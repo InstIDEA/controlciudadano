@@ -1,0 +1,56 @@
+{
+  "name": "simple_searcher",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@nivo/line": "^0.62.0",
+    "@nivo/network": "^0.62.0",
+    "@nivo/pie": "^0.62.0",
+    "@nivo/scatterplot": "^0.62.0",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "@types/jest": "^25.2.3",
+    "@types/node": "^14.0.5",
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
+    "@types/react-router-dom": "^5.1.5",
+    "add": "^2.0.6",
+    "antd": "^4.6.2",
+    "date-fns": "^2.14.0",
+    "install": "^0.13.0",
+    "npm": "^6.14.5",
+    "query-string": "^6.13.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-json-to-table": "^0.1.5",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "3.4.1",
+    "react-sigma": "^1.2.34",
+    "typescript": "^3.9.3",
+    "use-query-params": "^1.1.6",
+    "yarn": "^1.22.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "to-prod": "scp -r ./build/* ideacds:services/simple_searcher"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
