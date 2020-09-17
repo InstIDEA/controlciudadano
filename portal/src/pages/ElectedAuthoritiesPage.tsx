@@ -35,7 +35,7 @@ export function ElectedAuthoritiesPage() {
                        onBack={() => history.push('/')}
                        title="Autoridades electas"
                        extra={[
-                           <Link to="/sources?query=tsje_elected">
+                           <Link to="/sources?query=tsje_elected" key="link">
                                Fuente
                            </Link>,
                            <Input.Search placeholder="Buscar"
