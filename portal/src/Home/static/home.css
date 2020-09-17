@@ -1,0 +1,421 @@
+html, body {
+  height: 100%;
+  width: 100%;
+}
+body {
+  line-height: 1.5;
+  font-size: 14px;
+  background: #fff;
+  transition: background 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+  overflow-x: hidden;
+}
+a {
+  transition: color 0.3s ease;
+}
+a:focus {
+  text-decoration: underline;
+  text-decoration-skip: ink;
+}
+.home-wrapper {
+  width: 100%;
+  color: rgba(0, 52, 91, 1);
+}
+.home-wrapper .ant-btn {
+  min-width: 110px;
+  height: 40px;
+  border-radius: 20px;
+  font-size: 16px;
+}
+.home-wrapper .ant-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, .4);
+}
+.banner-text {
+  color: rgba(0, 52, 91, 1);  
+  font-size: 30px !important;
+  width: 90%;
+}
+svg g {
+  transform-origin: 50% 50%;
+  transform-box: fill-box;
+}
+.banner-wrapper {
+  width: 100%;
+  position: relative;
+  padding-top: 75px;
+  background-image: url('../../assets/imgs/background.svg');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.banner-wrapper .banner-title-wrapper {
+  width: 80%;
+  height: 100px;
+  position: relative;
+  top: 0;
+  bottom: 0;
+  left: 10%;
+}
+.banner-wrapper .banner-title-wrapper > * {
+  will-change: transform;
+}
+.banner-wrapper .banner-title-wrapper h1 {
+  font-family: "Futura", "Helvetica Neue For Number", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 54px;
+  margin: 12px 0;
+}
+.banner-wrapper .banner-title-wrapper p {
+  font-size: 20px;
+}
+.banner-wrapper .banner-title-wrapper .button-wrapper {
+  margin-top: 64px;
+  line-height: 40px;
+  align-items: center;
+  display: flex;
+}
+.banner-wrapper .banner-title-wrapper .button-wrapper .github-btn {
+  display: inline-block;
+  height: 28px;
+}
+.banner-wrapper .banner-title-wrapper .button-wrapper .github-btn .gh-btn {
+  height: 28px;
+  border-radius: 4px;
+  background: rgba(243, 243, 243, 1);
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(243, 243, 243, 1) 100%);
+  border: 1px solid #ebedf0;
+  align-items: center;
+  display: flex;
+  padding: 0 12px;
+  font-size: 13px;
+}
+.banner-wrapper .banner-title-wrapper .button-wrapper .github-btn .gh-btn:hover {
+  color: rgba(0, 52, 91, 1);
+}
+.banner-wrapper .banner-title-wrapper .button-wrapper .github-btn .gh-btn .gh-ico {
+  margin-right: 8px;
+}
+.banner-wrapper .banner-title-wrapper .button-wrapper .github-btn .gh-count {
+  height: 28px;
+  line-height: 22px;
+  background: #fff;
+  border: 1px solid #ebedf0;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 13px;
+}
+.banner-wrapper .banner-title-wrapper .title-line {
+  transform: translateX(-64px);
+  animation: bannerTitleLine 3s ease-in-out 0s infinite;
+}
+.banner-wrapper .banner-image-wrapper {
+  width: 100%;
+  height: 324px;
+  position: absolute;
+  right: 8%;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  opacity: 0;
+}
+.ver-mas-button {
+  font-size: 12px;
+  min-width: 100px;
+  height: 30px;
+  margin-top: 30px;
+  text-transform: none !important;
+  padding: 0 !important;
+  background-color: tomato;
+  color: white;
+  box-shadow: 0 5px 15px 0 rgba(0, 0, 0, 0.2), 0 5px 15px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 1rem;
+  border: none;
+}
+.home-banner-image {
+  display: none;
+}
+.title-line-wrapper {
+  height: 2px;
+  width: 100%;
+  overflow: hidden;
+}
+.title-line-wrapper .title-line {
+  height: 100%;
+  width: 64px;
+  transform: translateX(-64px);
+  background: linear-gradient(to right, rgba(24, 144, 255, 0) 0%, rgba(24, 144, 255, 1) 100%);
+}
+.home-page {
+  margin: 50px auto;
+}
+.home-page h2 {
+  text-align: center;
+  font-weight: 300;
+  font-size: 28px;
+  color: #314659;
+  letter-spacing: 0.6px;
+}
+.home-page h2 span {
+  font-weight: 600;
+}
+.home-page-wrapper {
+  max-width: 1280px;
+  width: 100%;
+  margin: auto;
+  position: relative;
+}
+/** page1 **/
+.page1 {
+  height: 100%;
+}
+.page1-line.title-line-wrapper {
+  width: 312px;
+  margin: 24px auto 76px;
+}
+.page1-line.title-line-wrapper .title-line {
+  animation: page1TitleLine 3s ease-in-out 1.5s infinite;
+}
+.page1-bg {
+  font-size: 320px;
+  color: #ebedf0;
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  opacity: 0.25;
+  top: 0;
+  transform: translateY(960px);
+}
+.page1-box-wrapper {
+  margin-bottom: 62px;
+  display: flex;
+  align-items: flex-start;
+}
+.page1-box-wrapper li {
+  width: 33.33%;
+  display: inline-block;
+  will-change: transform;
+}
+.page1-box-wrapper li .page1-box {
+  width: 194px;
+  margin: auto;
+  text-align: center;
+  position: relative;
+}
+.page1-box-wrapper li .page1-box .page1-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 40px;
+  margin: 20px auto 32px;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  transition: box-shadow 0.3s ease-out, transform 0.3s ease-out;
+}
+.page1-box-wrapper li .page1-box:hover .page1-image {
+  transform: translateY(-5px);
+}
+.page1-box-wrapper li .page1-box h3 {
+  color: #0d1a26;
+  font-size: 16px;
+  margin: 8px auto;
+}
+.page1-point-wrapper {
+  position: absolute;
+  width: 0;
+  left: 50%;
+  top: 0;
+}
+.page1-point-wrapper .point-0 {
+  width: 4px;
+  height: 4px;
+}
+.page1-point-wrapper .point-2, .page1-point-wrapper .point-ring {
+  width: 10px;
+  height: 10px;
+}
+.page1-point-wrapper .point-ring {
+  border-style: solid;
+  border-width: 1px;
+  background: transparent !important;
+}
+.page1-point-wrapper .point-1 {
+  width: 6px;
+  height: 6px;
+}
+.page1-point-wrapper .point-3 {
+  width: 15px;
+  height: 15px;
+}
+.page1-point-wrapper i {
+  display: inline-block;
+  border-radius: 100%;
+  position: absolute;
+  opacity: 0;
+  transform: translate(0, 30px);
+}
+/** page2 **/
+.page2 {
+  text-align: center;
+  height: 588px;
+}
+.page2 .page2-content {
+  will-change: transform;
+}
+.page2-line {
+  margin: 148px auto 24px;
+  width: 114px;
+}
+.page2-line .title-line {
+  animation: page2TitleLine 3s ease-in-out 0s infinite;
+}
+.page-content {
+  width: 760px;
+  margin: 24px auto 32px;
+  line-height: 28px;
+}
+.home-code {
+  width: 90%;
+  max-width: 840px;
+  border-radius: 4px;
+  background: #f2f4f5;
+  line-height: 28px;
+  margin: 16px auto;
+  color: rgba(0, 52, 91, 1);
+  font-size: 16px;
+  text-align: left;
+  padding: 20px 50px;
+}
+.home-code span {
+  color: #f5222d;
+}
+#reat-content {
+  font-family: Helvetica Neue For Number, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Helvetica Neue, Helvetica, Arial, sans-serif;
+}
+.intro .header {
+  padding-top: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+h2, h3, h4, h5, h6 {
+  font-weight: 400;
+}
+.page-wrapper {
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+}
+.page-wrapper .page {
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+  position: relative;
+}
+.page-wrapper .page h2 {
+  margin-bottom: 30px;
+  font-size: 2rem;
+}
+.page-wrapper .page .separator {
+  margin-bottom: 65px;
+  display: inline-block;
+  width: 30px;
+  height: 5px;
+  background: #1890ff;
+  border-radius: 2.5px;
+}
+.card {
+  text-decoration: none;
+}
+.card .title, .card .description {
+  color: rgba(0, 52, 91, 1) !important;
+  font-size: 24px;
+  font-weight: 300;
+  display: block;
+  font-weight: bolder;
+}
+.card:hover .title {
+  color: rgba(0, 52, 91, 1) !important;
+}
+.features img {
+  margin-top: 0 !important;
+}
+.page h2, .page h4, .page h5, .page span, .page p, .page a, .page .feature, .page .card-wrapper, .page .main-info, .page .detail {
+  will-change: transform;
+}
+.page .main-info {
+  line-height: 36px;
+}
+.page1 {
+  padding-top: 10px;
+  overflow: initial;
+  min-height: 320px;
+}
+.page1 .card {
+  transition: transform 0.3s, box-shadow 0.3s;
+  color: #868e96;
+  display: inline-block;
+  width: 90%;
+  height: 250px;
+  padding: 32px;
+  box-shadow: 10px 10px 5px rgba(84, 48, 132, 0.06);
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  text-align: center;
+  border-radius: 20px;
+}
+.page1 .card .card-img-top {
+  width: 50%;
+  height: 100%;
+  border-top-left-radius: calc(.25rem - 1px);
+  border-top-right-radius: calc(.25rem - 1px);
+}
+.page1 .card h3 {
+  font-size: 30px;
+}
+.page1 .card img {
+  height: 80px;
+  width: 100px;
+  position: relative;
+  float: left;
+  margin: 20px 0;
+}
+.page1 .card:hover {
+  text-decoration: none;
+  transform: translateY(-12px);
+  box-shadow: 0 12px 24px rgba(84, 48, 132, 0.06);
+}
+.info-card {
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: absolute;
+  top: 84px;
+  right: 66px;
+  color: #868e96;
+  display: flex;
+  width: 46%;
+  height: 132px;
+  padding: 25px;
+  box-shadow: 5px 2px rgba(84, 48, 132, 0.06);
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  text-align: center;
+  border: 1px solid #868e96;
+}
+
+.info-card .title, .info-card .description {
+  color: rgba(0, 52, 91, 1) !important;
+  font-size: 20px;
+  font-weight: 300;
+  display: block;
+  font-weight: bolder;
+}
+.info-banner {
+  background-image: url('../../assets/imgs/home.svg');
+  background-repeat: no-repeat;
+  background-size: 50%;
+  background-position-x: center;
+  background-position-y: top;
+  padding-top: 100px;
+  min-height: 360px;
+}
