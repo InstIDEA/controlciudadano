@@ -18,9 +18,11 @@
     "add": "^2.0.6",
     "antd": "^4.6.2",
     "date-fns": "^2.14.0",
+    "enquire-js": "^0.2.1",
     "install": "^0.13.0",
     "npm": "^6.14.5",
     "query-string": "^6.13.1",
+    "rc-queue-anim": "^1.4.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-json-to-table": "^0.1.5",
@@ -29,8 +31,7 @@
     "react-sigma": "^1.2.34",
     "typescript": "^3.9.3",
     "use-query-params": "^1.1.6",
-    "yarn": "^1.22.4",
-    "rc-queue-anim": "^1.4.0"
+    "yarn": "^1.22.4"
   },
   "scripts": {
     "start": "react-scripts start",
