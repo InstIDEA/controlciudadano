@@ -2,7 +2,7 @@ import * as React from 'react';
 import {useEffect, useMemo, useState} from 'react';
 import {OCDSSupplierContract, OCDSSupplierRelation, Supplier} from '../Model';
 import {SimpleApi} from '../SimpleApi';
-import {Checkbox, Col, Input, message, PageHeader, Table, Tabs} from 'antd';
+import {Checkbox, message, PageHeader, Table, Tabs} from 'antd';
 import {useHistory, useParams} from 'react-router-dom';
 import {formatIsoDate, formatMoney} from '../formatters';
 import {SupplierDescription} from '../components/SupplierDescription';
@@ -50,7 +50,7 @@ export function OCDSSupplier() {
                        title={data ? `${data.name}` : 'Cargando...'}
                        subTitle="CDS - IDEA"
                        extra={[
-                           <Checkbox checked={!!onlyCovid} onChange={_ => setOnlyCovid(a => !a)}>
+                           <Checkbox key="onlyCovid" checked={!!onlyCovid} onChange={_ => setOnlyCovid(a => !a)}>
                                Solo fondos de emergencia
                            </Checkbox>
                        ]}
@@ -149,10 +149,11 @@ export function SupplierRelations(props: {
     const [data, setData] = useState<OCDSSupplierRelation[]>();
 
     useEffect(() => {
-        new RedashAPI('a2kmZeR9AdGeldeP0RXg2JWSZeevSA62xzpN15jb')
+        new RedashAPI()
             .getRelations()
-            .then(relations => setData(relations.query_result.data.rows.filter(r => r.p1ruc === ruc)))
-
+            .then(relations => setData(relations.query_result.data.rows.filter(r => {
+                return ruc.endsWith(r.p1ruc);
+            })))
     }, [ruc])
 
     const graph = useMemo(() => toGraph(data), [data]);
