@@ -18,10 +18,7 @@ footer.dark .bottom-bar {
 footer {
   clear: both;
   font-size: 12px;
-  background: #fff;
-  position: absolute;
   max-height: 30px;
-  bottom: 30px;
   z-index: 100;
   box-shadow: 0 1000px 0 1000px #fff;
 }

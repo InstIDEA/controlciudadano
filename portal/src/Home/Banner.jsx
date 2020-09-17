@@ -30,9 +30,7 @@ function Banner(props) {
           <span className="description">{card.description}</span>
           <span className="title">{card.title}</span>
           <div className="button-wrapper"></div>
-          <Link to={card.href}>
             <button className="ver-mas-button">Ver más</button>
-          </Link>
         </div>
       </a>
     </Col>

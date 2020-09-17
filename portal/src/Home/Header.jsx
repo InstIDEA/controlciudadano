@@ -34,7 +34,7 @@ class Header extends React.Component {
           <a>Conjuto de datos</a>
         </Menu.Item>
         <Menu.Item key="docs">
-          <a><span>Acerca de</span></a>
+          <a>Acerca de</a>
         </Menu.Item>
       </Menu>
     );

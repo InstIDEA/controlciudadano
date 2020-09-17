@@ -46,6 +46,7 @@ svg g {
   background-image: url('../../assets/imgs/background.svg');
   background-repeat: no-repeat;
   background-size: cover;
+  background-position-y: center;
 }
 .banner-wrapper .banner-title-wrapper {
   width: 80%;
