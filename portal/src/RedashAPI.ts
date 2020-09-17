@@ -22,6 +22,7 @@ const API_KEYS: Record<number, string> = {
     25: "ILEsnIawXqNOajocI8PrxH0QfbdGeeyaEEbzkLsQ",
     26: "YQP3k6QFEDgFDDXLDvyFrI1HWp2OvT07mZUL7ht8",
     27: "DhDrVfrcpeV1sNxk0uAsFDLPxhef7CGRXKOm9lnn",
+    28: "qMecN8ma9IkW2Tekpebk8ygk4c3fzzos2mk6ya0A",
     35: "WYy6Jsk51sOOQuhzOwCriygodvlolhxwjyIxbpRH",
     36: "vX16f20urPFfYsebawg3Kda9qhN6JDTCexhH8Trf",
     37: "N0DHcr72NbiWC5n3IBEVmkSoViBxud8GTxKNLi3z"
