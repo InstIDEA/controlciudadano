@@ -12,10 +12,7 @@ body {
 a {
   transition: color 0.3s ease;
 }
-a:focus {
-  text-decoration: underline;
-  text-decoration-skip: ink;
-}
+
 .home-wrapper {
   width: 100%;
   color: rgba(0, 52, 91, 1);

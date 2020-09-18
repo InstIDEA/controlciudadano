@@ -22,9 +22,9 @@ import {ActionResearchLanding} from './pages/ActionResearchLanding';
 import {OCDSBuyersPage} from './pages/OCDSBuyers';
 import {OCDSSupplierWithSanctionPage} from './pages/OCDSSupplierWithSanction';
 import {OCDSCovidTenders} from './pages/OCDSCovidTenders';
-import Header from "./Home/Header";
 import Banner from "./Home/Banner";
 import Footer from "./Home/Footer";
+import { Sidebar } from "./components/sidebar";
 
 
 export default function App() {

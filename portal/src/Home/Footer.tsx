@@ -12,27 +12,27 @@ function Footer() {
     <footer id="footer">
       <Row>
         <Col xxl={4} xl={4} lg={4} md={4} sm={4} xs={4}>
-          <div id="logo" to="/">
+          <div id="logo">
             <img src={usaid} alt="logo" />
           </div>
         </Col>
         <Col xxl={4} xl={4} lg={4} md={4} sm={4} xs={4}>
-          <div id="logo" to="/">
+          <div id="logo">
             <img src={ocp} alt="logo" />
           </div>
         </Col>
         <Col xxl={4} xl={4} lg={4} md={4} sm={4} xs={4}>
-          <div id="logo" to="/">
+          <div id="logo">
             <img src={idea} alt="logo" />
           </div>
         </Col>
         <Col xxl={4} xl={4} lg={4} md={4} sm={4} xs={4}>
-          <div id="logo" to="/">
+          <div id="logo">
             <img src={reaccion} alt="logo" />
           </div>
         </Col>
         <Col xxl={4} xl={4} lg={4} md={4} sm={4} xs={4}>
-          <div id="logo" to="/">
+          <div id="logo">
             <img src={cds} alt="logo" />
           </div>
         </Col>
