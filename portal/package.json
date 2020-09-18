@@ -29,7 +29,8 @@
     "react-sigma": "^1.2.34",
     "typescript": "^3.9.3",
     "use-query-params": "^1.1.6",
-    "yarn": "^1.22.4"
+    "yarn": "^1.22.4",
+    "rc-queue-anim": "^1.4.0"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -22,6 +22,9 @@ import {ActionResearchLanding} from './pages/ActionResearchLanding';
 import {OCDSBuyersPage} from './pages/OCDSBuyers';
 import {OCDSSupplierWithSanctionPage} from './pages/OCDSSupplierWithSanction';
 import {OCDSCovidTenders} from './pages/OCDSCovidTenders';
+import Header from "./Home/Header";
+import Banner from "./Home/Banner";
+import Footer from "./Home/Footer";
 
 
 export default function App() {
@@ -52,8 +55,9 @@ function Routes() {
                 <Route path="/ocds/buyer/:id" exact render={() => <OCDSBuyerPage/>}/>
                 <Route path="/ocds/relations" exact render={() => <OCDSSupplierRelations/>}/>
                 <Route path="/action" exact render={() => <ActionResearchLanding/>}/>
+                <Route path="/explore" exact render={() => <Welcome/>}/>
                 <Route path="/">
-                    <Welcome/>
+                    <Banner/>
                 </Route>
             </Switch>
         </QueryParamProvider>

@@ -1,0 +1,68 @@
+#header {
+  background-color: #fff;
+  position: relative;
+  z-index: 10;
+  height: 64px;
+}
+.header-title {
+  color: rgba(0, 52, 91, 1);
+}
+#logo {
+  overflow: hidden;
+  padding-left: 150px;
+  line-height: 64px;
+  text-decoration: none;
+  height: 64px;
+}
+#logo img {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 16px;
+  width: 45%;
+}
+#logo span {
+  color: rgba(0, 52, 91, 1);
+  outline: none;
+  font-size: 14px;
+  line-height: 28px;
+}
+.header-meta {
+  color: rgba(0, 52, 91, 1);
+  padding-right: 40px;
+}
+#menu {
+  float: right;
+  overflow: hidden;
+  height: 64px;
+}
+#menu .ant-menu {
+  line-height: 60px;
+}
+#menu .ant-menu-horizontal {
+  border-bottom: none;
+}
+#menu .ant-menu-horizontal > .ant-menu-item {
+  border-top: 2px solid transparent;
+}
+#menu .ant-menu-horizontal > .ant-menu-item:hover {
+  border-bottom: 2px solid rgba(0, 52, 91, 1);
+  border-top: 2px solid transparent;
+}
+#menu .ant-menu-horizontal > .ant-menu-item a {
+  color: rgba(0, 52, 91, 1);
+}
+#menu .ant-menu-horizontal > .ant-menu-item-selected {
+  border-bottom: 2px solid rgba(0, 52, 91, 1);
+  border-top: 2px solid transparent;
+}
+#menu .ant-menu-horizontal > .ant-menu-item-selected a {
+  color: rgba(0, 52, 91, 1);
+}
+#preview {
+  padding-top: 17px;
+  float: right;
+  margin-left: 32px;
+}
+#preview button {
+  border-radius: 32px;
+}
