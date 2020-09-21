@@ -23,9 +23,6 @@ import {OCDSBuyersPage} from './pages/OCDSBuyers';
 import {OCDSSupplierWithSanctionPage} from './pages/OCDSSupplierWithSanction';
 import {OCDSCovidTenders} from './pages/OCDSCovidTenders';
 import Banner from "./Home/Banner";
-import Footer from "./Home/Footer";
-import { Sidebar } from "./components/sidebar";
-
 
 export default function App() {
     return <Routes/>

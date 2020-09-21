@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Menu, Popover, Input } from 'antd';
+import { Row, Col, Menu, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons'
 
 import './static/header.css'
@@ -25,10 +25,10 @@ export function Header(props: {
         <a href="/action">Compras COVID</a>
       </Menu.Item>
       <Menu.Item key="conjunto">
-        <a>Fuente de datos</a>
+        <a href="/">Fuente de datos</a>
       </Menu.Item>
       <Menu.Item key="docs">
-        <a>Acerca de</a>
+        <a href="/">Acerca de</a>
       </Menu.Item>
     </Menu>
   );
@@ -62,12 +62,12 @@ export function Header(props: {
       </div> :
       <div id="header" className="header">
         <Row>
-          <Col xxl={6} xl={7} lg={10} md={10} sm={24} xs={24}>
-            <div id="logo">
+          <Col xxl={10} xl={10} lg={10} md={10} sm={24} xs={24}>
+            <div>
               <h1 className="header-title">CONTROL CIUDADANO</h1>
             </div>
           </Col>
-          <Col xxl={14} xl={17} lg={14} md={14} sm={0} xs={0}>
+          <Col xxl={14} xl={14} lg={14} md={14} sm={0} xs={0}>
             <div className="header-meta">
               <div id="menu">{menu}</div>
             </div>

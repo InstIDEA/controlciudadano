@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { Input, PageHeader, Table, Typography, Layout, Menu } from 'antd';
+import { PageHeader, Table, Typography } from 'antd';
 import { OCDSItemRankingListRow } from '../Model';
 import { formatMoney } from '../formatters';
 import { Link, useHistory } from 'react-router-dom';
 import { filterRedashList, RedashAPI } from '../RedashAPI';
 import '../Home/static/layout.css'
-import { Sidebar } from '../components/sidebar';
 import { BaseDatosPage } from '../components/BaseDatosPage';
 
 export function OCDSItemsRankingPage() {
@@ -15,7 +14,6 @@ export function OCDSItemsRankingPage() {
     const [working, setWorking] = useState(false);
     const [data, setData] = useState<OCDSItemRankingListRow[]>();
     const history = useHistory();
-    const { Sider, Content } = Layout;
 
     useEffect(() => {
         setWorking(true);

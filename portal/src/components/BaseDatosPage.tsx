@@ -21,5 +21,6 @@ export function BaseDatosPage(props: {
                {props.children}
           </Col>
        </Row>
+       <Footer tableMode={true}/>
   </>
 }

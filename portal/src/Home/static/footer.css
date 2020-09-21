@@ -75,3 +75,25 @@ footer .footer-flag {
   top: -4px;
   margin-right: 8px;
 }
+.footer-background {
+  background-color: rgba(0, 52, 89, 1);
+  padding: 5px 200px;
+}
+.footer-background-secondary {
+  background-color: rgba(223, 237, 251, 1);
+  padding: 5px 200px;
+}
+.footer-paragraph {
+  color: rgba(153, 173, 188, 1) !important;
+}
+.footer-logo-wrapper {
+  display: inline-block;
+  margin: 0 5px;
+}
+.logo-small {
+  height: 30px;
+  width: 45px;
+}
+.footer-label {
+  color: rgba(0, 52, 91, 1);
+}

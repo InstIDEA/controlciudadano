@@ -5,7 +5,7 @@
   height: 64px;
 }
 .anticon {
-  color: rgba(0, 52, 91, 1);
+  /*color: rgba(0, 52, 91, 1);*/
   font-size: larger;
 }
 
@@ -21,6 +21,11 @@
 }
 .header-title {
   color: rgba(0, 52, 91, 1);
+  overflow: hidden;
+  padding-left: 150px;
+  line-height: 64px;
+  text-decoration: none;
+  height: 64px;
 }
 .header-table-mode {
   color: rgba(0, 52, 91, 1);
@@ -44,7 +49,6 @@
 
 #logo {
   overflow: hidden;
-  padding-left: 150px;
   line-height: 64px;
   text-decoration: none;
   height: 64px;
@@ -53,7 +57,7 @@
   display: inline-block;
   vertical-align: middle;
   margin-right: 16px;
-  width: 45%;
+  width: 15%;
 }
 #logo span {
   color: rgba(0, 52, 91, 1);

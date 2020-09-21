@@ -4,8 +4,8 @@ import { Row, Col } from 'antd';
 import './static/home.css';
 import explorarDatos from '../assets/imgs/explorar_datos.svg';
 import comprasCovid from '../assets/imgs/compras_covid.svg';
-import { Link } from 'react-router-dom';
 import { Header } from './Header'
+import Footer from './Footer';
 
 export const page1 = [
   {
@@ -81,6 +81,7 @@ para realizar un <strong>control de los gastos del COVID-19</strong>
         </QueueAnim>
       </section>
     </div>
+    <Footer tableMode={false}/>
     </>
   );
 }

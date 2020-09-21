@@ -8,14 +8,17 @@ import onlineReports from '../assets/imgs/items_adquiridos.svg'
 import contracts from '../assets/imgs/licitaciones.svg'
 import relation from '../assets/imgs/relaciones_proveedores.svg'
 import {Link} from 'react-router-dom';
+import { Header } from '../Home/Header';
+import Footer from '../Home/Footer';
 
 
 export function ActionResearchLanding() {
 
     const spans = {xl: 8, lg: 8, md: 12, xs: 24};
 
-    return <div className="action-landing">
-
+    return <>
+        <Header tableMode={false}/>
+        <div className="action-landing">
         <Row className="title">
             <div>
                 Can urgency be exploited by corruption?
@@ -97,5 +100,7 @@ export function ActionResearchLanding() {
         </Row>
 
     </div>
+    <Footer tableMode={false}/>
+    </>
 
 }

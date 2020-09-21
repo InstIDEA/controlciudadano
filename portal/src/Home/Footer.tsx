@@ -1,39 +1,69 @@
 import React from 'react';
-import { Row, Col, Button } from 'antd';
+import { Row, Col, Typography } from 'antd';
 import './static/footer.css';
 import cds from '../assets/logos/cds.png';
+import cdsBlanco from '../assets/logos/cds_blanco.png';
 import usaid from '../assets/logos/usaid.png';
 import ocp from '../assets/logos/ocp.png';
 import reaccion from '../assets/logos/reaccion.png';
 import idea from '../assets/logos/logo_idea.png';
+import cc from '../assets/logos/cc.png';
+import github from '../assets/logos/github.svg';
 
-function Footer() {
+function Footer(props: {
+  tableMode?: boolean
+}) {
   return (
     <footer id="footer">
-      <Row>
-        <Col xxl={4} xl={4} lg={4} md={4} sm={4} xs={4}>
+      <Row className={props.tableMode ? "footer-background-secondary" : ""}>
+        <Col xxl={8} xl={8} lg={8} md={8} sm={8} xs={8}>
+          <span className="footer-label">Es una iniciativa de:</span>
           <div id="logo">
+            <img src={idea} alt="logo" />
             <img src={usaid} alt="logo" />
           </div>
         </Col>
-        <Col xxl={4} xl={4} lg={4} md={4} sm={4} xs={4}>
+        <Col xxl={8} xl={8} lg={8} md={8} sm={8} xs={8}>
+          <span className="footer-label">Impulsores del proyecto:</span>
+          <div id="logo">
+            <img src={idea} alt="logo" />
+            <img src={reaccion} alt="logo" />
+            <img src={cds} alt="logo" />
+          </div>
+        </Col>
+        <Col xxl={8} xl={8} lg={8} md={8} sm={8} xs={8}>
+          <span className="footer-label">Herramientas de IA con apoyo de:</span>
           <div id="logo">
             <img src={ocp} alt="logo" />
           </div>
         </Col>
-        <Col xxl={4} xl={4} lg={4} md={4} sm={4} xs={4}>
-          <div id="logo">
-            <img src={idea} alt="logo" />
+      </Row>
+      <Row className="footer-background">
+        <Col xxl={24} xl={24} lg={24} md={4} sm={4} xs={4}>
+          <Typography.Paragraph className="footer-paragraph">
+            Este sitio web fue posible gracias al generoso apoyo del pueblo de los Estados Unidos de América a través
+            de la Agencia de los Estados Unidos para el Desarrollo Internacional (USAID). El contenido de este sitio
+            web es responsabilidad de sus autores y no refleja necesariamente las opiniones o posiciones de la Agencia de los Estados Unidos para el Desarrollo Internacional o del Gobierno de los Estados Unidos.
+
+        </Typography.Paragraph>
+
+        </Col>
+      </Row>
+      <Row className="footer-background">
+        <Col xxl={4} xl={4} lg={4} md={4} sm={2} xs={2}>
+          <div className="footer-logo-wrapper">
+            <img src={cc} alt="logo" />
           </div>
         </Col>
-        <Col xxl={4} xl={4} lg={4} md={4} sm={4} xs={4}>
-          <div id="logo">
-            <img src={reaccion} alt="logo" />
-          </div>
+        <Col xxl={6} xl={6} lg={6} md={6} sm={6} xs={6}>
         </Col>
-        <Col xxl={4} xl={4} lg={4} md={4} sm={4} xs={4}>
-          <div id="logo">
-            <img src={cds} alt="logo" />
+        <Col xxl={14} xl={14} lg={14} md={14} sm={16} xs={16} style={{ textAlign: "right" }}>
+          <div className="footer-logo-wrapper">
+            <img className="logo-small" src={github} alt="logo" />
+          </div>
+          <Typography.Text className="footer-paragraph">Código fuente abierto desarrollado por</Typography.Text>
+          <div className="footer-logo-wrapper">
+            <img className="logo-small" src={cdsBlanco} alt="logo" />
           </div>
         </Col>
       </Row>
