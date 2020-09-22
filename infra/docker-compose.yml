@@ -52,11 +52,19 @@ services:
       - .env
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.sapi.rule=Host(`www.controlciudadanopy.org`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.sapi.rule=Host(`api.controlciudadanopy.org`)"
       - "traefik.http.routers.sapi.entrypoints=websecure"
       - "traefik.http.routers.sapi.tls.certresolver=leresolver"
       - "traefik.http.services.sapi.loadbalancer.server.port=80"
       - "traefik.http.middlewares.sapi.stripprefix.prefixes=/api/"
+
+      - "traefik.http.middlewares.corsapi.headers.accesscontrolallowmethods=GET,OPTIONS"
+      - "traefik.http.middlewares.corsapi.headers.accesscontrolalloworiginlist=https://api.controlciudadanopy.org,http://localhost:3000"
+      - "traefik.http.middlewares.corsapi.headers.accesscontrolmaxage=100"
+      - "traefik.http.middlewares.corsapi.headers.addvaryheader=true"
+
+      - "traefik.http.routers.sapi.middlewares=corsapi@docker"
+
 
   reverse-proxy:
     image: traefik:v2.2
