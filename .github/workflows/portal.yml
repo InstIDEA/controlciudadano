@@ -6,7 +6,9 @@ name: Node.js CI
 on:
   push:
     branches: [ master ]
-    paths: 'portal/**'
+    paths: 
+    - 'portal/**'
+    - '.github/workflows/portal.yml'
 
 jobs:
   build:
