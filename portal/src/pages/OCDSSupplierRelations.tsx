@@ -1,14 +1,15 @@
 import * as React from 'react';
-import {useCallback, useEffect, useMemo, useState} from 'react';
-import {OCDSSupplierRelation, Supplier} from '../Model';
-import {Layout, PageHeader, Space, Timeline} from 'antd';
-import {Link, useHistory} from 'react-router-dom';
-import {Edge, Graph, Node, RelationGraph} from '../components/graphs/RelationGraph';
-import {RedashAPI} from '../RedashAPI';
-import {Card} from 'antd/es';
-import {SimpleApi} from '../SimpleApi';
-import {SupplierDescription} from '../components/SupplierDescription';
-import {RELATIONS_COLORS, RELATIONS_NAMES} from '../Constants';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { OCDSSupplierRelation, Supplier } from '../Model';
+import { Layout, PageHeader, Space, Timeline } from 'antd';
+import { Link, useHistory } from 'react-router-dom';
+import { Edge, Graph, Node, RelationGraph } from '../components/graphs/RelationGraph';
+import { RedashAPI } from '../RedashAPI';
+import { Card } from 'antd/es';
+import { SimpleApi } from '../SimpleApi';
+import { SupplierDescription } from '../components/SupplierDescription';
+import { RELATIONS_COLORS, RELATIONS_NAMES } from '../Constants';
+import { BaseDatosPage } from '../components/BaseDatosPage';
 
 const colors = RELATIONS_COLORS;
 const names = RELATIONS_NAMES;
@@ -39,52 +40,55 @@ export function OCDSSupplierRelations() {
         else setActives([...actives, type]);
     }
 
-    return <PageHeader ghost={false}
-                       onBack={() => history.push('')}
-                       style={{border: '1px solid rgb(235, 237, 240)'}}
-                       title={"Relaciones ente proveedores"}
-                       subTitle="CDS - IDEA"
-    >
-        <Layout>
+    return <BaseDatosPage menuIndex="relations">
+        <PageHeader ghost={false}
+            onBack={() => history.push('')}
+            backIcon={null}
+            style={{ border: '1px solid rgb(235, 237, 240)' }}
+            title={"Relaciones ente proveedores"}
+            subTitle="CDS - IDEA"
+        >
             <Layout>
-                <Layout.Content>
-                    {data && <RelationGraph nodes={graph.nodes}
-                                            edges={graph.edges}
-                                            onSelect={setSelected}
-                                            filterEdge={filter}
-                    />}
-                    {!data && 'Cargando ...'}
-                </Layout.Content>
-                <Layout.Sider style={{
-                    background: '#ececec',
-                    padding: 10
-                }} width={400}>
-                    <Space direction="vertical" style={{width: '100%'}}>
-                        <Card title="Leyenda"
-                              bordered={false}
-                              style={{width: '100%'}}>
+                <Layout>
+                    <Layout.Content>
+                        {data && <RelationGraph nodes={graph.nodes}
+                            edges={graph.edges}
+                            onSelect={setSelected}
+                            filterEdge={filter}
+                        />}
+                        {!data && 'Cargando ...'}
+                    </Layout.Content>
+                    <Layout.Sider style={{
+                        background: '#ececec',
+                        padding: 10
+                    }} width={400}>
+                        <Space direction="vertical" style={{ width: '100%' }}>
+                            <Card title="Leyenda"
+                                bordered={false}
+                                style={{ width: '100%' }}>
 
-                            <Timeline>
-                                {Object.keys(colors).map(type => <Timeline.Item color={colors[type]} key={type}>
-                                <span style={{
-                                    color: actives.includes(type) ? 'black' : 'gray'
-                                }} onClick={() => toggle(type)}>
-                                    {names[type]}
-                                </span>
-                                </Timeline.Item>)}
-                            </Timeline>
-                        </Card>
-                        {selected && <SupplierCard id={selected}/>}
-                    </Space>
-                </Layout.Sider>
+                                <Timeline>
+                                    {Object.keys(colors).map(type => <Timeline.Item color={colors[type]} key={type}>
+                                        <span style={{
+                                            color: actives.includes(type) ? 'black' : 'gray'
+                                        }} onClick={() => toggle(type)}>
+                                            {names[type]}
+                                        </span>
+                                    </Timeline.Item>)}
+                                </Timeline>
+                            </Card>
+                            {selected && <SupplierCard id={selected} />}
+                        </Space>
+                    </Layout.Sider>
+                </Layout>
             </Layout>
-        </Layout>
-    </PageHeader>
+        </PageHeader>
+    </BaseDatosPage>
 
 }
 
 export function toGraph(data?: OCDSSupplierRelation[]): Graph {
-    if (!data) return {edges: [], nodes: []};
+    if (!data) return { edges: [], nodes: [] };
     const edges = new Map<string, Edge>();
     const nodes = new Map<string, Node>();
 
@@ -92,8 +96,8 @@ export function toGraph(data?: OCDSSupplierRelation[]): Graph {
     const defColor = 'black';
 
     data.forEach(d => {
-        nodes.set(d.p1ruc, {id: d.p1ruc, label: d.p1name, color: '#000000'});
-        nodes.set(d.p2ruc, {id: d.p2ruc, label: d.p2name, color: '#000000'});
+        nodes.set(d.p1ruc, { id: d.p1ruc, label: d.p1name, color: '#000000' });
+        nodes.set(d.p2ruc, { id: d.p2ruc, label: d.p2name, color: '#000000' });
 
         if (edges.has(`${d.p1ruc}_${d.p2ruc}_${d.relation}`)
             || edges.has(`${d.p2ruc}_${d.p1ruc}_${d.relation}`)
@@ -114,7 +118,7 @@ export function toGraph(data?: OCDSSupplierRelation[]): Graph {
     }
 }
 
-export function SupplierCard({id}: { id: string }) {
+export function SupplierCard({ id }: { id: string }) {
 
     const [data, setData] = useState<Supplier>()
 
@@ -136,6 +140,6 @@ export function SupplierCard({id}: { id: string }) {
     return <Card
         title={<Link to={`/ocds/suppliers/${id}`} target="__blank">{data ? data.name : id}</Link>}
     >
-        {data && <SupplierDescription data={data} columns={1}/>}
+        {data && <SupplierDescription data={data} columns={1} />}
     </Card>
 }

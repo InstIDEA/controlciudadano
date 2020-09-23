@@ -4,7 +4,8 @@ import { Row, Col } from 'antd';
 import './static/home.css';
 import explorarDatos from '../assets/imgs/explorar_datos.svg';
 import comprasCovid from '../assets/imgs/compras_covid.svg';
-import { Link } from 'react-router-dom';
+import { Header } from './Header'
+import Footer from './Footer';
 
 export const page1 = [
   {
@@ -21,7 +22,7 @@ export const page1 = [
   },
 ];
 
-function Banner(props) {
+function Banner() {
   const children = page1.map((card, i) => (
     <Col className="card-wrapper" key={i.toString()} md={12} xs={24}>
       <a className="card" href={card.href}>
@@ -35,7 +36,8 @@ function Banner(props) {
       </a>
     </Col>
   ));
-  return (
+  return (<>
+    <Header tableMode={false}/>
     <div className="banner-wrapper">
       <QueueAnim className="banner-title-wrapper">
         <p className="banner-text" key="content">
@@ -79,6 +81,8 @@ para realizar un <strong>control de los gastos del COVID-19</strong>
         </QueueAnim>
       </section>
     </div>
+    <Footer tableMode={false}/>
+    </>
   );
 }
 

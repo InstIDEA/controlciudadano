@@ -15,13 +15,13 @@ import {useQueryParam, BooleanParam} from 'use-query-params';
 
 export function OCDSSupplier() {
 
-    const {ruc} = useParams();
+    const { ruc } = useParams();
     const history = useHistory();
     const [data, setData] = useState<Supplier>();
     const [onlyCovid, setOnlyCovid] = useQueryParam('onlyCovid', BooleanParam);
 
     const [contracts, setContracts] = useState<OCDSSupplierContract[]>();
-    const [page, setPage] = useState({page: 1, pageSize: 100});
+    const [page, setPage] = useState({ page: 1, pageSize: 100 });
 
     useEffect(() => {
         new SimpleApi().getSupplier(ruc)
@@ -30,7 +30,7 @@ export function OCDSSupplier() {
                 message.warn("Can't fetch supplier")
                 console.warn(e)
             })
-        ;
+            ;
     }, [ruc]);
 
     useEffect(() => {
@@ -44,7 +44,7 @@ export function OCDSSupplier() {
             : [];
 
 
-    return <PageHeader ghost={false}
+    return  <PageHeader ghost={false}
                        onBack={() => history.push('/ocds/suppliers')}
                        style={{border: '1px solid rgb(235, 237, 240)'}}
                        title={data ? `${data.name}` : 'Cargando...'}
@@ -53,25 +53,24 @@ export function OCDSSupplier() {
                            <Checkbox key="onlyCovid" checked={!!onlyCovid} onChange={_ => setOnlyCovid(a => !a)}>
                                Solo fondos de emergencia
                            </Checkbox>
-                       ]}
-                       footer={<Tabs defaultActiveKey="CONTRACTS">
-                           <Tabs.TabPane tab="Contratos" key="CONTRACTS">
-                               <ContractsTable contracts={finalContracts} page={page} setPage={setPage}/>
-                           </Tabs.TabPane>
-                           <Tabs.TabPane tab="Asociaciones" key="RELATIONS">
-                               <SupplierRelations ruc={ruc}/>
-                           </Tabs.TabPane>
-                       </Tabs>}>
+            ]}
+            footer={<Tabs defaultActiveKey="CONTRACTS">
+                <Tabs.TabPane tab="Contratos" key="CONTRACTS">
+                    <ContractsTable contracts={finalContracts} page={page} setPage={setPage} />
+                </Tabs.TabPane>
+                <Tabs.TabPane tab="Asociaciones" key="RELATIONS">
+                    <SupplierRelations ruc={ruc} />
+                </Tabs.TabPane>
+            </Tabs>}>
 
-        <div className="content">
-            <div className="main">
-                {data && <SupplierDescription data={data} columns={2}/>}
+            <div className="content">
+                <div className="main">
+                    {data && <SupplierDescription data={data} columns={2} />}
+                </div>
             </div>
-        </div>
 
 
-    </PageHeader>
-
+        </PageHeader>
 }
 
 export function ContractsTable(props: {
@@ -86,7 +85,7 @@ export function ContractsTable(props: {
         size="small"
         pagination={{
             pageSize: props.page.pageSize,
-            onChange: (p) => props.setPage({page: p, pageSize: props.page.pageSize}),
+            onChange: (p) => props.setPage({ page: p, pageSize: props.page.pageSize }),
             onShowSizeChange: (_, ps) => props.setPage({
                 page: props.page.page,
                 pageSize: ps
@@ -145,7 +144,7 @@ export function SupplierRelations(props: {
     ruc: string,
 }) {
 
-    const {ruc} = props;
+    const { ruc } = props;
     const [data, setData] = useState<OCDSSupplierRelation[]>();
 
     useEffect(() => {
@@ -164,12 +163,12 @@ export function SupplierRelations(props: {
 
     return <Tabs defaultActiveKey="TABLE">
         <Tabs.TabPane tab="Tabla" key="TABLE">
-            <SupplierRelationsTable data={data} showOrigin={false}/>
+            <SupplierRelationsTable data={data} showOrigin={false} />
         </Tabs.TabPane>
         <Tabs.TabPane tab="Grafico" key="RELATIONS">
             <RelationGraph nodes={graph.nodes}
-                           edges={graph.edges}
-                           onSelect={() => null}
+                edges={graph.edges}
+                onSelect={() => null}
             />
         </Tabs.TabPane>
     </Tabs>

@@ -1,6 +1,6 @@
 import React from 'react';
-import {Card, Col, Divider, PageHeader, Row, Tag} from 'antd';
-import {Link} from 'react-router-dom';
+import { Card, Col, Divider, PageHeader, Row, Tag } from 'antd';
+import { Link } from 'react-router-dom';
 import {
     ReconciliationOutlined,
     DashboardOutlined,
@@ -9,6 +9,8 @@ import {
     RiseOutlined,
     UserOutlined
 } from '@ant-design/icons';
+import { Header } from '../Home/Header';
+import Footer from '../Home/Footer';
 
 const data = [{
     link: "/people",
@@ -66,7 +68,7 @@ const tags: { [k: string]: { label: string, color: string, icon?: React.ReactNod
     meta: {
         label: 'Acerca de',
         color: '#ff5500',
-        icon: <InfoOutlined/>
+        icon: <InfoOutlined />
     },
     ocds: {
         label: 'OCDS',
@@ -79,12 +81,12 @@ const tags: { [k: string]: { label: string, color: string, icon?: React.ReactNod
     people: {
         label: 'Personas',
         color: '#116d5f',
-        icon: <UserOutlined/>
+        icon: <UserOutlined />
     },
     government: {
         label: 'Datos gubernamentales',
         color: '#ac4444',
-        icon: <ReconciliationOutlined/>
+        icon: <ReconciliationOutlined />
     },
     items: {
         label: 'Items',
@@ -93,12 +95,12 @@ const tags: { [k: string]: { label: string, color: string, icon?: React.ReactNod
     ranking: {
         label: 'Ranking',
         color: '#2db7f5',
-        icon: <RiseOutlined/>
+        icon: <RiseOutlined />
     },
     supplier: {
         label: 'Proveedor',
         color: '#8435cd',
-        icon: <IdcardOutlined/>
+        icon: <IdcardOutlined />
     },
     authorities: {
         label: 'Autoridades',
@@ -111,7 +113,7 @@ const tags: { [k: string]: { label: string, color: string, icon?: React.ReactNod
     graph: {
         label: "Gráfico",
         color: '#87d068',
-        icon: <DashboardOutlined/>
+        icon: <DashboardOutlined />
     },
     affidavit: {
         label: 'Declaraciones juradas',
@@ -120,34 +122,38 @@ const tags: { [k: string]: { label: string, color: string, icon?: React.ReactNod
 }
 
 export function Welcome() {
-    return <PageHeader ghost={false}
-                       style={{border: '1px solid rgb(235, 237, 240)'}}
-                       title="IDEA / CDS"
-                       subTitle="Portal para explorar datos abiertos"
-                       extra={[]}>
-        <Divider orientation="left">Conjuntos de datos</Divider>
-        <Row justify="space-around" align="middle" gutter={[16, 32]}>
-            {data.map(d => <Col xl={6} lg={8} md={12} xs={24} key={d.title}>
-                <Link to={d.link}>
-                    <Card hoverable style={{width: '100%'}}>
-                        <Card.Meta title={d.title}
-                                   description={<>
-                                       {d.description}
-                                       <br/>
-                                       <br/>
-                                       {d.tags.map(t => <CustomTag t={t} key={t}/>)}
-                                   </>}/>
+    return <>
+        <Header tableMode={false} />
+        <PageHeader ghost={false}
+            style={{ border: '1px solid rgb(235, 237, 240)' }}
+            title="IDEA / CDS"
+            subTitle="Portal para explorar datos abiertos"
+            extra={[]}>
+            <Divider orientation="left">Conjuntos de datos</Divider>
+            <Row justify="space-around" align="middle" gutter={[16, 32]}>
+                {data.map(d => <Col xl={6} lg={8} md={12} xs={24} key={d.title}>
+                    <Link to={d.link}>
+                        <Card hoverable style={{ width: '100%' }}>
+                            <Card.Meta title={d.title}
+                                description={<>
+                                    {d.description}
+                                    <br />
+                                    <br />
+                                    {d.tags.map(t => <CustomTag t={t} key={t} />)}
+                                </>} />
 
-                    </Card></Link>
-            </Col>)}
-        </Row>
+                        </Card></Link>
+                </Col>)}
+            </Row>
 
 
-    </PageHeader>
+        </PageHeader>
+        <Footer tableMode={false}/>
+    </>
 }
 
 
-function CustomTag({t}: { t: string }) {
+function CustomTag({ t }: { t: string }) {
     if (tags[t]) {
         return <Tag color={tags[t].color} icon={tags[t].icon}>
             <b>{tags[t].label}</b>

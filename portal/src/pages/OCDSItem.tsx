@@ -28,6 +28,7 @@ import {Edge, Graph, Node, RelationGraph} from '../components/graphs/RelationGra
 import {IMPORTANT_RELATIONS, PARTY_ROLES} from '../Constants';
 import {Card} from 'antd/es';
 import {SupplierDescription} from '../components/SupplierDescription';
+import { BaseDatosPage } from '../components/BaseDatosPage';
 
 export function OCDSItem() {
 
@@ -45,8 +46,12 @@ export function OCDSItem() {
 
     const header = getHeader(data);
 
-    return <PageHeader ghost={false}
+    return <BaseDatosPage headerExtra={false}
+    menuIndex="1">
+    
+    <PageHeader ghost={false}
                        onBack={() => history.push('/ocds/items')}
+                       backIcon={null}
                        style={{border: '1px solid rgb(235, 237, 240)'}}
                        title={data ? `${header.name}` : 'Cargando...'}
                        subTitle="CDS - IDEA"
@@ -87,6 +92,7 @@ export function OCDSItem() {
 
 
     </PageHeader>
+    </BaseDatosPage>
 }
 
 /**
