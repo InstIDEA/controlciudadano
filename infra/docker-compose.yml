@@ -1,0 +1,111 @@
+version: '3'
+services:
+
+  db:
+    image: postgres:12.2
+    shm_size: 1g
+    command: postgres -c 'max_connections=500'
+    networks:
+      - db
+    volumes:
+      - "./pgdata:/var/lib/postgresql/data"
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "${POSTGRES_EXPOSED_PORT}:5432"
+
+
+  searcher:
+    image: node:14.2.0-slim
+    volumes:
+      - ./simple_searcher:/app
+    working_dir: /app
+    command: npx serve -l 80 -s .
+    networks:
+      - proxy
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.searcher.rule=Host(`www.controlciudadanopy.org`) || Host(`controlciudadanopy.org`)"
+      - "traefik.http.routers.searcher.entrypoints=websecure"
+      - "traefik.http.routers.searcher.tls.certresolver=leresolver"
+      - "traefik.http.services.searcher.loadbalancer.server.port=80"
+
+
+
+  api:
+    image: node:14.2.0-slim
+    volumes:
+      - ./simple_api:/app
+    working_dir: /app
+    command: npx nodemon dist/index.js
+    networks:
+      - proxy
+      - db
+    restart: always
+    environment:
+      PGHOST: db
+      PGPORT: 5432 
+      PORT: 80
+    env_file:
+      - .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sapi.rule=Host(`api.controlciudadanopy.org`)"
+      - "traefik.http.routers.sapi.entrypoints=websecure"
+      - "traefik.http.routers.sapi.tls.certresolver=leresolver"
+      - "traefik.http.services.sapi.loadbalancer.server.port=80"
+      - "traefik.http.middlewares.sapi.stripprefix.prefixes=/api/"
+
+      - "traefik.http.middlewares.corsapi.headers.accesscontrolallowmethods=GET,OPTIONS"
+      - "traefik.http.middlewares.corsapi.headers.accesscontrolalloworiginlist=https://api.controlciudadanopy.org,http://localhost:3000"
+      - "traefik.http.middlewares.corsapi.headers.accesscontrolmaxage=100"
+      - "traefik.http.middlewares.corsapi.headers.addvaryheader=true"
+
+      - "traefik.http.routers.sapi.middlewares=corsapi@docker"
+
+
+  reverse-proxy:
+    image: traefik:v2.2
+    restart: always
+    command:
+      - "--log.level=INFO"
+        #- "--api.insecure"
+      - "--providers.docker"
+      - "--providers.docker.network=proxy"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.leresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.leresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.leresolver.acme.email=contacto@cds.com.py"
+      - "--certificatesresolvers.leresolver.acme.storage=/letsencrypt/acme.json"
+      #- "--certificatesresolvers.leresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "./letsencrypt:/letsencrypt"
+    networks:
+     - proxy
+    labels:
+      - "traefik.http.routers.redirs.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.redirs.entrypoints=web"
+      - "traefik.http.routers.redirs.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+
+
+
+networks:
+  db:
+    external: true
+  proxy:
+    external: true
+
+
