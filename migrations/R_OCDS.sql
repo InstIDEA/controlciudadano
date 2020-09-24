@@ -56,6 +56,7 @@ update view_data_dncp_data.awards_summary_no_data a
 set fecha_firma_contrato = c.datesigned
 from view_data_dncp_data.contracts_summary_no_data c where c.data_id = a.data_id and c.award_id = a.award_id;
 
+set search_path to view_data_dncp_data, public;
 
 create or  replace function get_max_collection() returns integer
     language sql
@@ -68,7 +69,7 @@ create or  replace function get_duplicated_ids() returns setof int
 as
 $$
 select distinct data_id from release_summary r
-where collection_id = get_max_collection()-1 and ocid in (select distinct ocid
+where collection_id < get_max_collection() and ocid in (select distinct ocid
     from release_summary  rr where collection_id = get_max_collection());
 $$;
 
