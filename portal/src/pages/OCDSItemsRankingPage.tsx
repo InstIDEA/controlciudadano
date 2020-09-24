@@ -9,7 +9,7 @@ import { BaseDatosPage } from '../components/BaseDatosPage';
 
 export function OCDSItemsRankingPage() {
 
-    const [query, setQuery] = useState('');
+    const [query] = useState('');
     const [working, setWorking] = useState(false);
     const [data, setData] = useState<OCDSItemRankingListRow[]>();
     const history = useHistory();
