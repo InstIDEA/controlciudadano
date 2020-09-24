@@ -420,7 +420,6 @@ h6 {
 .info-card .title {
   color: rgba(0, 52, 91, 1) !important;
   font-size: 20px;
-  font-weight: 300;
   display: block;
   font-weight: bolder;
 }
@@ -429,6 +428,10 @@ h6 {
   color: rgba(0, 52, 91, 1) !important;
   font-size: 20px;
   display: block;
+}
+
+.info-card .description.loading {
+  color: lightgrey !important;
 }
 
 .info-banner {

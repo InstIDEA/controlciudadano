@@ -2,7 +2,7 @@ import {
     Affidavit,
     AndeExonerated,
     Authorities,
-    EssapExonerated,
+    EssapExonerated, GlobalStatistics,
     OCDSBuyerWithAmount,
     OCDSCovidTender,
     OCDSItemRankingListRow,
@@ -13,7 +13,7 @@ import {
     Supplier
 } from './Model';
 
-const BASE_API = "https://datapy.redash.cds.com.py/api";
+const BASE_API = "https://redash.controlciudadanopy.org/api";
 
 const API_KEYS: Record<number, string> = {
     1: "Wtp9iNNTzO2yTbUwfoE4bOM7qd9msWnWIJ9aeatl",
@@ -25,7 +25,8 @@ const API_KEYS: Record<number, string> = {
     28: "qMecN8ma9IkW2Tekpebk8ygk4c3fzzos2mk6ya0A",
     35: "WYy6Jsk51sOOQuhzOwCriygodvlolhxwjyIxbpRH",
     36: "vX16f20urPFfYsebawg3Kda9qhN6JDTCexhH8Trf",
-    37: "N0DHcr72NbiWC5n3IBEVmkSoViBxud8GTxKNLi3z"
+    37: "N0DHcr72NbiWC5n3IBEVmkSoViBxud8GTxKNLi3z",
+    39: "g74o1ujam75shxjB8BVJ1nOQkInbsrgpTax9sukM"
 }
 
 
@@ -91,6 +92,10 @@ export class RedashAPI {
 
     getCovidTenders(): Promise<BaseRedashResponse<OCDSCovidTender>> {
         return this.fetchQuery(37);
+    }
+
+    getMainStatistics(): Promise<BaseRedashResponse<GlobalStatistics>> {
+        return this.fetchQuery(39)
     }
 }
 
