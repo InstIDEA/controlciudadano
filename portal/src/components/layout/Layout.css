@@ -33,3 +33,8 @@
 .ant-typography {
   color: rgba(0, 52, 91, 1);
 }
+
+.content {
+  height:auto !important;
+  min-height:100%;
+}

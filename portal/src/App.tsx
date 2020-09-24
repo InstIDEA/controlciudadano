@@ -22,7 +22,7 @@ import {ActionResearchLanding} from './pages/ActionResearchLanding';
 import {OCDSBuyersPage} from './pages/OCDSBuyers';
 import {OCDSSupplierWithSanctionPage} from './pages/OCDSSupplierWithSanction';
 import {OCDSCovidTenders} from './pages/OCDSCovidTenders';
-import Banner from "./Home/Banner";
+import Banner from "./pages/Landing";
 
 export default function App() {
     return <Routes/>

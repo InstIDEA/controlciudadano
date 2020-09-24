@@ -2,7 +2,7 @@ import React from 'react';
 import { Row, Col, Menu, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons'
 
-import './static/header.css'
+import './Header.css'
 
 const { Search } = Input;
 
@@ -19,7 +19,7 @@ export function Header(props: {
         <a href="/">Inicio</a>
       </Menu.Item>
       <Menu.Item key="explorar">
-        <a href="/explore">Explorar</a>
+        <a href="/explore">Explorar Datos</a>
       </Menu.Item>
       <Menu.Item key="analisis">
         <a href="/action">Compras COVID</a>
@@ -62,7 +62,7 @@ export function Header(props: {
       </div> :
       <div id="header" className="header">
         <Row>
-          <Col xxl={10} xl={10} lg={10} md={10} sm={24} xs={24}>
+          <Col xxl={8} xl={8} lg={8} md={8} sm={24} xs={24}>
             <div>
               <h1 className="header-title">CONTROL CIUDADANO</h1>
             </div>
