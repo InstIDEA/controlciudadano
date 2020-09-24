@@ -55,3 +55,87 @@ alter table view_data_dncp_data.awards_summary_no_data add column fecha_firma_co
 update view_data_dncp_data.awards_summary_no_data a
 set fecha_firma_contrato = c.datesigned
 from view_data_dncp_data.contracts_summary_no_data c where c.data_id = a.data_id and c.award_id = a.award_id;
+
+
+create or  replace function get_max_collection() returns integer
+    language sql
+as
+$$
+     select max(id) from selected_collections;
+$$;
+create or  replace function get_duplicated_ids() returns setof int
+    language sql
+as
+$$
+select distinct data_id from release_summary r
+where collection_id = get_max_collection()-1 and ocid in (select distinct ocid
+    from release_summary  rr where collection_id = get_max_collection());
+$$;
+
+delete from record where data_id in (
+select * from get_duplicated_ids());
+
+delete from data where id in (
+select * from get_duplicated_ids());
+
+delete from tender_documents_summary where data_id in (
+select * from get_duplicated_ids());
+
+delete from tender_items_summary where data_id in (
+select * from get_duplicated_ids());
+
+delete from procuringentity_summary where data_id in (
+select * from get_duplicated_ids());
+
+delete from tenderers_summary where data_id in (
+select * from get_duplicated_ids());
+
+delete from tender_summary where data_id in (
+select * from get_duplicated_ids());
+
+delete from buyer_summary where data_id in (
+select * from get_duplicated_ids());
+
+
+delete from planning_summary where data_id in (
+select * from get_duplicated_ids());
+
+delete from parties_summary_no_data where data_id in (
+select * from get_duplicated_ids());
+
+delete from award_suppliers_summary where data_id in (
+select * from get_duplicated_ids());
+
+delete from award_items_summary where data_id in (
+select * from get_duplicated_ids());
+
+delete from award_documents_summary where data_id in (
+select * from get_duplicated_ids());
+
+delete from awards_summary_no_data where data_id in (
+select * from get_duplicated_ids());
+
+delete from contract_documents_summary where data_id in (
+select * from get_duplicated_ids());
+
+delete from contract_implementation_documents_summary where data_id in (
+select * from get_duplicated_ids());
+
+delete from contract_implementation_milestones_summary where data_id in (
+select * from get_duplicated_ids());
+
+delete from contract_implementation_transactions_summary where data_id in (
+select * from get_duplicated_ids());
+
+delete from contract_items_summary where data_id in (
+select * from get_duplicated_ids());
+
+delete from contract_milestones_summary where data_id in (
+select * from get_duplicated_ids());
+
+delete from contracts_summary_no_data where data_id in (
+select * from get_duplicated_ids());
+
+
+delete from release_summary where data_id in (
+select * from get_duplicated_ids());
