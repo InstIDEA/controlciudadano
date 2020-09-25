@@ -4,6 +4,8 @@ import {filterRedashList, RedashAPI} from '../RedashAPI';
 import {Authorities} from '../Model';
 import {Link, useHistory} from 'react-router-dom';
 import {Input, PageHeader, Table, Typography} from 'antd';
+import { Header } from '../components/layout/Header';
+import { BaseDatosPage } from '../components/BaseDatosPage';
 
 export function ElectedAuthoritiesPage() {
 
@@ -11,6 +13,7 @@ export function ElectedAuthoritiesPage() {
     const [working, setWorking] = useState(false);
     const [data, setData] = useState<Authorities[]>();
     const history = useHistory();
+    const isExploreMenu = history.location.pathname.includes('explore');
 
     useEffect(() => {
         setWorking(true);
@@ -30,7 +33,9 @@ export function ElectedAuthoritiesPage() {
         'siglas_lista',
     ]), [data, query]);
 
-    return <PageHeader ghost={false}
+    return <>
+    <BaseDatosPage menuIndex="authorities" sidebar={isExploreMenu}>
+    <PageHeader ghost={false}
                        style={{border: '1px solid rgb(235, 237, 240)'}}
                        onBack={() => history.push('/')}
                        title="Autoridades electas"
@@ -98,5 +103,6 @@ export function ElectedAuthoritiesPage() {
                 </>,
             }]}/>
     </PageHeader>
-
+    </BaseDatosPage>
+    </>
 }

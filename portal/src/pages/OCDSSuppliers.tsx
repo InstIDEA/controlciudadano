@@ -4,13 +4,15 @@ import {Input, PageHeader, Table, Typography} from 'antd';
 import {Supplier} from '../Model';
 import {Link, useHistory} from 'react-router-dom';
 import {filterRedashList, RedashAPI} from '../RedashAPI';
-
+import { BaseDatosPage } from '../components/BaseDatosPage';
+import { SearchOutlined } from '@ant-design/icons'
 export function OCDSSuppliers() {
 
     const [working, setWorking] = useState(false);
     const [data, setData] = useState<Supplier[]>();
     const history = useHistory();
     const [query, setQuery] = useState('');
+    const isExploreMenu = history.location.pathname.includes('explore');
 
     useEffect(() => {
         setWorking(true);
@@ -28,18 +30,25 @@ export function OCDSSuppliers() {
         'contact_point'
     ]), [data, query]);
 
-    return <PageHeader ghost={false}
+    return <>
+        <BaseDatosPage menuIndex="suppliers" sidebar={isExploreMenu} headerExtra={
+        <div className="header-search-wrapper">
+            <Input.Search
+            prefix={<SearchOutlined />}
+            suffix={null}
+            placeholder="Buscar"
+            key="search_input"
+            defaultValue={query}
+            style={{ width: 200 }}
+            onSearch={setQuery}
+            formMethod="submit"/>
+        </div>
+        }>
+        <PageHeader ghost={false}
                        style={{border: '1px solid rgb(235, 237, 240)'}}
                        onBack={() => history.push('/')}
                        title="Proveedores"
-                       subTitle="CDS - IDEA"
-                       extra={[
-                           <Input.Search placeholder="Buscar"
-                                         key="search_input"
-                                         defaultValue={query}
-                                         onSearch={setQuery}
-                                         formMethod="submit"/>
-                       ]}>
+                       subTitle="CDS - IDEA">
 
 
         <Typography.Paragraph>
@@ -80,5 +89,6 @@ export function OCDSSuppliers() {
                              </>
                          }]}/>
     </PageHeader>
-
+    </BaseDatosPage>
+    </>
 }

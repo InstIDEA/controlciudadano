@@ -4,6 +4,7 @@ import {filterRedashList, RedashAPI} from '../RedashAPI';
 import {EssapExonerated} from '../Model';
 import {Link, useHistory} from 'react-router-dom';
 import {Input, PageHeader, Table, Typography} from 'antd';
+import { BaseDatosPage } from '../components/BaseDatosPage';
 
 export function EssapExoneratedList() {
 
@@ -11,6 +12,7 @@ export function EssapExoneratedList() {
     const [working, setWorking] = useState(false);
     const [data, setData] = useState<EssapExonerated[]>();
     const history = useHistory();
+    const isExploreMenu = history.location.pathname.includes('explore');
 
     useEffect(() => {
         setWorking(true);
@@ -25,7 +27,9 @@ export function EssapExoneratedList() {
         'catastro',
     ]), [data, query]);
 
-    return <PageHeader ghost={false}
+    return <> 
+    <BaseDatosPage menuIndex="essap" sidebar={isExploreMenu}>
+    <PageHeader ghost={false}
                        style={{border: '1px solid rgb(235, 237, 240)'}}
                        onBack={() => history.push('/')}
                        title="COVID - Facturas exoneradas de la Essap"
@@ -72,5 +76,6 @@ export function EssapExoneratedList() {
                 sorter: (a, b) => a.promedio - b.promedio,
             }]}/>
     </PageHeader>
-
+    </BaseDatosPage>
+    </>
 }

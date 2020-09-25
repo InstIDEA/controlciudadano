@@ -14,6 +14,7 @@ export function OCDSItemsRankingPage() {
     const [working, setWorking] = useState(false);
     const [data, setData] = useState<OCDSItemRankingListRow[]>();
     const history = useHistory();
+    const isExploreMenu = history.location.pathname.includes('explore');
 
     useEffect(() => {
         setWorking(true);
@@ -32,7 +33,7 @@ export function OCDSItemsRankingPage() {
     ]), [data, query]);
 
     return <BaseDatosPage
-            menuIndex="itemsRanking">
+            menuIndex="itemsRanking" sidebar={isExploreMenu}>
             <PageHeader ghost={false}
             onBack={() => history.push('/')}
             backIcon={null}

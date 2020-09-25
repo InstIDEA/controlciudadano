@@ -12,7 +12,7 @@ export function OCDSSupplierWithSanctionPage() {
     const [data, setData] = useState<OCDSSupplierWithSanction[]>();
     const [working, setWorking] = useState(false);
     const [query, setQuery] = useState('');
-
+    const isExploreMenu = history.location.pathname.includes('explore');
 
     useEffect(() => {
         setWorking(false)
@@ -32,7 +32,7 @@ export function OCDSSupplierWithSanctionPage() {
     ]), [data, query]);
 
     return <BaseDatosPage
-        menuIndex="sanctionedSuppliers">
+        menuIndex="sanctionedSuppliers" sidebar={isExploreMenu}>
         <PageHeader ghost={false}
             style={{ border: '1px solid rgb(235, 237, 240)' }}
             onBack={() => history.push('/')}

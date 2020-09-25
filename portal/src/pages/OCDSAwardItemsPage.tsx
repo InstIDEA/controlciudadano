@@ -13,6 +13,7 @@ export function OCDSAwardItemsPage() {
     const [working, setWorking] = useState(false);
     const [data, setData] = useState<OCDSItemsAwardedCOVID19[]>();
     const history = useHistory();
+    const isExploreMenu = history.location.pathname.includes('explore');
 
     useEffect(() => {
         setWorking(true);
@@ -31,7 +32,7 @@ export function OCDSAwardItemsPage() {
     ]), [data, query]);
 
     return <BaseDatosPage
-        menuIndex="items">
+        menuIndex="items" sidebar={isExploreMenu}>
         <PageHeader ghost={false}
             style={{ border: '1px solid rgb(235, 237, 240)' }}
             onBack={() => history.push('/')}

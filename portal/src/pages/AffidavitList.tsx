@@ -6,6 +6,7 @@ import {Link, useHistory} from 'react-router-dom';
 import {filterRedashList, RedashAPI} from '../RedashAPI';
 import {formatMoney} from '../formatters';
 import {FilePdfOutlined, ShareAltOutlined} from '@ant-design/icons';
+import { BaseDatosPage } from '../components/BaseDatosPage';
 
 export function AffidavitList() {
 
@@ -13,6 +14,7 @@ export function AffidavitList() {
     const [data, setData] = useState<Affidavit[]>();
     const history = useHistory();
     const [query, setQuery] = useState('');
+    const isExploreMenu = history.location.pathname.includes('explore');
 
     useEffect(() => {
         setWorking(true);
@@ -30,7 +32,9 @@ export function AffidavitList() {
         'year'
     ]), [data, query]);
 
-    return <PageHeader ghost={false}
+    return <>
+    <BaseDatosPage menuIndex="affidavit" sidebar={isExploreMenu}>
+    <PageHeader ghost={false}
                        style={{border: '1px solid rgb(235, 237, 240)'}}
                        onBack={() => history.push('/')}
                        title="Declaraciones Juradas"
@@ -111,5 +115,6 @@ export function AffidavitList() {
                               </div>
                           }]}/>
     </PageHeader>
-
+    </BaseDatosPage>
+    </>
 }

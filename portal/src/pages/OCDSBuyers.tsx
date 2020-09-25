@@ -13,6 +13,7 @@ export function OCDSBuyersPage() {
     const [data, setData] = useState<OCDSBuyerWithAmount[]>();
     const history = useHistory();
     const [query, setQuery] = useState('');
+    const isExploreMenu = history.location.pathname.includes('explore');
 
     useEffect(() => {
         setWorking(true);
@@ -29,7 +30,7 @@ export function OCDSBuyersPage() {
     ]), [data, query]);
 
     return <BaseDatosPage
-        menuIndex="buyers">
+        menuIndex="buyers" sidebar={isExploreMenu}>
         <PageHeader ghost={false}
             style={{ border: '1px solid rgb(235, 237, 240)' }}
             onBack={() => history.push('/')}

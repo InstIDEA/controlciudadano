@@ -4,6 +4,7 @@ import {filterRedashList, RedashAPI} from '../RedashAPI';
 import {AndeExonerated} from '../Model';
 import {Link, useHistory} from 'react-router-dom';
 import {Input, PageHeader, Table, Typography} from 'antd';
+import { BaseDatosPage } from '../components/BaseDatosPage';
 
 export function AndeExoneratedList() {
 
@@ -11,6 +12,7 @@ export function AndeExoneratedList() {
     const [working, setWorking] = useState(false);
     const [data, setData] = useState<AndeExonerated[]>();
     const history = useHistory();
+    const isExploreMenu = history.location.pathname.includes('explore');
 
     useEffect(() => {
         setWorking(true);
@@ -26,7 +28,9 @@ export function AndeExoneratedList() {
         'documento',
     ]), [data, query]);
 
-    return <PageHeader ghost={false}
+    return <>
+    <BaseDatosPage menuIndex="ande" sidebar={isExploreMenu}>
+    <PageHeader ghost={false}
                        style={{border: '1px solid rgb(235, 237, 240)'}}
                        onBack={() => history.push('/')}
                        title="COVID - Facturas exoneradas de la ANDE"
@@ -80,5 +84,6 @@ export function AndeExoneratedList() {
                 sorter: (a, b) => (a.fecha_exoneracion || '').localeCompare(b.fecha_exoneracion),
             }]}/>
     </PageHeader>
-
+    </BaseDatosPage>
+    </>
 }

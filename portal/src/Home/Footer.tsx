@@ -1,5 +1,6 @@
 import React from 'react';
 import { Row, Col, Typography } from 'antd';
+<<<<<<< Updated upstream:portal/src/Home/Footer.tsx
 import './static/footer.css';
 import cds from '../assets/logos/cds.png';
 import cdsBlanco from '../assets/logos/cds_blanco.png';
@@ -9,21 +10,46 @@ import reaccion from '../assets/logos/reaccion.png';
 import idea from '../assets/logos/logo_idea.png';
 import cc from '../assets/logos/cc.png';
 import github from '../assets/logos/github.svg';
+=======
+import './Footer.css';
+import cds from '../../assets/logos/cds.png';
+import cdsBlanco from '../../assets/logos/cds_blanco.png';
+import usaid from '../../assets/logos/usaid.png';
+import ocp from '../../assets/logos/ocp.png';
+import reaccion from '../../assets/logos/reaccion_fondo.png';
+import idea from '../../assets/logos/logo_idea.png';
+import cc from '../../assets/logos/cc.png';
+import github from '../../assets/logos/github.svg';
+
+>>>>>>> Stashed changes:portal/src/components/layout/Footer.tsx
 
 function Footer(props: {
   tableMode?: boolean
+  aboutFooter?: boolean
 }) {
   return (
     <footer id="footer">
       <Row className={props.tableMode ? "footer-background-secondary" : ""}>
+<<<<<<< Updated upstream:portal/src/Home/Footer.tsx
         <Col xxl={8} xl={8} lg={8} md={8} sm={8} xs={8}>
+=======
+        <Col offset={props.aboutFooter ? 6 : 0} 
+        xxl={props.aboutFooter ? 12 : 8} xl={props.aboutFooter ? 12 : 8}
+        lg={props.aboutFooter ? 12 : 8} md={props.aboutFooter ? 12 : 8} sm={12} xs={12}>
+>>>>>>> Stashed changes:portal/src/components/layout/Footer.tsx
           <span className="footer-label">Es una iniciativa de:</span>
           <div id="logo">
             <img src={idea} alt="logo" />
             <img src={usaid} alt="logo" />
           </div>
         </Col>
+<<<<<<< Updated upstream:portal/src/Home/Footer.tsx
         <Col xxl={8} xl={8} lg={8} md={8} sm={8} xs={8}>
+=======
+        <Col offset={props.aboutFooter ? 6 : 0} 
+        xxl={props.aboutFooter ? 12 : 8} xl={props.aboutFooter ? 12 : 8}
+        lg={props.aboutFooter ? 12 : 8} md={props.aboutFooter ? 12 : 8} sm={12} xs={12}>
+>>>>>>> Stashed changes:portal/src/components/layout/Footer.tsx
           <span className="footer-label">Impulsores del proyecto:</span>
           <div id="logo">
             <img src={idea} alt="logo" />
@@ -31,7 +57,13 @@ function Footer(props: {
             <img src={cds} alt="logo" />
           </div>
         </Col>
+<<<<<<< Updated upstream:portal/src/Home/Footer.tsx
         <Col xxl={8} xl={8} lg={8} md={8} sm={8} xs={8}>
+=======
+        <Col offset={props.aboutFooter ? 6 : 0} 
+        xxl={props.aboutFooter ? 12 : 8} xl={props.aboutFooter ? 12 : 8}
+        lg={props.aboutFooter ? 12 : 8} md={props.aboutFooter ? 12 : 8} sm={12} xs={12}>
+>>>>>>> Stashed changes:portal/src/components/layout/Footer.tsx
           <span className="footer-label">Herramientas de IA con apoyo de:</span>
           <div id="logo">
             <img src={ocp} alt="logo" />

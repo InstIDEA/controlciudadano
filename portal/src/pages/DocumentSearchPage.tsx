@@ -8,6 +8,8 @@ import {ColumnProps} from 'antd/es/table';
 import {SimpleApi} from '../SimpleApi';
 import {Link, useHistory} from 'react-router-dom';
 import {buildSFPUrl} from '../SFPHelper';
+import { Header } from '../components/layout/Header';
+import { BaseDatosPage } from '../components/BaseDatosPage';
 
 export function DocumentSearchPage() {
 
@@ -15,7 +17,7 @@ export function DocumentSearchPage() {
     const [sfp, setSFP] = useState<unknown[]>();
     const [local, setLocal] = useState<LocalSearchResult>();
     const history = useHistory();
-
+    const isExploreMenu = history.location.pathname.includes('explore');
     function doSearchSFP(cedula: string) {
         if (!cedula) return;
 
@@ -42,17 +44,19 @@ export function DocumentSearchPage() {
     useEffect(() => doSearch(document || ''), [document, doSearch]);
 
 
-    return <PageHeader ghost={false}
+    return <> 
+    <BaseDatosPage menuIndex="people" sidebar={isExploreMenu} headerExtra={<Input.Search placeholder="Buscar por cédula"
+                                         key="search_input"
+                                         defaultValue={document || ''}
+                                         onSearch={v => setDocument(v)}
+                                         formMethod="submit"/>}>
+    <PageHeader ghost={false}
                        style={{border: '1px solid rgb(235, 237, 240)'}}
                        title="CDS - IDEA"
                        subTitle="Búsqueda de personas por cédula"
                        onBack={() => history.push('/')}
                        extra={[
-                           <Input.Search placeholder="Buscar por cédula"
-                                         key="search_input"
-                                         defaultValue={document || ''}
-                                         onSearch={v => setDocument(v)}
-                                         formMethod="submit"/>
+                           
                        ]}>
 
         <Typography.Paragraph>
@@ -75,6 +79,8 @@ export function DocumentSearchPage() {
           <GenericTable data={sfp}/>
         </Card>}
     </PageHeader>
+    </BaseDatosPage>
+    </>
 
 }
 

@@ -77,7 +77,12 @@ footer .footer-flag {
 }
 .footer-background {
   background-color: rgba(0, 52, 89, 1);
+<<<<<<< Updated upstream:portal/src/Home/static/footer.css
   padding: 5px 200px;
+=======
+  padding: 5px 10%;
+  text-align: justify !important;
+>>>>>>> Stashed changes:portal/src/components/layout/Footer.css
 }
 .footer-background-secondary {
   background-color: rgba(223, 237, 251, 1);
@@ -96,4 +101,31 @@ footer .footer-flag {
 }
 .footer-label {
   color: rgba(0, 52, 91, 1);
+<<<<<<< Updated upstream:portal/src/Home/static/footer.css
+=======
+}
+#logo {
+  overflow: hidden;
+  line-height: 64px;
+  text-decoration: none;
+  margin-bottom: 15px;
+}
+#logo img {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 16px;
+  width: 15%;
+}
+#logo span {
+  color: rgba(0, 52, 91, 1);
+  outline: none;
+  font-size: 14px;
+  line-height: 28px;
+}
+
+@media only screen and (max-width: 600px) {
+  #logo img{
+    width: 20%;
+  }
+>>>>>>> Stashed changes:portal/src/components/layout/Footer.css
 }

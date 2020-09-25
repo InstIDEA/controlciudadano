@@ -8,10 +8,16 @@ import onlineReports from '../assets/imgs/items_adquiridos.svg'
 import contracts from '../assets/imgs/licitaciones.svg'
 import relation from '../assets/imgs/relaciones_proveedores.svg'
 import {Link} from 'react-router-dom';
+<<<<<<< Updated upstream
 import { Header } from '../Home/Header';
 import Footer from '../Home/Footer';
 
 
+=======
+import { Header } from '../components/layout/Header';
+import Footer from '../components/layout/Footer';
+import { AppContext } from '../App';
+>>>>>>> Stashed changes
 export function ActionResearchLanding() {
 
     const spans = {xl: 8, lg: 8, md: 12, xs: 24};
@@ -32,7 +38,7 @@ export function ActionResearchLanding() {
 
         <Row className="cards" gutter={[8, 24]}>
             <Col {...spans}>
-                <Link to="/ocds/items" target="_blank">
+                <Link to="/action/ocds/items" target="_blank">
                     <Card hoverable
                           style={{width: 320}}
                           cover={<img height="80px" alt="Items adquiridos" src={onlineReports}/>}>
@@ -43,7 +49,7 @@ export function ActionResearchLanding() {
             </Col>
 
             <Col {...spans}>
-                <Link to="/ocds/covid/itemsRanking" target="_blank">
+                <Link to="/action/ocds/covid/itemsRanking">
                     <Card hoverable
                           style={{width: 350}}
                           cover={<img height="80px" alt="Ranking de items adquiridos" src={dataReports}/>}>
@@ -65,7 +71,7 @@ export function ActionResearchLanding() {
             </Col>
 
             <Col {...spans}>
-                <Link to="/ocds/buyers" target="_blank">
+                <Link to="/action/ocds/buyers" target="_blank">
                     <Card hoverable
                           style={{width: 340}}
                           cover={<img height="80px" alt="Compradoras" src={buyers}/>}>
@@ -76,7 +82,7 @@ export function ActionResearchLanding() {
             </Col>
 
             <Col {...spans}>
-                <Link to="/ocds/tenders" target="_blank">
+                <Link to="/action/ocds/tenders" target="_blank">
                     <Card hoverable
                           style={{width: 340}}
                           cover={<img height="80px" alt="Licitaciones" src={contracts} style={{
@@ -88,7 +94,7 @@ export function ActionResearchLanding() {
             </Col>
 
             <Col {...spans}>
-                <Link to="/ocds/relations" target="_blank">
+                <Link to="/action/ocds/relations" target="_blank">
                     <Card hoverable
                           style={{width: 340}}
                           cover={<img height="80px" alt="Relations" src={relation}/>}>
