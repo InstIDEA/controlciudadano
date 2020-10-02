@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import QueueAnim from 'rc-queue-anim';
 import {Col, Row, Tooltip} from 'antd';
-import './static/home.css';
+import './Landing.css';
 import explorarDatos from '../assets/imgs/explorar_datos.svg';
 import comprasCovid from '../assets/imgs/compras_covid.svg';
-import {Header} from './Header'
-import Footer from './Footer';
+import {Header} from '../components/layout/Header'
+import Footer from '../components/layout/Footer';
 import {Async, AsyncHelper, GlobalStatistics} from '../Model';
-import {formatIsoDate, formatMoney, formatToMonth} from '../formatters';
 import {RedashAPI} from '../RedashAPI';
+import {formatIsoDate, formatMoney, formatToMonth} from '../formatters';
 
-export const pages = [
+export const page1 = [
     {
         img: explorarDatos,
         href: `/explore`,
@@ -25,7 +25,7 @@ export const pages = [
     },
 ];
 
-export function WelcomePage() {
+export function LandingPage() {
 
     const [data, setData] = useState<Async<GlobalStatistics>>({
         state: 'NO_REQUESTED'
@@ -44,8 +44,7 @@ export function WelcomePage() {
             }))
     }, [])
 
-
-    const children = pages.map(card => (
+    const children = page1.map(card => (
         <Col className="card-wrapper" key={card.title} md={12} xs={24}>
             <a className="card" href={card.href}>
                 <img src={card.img} alt="" className="card-img-top"/>
@@ -58,15 +57,18 @@ export function WelcomePage() {
             </a>
         </Col>
     ));
+
     return (<>
             <Header tableMode={false}/>
-            <div className="banner-wrapper">
-                <QueueAnim className="banner-title-wrapper">
-                    <p className="banner-text" key="content">
-                        Este es un portal en el que vas a poder explorar <strong>Datos Abiertos</strong>,
-                        para realizar un <strong>control de los gastos del COVID-19</strong>
-                    </p>
-                </QueueAnim>
+            <Row className="banner-wrapper">
+                <Col xxl={24} xl={24} lg={24} md={24} sm={24} xs={24}>
+                    <QueueAnim className="banner-title-wrapper">
+                        <p className="banner-text" key="content">
+                            Este es un portal en el que vas a poder explorar <strong>Datos Abiertos</strong>,
+                            para realizar un <strong>control de los gastos del COVID-19</strong>
+                        </p>
+                    </QueueAnim>
+                </Col>
                 <section className="page-wrapper info-banner">
                     <QueueAnim
                         component={Row}
@@ -83,7 +85,7 @@ export function WelcomePage() {
                                            obs={AsyncHelper.map(data, d => `Contratos firmados al ${formatIsoDate(d.calc_date)}`)}
                                            data={AsyncHelper.map(data, d => d.ocds_current_year_contracts)}/>
                                 <Statistic name="Contratos COVID-19"
-                                           obs={AsyncHelper.map(data, d => `Contratos realizados con fondos de emergencia al ${formatIsoDate(d.calc_date)}`)}
+                                           obs={AsyncHelper.map(data, d => `Contratos realizados contra la pandemia al ${formatIsoDate(d.calc_date)}`)}
                                            data={AsyncHelper.map(data, d => d.ocds_covid_contracts)}/>
                             </div>
                         </Col>
@@ -99,7 +101,7 @@ export function WelcomePage() {
                         {children}
                     </QueueAnim>
                 </section>
-            </div>
+            </Row>
             <Footer tableMode={false}/>
         </>
     );

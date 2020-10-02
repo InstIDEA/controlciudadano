@@ -5,12 +5,11 @@ import { OCDSItemRankingListRow } from '../Model';
 import { formatMoney } from '../formatters';
 import { Link, useHistory } from 'react-router-dom';
 import { filterRedashList, RedashAPI } from '../RedashAPI';
-import '../Home/static/layout.css'
 import { BaseDatosPage } from '../components/BaseDatosPage';
 
 export function OCDSItemsRankingPage() {
 
-    const [query, setQuery] = useState('');
+    const [query] = useState('');
     const [working, setWorking] = useState(false);
     const [data, setData] = useState<OCDSItemRankingListRow[]>();
     const history = useHistory();

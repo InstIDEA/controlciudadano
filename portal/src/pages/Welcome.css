@@ -1,0 +1,28 @@
+
+.welcome-page {
+    padding: 20px;
+    background-image: url('../assets/imgs/background3.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position-y: top;
+}
+
+.welcome-page .cards {
+    justify-content: center;
+    align-items: center;
+    padding-top: 30px;
+    padding-left: 4vw;
+    padding-right: 4vw;
+}
+
+.welcome-page .cards .ant-card {
+    margin: auto;
+    box-shadow: 0px 5px 15px rgba(42, 42, 42, 0.06);
+    border-radius: 20px;
+}
+
+.row-button{
+    position: absolute;
+    bottom: 15px;
+    right: 60px;
+}

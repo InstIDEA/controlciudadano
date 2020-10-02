@@ -22,7 +22,7 @@ import {ActionResearchLanding} from './pages/ActionResearchLanding';
 import {OCDSBuyersPage} from './pages/OCDSBuyers';
 import {OCDSSupplierWithSanctionPage} from './pages/OCDSSupplierWithSanction';
 import {OCDSCovidTenders} from './pages/OCDSCovidTenders';
-import {WelcomePage} from "./Home/Banner";
+import {LandingPage} from "./pages/Landing";
 
 export default function App() {
     return <Routes/>
@@ -54,7 +54,7 @@ function Routes() {
                 <Route path="/action" exact render={() => <ActionResearchLanding/>}/>
                 <Route path="/explore" exact render={() => <Welcome/>}/>
                 <Route path="/">
-                    <WelcomePage/>
+                    <LandingPage/>
                 </Route>
             </Switch>
         </QueryParamProvider>

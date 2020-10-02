@@ -389,7 +389,6 @@ export interface OCDSCovidTender {
     }>;
 }
 
-
 export interface GlobalStatistics {
     current_year: number;
     payed_salaries: number;
@@ -431,7 +430,6 @@ export const AsyncHelper = {
     },
 
     map: function <T, E, K>(nr: Async<T, E>, mapper: (toMap: T) => K): Async<K, E> {
-        let toRet: Async<K, E>;
         switch (nr.state) {
             case 'ERROR':
                 return AsyncHelper.error(nr.error);
