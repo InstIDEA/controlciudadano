@@ -95,12 +95,3 @@ export function formatSecondsDuration(seconds: number) {
     return prefix + formatDistance(0, seconds * 1000, {includeSeconds: true, locale: es})
 }
 
-
-export function formatToMonth(value: any) {
-    if (value) {
-        return format(new Date(value), "MMMM 'de' yyyy", {locale: es});
-    }
-
-    return '';
-}
-
