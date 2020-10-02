@@ -1,7 +1,7 @@
 {
-  "name": "simple_searcher",
-  "version": "0.1.0",
-  "private": true,
+  "name": "control_ciudadano_portal",
+  "version": "1.0.0",
+  "private": false,
   "dependencies": {
     "@nivo/line": "^0.62.0",
     "@nivo/network": "^0.62.0",

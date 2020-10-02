@@ -13,7 +13,7 @@ import {
     Supplier
 } from './Model';
 
-const BASE_API = "https://datapy.redash.cds.com.py/api";
+const BASE_API = "https://redash.controlciudadanopy.org/api";
 
 const API_KEYS: Record<number, string> = {
     1: "Wtp9iNNTzO2yTbUwfoE4bOM7qd9msWnWIJ9aeatl",
