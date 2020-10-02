@@ -388,3 +388,62 @@ export interface OCDSCovidTender {
         id: string;
     }>;
 }
+
+
+export interface GlobalStatistics {
+    current_year: number;
+    payed_salaries: number;
+    payed_salaries_month: string;
+    ocds_current_year_contracts: number;
+    ocds_covid_contracts: number;
+    calc_date: string
+}
+
+/**
+ * Represents a networks resource.
+ *
+ * Useful in switches and with pattern matching
+ */
+export type Async<T, E = Error> = {
+    state: 'NO_REQUESTED'
+} | {
+    state: 'FETCHING'
+} | {
+    state: 'LOADED',
+    data: T
+} | {
+    state: 'ERROR',
+    error: E
+}
+
+/**
+ * A single helper to produce NetworkResource instances quickly
+ */
+export const AsyncHelper = {
+    noRequested: () => ({state: 'NO_REQUESTED' as const}),
+    fetching: () => ({state: 'FETCHING' as const}),
+    loaded: <T>(data: T) => ({state: 'LOADED' as const, data}),
+    error: <E>(error: E) => ({state: 'ERROR' as const, error}),
+
+    or: function <T, E>(nr: Async<T, E>, def: T) {
+        if (nr.state === 'LOADED') return nr.data;
+        return def;
+    },
+
+    map: function <T, E, K>(nr: Async<T, E>, mapper: (toMap: T) => K): Async<K, E> {
+        let toRet: Async<K, E>;
+        switch (nr.state) {
+            case 'ERROR':
+                return AsyncHelper.error(nr.error);
+            case 'FETCHING':
+                return AsyncHelper.fetching();
+            case 'LOADED':
+                const mapped: K = mapper(nr.data);
+                return AsyncHelper.loaded<K>(mapped);
+            case 'NO_REQUESTED':
+            default:
+                return AsyncHelper.noRequested();
+
+        }
+    }
+};

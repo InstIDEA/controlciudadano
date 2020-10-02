@@ -404,10 +404,14 @@ h2, h3, h4, h5, h6 {
 .info-card .title, .info-card .description {
   color: rgba(0, 52, 91, 1) !important;
   font-size: 20px;
-  font-weight: 300;
   display: block;
   font-weight: bolder;
 }
+
+.info-card .description.loading {
+  color: lightgrey !important;
+}
+
 .info-banner {
   background-image: url('../../assets/imgs/home.svg');
   background-repeat: no-repeat;
