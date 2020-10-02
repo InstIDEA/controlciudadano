@@ -1,15 +1,16 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {Divider, message, PageHeader, Tabs} from 'antd';
+import {Divider, PageHeader, Tabs} from 'antd';
 import {Affidavit, AnalysisSearchResult, LocalSearchResult} from '../Model';
 import {Link, useHistory, useParams} from 'react-router-dom';
 import {SimpleApi} from '../SimpleApi';
 import {AffidavitTable} from '../components/AffidavitTable';
 import {PersonDescription} from '../components/PersonDescription';
-import {SFPFetcher, SFPRow} from '../SFPHelper';
+import {SFPRow} from '../SFPHelper';
 import {SFPTable} from '../components/SFPTable';
 import {LocalData} from './DocumentSearchPage';
 import {GenericTable} from '../components/GenericTable';
+import {CrowdfillerWidget} from '../widgets/CrowdfillerWidget';
 
 
 export function PersonPage() {
@@ -34,28 +35,30 @@ export function PersonPage() {
             .then(d => setLocal(d));
     }, [document]);
 
-    useEffect(() => {
-
-        const fetcher = new SFPFetcher();
-
-        fetcher.addHandler(data => {
-            if (data.type === 'error') {
-                message.warn(`No se puede cargar datos del año ${data.year} para ${document}`, 5000);
-                return;
-            }
-            setSfpData(prev => ({
-                ...prev,
-                [`${data.year}`]: data.data
-            }));
-        });
-
-        fetcher.fetchAllYears(document)
-        return () => fetcher.cancel();
-    }, [document])
+    // useEffect(() => {
+    //
+    //     const fetcher = new SFPFetcher();
+    //
+    //     fetcher.addHandler(data => {
+    //         if (data.type === 'error') {
+    //             message.warn(`No se puede cargar datos del año ${data.year} para ${document}`, 5000);
+    //             return;
+    //         }
+    //         setSfpData(prev => ({
+    //             ...prev,
+    //             [`${data.year}`]: data.data
+    //         }));
+    //     });
+    //
+    //     fetcher.fetchAllYears(document)
+    //     return () => fetcher.cancel();
+    // }, [document])
 
     const header = tryToGuestHeader(document, affidavit, sfpData, analysis, local);
     const allSfpData = Object.values(sfpData).flatMap(d => d);
     const tsjeElected = analysis?.analysis?.tsje_elected;
+
+    const [currentAffidavit, setCurrentAffidavit] = useState<Affidavit>();
 
     return <PageHeader ghost={false}
                        onBack={() => history.push('/')}
@@ -65,7 +68,10 @@ export function PersonPage() {
                        subTitle="CDS - IDEA"
                        footer={<Tabs defaultActiveKey="AFFIDAVIT">
                            <Tabs.TabPane tab="Declaraciones juradas" key="AFFIDAVIT">
-                               <AffidavitTable data={affidavit || []} working={!affidavit}/>
+                               <AffidavitTable data={affidavit || []}
+                                               working={!affidavit}
+                                               onClickHelp={setCurrentAffidavit}
+                               />
                            </Tabs.TabPane>
                            <Tabs.TabPane tab="Salarios según la SFP" key="SFP">
                                <Divider orientation="left" plain>
@@ -99,6 +105,11 @@ export function PersonPage() {
         </div>
 
 
+        <CrowdfillerWidget visible={!!currentAffidavit}
+                           onComplete={() => setCurrentAffidavit(undefined)}
+                           onCancel={() => setCurrentAffidavit(undefined)}
+                           src={currentAffidavit?.link}
+                           formId={2}/>
     </PageHeader>
 
 }

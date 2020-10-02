@@ -1,12 +1,14 @@
-import {Table} from 'antd';
+import {Button, Table} from 'antd';
 import {Affidavit} from '../Model';
 import {formatMoney} from '../formatters';
 import * as React from 'react';
 import {FilePdfOutlined, ShareAltOutlined} from '@ant-design/icons';
 
 export function AffidavitTable(props: {
-    data: Affidavit[],
-    working: boolean
+    data: Affidavit[];
+    working: boolean;
+    onClickHelp: (a: Affidavit) => void;
+
 }) {
     const {data, working} = props;
     return <Table<Affidavit> dataSource={data}
@@ -34,8 +36,8 @@ export function AffidavitTable(props: {
                                  dataIndex: 'passive',
                                  title: 'Pasivos',
                                  align: 'right',
-                                 render: (nw) => nw === undefined || nw === null
-                                     ? <span>Ayudanos a completar!</span>
+                                 render: (nw, r) => nw === undefined || nw === null
+                                     ? <Button onClick={() => props.onClickHelp(r)}>Ayudanos a completar!</Button>
                                      : formatMoney(nw),
                                  sorter: (a, b) => (a.passive || 0) - (b.passive || 0)
                              }, {
