@@ -53,7 +53,7 @@ export function ActionResearchLanding() {
             </Col>
 
             <Col {...spans}>
-                <Link to="/ocds/sanctioned_suppliers" target="_blank">
+                <Link to="/action/ocds/sanctioned_suppliers" target="_blank">
                     <Card hoverable
                           style={{width: 340}}
                           cover={<img height="80px" alt="Proveedores" src={suppliers}/>}>

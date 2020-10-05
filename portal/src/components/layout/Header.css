@@ -2,7 +2,7 @@
   background-color: #fff;
   position: relative;
   z-index: 10;
-  height: 64px;
+  min-height: 64px;
 }
 .dropdown-item .anticon {
   color: rgba(0, 52, 91, 1);

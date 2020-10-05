@@ -1,9 +1,11 @@
 import { Layout, Menu } from 'antd';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { ReactNode } from 'react';
 export function Sidebar(props: {
   menuIndex: string;
-  sidebar?: boolean
+  sidebar?: boolean;
+  children: ReactNode;
 }) {
   const { Sider } = Layout;
   const actionMenu = [
@@ -24,11 +26,12 @@ export function Sidebar(props: {
     { key: 'relations', link: '/explore/ocds/relations', label: 'Relaciones entre proveedores' },
     { key: 'ande', link: '/explore/covid/ande', label: 'ANDE exoneradas por COVID-19' },
     { key: 'essap', link: '/explore/covid/essap', label: 'ESSAP exoneradas por COVID-19' },
-    { key: 'sources', link: '/explore/sources', label: 'Fuentes' },
+    { key: 'sources', link: '/sources', label: 'Fuentes' },
   ];
   const menuItems = props.sidebar ? exploreMenu : actionMenu;
   return <>
-    <Sider width={300} className="site-layout-background">
+    <Layout>
+    <Sider width={300} className="site-layout-background" breakpoint='lg' collapsedWidth={0}>
       <Menu
         mode="inline"
         defaultSelectedKeys={[props.menuIndex]}
@@ -41,6 +44,9 @@ export function Sidebar(props: {
         }
       </Menu>
     </Sider>
-
+    <Layout.Content>
+      {props.children}
+    </Layout.Content>
+    </Layout>
   </>
 }

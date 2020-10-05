@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {Button, Input, PageHeader, Space, Table, Typography} from 'antd';
+import {Button, Input, PageHeader, Space, Table } from 'antd';
 import {DownloadOutlined, LinkOutlined} from '@ant-design/icons';
 import {useHistory} from 'react-router-dom';
 import {filterRedashList, RedashAPI} from '../RedashAPI';
@@ -7,6 +7,8 @@ import {StringParam, useQueryParam} from 'use-query-params';
 import { Header } from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import './Datasources.css';
+import { SearchOutlined } from '@ant-design/icons'
+
 
 interface DSDefinition {
     name: string,
@@ -67,7 +69,6 @@ const sources: Array<DSDefinition> = [
 
 ]
 
-const Paragraph = Typography.Paragraph;
 
 export function DS() {
 
@@ -99,18 +100,23 @@ export function DS() {
     ]), [data, query]);
 
     return <>
-        <Header tableMode={true} searchBar={true}/>
+        <Header tableMode={true} searchBar={
+            <div className="header-search-wrapper">
+                <Input.Search
+                prefix={<SearchOutlined />}
+                suffix={null}
+                placeholder="Buscar"
+                key="search_input"
+                defaultValue={query || ''}
+                onSearch={v => setQuery(v)}
+                style={{ width: 200 }}
+                formMethod="submit"/>
+            </div>
+        }/>
         <PageHeader title="Fuente"
                        onBack={() => history.push('/')}
                        backIcon={null}
-                       subTitle=""
-                       extra={[
-                           <Input.Search placeholder="Buscar"
-                                         key="search_input"
-                                         defaultValue={query || ''}
-                                         onSearch={v => setQuery(v)}
-                                         formMethod="submit"/>
-                       ]}>
+                       subTitle="">
 
         <div style={{padding: 12}}>
             <Table<DSDefinition>
@@ -126,7 +132,7 @@ export function DS() {
                     dataIndex: "name",
                     render: (_, row) => <Space className="action-column">
                         {row.name}
-                        <div className="button-row">
+                        <Space>
                             <a href={row.url} target="_blank" rel="noopener noreferrer">
                                 <Button type="primary" className="btn-wrapper" icon={<DownloadOutlined/>}>
                                     Descargar
@@ -137,7 +143,7 @@ export function DS() {
                                 Ir a fuente
                             </Button>
                             </a>}
-                        </div>
+                        </Space>
                     </Space>
                 }, {
                     title: 'Descripción',

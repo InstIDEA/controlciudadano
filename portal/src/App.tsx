@@ -54,7 +54,7 @@ function Routes() {
                 <Route path="/ocds/items/:itemId" exact render={() => <OCDSItem/>}/>
                 <Route path="/explore/ocds/suppliers" exact render={() => <OCDSSuppliers/>}/>
                 <Route path="/action/ocds/suppliers" exact render={() => <OCDSSuppliers/>}/>
-                <Route path="/ocds/sanctioned_suppliers" exact render={() => <OCDSSupplierWithSanctionPage/>}/>
+                <Route path="/action/ocds/sanctioned_suppliers" exact render={() => <OCDSSupplierWithSanctionPage/>}/>
                 <Route path="/ocds/suppliers/:ruc" exact render={() => <OCDSSupplier/>}/>
                 <Route path="/action/ocds/buyers" exact render={() => <OCDSBuyersPage/>}/>
                 <Route path="/ocds/buyer/:id" exact render={() => <OCDSBuyerPage/>}/>

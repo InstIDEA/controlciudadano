@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { Input, PageHeader, Table, Typography } from 'antd';
+import { Input, PageHeader, Table, Typography, List, Card } from 'antd';
 import { OCDSBuyerWithAmount } from '../Model';
 import { Link, useHistory } from 'react-router-dom';
 import { filterRedashList, RedashAPI } from '../RedashAPI';
 import { formatMoney } from '../formatters';
 import { BaseDatosPage } from '../components/BaseDatosPage';
+import { SearchOutlined } from '@ant-design/icons'
 
 export function OCDSBuyersPage() {
 
@@ -30,20 +31,25 @@ export function OCDSBuyersPage() {
     ]), [data, query]);
 
     return <BaseDatosPage
-        menuIndex="buyers" sidebar={isExploreMenu}>
+        menuIndex="buyers" sidebar={isExploreMenu} headerExtra={
+            <div className="header-search-wrapper">
+                <Input.Search
+                prefix={<SearchOutlined />}
+                suffix={null}
+                placeholder="Buscar"
+                key="search_input"
+                defaultValue={query}
+                style={{ width: 200 }}
+                onSearch={setQuery}
+                formMethod="submit"/>
+            </div>
+        }>
         <PageHeader ghost={false}
             style={{ border: '1px solid rgb(235, 237, 240)' }}
             onBack={() => history.push('/')}
             backIcon={null}
             title="Entidades gubernamentales"
-            subTitle="CDS - IDEA"
-            extra={[
-                <Input.Search placeholder="Buscar"
-                    key="search_input"
-                    defaultValue={query}
-                    onSearch={setQuery}
-                    formMethod="submit" />
-            ]}>
+            subTitle="CDS - IDEA">
 
 
             <Typography.Paragraph>
@@ -51,6 +57,7 @@ export function OCDSBuyersPage() {
         </Typography.Paragraph>
 
             <Table<OCDSBuyerWithAmount> dataSource={filtered}
+                className="hide-responsive"
                 loading={working}
                 rowKey="ocid"
                 size="small"
@@ -81,6 +88,39 @@ export function OCDSBuyersPage() {
                     render: (_, r) => formatMoney(r.different_suppliers),
                     sorter: (a, b) => a.different_suppliers - b.different_suppliers,
                 }]} />
+                <List
+                    className="show-responsive"
+                    grid={{
+                        gutter: 16,
+                        xs: 1,
+                        sm: 1,
+                        md: 1,
+                        lg: 4,
+                        xl: 5,
+                        xxl: 6
+                    }}
+                    pagination={{
+                        showSizeChanger: true,
+                        position: "bottom"
+                    }}
+                    dataSource={filtered}
+                    loading={working}
+                    renderItem={(r: OCDSBuyerWithAmount) =>
+                        <List.Item className="list-item">
+                            <Card bordered={false}>
+                                Nombre: <Link to={`/ocds/buyer/${r.buyer_id}?onlyCovid=1`}>{r.buyer}</Link>
+                                <br />
+                                Total adjudicado: {formatMoney(r.awarded_amount, 'PYG')}
+                                <br />
+                                Cantidad de adjudicaciones: { formatMoney(r.total_awards)}
+                                <br />
+                                Cantidad de proveedores diferentes: { formatMoney(r.different_suppliers)}
+                                <br />
+                            </Card>
+                        </List.Item>
+                    }
+                >
+                </List>
         </PageHeader>
     </BaseDatosPage>
 }
