@@ -59,6 +59,14 @@ export function formatIsoDate(value: any) {
     return '';
 }
 
+export function formatToMonth(value: any) {
+    if (value) {
+        return format(new Date(value), "MMMM 'de' yyyy", {locale: es});
+    }
+
+    return '';
+}
+
 export function formatSortableDate(value: any) {
     if (value) {
         return format(new Date(value), 'yyyy/MM/dd', {locale: es});
@@ -81,7 +89,9 @@ export function formatIsoTime(value: any) {
 
     return '';
 }
+
 export function formatSecondsDuration(seconds: number) {
     const prefix = seconds < 0 ? "-" : "";
     return prefix + formatDistance(0, seconds * 1000, {includeSeconds: true, locale: es})
 }
+

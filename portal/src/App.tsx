@@ -22,12 +22,8 @@ import {ActionResearchLanding} from './pages/ActionResearchLanding';
 import {OCDSBuyersPage} from './pages/OCDSBuyers';
 import {OCDSSupplierWithSanctionPage} from './pages/OCDSSupplierWithSanction';
 import {OCDSCovidTenders} from './pages/OCDSCovidTenders';
-<<<<<<< Updated upstream
-import Banner from "./Home/Banner";
-=======
-import Banner from "./pages/Landing";
 import AboutPage from "./pages/AboutPage";
->>>>>>> Stashed changes
+import {LandingPage} from "./pages/Landing";
 
 export default function App() {
     return <Routes/>
@@ -68,7 +64,7 @@ function Routes() {
                 <Route path="/explore" exact render={() => <Welcome/>}/>
                 <Route path="/about" exact render={() => <AboutPage/>}/>
                 <Route path="/">
-                    <Banner/>
+                    <LandingPage/>
                 </Route>
             </Switch>
         </QueryParamProvider>

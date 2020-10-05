@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, Col, Divider, Row, Space} from 'antd';
+import {Card, Col, Row, Typography} from 'antd';
 import './ActionResearchLanding.css';
 import dataReports from '../assets/imgs/ranking_items.svg'
 import buyers from '../assets/imgs/entidades_compradoras.svg'
@@ -8,16 +8,8 @@ import onlineReports from '../assets/imgs/items_adquiridos.svg'
 import contracts from '../assets/imgs/licitaciones.svg'
 import relation from '../assets/imgs/relaciones_proveedores.svg'
 import {Link} from 'react-router-dom';
-<<<<<<< Updated upstream
-import { Header } from '../Home/Header';
-import Footer from '../Home/Footer';
-
-
-=======
 import { Header } from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
-import { AppContext } from '../App';
->>>>>>> Stashed changes
 export function ActionResearchLanding() {
 
     const spans = {xl: 8, lg: 8, md: 12, xs: 24};
@@ -32,8 +24,9 @@ export function ActionResearchLanding() {
         </Row>
 
         <Row className="description">
-            <div>Descripción
-            </div>
+            <Typography.Paragraph>
+            Análisis de datos aplicado a compras en Paraguay con uso de fondos públicos y procedimientos abreviados atendiendo la pandemia de Covid-19
+            </Typography.Paragraph>
         </Row>
 
         <Row className="cards" gutter={[8, 24]}>

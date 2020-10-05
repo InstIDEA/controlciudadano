@@ -16,11 +16,7 @@ footer.dark .bottom-bar {
   overflow: hidden;
 }
 footer {
-  clear: both;
-  font-size: 12px;
-  max-height: 30px;
-  z-index: 100;
-  box-shadow: 0 1000px 0 1000px #fff;
+  margin-top: auto;
 }
 footer .ant-row {
   text-align: center;
@@ -77,16 +73,12 @@ footer .footer-flag {
 }
 .footer-background {
   background-color: rgba(0, 52, 89, 1);
-<<<<<<< Updated upstream:portal/src/Home/static/footer.css
-  padding: 5px 200px;
-=======
   padding: 5px 10%;
   text-align: justify !important;
->>>>>>> Stashed changes:portal/src/components/layout/Footer.css
 }
 .footer-background-secondary {
   background-color: rgba(223, 237, 251, 1);
-  padding: 5px 200px;
+  padding: 5px 10%;
 }
 .footer-paragraph {
   color: rgba(153, 173, 188, 1) !important;
@@ -101,8 +93,6 @@ footer .footer-flag {
 }
 .footer-label {
   color: rgba(0, 52, 91, 1);
-<<<<<<< Updated upstream:portal/src/Home/static/footer.css
-=======
 }
 #logo {
   overflow: hidden;
@@ -127,5 +117,4 @@ footer .footer-flag {
   #logo img{
     width: 20%;
   }
->>>>>>> Stashed changes:portal/src/components/layout/Footer.css
 }
