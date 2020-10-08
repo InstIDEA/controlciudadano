@@ -49,14 +49,9 @@
     height: 80px;
 }
 
-.ant-card-body {
-    height: 200px;
-}
-
 .ant-card-meta-detail {
     text-align: center;
 }
-
 
 .ant-card-meta-title {
     margin-bottom: 25px;
