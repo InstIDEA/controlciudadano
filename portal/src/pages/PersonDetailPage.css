@@ -1,0 +1,18 @@
+.header-title-big .ant-card-head {
+  font-size: 20px;
+}
+
+.data-box {
+  margin: 10px 0;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(227, 232, 236, 1);
+}
+
+.data-box .ant-card-head {
+  color: rgba(0, 52, 91, 1);
+  font-size: 16px;
+}
+
+.data-box .ant-card-body {
+  padding-top: 5px;
+}
