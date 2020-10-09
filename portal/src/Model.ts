@@ -398,6 +398,19 @@ export interface GlobalStatistics {
     calc_date: string
 }
 
+export interface PersonDataStatistics {
+    treasury_data_payed_salaries: number,
+    ande_count: number,
+    pytyvo_count: number,
+    sfp_payed_salaries: number,
+    treasury_data_payed_salaries_month: string,
+    affidavid_count: number,
+    sfp_payed_salaries_month: string,
+    calc_date: string,
+    current_year: number,
+    nangareko_count: number
+}
+
 /**
  * Represents a networks resource.
  *

@@ -10,6 +10,9 @@ on:
     - 'portal/**'
     - '.github/workflows/portal.yml'
 
+env:
+  IMAGE_NAME: portal
+
 jobs:
   build:
 
