@@ -4,7 +4,7 @@ import {
     Authorities,
     EssapExonerated,
     GlobalStatistics,
-    PersonDataStatistics
+    PersonDataStatistics,
     OCDSBuyerWithAmount,
     OCDSCovidTender,
     OCDSItemRankingListRow,
