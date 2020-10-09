@@ -34,7 +34,7 @@
 }
 .header-title-wrapper {
   width: 300px;
-  border-right: 1px solid rgb(236, 241, 245);
+  /*border-right: 1px solid rgb(236, 241, 245);*/
   display: inline-block;
   vertical-align: middle;
   line-height: 64px;

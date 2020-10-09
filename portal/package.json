@@ -1,6 +1,7 @@
 {
   "name": "control_ciudadano_portal",
   "version": "1.0.0",
+  "license": "Mozilla Public License Version 2.0",
   "private": false,
   "dependencies": {
     "@nivo/line": "^0.62.0",

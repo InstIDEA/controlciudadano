@@ -410,6 +410,26 @@ export interface PersonDataStatistics {
     current_year: number,
     nangareko_count: number
 }
+export interface DataSetFile {
+    hash: string,
+    original_url: string,
+    file_name: string,
+    file_date: string,
+    loaded_date: string,
+    local_suffix: string | null,
+    id: number
+}
+
+export interface DataSet {
+    files: null | Array<DataSetFile>,
+    kind: "OTHER" | "MONTHLY",
+    description: string,
+    base_url: string,
+    last_update: string,
+    id: number,
+    institution: string,
+    name: string
+}
 
 /**
  * Represents a networks resource.

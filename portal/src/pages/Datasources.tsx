@@ -1,173 +1,100 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {Button, Input, PageHeader, Space, Table } from 'antd';
-import {DownloadOutlined, LinkOutlined} from '@ant-design/icons';
-import {useHistory} from 'react-router-dom';
+import {Button, Input, PageHeader, Space, Table} from 'antd';
+import {DownloadOutlined, LinkOutlined, SearchOutlined} from '@ant-design/icons';
+import {Link, useHistory} from 'react-router-dom';
 import {filterRedashList, RedashAPI} from '../RedashAPI';
 import {StringParam, useQueryParam} from 'use-query-params';
-import { Header } from '../components/layout/Header';
+import {Header} from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import './Datasources.css';
-import { SearchOutlined } from '@ant-design/icons'
-
-
-interface DSDefinition {
-    name: string,
-    url: string,
-    ds: string
-    original_uri?: string;
-}
-
-const sources: Array<DSDefinition> = [
-    {name: 'Salario enero 2019', url: 'https://data.controlciudadanopy.org/hacienda/hacienda_2019/01.csv', ds: 'Hacienda'},
-    {name: 'Salario febrero 2019', url: 'https://data.controlciudadanopy.org/hacienda/hacienda_2019/02.csv', ds: 'Hacienda'},
-    {name: 'Salario marzo 2019', url: 'https://data.controlciudadanopy.org/hacienda/hacienda_2019/03.csv', ds: 'Hacienda'},
-    {name: 'Salario abril 2019', url: 'https://data.controlciudadanopy.org/hacienda/hacienda_2019/04.csv', ds: 'Hacienda'},
-    {name: 'Salario mayo 2019', url: 'https://data.controlciudadanopy.org/hacienda/hacienda_2019/05.csv', ds: 'Hacienda'},
-    {name: 'Salario junio 2019', url: 'https://data.controlciudadanopy.org/hacienda/hacienda_2019/06.csv', ds: 'Hacienda'},
-    {name: 'Salario julio 2019', url: 'https://data.controlciudadanopy.org/hacienda/hacienda_2019/07.csv', ds: 'Hacienda'},
-    {name: 'Salario agosto 2019', url: 'https://data.controlciudadanopy.org/hacienda/hacienda_2019/08.csv', ds: 'Hacienda'},
-    {
-        name: 'Salario septiembre 2019',
-        url: 'https://data.controlciudadanopy.org/hacienda/hacienda_2019/09.csv',
-        ds: 'Hacienda'
-    },
-    {name: 'Salario octubre 2019', url: 'https://data.controlciudadanopy.org/hacienda/hacienda_2019/10.csv', ds: 'Hacienda'},
-    {
-        name: 'Salario noviembre 2019',
-        url: 'https://data.controlciudadanopy.org/hacienda/hacienda_2019/11.csv',
-        ds: 'Hacienda'
-    },
-    {
-        name: 'Salario diciembre 2019',
-        url: 'https://data.controlciudadanopy.org/hacienda/hacienda_2019/12.csv',
-        ds: 'Hacienda'
-    },
-    {name: 'Salario enero 2020', url: 'https://data.controlciudadanopy.org/hacienda/hacienda_2020/01.csv', ds: 'Hacienda'},
-    {name: 'Salario febrero 2020', url: 'https://data.controlciudadanopy.org/hacienda/hacienda_2020/02.csv', ds: 'Hacienda'},
-    {name: 'Salario marzo 2020', url: 'https://data.controlciudadanopy.org/hacienda/hacienda_2020/03.csv', ds: 'Hacienda'},
-
-    {name: 'Pytyvo lista 01', url: 'https://data.controlciudadanopy.org/pytyvo/pytyvo-lista01-2020-04-29.csv', ds: 'Pytyvo'},
-    {name: 'Pytyvo lista 02', url: 'https://data.controlciudadanopy.org/pytyvo/pytyvo-lista02-2020-04-29.csv', ds: 'Pytyvo'},
-    {name: 'Pytyvo lista 03', url: 'https://data.controlciudadanopy.org/pytyvo/pytyvo-lista03-2020-05-06.csv', ds: 'Pytyvo'},
-    {name: 'Pytyvo lista 04', url: 'https://data.controlciudadanopy.org/pytyvo/pytyvo-lista04-2020-05-07.csv', ds: 'Pytyvo'},
-    {
-        name: 'Pytyvo lista 05a',
-        url: 'https://data.controlciudadanopy.org/pytyvo/pytyvo-lista05-2020-05-11-a.csv',
-        ds: 'Pytyvo'
-    },
-    {
-        name: 'Pytyvo lista 05b',
-        url: 'https://data.controlciudadanopy.org/pytyvo/pytyvo-lista05-2020-05-11-b.csv',
-        ds: 'Pytyvo'
-    },
-    {
-        name: 'Pytyvo lista 05c',
-        url: 'https://data.controlciudadanopy.org/pytyvo/pytyvo-lista05-2020-05-11-c.csv',
-        ds: 'Pytyvo'
-    },
-    {name: 'Pytyvo lista 06', url: 'https://data.controlciudadanopy.org/pytyvo/pytyvo-lista06-2020-05-12.csv', ds: 'Pytyvo'},
-
-]
-
+import {DataSet} from '../Model';
 
 export function DS() {
 
     const [working, setWorking] = useState(false);
     const [query, setQuery] = useQueryParam('query', StringParam);
-    const [data, setData] = useState<DSDefinition[]>(sources);
+    const [data, setData] = useState<DataSet[]>();
     const history = useHistory();
 
     useEffect(() => {
         setWorking(true);
-        new RedashAPI().getSources()
-            .then(d => {
-                setData(prev => [
-                    ...d.query_result.data.rows.map(row => ({
-                        ds: mapDSToName(row.dataset),
-                        name: `${row.file_name}`,
-                        url: `https://data.controlciudadanopy.org/${mapDSToFolder(row.dataset)}/${row.hash}_${row.file_name}`,
-                        original_uri: row.original_uri
-                    })),
-                    ...prev
-                ])
-            })
+        new RedashAPI().getDataSets()
+            .then(d => setData(d.query_result.data.rows))
             .finally(() => setWorking(false));
     }, []);
 
     const filtered = useMemo(() => filterRedashList(data || [], query || '', [
         'name',
-        'ds'
+        'institution'
     ]), [data, query]);
 
     return <>
-        <Header tableMode={true} searchBar={
-            <div className="header-search-wrapper">
-                <Input.Search
-                prefix={<SearchOutlined />}
-                suffix={null}
-                placeholder="Buscar"
-                key="search_input"
-                defaultValue={query || ''}
-                onSearch={v => setQuery(v)}
-                style={{ width: 200 }}
-                formMethod="submit"/>
-            </div>
-        }/>
-        <PageHeader title="Fuente"
-                       onBack={() => history.push('/')}
-                       backIcon={null}
-                       subTitle="">
+        <Header tableMode={true}
+                showSeparator={false}
+                searchBar={<div className="header-search-wrapper">
+                    <Input.Search
+                        prefix={<SearchOutlined/>}
+                        suffix={null}
+                        placeholder="Buscar"
+                        key="search_input"
+                        defaultValue={query || ''}
+                        onSearch={v => setQuery(v)}
+                        style={{width: 200}}
+                        formMethod="submit"/>
+                </div>}/>
+        <PageHeader title="Fuentes de datos"
+                    onBack={() => history.push('/')}
+                    backIcon={null}
+                    subTitle="">
 
-        <div style={{padding: 12}}>
-            <Table<DSDefinition>
-                loading={working}
-                rowKey="url"
-                dataSource={filtered}
-                columns={[{
-                    title: 'Fuente',
-                    dataIndex: 'ds',
-                    sorter: (a, b) => (a.ds || '').localeCompare(b.ds)
-                }, {
-                    title: "Acciones",
-                    dataIndex: "name",
-                    render: (_, row) => <Space className="action-column">
-                        {row.name}
-                        <Space>
-                            <a href={row.url} target="_blank" rel="noopener noreferrer">
-                                <Button type="primary" className="btn-wrapper" icon={<DownloadOutlined/>}>
-                                    Descargar
-                                </Button>
-                            </a>
-                            {row.original_uri && <a href={row.original_uri} target="_blank" rel="noopener noreferrer">
-                            <Button className="btn-wrapper btn-secondary" icon={<LinkOutlined/>}>
-                                Ir a fuente
-                            </Button>
-                            </a>}
+            <div style={{padding: 12}}>
+                <Table<DataSet>
+                    loading={working}
+                    rowKey="url"
+                    dataSource={filtered}
+                    columns={[{
+                        title: 'Institución',
+                        dataIndex: 'institution',
+                        sorter: (a, b) => (a.institution || '').localeCompare(b.institution)
+                    }, {
+                        title: 'Descripción',
+                        dataIndex: 'description',
+                        sorter: (a, b) => (a.name || '').localeCompare(b.name)
+                    }, {
+                        title: "Acciones",
+                        dataIndex: "name",
+                        render: (_, row) => <Space className="action-column">
+                            <Space>
+                                {row.base_url && <a href={row.base_url} target="_blank" rel="noopener noreferrer">
+                                  <Button className="btn-wrapper btn-secondary" icon={<LinkOutlined/>}>
+                                    Ir a fuente
+                                  </Button>
+                                </a>}
+                                <LinkToDS data={row}/>
+                            </Space>
                         </Space>
-                    </Space>
-                }, {
-                    title: 'Descripción',
-                    dataIndex: 'description',
-                    sorter: (a, b) => (a.name || '').localeCompare(b.name)
-                }]}
-            />
-        </div>
-    </PageHeader>
-    <Footer tableMode={true}/>
+                    },]}
+                />
+            </div>
+        </PageHeader>
+        <Footer tableMode={true}/>
     </>
 }
 
-function mapDSToFolder(ds: string) {
-    if (ds === 'ande_exonerados') return 'ande';
-    if (ds === 'essap_exonerados') return 'essap';
-    return ds;
-}
-
-function mapDSToName(ds: string) {
-
-    if (ds === 'ande_exonerados') return 'ANDE';
-    if (ds === 'essap_exonerados') return 'ESSAP';
-    if (ds === 'hacienda_employees') return 'Hacienda';
-    if (ds === 'tsje_elected') return 'TSJE';
-    return ds;
+function LinkToDS(props: { data: DataSet }) {
+    if (props.data.files) return <Link to={`/sources/${props.data.id}`}>
+        <Button type="primary" className="btn-wrapper" icon={<DownloadOutlined/>}>
+            Ver más
+        </Button>
+    </Link>
+    if (props.data.id === 9) return <Link to="/action">
+        <Button type="primary" className="btn-wrapper" icon={<SearchOutlined/>}>
+            Explorar datos
+        </Button>
+    </Link>
+    if (props.data.id === 10) return <Link to="/explore/contralory/affidavit">
+        <Button type="primary" className="btn-wrapper" icon={<SearchOutlined/>}>
+            Explorar datos
+        </Button></Link>
+    return <></>
 }

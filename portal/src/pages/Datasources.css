@@ -19,3 +19,11 @@
 .action-column {
   display: block;
 }
+
+.btn-wrapper {
+  float: right;
+}
+
+.datasource-card .ant-card-body {
+  min-height: 300px !important;
+}
