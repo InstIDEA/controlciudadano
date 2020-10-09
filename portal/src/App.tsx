@@ -24,6 +24,7 @@ import {OCDSSupplierWithSanctionPage} from './pages/OCDSSupplierWithSanction';
 import {OCDSCovidTenders} from './pages/OCDSCovidTenders';
 import AboutPage from "./pages/AboutPage";
 import {LandingPage} from "./pages/Landing";
+import { DSDownload } from "./pages/DatasourcesDownload";
 
 export default function App() {
     return <Routes/>
@@ -44,6 +45,7 @@ function Routes() {
                 <Route path="/explore/covid/essap" exact render={() => <EssapExoneratedList/>}/>
                 <Route path="/action/covid/essap" exact render={() => <EssapExoneratedList/>}/>
                 <Route path="/sources" exact render={() => <DS/>}/>
+                <Route path="/sources/:dataSetId" exact render={() => <DSDownload/>}/>
                 <Route path="/explore/contralory/affidavit" exact render={() => <AffidavitList/>}/>
                 <Route path="/ocds/" exact render={() => <Redirect to="/ocds/items"/>}/>
                 <Route path="/action/ocds/tenders" exact render={() => <OCDSCovidTenders/>}/>

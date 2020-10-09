@@ -12,7 +12,8 @@ import {
     OCDSSupplierRelation,
     OCDSSupplierWithSanction,
     SourceData,
-    Supplier
+    Supplier,
+    DataSet
 } from './Model';
 
 const BASE_API = "https://redash.controlciudadanopy.org/api";
@@ -106,7 +107,7 @@ export class RedashAPI {
         return this.fetchQuery(40)
     }
 
-    getDataSets(): Promise<BaseRedashResponse<PersonDataStatistics>> {
+    getDataSets(): Promise<BaseRedashResponse<DataSet>> {
         return this.fetchQuery(41)
     }
 }

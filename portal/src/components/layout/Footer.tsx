@@ -10,7 +10,7 @@ import idea from '../../assets/logos/logo_idea.png';
 import cc from '../../assets/logos/cc.png';
 import github from '../../assets/logos/github.svg';
 
-
+const GITHUB_REPO = 'https://github.com/InstIDEA/controlciudadano';
 function Footer(props: {
   tableMode?: boolean
   aboutFooter?: boolean
@@ -66,13 +66,15 @@ function Footer(props: {
         <Col xxl={6} xl={6} lg={6} md={6} sm={6} xs={6}>
         </Col>
         <Col xxl={14} xl={14} lg={14} md={14} sm={16} xs={16} style={{ textAlign: "right" }}>
-          <div className="footer-logo-wrapper">
-            <img className="logo-small" src={github} alt="logo" />
-          </div>
-          <Typography.Text className="footer-paragraph">Código fuente abierto desarrollado por</Typography.Text>
-          <div className="footer-logo-wrapper">
-            <img className="logo-small" src={cdsBlanco} alt="logo" />
-          </div>
+          <a href={GITHUB_REPO} target="_blank" rel="noopener noreferrer">
+            <div className="footer-logo-wrapper">
+              <img className="logo-small" src={github} alt="logo" />
+            </div>
+            <Typography.Text className="footer-paragraph">Código fuente abierto desarrollado por</Typography.Text>
+            <div className="footer-logo-wrapper">
+              <img className="logo-small" src={cdsBlanco} alt="logo" />
+            </div>
+          </a>
         </Col>
       </Row>
     </footer>
