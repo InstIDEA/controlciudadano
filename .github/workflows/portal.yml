@@ -5,10 +5,17 @@ name: Build portal and publish image
 
 on:
   push:
-    branches: [ master ]
-    paths: 
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
+    paths:
     - 'portal/**'
     - '.github/workflows/portal.yml'
+
+env:
+  IMAGE_NAME: portal
 
 jobs:
   build:
@@ -38,16 +45,14 @@ jobs:
     - name: Build image
       run: docker build . --file Dockerfile --tag $IMAGE_NAME
 
-    - name: Log into registry
-      if: github.event_name == 'push'
-      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-
     - name: Tag and push image
-      if: github.event_name == 'push'
+      if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == "master"
       run: |
+        echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
         IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
           
-          # Change all uppercase to lowercase
+        # Change all uppercase to lowercase
         IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
         # Strip git ref prefix from version
         VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
