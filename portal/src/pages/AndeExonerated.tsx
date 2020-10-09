@@ -3,7 +3,9 @@ import {useEffect, useMemo, useState} from 'react';
 import {filterRedashList, RedashAPI} from '../RedashAPI';
 import {AndeExonerated} from '../Model';
 import {Link, useHistory} from 'react-router-dom';
-import {Input, PageHeader, Table, Typography} from 'antd';
+import {Input, PageHeader, Table, Typography, List, Card} from 'antd';
+import { BaseDatosPage } from '../components/BaseDatosPage';
+import { SearchOutlined } from '@ant-design/icons'
 
 export function AndeExoneratedList() {
 
@@ -11,6 +13,7 @@ export function AndeExoneratedList() {
     const [working, setWorking] = useState(false);
     const [data, setData] = useState<AndeExonerated[]>();
     const history = useHistory();
+    const isExploreMenu = history.location.pathname.includes('explore');
 
     useEffect(() => {
         setWorking(true);
@@ -26,20 +29,29 @@ export function AndeExoneratedList() {
         'documento',
     ]), [data, query]);
 
-    return <PageHeader ghost={false}
+    return <>
+    <BaseDatosPage menuIndex="ande" sidebar={isExploreMenu} headerExtra={
+        <div className="header-search-wrapper">
+            <Input.Search
+            prefix={<SearchOutlined />}
+            suffix={null}
+            placeholder="Buscar"
+            key="search_input"
+            defaultValue={query}
+            style={{ width: 200 }}
+            onSearch={setQuery}
+            formMethod="submit"/>
+        </div>
+    }>
+    <PageHeader ghost={false}
                        style={{border: '1px solid rgb(235, 237, 240)'}}
                        onBack={() => history.push('/')}
+                       backIcon={null}
                        title="COVID - Facturas exoneradas de la ANDE"
                        extra={[
                            <Link to="/sources?query=ande_exonerados">
                                Fuente
-                           </Link>,
-                           <Input.Search placeholder="Buscar"
-                                         style={{width: '80%'}}
-                                         key="search_input"
-                                         defaultValue={query}
-                                         onSearch={setQuery}
-                                         formMethod="submit"/>
+                           </Link>
                        ]}>
 
         <Typography.Paragraph>
@@ -47,6 +59,7 @@ export function AndeExoneratedList() {
         </Typography.Paragraph>
 
         <Table<AndeExonerated>
+            className="hide-responsive"
             dataSource={filtered}
             loading={working}
             rowKey="id"
@@ -79,6 +92,46 @@ export function AndeExoneratedList() {
                 dataIndex: 'fecha_exoneracion',
                 sorter: (a, b) => (a.fecha_exoneracion || '').localeCompare(b.fecha_exoneracion),
             }]}/>
+            <List
+                className="show-responsive"
+                grid={{
+                    gutter: 16,
+                    xs: 1,
+                    sm: 1,
+                    md: 1,
+                    lg: 4,
+                    xl: 5,
+                    xxl: 6
+                }}
+                pagination={{
+                    showSizeChanger: true,
+                    position: "bottom"
+                }}
+                loading={working}
+                dataSource={filtered}
+                renderItem={(r: AndeExonerated) =>
+                    <List.Item className="list-item">
+                        <Card bordered={false}>
+                            Beneficiario:  <Link to={`/people/${r.documento}`}
+                                 rel="noopener noreferrer"
+                                 target="_blank">
+                        {r.cliente}
+                        <br/>
+                        {r.documento}
+                    </Link>
+                            <br />
+                            NIS: {r.nis}
+                            <br />
+                            Tipo de tarifa: {r.tarifa}
+                            <br />
+                            Fecha de exoneración:  {r.fecha_exoneracion} <br />
+                            <br />
+                        </Card>
+                    </List.Item>
+                }
+            >
+            </List>
     </PageHeader>
-
+    </BaseDatosPage>
+    </>
 }

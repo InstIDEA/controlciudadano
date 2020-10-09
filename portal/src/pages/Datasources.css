@@ -1,0 +1,21 @@
+.ant-btn-primary {
+  background: rgb(205 83 52);
+  border-color: rgb(205 83 52);
+}
+
+.ant-btn-primary .ant-icon {
+  color: #ffffff;
+}
+
+.btn-secondary {
+  border-color: rgb(205 83 52);
+  color: rgb(205 83 52);
+}
+
+.btn-secondary .ant-icon {
+  border-color: rgb(205 83 52);
+}
+
+.action-column {
+  display: block;
+}

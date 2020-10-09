@@ -13,49 +13,48 @@ import proveedores from '../assets/imgs/proveedores.svg'
 import proveedoresRelacionados from '../assets/imgs/relaciones_proveedores.svg'
 import exoneradasAnde from '../assets/imgs/exoneradas_ande.svg'
 import exoneradasEssap from '../assets/imgs/exoneradas_essap.svg'
-
 const data = [{
-    link: "/people",
+    link: "/explore/people",
     title: "Buscador de personas",
     description: "Buscar personas que reciben ingresos del gobierno.",
     icon: buscadorPersonas
 }, {
-    link: '/contralory/affidavit',
+    link: '/explore/contralory/affidavit',
     title: 'Declaraciones juradas',
     description: 'Todas las declaraciones juradas que se subieron hasta la fecha en el portal de la contraloria',
     icon: declaraciones
 }, {
-    link: '/authorities/elected',
+    link: '/explore/authorities/elected',
     title: 'Autoridades electas',
     description: 'Todas las autoridades que han sido electas en elecciones generales.',
     icon: autoridades
 }, {
-    link: '/ocds/items',
+    link: '/explore/ocds/items',
     title: 'Items adquiridos',
     description: 'Todos los items que han sido comprados con recursos de emergencia nacional COVID-19',
     icon: items
 }, {
-    link: '/ocds/covid/itemsRanking',
+    link: '/explore/ocds/covid/itemsRanking',
     title: 'Ranking de items adquiridos',
     description: 'Ranking de ítems que fueron adjudicados en procesos de licitación marcados con COVID-19, agrupados por moneda, presentación y unidad de medida.',
     icon: rankingItems
 }, {
-    link: '/ocds/suppliers',
+    link: '/explore/ocds/suppliers',
     title: 'Proveedores',
     description: 'Listado de todas aquellas personas físicas o jurídicas que han participado en una licitación pública.',
     icon: proveedores
 }, {
-    link: '/ocds/relations',
+    link: '/explore/ocds/relations',
     title: 'Proveedores relacionados',
     description: 'Gráfico de relaciones entre proveedores',
     icon: proveedoresRelacionados
 }, {
-    link: '/covid/ande',
+    link: '/explore/covid/ande',
     title: 'ANDE exoneradas por COVID-19',
     description: 'Listado de facturas exoneradas por la ANDE por baja consumición',
     icon: exoneradasAnde
 }, {
-    link: '/covid/essap',
+    link: '/explore/covid/essap',
     title: 'ESSAP exoneradas por COVID-19',
     description: 'Listado de exonerados por la ESSAP',
     icon: exoneradasEssap

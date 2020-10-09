@@ -1,9 +1,14 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {Button, Input, PageHeader, Space, Table, Typography} from 'antd';
+import {Button, Input, PageHeader, Space, Table } from 'antd';
 import {DownloadOutlined, LinkOutlined} from '@ant-design/icons';
 import {useHistory} from 'react-router-dom';
 import {filterRedashList, RedashAPI} from '../RedashAPI';
 import {StringParam, useQueryParam} from 'use-query-params';
+import { Header } from '../components/layout/Header';
+import Footer from '../components/layout/Footer';
+import './Datasources.css';
+import { SearchOutlined } from '@ant-design/icons'
+
 
 interface DSDefinition {
     name: string,
@@ -64,7 +69,6 @@ const sources: Array<DSDefinition> = [
 
 ]
 
-const Paragraph = Typography.Paragraph;
 
 export function DS() {
 
@@ -95,21 +99,25 @@ export function DS() {
         'ds'
     ]), [data, query]);
 
-    return <PageHeader title="Fuentes utilizadas"
+    return <>
+        <Header tableMode={true} searchBar={
+            <div className="header-search-wrapper">
+                <Input.Search
+                prefix={<SearchOutlined />}
+                suffix={null}
+                placeholder="Buscar"
+                key="search_input"
+                defaultValue={query || ''}
+                onSearch={v => setQuery(v)}
+                style={{ width: 200 }}
+                formMethod="submit"/>
+            </div>
+        }/>
+        <PageHeader title="Fuente"
                        onBack={() => history.push('/')}
-                       subTitle="IDEA - CDS"
-                       extra={[
-                           <Input.Search placeholder="Buscar"
-                                         key="search_input"
-                                         defaultValue={query || ''}
-                                         onSearch={v => setQuery(v)}
-                                         formMethod="submit"/>
-                       ]}>
+                       backIcon={null}
+                       subTitle="">
 
-        <Paragraph>
-            En esta pagina encontraras todas las fuentes de datos utilizadas, estamos en constante proceso de
-            actualización.
-        </Paragraph>
         <div style={{padding: 12}}>
             <Table<DSDefinition>
                 loading={working}
@@ -120,28 +128,33 @@ export function DS() {
                     dataIndex: 'ds',
                     sorter: (a, b) => (a.ds || '').localeCompare(b.ds)
                 }, {
-                    title: 'Nombre',
-                    dataIndex: 'name',
-                    sorter: (a, b) => (a.name || '').localeCompare(b.name)
-                }, {
                     title: "Acciones",
-                    dataIndex: "url",
-                    render: (_, row) => <Space>
-                        <a href={row.url} target="_blank" rel="noopener noreferrer">
-                            <Button type="primary" icon={<DownloadOutlined/>}>
-                                Descargar
+                    dataIndex: "name",
+                    render: (_, row) => <Space className="action-column">
+                        {row.name}
+                        <Space>
+                            <a href={row.url} target="_blank" rel="noopener noreferrer">
+                                <Button type="primary" className="btn-wrapper" icon={<DownloadOutlined/>}>
+                                    Descargar
+                                </Button>
+                            </a>
+                            {row.original_uri && <a href={row.original_uri} target="_blank" rel="noopener noreferrer">
+                            <Button className="btn-wrapper btn-secondary" icon={<LinkOutlined/>}>
+                                Ir a fuente
                             </Button>
-                        </a>
-                        {row.original_uri && <a href={row.original_uri} target="_blank" rel="noopener noreferrer">
-                          <Button icon={<LinkOutlined/>}>
-                            Ir a fuente
-                          </Button>
-                        </a>}
+                            </a>}
+                        </Space>
                     </Space>
+                }, {
+                    title: 'Descripción',
+                    dataIndex: 'description',
+                    sorter: (a, b) => (a.name || '').localeCompare(b.name)
                 }]}
             />
         </div>
     </PageHeader>
+    <Footer tableMode={true}/>
+    </>
 }
 
 function mapDSToFolder(ds: string) {

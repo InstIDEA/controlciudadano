@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { Input, PageHeader, Space, Table, Typography } from 'antd';
+import { Input, PageHeader, Space, Table, Typography, List, Card } from 'antd';
 import { OCDSCovidTender } from '../Model';
 import { Link, useHistory } from 'react-router-dom';
 import { filterRedashList, RedashAPI, removeDuplicated } from '../RedashAPI';
 import { getTenderLink } from './OCDSAwardItemsPage';
 import { formatMoney } from '../formatters';
 import { BaseDatosPage } from '../components/BaseDatosPage';
+import { SearchOutlined } from '@ant-design/icons'
 
 type OCDSCovidTenderWithQuery = OCDSCovidTender & {
     buyer_query: string;
@@ -21,6 +22,7 @@ export function OCDSCovidTenders() {
     const [data, setData] = useState<OCDSCovidTenderWithQuery[]>();
     const history = useHistory();
     const [query, setQuery] = useState('');
+    const isExploreMenu = history.location.pathname.includes('explore');
 
     useEffect(() => {
         setWorking(true);
@@ -43,18 +45,25 @@ export function OCDSCovidTenders() {
         'supplier_query'
     ]), d => d.ocid), [data, query]);
 
-    return <BaseDatosPage menuIndex="tenders">
+    return <BaseDatosPage menuIndex="tenders" sidebar={isExploreMenu} headerExtra={
+        <div className="header-search-wrapper">
+            <Input.Search
+                prefix={<SearchOutlined />}
+                suffix={null}
+                placeholder="Buscar"
+                key="search_input"
+                defaultValue={query}
+                style={{ width: 200 }}
+                onSearch={setQuery}
+                formMethod="submit" />
+        </div>
+    }>
         <PageHeader ghost={false}
             style={{ border: '1px solid rgb(235, 237, 240)' }}
             onBack={() => history.push('/')}
             backIcon={null}
             title="Licitaciones"
-            subTitle="CDS - IDEA"
-            extra={[<Input.Search placeholder="Buscar"
-                key="search_input"
-                defaultValue={query}
-                onSearch={setQuery}
-                formMethod="submit" />]}>
+            subTitle="CDS - IDEA">
 
 
             <Typography.Paragraph>
@@ -62,6 +71,7 @@ export function OCDSCovidTenders() {
         </Typography.Paragraph>
 
             <Table<OCDSCovidTenderWithQuery>
+                className="hide-responsive"
                 dataSource={filtered}
                 loading={working}
                 rowKey="ocid"
@@ -110,6 +120,52 @@ export function OCDSCovidTenders() {
                     render: (_, r) => formatMoney(r.tender_amount, 'PYG'),
                     sorter: (a, b) => a.tender_amount - b.tender_amount,
                 }]} />
+            <List
+                className="show-responsive"
+                grid={{
+                    gutter: 16,
+                    xs: 1,
+                    sm: 1,
+                    md: 1,
+                    lg: 4,
+                    xl: 5,
+                    xxl: 6
+                }}
+                pagination={{
+                    showSizeChanger: true,
+                    position: "bottom"
+                }}
+                dataSource={filtered}
+                loading={working}
+                renderItem={(r: OCDSCovidTenderWithQuery) =>
+                    <List.Item className="list-item">
+                        <Card bordered={false}>
+                            Llamado:  <a href={getTenderLink(r.tender_slug, r.procurement_method)}
+                                target="__blank"
+                                rel="noopener noreferrer">
+                                {r.tender_title}
+                            </a>
+                            <br />
+                            Comprador: <Space direction="vertical">
+                                {(r.buyer || []).map(b => <Link to={`/ocds/buyer/${b.id}?onlyCovid=1`} key={b.id}>
+                                    {b.name}
+                                </Link>)}
+                            </Space>
+                            <br />
+                            Proveedor: <Space direction="vertical">
+                                {(r.supplier || []).map(s => <Link to={`/ocds/supplier/${s.id}?onlyCovid=1`} key={s.id}>
+                                    {s.name}
+                                </Link>)}
+                            </Space>
+                            <br />
+                            Estado: {labels[r.status] || r.status}
+                            <br />
+                            Monto: {formatMoney(r.tender_amount, 'PYG')}
+                        </Card>
+                    </List.Item>
+                }
+            >
+            </List>
         </PageHeader>
     </BaseDatosPage>
 }

@@ -2,10 +2,10 @@
   background-color: #fff;
   position: relative;
   z-index: 10;
-  height: 64px;
+  min-height: 64px;
 }
-.anticon {
-  /*color: rgba(0, 52, 91, 1);*/
+.dropdown-item .anticon {
+  color: rgba(0, 52, 91, 1);
   font-size: larger;
 }
 
@@ -52,6 +52,13 @@
   color: rgba(0, 52, 91, 1);
   padding-right: 40px;
 }
+
+.collapsed-menu {
+  color: rgba(0, 52, 91, 1);
+  padding-right: 40px;
+  padding-top: 20px;
+}
+
 #menu {
   float: right;
   overflow: hidden;
@@ -80,11 +87,7 @@
 #menu .ant-menu-horizontal > .ant-menu-item-selected a {
   color: rgba(0, 52, 91, 1);
 }
-#preview {
-  padding-top: 17px;
-  float: right;
-  margin-left: 32px;
-}
-#preview button {
-  border-radius: 32px;
+
+.menu-item {
+  color: rgba(0, 52, 91, 1) !important;
 }

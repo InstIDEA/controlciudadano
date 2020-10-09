@@ -2,9 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { OCDSSupplierSanctions, OCDSSupplierWithSanction } from '../Model';
 import { filterRedashList, RedashAPI } from '../RedashAPI';
-import { Input, message, PageHeader, Space, Table, Tooltip, Typography } from 'antd';
+import { Input, message, PageHeader, Space, Table, Tooltip, Typography, List, Card } from 'antd';
 import { formatIsoDate, formatMoney } from '../formatters';
 import { BaseDatosPage } from '../components/BaseDatosPage';
+import { SearchOutlined } from '@ant-design/icons'
 
 export function OCDSSupplierWithSanctionPage() {
 
@@ -12,7 +13,7 @@ export function OCDSSupplierWithSanctionPage() {
     const [data, setData] = useState<OCDSSupplierWithSanction[]>();
     const [working, setWorking] = useState(false);
     const [query, setQuery] = useState('');
-
+    const isExploreMenu = history.location.pathname.includes('explore');
 
     useEffect(() => {
         setWorking(false)
@@ -32,18 +33,25 @@ export function OCDSSupplierWithSanctionPage() {
     ]), [data, query]);
 
     return <BaseDatosPage
-        menuIndex="sanctionedSuppliers">
+        menuIndex="sanctionedSuppliers" sidebar={isExploreMenu} headerExtra={
+            <div className="header-search-wrapper">
+                <Input.Search
+                prefix={<SearchOutlined />}
+                suffix={null}
+                placeholder="Buscar"
+                key="search_input"
+                defaultValue={query}
+                style={{ width: 200 }}
+                onSearch={setQuery}
+                formMethod="submit"/>
+            </div>
+        }>
         <PageHeader ghost={false}
             style={{ border: '1px solid rgb(235, 237, 240)' }}
             onBack={() => history.push('/')}
             backIcon={null}
             title="Proveedores"
-            subTitle="CDS - IDEA"
-            extra={[<Input.Search placeholder="Buscar"
-                key="search_input"
-                defaultValue={query}
-                onSearch={setQuery}
-                formMethod="submit" />]}>
+            subTitle="CDS - IDEA">
 
 
             <Typography.Paragraph>
@@ -51,6 +59,7 @@ export function OCDSSupplierWithSanctionPage() {
         </Typography.Paragraph>
 
             <Table<OCDSSupplierWithSanction>
+                className="hide-responsive"
                 dataSource={filtered}
                 loading={working}
                 rowKey="supplier_id"
@@ -78,6 +87,37 @@ export function OCDSSupplierWithSanctionPage() {
                     render: (_, r) => formatMoney(r.awarded_amount, 'PYG'),
                     sorter: (a, b) => a.awarded_amount - b.awarded_amount,
                 }]} />
+                <List
+                    className="show-responsive"
+                    grid={{
+                        gutter: 16,
+                        xs: 1,
+                        sm: 1,
+                        md: 1,
+                        lg: 4,
+                        xl: 5,
+                        xxl: 6
+                    }}
+                    pagination={{
+                        showSizeChanger: true,
+                        position: "bottom"
+                    }}
+                    dataSource={filtered}
+                    loading={working}
+                    renderItem={(r: OCDSSupplierWithSanction) =>
+                        <List.Item className="list-item">
+                            <Card bordered={false}>
+                                Proveedor: <Link to={`/ocds/suppliers/${r.supplier_id}?onlyCovid=1`}>{r.supplier_name}</Link>
+                                <br />
+                                Sanciones: <SanctionComponent data={r.sanctions} />
+                                <br />
+                                Monto total adjudicado: { formatMoney(r.awarded_amount, 'PYG')}
+                                <br />
+                            </Card>
+                        </List.Item>
+                    }
+                >
+                </List>
         </PageHeader>
     </BaseDatosPage>
 }

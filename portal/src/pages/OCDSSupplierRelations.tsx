@@ -21,6 +21,7 @@ export function OCDSSupplierRelations() {
     const [actives, setActives] = useState<string[]>(['OCDS_SAME_LEGAL_CONTACT'])
     const [selected, setSelected] = useState<string>();
     const history = useHistory();
+    const isExploreMenu = history.location.pathname.includes('explore');
 
     useEffect(() => {
         new RedashAPI('a2kmZeR9AdGeldeP0RXg2JWSZeevSA62xzpN15jb')
@@ -40,7 +41,7 @@ export function OCDSSupplierRelations() {
         else setActives([...actives, type]);
     }
 
-    return <BaseDatosPage menuIndex="relations">
+    return <BaseDatosPage menuIndex="relations" sidebar={isExploreMenu}>
         <PageHeader ghost={false}
             onBack={() => history.push('')}
             backIcon={null}

@@ -38,3 +38,24 @@
   height:auto !important;
   min-height:100%;
 }
+
+.list-item {
+  border-top: 1px dashed rgba(0, 52, 91, 1);
+  height: auto !important;
+}
+
+@media (max-width: 600px) {
+  .hide-responsive {
+    display: none;
+  }
+  .ant-layout-sider {
+    background-color: rgb(255, 255, 255) !important;
+    position: absolute;
+    z-index: 999;
+  }
+}
+@media (min-width: 600px) {
+  .show-responsive {
+    display: none;
+  }
+}

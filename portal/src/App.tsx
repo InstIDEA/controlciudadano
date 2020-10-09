@@ -22,6 +22,7 @@ import {ActionResearchLanding} from './pages/ActionResearchLanding';
 import {OCDSBuyersPage} from './pages/OCDSBuyers';
 import {OCDSSupplierWithSanctionPage} from './pages/OCDSSupplierWithSanction';
 import {OCDSCovidTenders} from './pages/OCDSCovidTenders';
+import AboutPage from "./pages/AboutPage";
 import {LandingPage} from "./pages/Landing";
 
 export default function App() {
@@ -34,25 +35,34 @@ function Routes() {
         <QueryParamProvider ReactRouterRoute={Route}>
             <Switch>
                 <Route path="/people/:document" exact render={() => <PersonPage/>}/>
-                <Route path="/people"><DocumentSearchPage/></Route>
-                <Route path="/authorities/elected"><ElectedAuthoritiesPage/></Route>
-                <Route path="/covid/ande" exact render={() => <AndeExoneratedList/>}/>
-                <Route path="/covid/essap" exact render={() => <EssapExoneratedList/>}/>
+                <Route path="/action/people"><DocumentSearchPage/></Route>
+                <Route path="/explore/people"><DocumentSearchPage/></Route>
+                <Route path="/explore/authorities/elected"><ElectedAuthoritiesPage/></Route>
+                <Route path="/action/authorities/elected"><ElectedAuthoritiesPage/></Route>
+                <Route path="/explore/covid/ande" exact render={() => <AndeExoneratedList/>}/>
+                <Route path="/action/covid/ande" exact render={() => <AndeExoneratedList/>}/>
+                <Route path="/explore/covid/essap" exact render={() => <EssapExoneratedList/>}/>
+                <Route path="/action/covid/essap" exact render={() => <EssapExoneratedList/>}/>
                 <Route path="/sources" exact render={() => <DS/>}/>
-                <Route path="/contralory/affidavit" exact render={() => <AffidavitList/>}/>
+                <Route path="/explore/contralory/affidavit" exact render={() => <AffidavitList/>}/>
                 <Route path="/ocds/" exact render={() => <Redirect to="/ocds/items"/>}/>
-                <Route path="/ocds/tenders" exact render={() => <OCDSCovidTenders/>}/>
-                <Route path="/ocds/items" exact render={() => <OCDSAwardItemsPage/>}/>
-                <Route path="/ocds/covid/itemsRanking" exact render={() => <OCDSItemsRankingPage/>}/>
+                <Route path="/action/ocds/tenders" exact render={() => <OCDSCovidTenders/>}/>
+                <Route path="/explore/ocds/items" exact render={() => <OCDSAwardItemsPage/>}/>
+                <Route path="/action/ocds/items" exact render={() => <OCDSAwardItemsPage/>}/>
+                <Route path="/explore/ocds/covid/itemsRanking" exact render={() => <OCDSItemsRankingPage/>}/>
+                <Route path="/action/ocds/covid/itemsRanking" exact render={() => <OCDSItemsRankingPage/>}/>
                 <Route path="/ocds/items/:itemId" exact render={() => <OCDSItem/>}/>
-                <Route path="/ocds/suppliers" exact render={() => <OCDSSuppliers/>}/>
-                <Route path="/ocds/sanctioned_suppliers" exact render={() => <OCDSSupplierWithSanctionPage/>}/>
+                <Route path="/explore/ocds/suppliers" exact render={() => <OCDSSuppliers/>}/>
+                <Route path="/action/ocds/suppliers" exact render={() => <OCDSSuppliers/>}/>
+                <Route path="/action/ocds/sanctioned_suppliers" exact render={() => <OCDSSupplierWithSanctionPage/>}/>
                 <Route path="/ocds/suppliers/:ruc" exact render={() => <OCDSSupplier/>}/>
-                <Route path="/ocds/buyers" exact render={() => <OCDSBuyersPage/>}/>
+                <Route path="/action/ocds/buyers" exact render={() => <OCDSBuyersPage/>}/>
                 <Route path="/ocds/buyer/:id" exact render={() => <OCDSBuyerPage/>}/>
-                <Route path="/ocds/relations" exact render={() => <OCDSSupplierRelations/>}/>
+                <Route path="/explore/ocds/relations" exact render={() => <OCDSSupplierRelations/>}/>
+                <Route path="/action/ocds/relations" exact render={() => <OCDSSupplierRelations/>}/>
                 <Route path="/action" exact render={() => <ActionResearchLanding/>}/>
                 <Route path="/explore" exact render={() => <Welcome/>}/>
+                <Route path="/about" exact render={() => <AboutPage/>}/>
                 <Route path="/">
                     <LandingPage/>
                 </Route>

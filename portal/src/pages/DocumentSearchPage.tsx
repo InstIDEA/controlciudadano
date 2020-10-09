@@ -8,6 +8,8 @@ import {ColumnProps} from 'antd/es/table';
 import {SimpleApi} from '../SimpleApi';
 import {Link, useHistory} from 'react-router-dom';
 import {buildSFPUrl} from '../SFPHelper';
+import { BaseDatosPage } from '../components/BaseDatosPage';
+import { SearchOutlined } from '@ant-design/icons'
 
 export function DocumentSearchPage() {
 
@@ -15,7 +17,7 @@ export function DocumentSearchPage() {
     const [sfp, setSFP] = useState<unknown[]>();
     const [local, setLocal] = useState<LocalSearchResult>();
     const history = useHistory();
-
+    const isExploreMenu = history.location.pathname.includes('explore');
     function doSearchSFP(cedula: string) {
         if (!cedula) return;
 
@@ -42,18 +44,26 @@ export function DocumentSearchPage() {
     useEffect(() => doSearch(document || ''), [document, doSearch]);
 
 
-    return <PageHeader ghost={false}
+    return <> 
+    <BaseDatosPage menuIndex="people" sidebar={isExploreMenu} headerExtra={
+        <div className="header-search-wrapper">
+        <Input.Search
+            prefix={<SearchOutlined />}
+            suffix={null}
+            placeholder="Buscar"
+            key="search_input"
+            defaultValue={document || ''}
+            onSearch={v => setDocument(v)}
+            style={{ width: 200 }}
+            formMethod="submit"/>
+        </div>
+    }>
+    <PageHeader ghost={false}
                        style={{border: '1px solid rgb(235, 237, 240)'}}
                        title="CDS - IDEA"
                        subTitle="Búsqueda de personas por cédula"
                        onBack={() => history.push('/')}
-                       extra={[
-                           <Input.Search placeholder="Buscar por cédula"
-                                         key="search_input"
-                                         defaultValue={document || ''}
-                                         onSearch={v => setDocument(v)}
-                                         formMethod="submit"/>
-                       ]}>
+                       backIcon={null}>
 
         <Typography.Paragraph>
             Se busca una cédula en las fuentes de datos listadas.
@@ -75,6 +85,8 @@ export function DocumentSearchPage() {
           <GenericTable data={sfp}/>
         </Card>}
     </PageHeader>
+    </BaseDatosPage>
+    </>
 
 }
 
