@@ -9,6 +9,7 @@ import Footer from '../components/layout/Footer';
 import {Async, AsyncHelper, GlobalStatistics} from '../Model';
 import {RedashAPI} from '../RedashAPI';
 import {formatIsoDate, formatMoney, formatToMonth} from '../formatters';
+import {Link} from 'react-router-dom';
 
 export const page1 = [
     {
@@ -46,7 +47,7 @@ export function LandingPage() {
 
     const children = page1.map(card => (
         <Col className="card-wrapper" key={card.title} md={12} xs={24}>
-            <a className="card" href={card.href}>
+            <Link className="card" to={card.href}>
                 <img src={card.img} alt="" className="card-img-top"/>
                 <div className="card-body">
                     <span className="description">{card.description}</span>
@@ -54,7 +55,7 @@ export function LandingPage() {
                     <div className="button-wrapper"/>
                     <button className="ver-mas-button">Ver más</button>
                 </div>
-            </a>
+            </Link>
         </Col>
     ));
 

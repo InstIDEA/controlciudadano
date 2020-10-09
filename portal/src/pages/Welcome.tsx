@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card, Col, Row } from 'antd';
-import { Link } from 'react-router-dom';
-import { Header } from '../components/layout/Header';
+import {Card, Col, Row} from 'antd';
+import {Link} from 'react-router-dom';
+import {Header} from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import './Welcome.css';
 import buscadorPersonas from '../assets/imgs/buscador_personas.svg'
@@ -13,6 +13,7 @@ import proveedores from '../assets/imgs/proveedores.svg'
 import proveedoresRelacionados from '../assets/imgs/relaciones_proveedores.svg'
 import exoneradasAnde from '../assets/imgs/exoneradas_ande.svg'
 import exoneradasEssap from '../assets/imgs/exoneradas_essap.svg'
+
 const data = [{
     link: "/explore/people",
     title: "Buscador de personas",
@@ -67,19 +68,21 @@ const data = [{
 
 export function Welcome() {
     return <>
-        <Header tableMode={false} />
+        <Header tableMode={false}/>
         <div className="welcome-page">
             <Row className="cards" gutter={[8, 24]}>
                 {data.map(d =>
                     <Col xl={8} lg={8} md={12} sm={12} xs={24} key={d.title}>
                         <Link to={d.link}>
                             <Card hoverable
-                                style={{ width: 320 }}
-                                cover={<img height="80px" src={d.icon} alt="Items adquiridos" />}>
+                                  style={{width: 320}}
+                                  cover={<img height="80px" src={d.icon} alt="Items adquiridos"/>}>
                                 <Card.Meta title={d.title}
-                                    description={d.description} />
+                                           description={d.description}/>
                                 <div className="row-button">
-                                    <button className="ver-mas-button">Fuente</button>
+                                    <Link to="/sources">
+                                        <button className="ver-mas-button">Fuente</button>
+                                    </Link>
                                     <button className="ver-mas-button">Explorar</button>
                                 </div>
                             </Card>
@@ -88,7 +91,7 @@ export function Welcome() {
                 )}
             </Row>
         </div>
-        <Footer tableMode={false} />
+        <Footer tableMode={false}/>
     </>
 }
 

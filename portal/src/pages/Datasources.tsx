@@ -29,20 +29,20 @@ export function DS() {
     ]), [data, query]);
 
     return <>
-        <Header tableMode={true} searchBar={
-            <div className="header-search-wrapper">
-                <Input.Search
-                    prefix={<SearchOutlined/>}
-                    suffix={null}
-                    placeholder="Buscar"
-                    key="search_input"
-                    defaultValue={query || ''}
-                    onSearch={v => setQuery(v)}
-                    style={{width: 200}}
-                    formMethod="submit"/>
-            </div>
-        }/>
-        <PageHeader title="Fuente"
+        <Header tableMode={true}
+                showSeparator={false}
+                searchBar={<div className="header-search-wrapper">
+                    <Input.Search
+                        prefix={<SearchOutlined/>}
+                        suffix={null}
+                        placeholder="Buscar"
+                        key="search_input"
+                        defaultValue={query || ''}
+                        onSearch={v => setQuery(v)}
+                        style={{width: 200}}
+                        formMethod="submit"/>
+                </div>}/>
+        <PageHeader title="Fuentes de datos"
                     onBack={() => history.push('/')}
                     backIcon={null}
                     subTitle="">
@@ -53,27 +53,27 @@ export function DS() {
                     rowKey="url"
                     dataSource={filtered}
                     columns={[{
-                        title: 'Fuente',
+                        title: 'Institución',
                         dataIndex: 'institution',
                         sorter: (a, b) => (a.institution || '').localeCompare(b.institution)
+                    }, {
+                        title: 'Descripción',
+                        dataIndex: 'description',
+                        sorter: (a, b) => (a.name || '').localeCompare(b.name)
                     }, {
                         title: "Acciones",
                         dataIndex: "name",
                         render: (_, row) => <Space className="action-column">
                             <Space>
-                                {LinkToDS({data: row})}
                                 {row.base_url && <a href={row.base_url} target="_blank" rel="noopener noreferrer">
                                   <Button className="btn-wrapper btn-secondary" icon={<LinkOutlined/>}>
                                     Ir a fuente
                                   </Button>
                                 </a>}
+                                <LinkToDS data={row}/>
                             </Space>
                         </Space>
-                    }, {
-                        title: 'Descripción',
-                        dataIndex: 'description',
-                        sorter: (a, b) => (a.name || '').localeCompare(b.name)
-                    }]}
+                    },]}
                 />
             </div>
         </PageHeader>
