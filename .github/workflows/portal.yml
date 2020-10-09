@@ -4,7 +4,7 @@
 name: Build portal and publish image
 
 on:
-  push:
+  pull_request:
     types:
       - opened
       - reopened
@@ -46,7 +46,7 @@ jobs:
       run: docker build . --file Dockerfile --tag $IMAGE_NAME
 
     - name: Tag and push image
-      if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == "master"
+      if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master'
       run: |
         echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
