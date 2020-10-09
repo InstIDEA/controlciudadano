@@ -29,7 +29,8 @@ const API_KEYS: Record<number, string> = {
     36: "vX16f20urPFfYsebawg3Kda9qhN6JDTCexhH8Trf",
     37: "N0DHcr72NbiWC5n3IBEVmkSoViBxud8GTxKNLi3z",
     39: "g74o1ujam75shxjB8BVJ1nOQkInbsrgpTax9sukM",
-    40: "3m3QeB4LHIuIbuCJeZjDgPmOECfgAlt9irtH0REV"
+    40: "3m3QeB4LHIuIbuCJeZjDgPmOECfgAlt9irtH0REV",
+    41: "5jHLPnSfUSwE4FRogLc1gs8cZsmfaNsWiid0EwJm"
 }
 
 
@@ -103,6 +104,10 @@ export class RedashAPI {
 
     getPersonDataStatistics(): Promise<BaseRedashResponse<PersonDataStatistics>> {
         return this.fetchQuery(40)
+    }
+
+    getDataSets(): Promise<BaseRedashResponse<PersonDataStatistics>> {
+        return this.fetchQuery(41)
     }
 }
 
