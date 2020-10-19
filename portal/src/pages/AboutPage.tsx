@@ -18,14 +18,15 @@ function AboutPage() {
     <Row gutter={[8, 24]} className="about-paragraph" style={{ fontSize: '20px' }}>
       <Col span={12} offset={6}>
         <Typography.Paragraph style={{ textAlign: 'justify' }}>
-          Control Ciudadano es una plataforma creada para que toda la ciudadanía tenga acceso a una herramienta con la cual controlar los recursos públicos.
-          La herramienta utiliza datos abiertos, entre ellos: compras realizadas durante la pandemia de la COVID-19, las declaraciones juradas subidas a la fecha
-          en la web de la Contraloría General de la República (CGR), datos sobre autoridades electas, relación con proveedores del Estado que cuenten con los
-          mismos datos de contacto, así como las facturas de ANDE y ESSAP.
-          La plataforma pretende contar con más datos que ayuden a ejercer el derecho de los ciudadanos a ser contralores, convirtiéndose en una herramienta
-          colaborativa. El principal apoyo será la colaboración de personas y organizaciones de la sociedad civil que deseen sumar sus esfuerzos para promover
-          el acceso a la información pública y contribuir al desarrollo de un país transparente, libre de corrupción e impunidad.
-          El portal de Control Ciudadano es una iniciativa de IDEA, con apoyo de USAID/Paraguay, en el marco del proyecto “Sin Oportunidad para la Impunidad”.
+        La plataforma de Control Ciudadano nace con el objetivo de poner a disposición de la ciudadanía un portal de datos abiertos
+        para controlar los recursos públicos. Los datos que se encuentran disponibles en la actualidad son: las compras realizadas
+        durante la pandemia de la COVID-19, las declaraciones juradas subidas a la fecha en la web de la Contraloría General de la República,
+        datos sobre autoridades electas, relación con proveedores del Estado que cuenten con los mismos datos de contacto, las facturas de ANDE
+        y ESSAP.
+        La plataforma pretende contar con más datos que ayuden a ejercer el derecho de “contralores ciudadanos”, convirtiéndose en una
+        herramienta colaborativa, apoyada por la comunidad de organizaciones y personas que deseen sumar sus esfuerzos a la sostenibilidad
+        de un portal útil  – para promover el acceso a la información pública y contribuir al desarrollo de un país transparente, libre de
+        corrupción e impunidad.
         </Typography.Paragraph>
       </Col>
     </Row>
