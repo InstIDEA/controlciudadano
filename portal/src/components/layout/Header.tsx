@@ -3,6 +3,7 @@ import {Col, Dropdown, Menu, Row} from 'antd';
 import './Header.css'
 import {MenuOutlined} from '@ant-design/icons';
 import {Link} from 'react-router-dom';
+import controlCiudadano from '../../assets/logos/control_ciudadano.svg';
 
 const menu = <Menu mode='horizontal' id="nav" key="nav">
     <Menu.Item key="home">
@@ -38,9 +39,9 @@ export function Header(props: {
                     <Col xxl={4} xl={5} lg={6} md={6} sm={22} xs={22}>
                         <div className="header-title-wrapper" style={{
                             borderRight: showSeparator ? '1px solid rgb(236, 241, 245)' : undefined
-                        }}>
+                        , padding: 10}}>
                             <Link to="/">
-                                <h1 className="header-table-mode">CONTROL CIUDADANO</h1>
+                                <img className="control-logo" src={controlCiudadano} alt="logo"/>
                             </Link>
                         </div>
                     </Col>
@@ -64,9 +65,9 @@ export function Header(props: {
             : <div id="header" className="header">
                 <Row>
                     <Col xxl={8} xl={8} lg={8} md={8} sm={22} xs={22}>
-                        <div>
+                        <div style={{textAlign: "center", paddingTop: 10}}>
                             <Link to="/">
-                                <h1 className="header-title">CONTROL CIUDADANO</h1>
+                                <img className="control-logo" src={controlCiudadano} alt="logo"/>
                             </Link>
                         </div>
                     </Col>

@@ -91,3 +91,8 @@
 .menu-item {
   color: rgba(0, 52, 91, 1) !important;
 }
+
+.control-logo {
+  width: 200px;
+  height: 70px;
+}
