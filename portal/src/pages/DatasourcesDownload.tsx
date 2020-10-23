@@ -8,6 +8,7 @@ import {Header} from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import './Datasources.css';
 import {DataSet, DataSetFile} from '../Model';
+import { SearchBar } from '../components/SearchBar';
 
 interface SingleYearData {
     jan?: DataSetFile,
@@ -50,17 +51,7 @@ export function DSDownload() {
 
     return <>
         <Header tableMode={true} searchBar={
-            <div className="header-search-wrapper">
-                <Input.Search
-                    prefix={<SearchOutlined/>}
-                    suffix={null}
-                    placeholder="Buscar"
-                    key="search_input"
-                    defaultValue={query || ''}
-                    onSearch={v => setQuery(v)}
-                    style={{width: 200}}
-                    formMethod="submit"/>
-            </div>
+            <SearchBar defaultValue={query || ''} onSearch={v => setQuery(v)}/>
         }/>
         <PageHeader title={name}
                     onBack={() => history.push('/sources')}

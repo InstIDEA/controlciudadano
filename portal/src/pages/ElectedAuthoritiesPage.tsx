@@ -6,6 +6,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { Input, PageHeader, Table, Typography, List, Card } from 'antd';
 import { BaseDatosPage } from '../components/BaseDatosPage';
 import { SearchOutlined } from '@ant-design/icons'
+import { SearchBar } from '../components/SearchBar';
 
 export function ElectedAuthoritiesPage() {
 
@@ -35,17 +36,7 @@ export function ElectedAuthoritiesPage() {
 
     return <>
         <BaseDatosPage menuIndex="authorities" sidebar={isExploreMenu} headerExtra={
-            <div className="header-search-wrapper">
-                <Input.Search
-                    prefix={<SearchOutlined />}
-                    suffix={null}
-                    placeholder="Buscar"
-                    key="search_input"
-                    style={{ width: 200 }}
-                    defaultValue={query}
-                    onSearch={setQuery}
-                    formMethod="submit" />
-            </div>
+            <SearchBar defaultValue={query || ''} onSearch={setQuery}/>
         }>
             <PageHeader ghost={false}
                 style={{ border: '1px solid rgb(235, 237, 240)' }}

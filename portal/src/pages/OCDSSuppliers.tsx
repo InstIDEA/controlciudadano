@@ -6,6 +6,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { filterRedashList, RedashAPI } from '../RedashAPI';
 import { BaseDatosPage } from '../components/BaseDatosPage';
 import { SearchOutlined } from '@ant-design/icons'
+import { SearchBar } from '../components/SearchBar';
 export function OCDSSuppliers() {
 
     const [working, setWorking] = useState(false);
@@ -32,17 +33,7 @@ export function OCDSSuppliers() {
 
     return <>
         <BaseDatosPage menuIndex="suppliers" sidebar={isExploreMenu} headerExtra={
-            <div className="header-search-wrapper">
-                <Input.Search
-                    prefix={<SearchOutlined />}
-                    suffix={null}
-                    placeholder="Buscar"
-                    key="search_input"
-                    defaultValue={query}
-                    style={{ width: 200 }}
-                    onSearch={setQuery}
-                    formMethod="submit" />
-            </div>
+           <SearchBar defaultValue={query || ''} onSearch={setQuery}/>
         }>
             <PageHeader ghost={false}
                 style={{ border: '1px solid rgb(235, 237, 240)' }}

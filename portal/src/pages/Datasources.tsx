@@ -8,6 +8,7 @@ import {Header} from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import './Datasources.css';
 import {DataSet} from '../Model';
+import { SearchBar } from '../components/SearchBar';
 
 export function DS() {
 
@@ -31,17 +32,9 @@ export function DS() {
     return <>
         <Header tableMode={true}
                 showSeparator={false}
-                searchBar={<div className="header-search-wrapper">
-                    <Input.Search
-                        prefix={<SearchOutlined/>}
-                        suffix={null}
-                        placeholder="Buscar"
-                        key="search_input"
-                        defaultValue={query || ''}
-                        onSearch={v => setQuery(v)}
-                        style={{width: 200}}
-                        formMethod="submit"/>
-                </div>}/>
+                searchBar={
+                    <SearchBar defaultValue={query || ''} onSearch={v => setQuery(v)}/>
+                }/>
         <PageHeader title="Fuentes de datos"
                     onBack={() => history.push('/')}
                     backIcon={null}

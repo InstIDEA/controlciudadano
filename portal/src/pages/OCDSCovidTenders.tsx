@@ -8,6 +8,7 @@ import { getTenderLink } from './OCDSAwardItemsPage';
 import { formatMoney } from '../formatters';
 import { BaseDatosPage } from '../components/BaseDatosPage';
 import { SearchOutlined } from '@ant-design/icons'
+import { SearchBar } from '../components/SearchBar';
 
 type OCDSCovidTenderWithQuery = OCDSCovidTender & {
     buyer_query: string;
@@ -46,17 +47,7 @@ export function OCDSCovidTenders() {
     ]), d => d.ocid), [data, query]);
 
     return <BaseDatosPage menuIndex="tenders" sidebar={isExploreMenu} headerExtra={
-        <div className="header-search-wrapper">
-            <Input.Search
-                prefix={<SearchOutlined />}
-                suffix={null}
-                placeholder="Buscar"
-                key="search_input"
-                defaultValue={query}
-                style={{ width: 200 }}
-                onSearch={setQuery}
-                formMethod="submit" />
-        </div>
+        <SearchBar defaultValue={query || ''} onSearch={setQuery}/>
     }>
         <PageHeader ghost={false}
             style={{ border: '1px solid rgb(235, 237, 240)' }}

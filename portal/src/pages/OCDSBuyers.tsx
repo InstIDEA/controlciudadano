@@ -7,6 +7,7 @@ import { filterRedashList, RedashAPI } from '../RedashAPI';
 import { formatMoney } from '../formatters';
 import { BaseDatosPage } from '../components/BaseDatosPage';
 import { SearchOutlined } from '@ant-design/icons'
+import { SearchBar } from '../components/SearchBar';
 
 export function OCDSBuyersPage() {
 
@@ -32,17 +33,7 @@ export function OCDSBuyersPage() {
 
     return <BaseDatosPage
         menuIndex="buyers" sidebar={isExploreMenu} headerExtra={
-            <div className="header-search-wrapper">
-                <Input.Search
-                prefix={<SearchOutlined />}
-                suffix={null}
-                placeholder="Buscar"
-                key="search_input"
-                defaultValue={query}
-                style={{ width: 200 }}
-                onSearch={setQuery}
-                formMethod="submit"/>
-            </div>
+            <SearchBar defaultValue={query || ''} onSearch={setQuery}/>
         }>
         <PageHeader ghost={false}
             style={{ border: '1px solid rgb(235, 237, 240)' }}

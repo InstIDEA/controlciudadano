@@ -10,6 +10,7 @@ import {Link, useHistory} from 'react-router-dom';
 import {buildSFPUrl} from '../SFPHelper';
 import { BaseDatosPage } from '../components/BaseDatosPage';
 import { SearchOutlined } from '@ant-design/icons'
+import { SearchBar } from '../components/SearchBar';
 
 export function DocumentSearchPage() {
 
@@ -46,17 +47,7 @@ export function DocumentSearchPage() {
 
     return <> 
     <BaseDatosPage menuIndex="people" sidebar={isExploreMenu} headerExtra={
-        <div className="header-search-wrapper">
-        <Input.Search
-            prefix={<SearchOutlined />}
-            suffix={null}
-            placeholder="Buscar"
-            key="search_input"
-            defaultValue={document || ''}
-            onSearch={v => setDocument(v)}
-            style={{ width: 200 }}
-            formMethod="submit"/>
-        </div>
+        <SearchBar defaultValue={document || ''} onSearch={v => setDocument(v)}/>
     }>
     <PageHeader ghost={false}
                        style={{border: '1px solid rgb(235, 237, 240)'}}
