@@ -3,13 +3,12 @@ import {useCallback, useEffect, useState} from 'react';
 import {GenericTable} from "../components/GenericTable";
 import {StringParam, useQueryParam} from 'use-query-params';
 import {LocalSearchResult} from '../Model';
-import {Card, Divider, Input, PageHeader, Typography} from 'antd';
+import {Card, Divider, PageHeader, Typography} from 'antd';
 import {ColumnProps} from 'antd/es/table';
 import {SimpleApi} from '../SimpleApi';
 import {Link, useHistory} from 'react-router-dom';
 import {buildSFPUrl} from '../SFPHelper';
 import { BaseDatosPage } from '../components/BaseDatosPage';
-import { SearchOutlined } from '@ant-design/icons'
 import { SearchBar } from '../components/SearchBar';
 
 export function DocumentSearchPage() {

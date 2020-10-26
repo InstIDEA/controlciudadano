@@ -65,8 +65,7 @@ export function LandingPage() {
                 <Col xxl={24} xl={24} lg={24} md={24} sm={24} xs={24}>
                     <QueueAnim className="banner-title-wrapper">
                         <p className="banner-text" key="content">
-                            Este es un portal en el que vas a poder explorar <strong>Datos Abiertos</strong>,
-                            para realizar un <strong>control de los gastos del COVID-19</strong>
+                        En este portal podés explorar <strong>Datos Abiertos</strong> y <strong>controlar los gastos del COVID-19</strong>
                         </p>
                     </QueueAnim>
                 </Col>

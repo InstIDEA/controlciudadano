@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { Input, PageHeader, Table, Tag, Typography, Card, List } from 'antd';
+import { PageHeader, Table, Tag, Typography, Card, List } from 'antd';
 import { OCDSItemsAwardedCOVID19 } from '../Model';
 import { formatMoney } from '../formatters';
 import { Link, useHistory } from 'react-router-dom';
 import { filterRedashList, RedashAPI } from '../RedashAPI';
 import { BaseDatosPage } from '../components/BaseDatosPage';
-import { SearchOutlined } from '@ant-design/icons'
 import '../components/layout/Layout.css'
 import { SearchBar } from '../components/SearchBar';
 export function OCDSAwardItemsPage() {

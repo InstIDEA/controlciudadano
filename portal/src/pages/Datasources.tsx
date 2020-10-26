@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {Button, Input, PageHeader, Space, Table} from 'antd';
+import {Button, PageHeader, Space, Table} from 'antd';
 import {DownloadOutlined, LinkOutlined, SearchOutlined} from '@ant-design/icons';
 import {Link, useHistory} from 'react-router-dom';
 import {filterRedashList, RedashAPI} from '../RedashAPI';

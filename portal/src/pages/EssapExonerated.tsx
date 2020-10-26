@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { filterRedashList, RedashAPI } from '../RedashAPI';
 import { EssapExonerated } from '../Model';
 import { Link, useHistory } from 'react-router-dom';
-import { Input, PageHeader, Table, Typography, List, Card } from 'antd';
+import { PageHeader, Table, Typography, List, Card } from 'antd';
 import { BaseDatosPage } from '../components/BaseDatosPage';
 import { SearchBar } from '../components/SearchBar'
 

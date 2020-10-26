@@ -2,10 +2,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { OCDSSupplierSanctions, OCDSSupplierWithSanction } from '../Model';
 import { filterRedashList, RedashAPI } from '../RedashAPI';
-import { Input, message, PageHeader, Space, Table, Tooltip, Typography, List, Card } from 'antd';
+import { message, PageHeader, Space, Table, Tooltip, Typography, List, Card } from 'antd';
 import { formatIsoDate, formatMoney } from '../formatters';
 import { BaseDatosPage } from '../components/BaseDatosPage';
-import { SearchOutlined } from '@ant-design/icons'
 import { SearchBar } from '../components/SearchBar';
 
 export function OCDSSupplierWithSanctionPage() {

@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { Input, PageHeader, Table, Typography, List, Card } from 'antd';
+import { PageHeader, Table, Typography, List, Card } from 'antd';
 import { OCDSItemRankingListRow } from '../Model';
 import { formatMoney } from '../formatters';
 import { Link, useHistory } from 'react-router-dom';
 import { filterRedashList, RedashAPI } from '../RedashAPI';
 import { BaseDatosPage } from '../components/BaseDatosPage';
-import { SearchOutlined } from '@ant-design/icons'
 import { SearchBar } from '../components/SearchBar';
 
 export function OCDSItemsRankingPage() {

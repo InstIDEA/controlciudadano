@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { Input, PageHeader, Space, Table, Typography, List, Card } from 'antd';
+import { PageHeader, Space, Table, Typography, List, Card } from 'antd';
 import { OCDSCovidTender } from '../Model';
 import { Link, useHistory } from 'react-router-dom';
 import { filterRedashList, RedashAPI, removeDuplicated } from '../RedashAPI';
 import { getTenderLink } from './OCDSAwardItemsPage';
 import { formatMoney } from '../formatters';
 import { BaseDatosPage } from '../components/BaseDatosPage';
-import { SearchOutlined } from '@ant-design/icons'
 import { SearchBar } from '../components/SearchBar';
 
 type OCDSCovidTenderWithQuery = OCDSCovidTender & {

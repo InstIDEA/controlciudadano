@@ -3,9 +3,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { filterRedashList, RedashAPI } from '../RedashAPI';
 import { Authorities } from '../Model';
 import { Link, useHistory } from 'react-router-dom';
-import { Input, PageHeader, Table, Typography, List, Card } from 'antd';
+import { PageHeader, Table, Typography, List, Card } from 'antd';
 import { BaseDatosPage } from '../components/BaseDatosPage';
-import { SearchOutlined } from '@ant-design/icons'
 import { SearchBar } from '../components/SearchBar';
 
 export function ElectedAuthoritiesPage() {
