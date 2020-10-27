@@ -17,6 +17,7 @@ const staging = [
 
 const analysis = [
     {table: 'tsje_elected', column: 'cedula'},
+    {table: 'declarations', column: 'document'},
 ]
 
 const mappers: { [k: string]: Mapper } = {
@@ -32,7 +33,7 @@ export class StagingService {
     constructor(private db: pg.Pool) {
     }
 
-    async findStaging(cedula: string) {
+    async findStaging(cedula: string): Promise<{ query: string, staging: Record<string, unknown> }> {
         const promises = [];
 
         for (let table of staging) {
