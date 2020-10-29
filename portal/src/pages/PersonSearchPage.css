@@ -52,3 +52,9 @@
     border: none;
     margin-right: 5px;
 }
+
+@media (max-width: 600px) {
+    .content-padding {
+        padding: 0 5px;
+    }
+}

@@ -67,8 +67,8 @@ function Routes() {
                 <Route path="/action" exact render={() => <ActionResearchLanding/>}/>
                 <Route path="/explore" exact render={() => <Welcome/>}/>
                 <Route path="/about" exact render={() => <AboutPage/>}/>
-                <Route path="/explore/person/:document" exact render={() => <PersonSearchPage/>}/>
-                <Route path="/person/detail/" exact render={() => <PersonDetailPage/>}/>
+                <Route path="/explore/person/:query?" exact render={() => <PersonSearchPage/>}/>
+                <Route path="/person/detail/:query" exact render={() => <PersonDetailPage/>}/>
                 <Route path="/">
                     <LandingPage/>
                 </Route>

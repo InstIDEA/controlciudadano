@@ -17,7 +17,6 @@ export function Sidebar(props: {
     { key: 'relations', link: '/action/ocds/relations', label: 'Relaciones entre proveedores' },
   ];
   const exploreMenu = [
-    { key: 'people', link: '/explore/people', label: 'Buscador de personas' },
     { key: 'affidavit', link: '/explore/contralory/affidavit', label: 'Declaraciones juradas' },
     { key: 'authorities', link: '/explore/authorities/elected', label: 'Autoridades Electas' },
     { key: 'items', link: '/explore/ocds/items', label: 'Items Adquiridos' },

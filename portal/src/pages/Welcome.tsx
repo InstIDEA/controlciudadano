@@ -15,7 +15,7 @@ import exoneradasAnde from '../assets/imgs/exoneradas_ande.svg'
 import exoneradasEssap from '../assets/imgs/exoneradas_essap.svg'
 
 const data = [{
-    link: "/explore/people",
+    link: "/explore/person/",
     title: "Buscador de personas",
     description: "Buscar personas que reciben ingresos del gobierno.",
     icon: buscadorPersonas
@@ -75,7 +75,7 @@ export function Welcome() {
                     <Col xl={8} lg={8} md={12} sm={12} xs={24} key={d.title}>
                         <Link to={d.link}>
                             <Card hoverable
-                                  style={{width: 320}}
+                                  style={{width: 320, height: 300}}
                                   cover={<img height="80px" src={d.icon} alt="Items adquiridos"/>}>
                                 <Card.Meta title={d.title}
                                            description={d.description}/>
