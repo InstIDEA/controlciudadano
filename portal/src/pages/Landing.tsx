@@ -10,7 +10,7 @@ import {Async, AsyncHelper, GlobalStatistics} from '../Model';
 import {RedashAPI} from '../RedashAPI';
 import {formatIsoDate, formatMoney, formatToMonth} from '../formatters';
 import {Link} from 'react-router-dom';
-import { FilterOutlined, SearchOutlined } from '@ant-design/icons'
+import { FilterOutlined } from '@ant-design/icons'
 import { useHistory } from 'react-router-dom';
 
 export const page1 = [
@@ -69,7 +69,6 @@ export function LandingPage() {
                 </Col>
                 <Col xxl={{offset: 0, span: 10}} xl={{offset: 0, span: 10}} lg={{offset: 0, span: 10}} md={{offset: 0, span: 10}} sm={{offset: 1, span: 16}} xs={{offset: 1, span: 16}} style={{textAlign: 'left'}}>
                     <Input.Search
-                        suffix={<SearchOutlined style={{fontSize: 24, color: 'rgba(0, 52, 91, 1)', marginRight: '5px'}} />}
                         placeholder="Buscar persona"
                         key="search_input"
                         onSearch={ v =>

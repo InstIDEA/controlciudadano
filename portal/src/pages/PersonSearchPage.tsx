@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Layout, Row, Col, Card, Input, Typography, Button, Badge, Select, Tooltip, Collapse, InputNumber, Tag } from 'antd';
 import { Header } from '../components/layout/Header';
-import { SearchOutlined } from '@ant-design/icons'
 import './PersonSearchPage.css'
 import Footer from '../components/layout/Footer';
 import { useQueryParam, StringParam } from 'use-query-params';
@@ -194,7 +193,6 @@ export function PersonSearchPage() {
                         <Col xxl={{ offset: 0, span: 20 }} xl={{ offset: 0, span: 20 }} lg={{ offset: 0, span: 20 }} md={{ offset: 0, span: 20 }} sm={{ offset: 1, span: 22 }} xs={{ offset: 1, span: 22 }} style={{ textAlign: 'left' }}>
                             <Input.Search
                                 placeholder="Buscar"
-                                suffix={<SearchOutlined style={{ fontSize: 24, color: 'rgba(0, 52, 91, 1)', marginRight: '5px' }} />}
                                 key="search_input"
                                 style={{ color: 'rgba(0, 52, 91, 1)', border: '2px solid', borderRadius: '5px', textAlign: 'left' }}
                                 defaultValue={document || ''}
@@ -452,11 +450,6 @@ function FilterMenu(props: {
                         <Typography.Text> <Button type="text" style={{ color: 'rgba(0, 52, 91, 1)' }} onClick={() => sort('networth')}>Patrimonio Neto</Button> </Typography.Text>
                         <Badge className="float-right" count={props.counters.assets} style={{ backgroundColor: '#b2c1cc' }} />
                     </Col>
-                    <Col {...props.spans}>
-
-                        <Typography.Text> Conexiones  </Typography.Text>
-                        <Badge className="float-right" count={0} style={{ backgroundColor: '#b2c1cc' }} />
-                    </Col>
                 </Row>
             </Card>
         </Col>
@@ -493,7 +486,6 @@ function FilterMenu(props: {
                 <Row gutter={[8, 16]}>
                     <Col {...props.spans}>
                         <Input.Search
-                            suffix={<SearchOutlined style={{ fontSize: 20, color: 'rgba(0, 52, 91, 1)', marginRight: '5px' }} />}
                             placeholder="Buscar"
                             key="search_input"
                             style={{ color: 'rgba(0, 52, 91, 1)', border: '1px solid', borderRadius: '5px', textAlign: 'left' }}

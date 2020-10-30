@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Row, Col, Card, Space, Typography, Layout, message } from 'antd';
+import { Row, Col, Card, Space, Typography, Layout, Tooltip } from 'antd';
 import { Header } from '../components/layout/Header';
 import './PersonDetailPage.css'
 import Footer from '../components/layout/Footer';
@@ -14,9 +14,10 @@ import Icon from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { SimpleApi } from '../SimpleApi';
 import { useParams } from 'react-router-dom';
-import { Affidavit, AnalysisSearchResult, LocalSearchResult } from '../Model';
+import { Affidavit, AnalysisSearchResult, LocalSearchResult, Authorities } from '../Model';
 import { SFPRow, SFPFetcher } from '../SFPHelper';
 import { GenericTable } from '../components/GenericTable';
+import { formatMoney } from '../formatters';
 export function PersonDetailPage() {
 
     const spans = { xxl: 8, xl: 8, lg: 8, md: 12, sm: 24, xs: 24};
@@ -24,6 +25,7 @@ export function PersonDetailPage() {
     const cardHeight = 200;
     const { document } = useParams();
     const [affidavit, setAffidavit] = useState<Affidavit[]>();
+    const [tsje, setTsje] = useState<Authorities[]>();
     const [sfpData, setSfpData] = useState<SFPLocalData>({});
     const [analysis, setAnalysis] = useState<AnalysisSearchResult>();
     const [local, setLocal] = useState<LocalSearchResult>();
@@ -35,20 +37,20 @@ export function PersonDetailPage() {
             .then(d => {
                 setAnalysis(d);
                 setAffidavit(d.analysis.declarations)
-                console.log(d)
+                setTsje(d.analysis.tsje_elected);
             })
         new SimpleApi()
             .findPeople(document)
-            .then(d => { setLocal(d); console.log(d) });
+            .then(d => { setLocal(d); });
     }, [document]);
 
-    useEffect(() => {
+     useEffect(() => {
  
          const fetcher = new SFPFetcher();
  
          fetcher.addHandler(data => {
              if (data.type === 'error') {
-                 message.warn(`No se puede cargar datos del año ${data.year} para ${document}`, 5000);
+                 console.warn(`No se puede cargar datos del año ${data.year} para ${document}`, 5000);
                  return;
              }
              setSfpData(prev => ({
@@ -56,7 +58,6 @@ export function PersonDetailPage() {
                  [`${data.year}`]: data.data
              }));
          });
-         console.log(fetcher);
          fetcher.fetchAllYears(document)
          return () => fetcher.cancel();
      }, [document])
@@ -67,19 +68,32 @@ export function PersonDetailPage() {
         <Layout>
             <Layout.Content style={{minHeight: '80vh', padding: '0 5%'}}>
                 <Row gutter={[16, 16]}>
-                    <Col {...config}>
+                    <Col xxl= {8} xl= {8} lg= {8} md= {12} sm= {24} xs={24}>
                         <Typography.Title level={2} className="title-layout-content">
                             {header.name}
                         </Typography.Title>
                     </Col>
-                    <Space direction="vertical" />
-                    <Col {...config}>
-                        <Card className="card-style header-title-big" title="Cargo">
-                            <Typography.Text className="text-layout-content">
-                                {header.charge || 'No encontrado'}
-                            </Typography.Text>
-                        </Card>
+                    <Col xxl= {12} xl= {12} lg= {12} md= {12} sm= {24} xs={24} style={{padding: 25}}>
+                        <Tooltip title="SFP">
+                            <Icon component={Sfp} style={{  color: ((local?.staging.sfp.length || []) > 0 ? 'rgba(0, 52, 91, 1)' : 'rgba(171, 171, 171, 1)') , fontSize: '30px' }} />
+                        </Tooltip>
+                        <Tooltip title="Declaraciones Juradas">
+                            <Icon component={Ddjj} style={{ color: ((analysis?.analysis.declarations.length || []) > 0 ? 'rgba(0, 52, 91, 1)' : 'rgba(171, 171, 171, 1)'), fontSize: '30px' }} />
+                        </Tooltip>
+                        <Tooltip title="Pytyvo">
+                            <Icon component={Pytyvo} style={{ color: ((local?.staging.pytyvo.length || []) > 0 ? 'rgba(0, 52, 91, 1)' : 'rgba(171, 171, 171, 1)'), fontSize: '30px' }} />
+                        </Tooltip>
+                        <Tooltip title="Ñangareko">
+                            <Icon component={Nangareko} style={{ color: ((local?.staging.nangareko.length || []) > 0 ? 'rgba(0, 52, 91, 1)' : 'rgba(171, 171, 171, 1)'), fontSize: '30px' }} />
+                        </Tooltip>
+                        <Tooltip title="ANDE">
+                            <Icon component={Ande} style={{ color: ((local?.staging.ande_exonerados.length || []) > 0 ? 'rgba(0, 52, 91, 1)' : 'rgba(171, 171, 171, 1)'), fontSize: '30px' }} />
+                        </Tooltip>
+                        <Tooltip title="Policia Nacional">
+                            <Icon component={PoliciaNacional} style={{ color: ((local?.staging.policia.length || []) > 0 ? 'rgba(0, 52, 91, 1)' : 'rgba(171, 171, 171, 1)'), fontSize: '30px' }} />
+                        </Tooltip>
                     </Col>
+                    <Space direction="vertical" />
                     <Col {...config}>
                         <Card className="card-style header-title-big" title="Datos Personales">
                             <Typography.Text className="text-layout-content">
@@ -94,6 +108,13 @@ export function PersonDetailPage() {
                                 <strong>Fecha de nacimiento: </strong> {header.birthDate || 'No encontrado'}
                             </Typography.Text>
 
+                        </Card>
+                    </Col>
+                    <Col {...config}>
+                        <Card className="card-style header-title-medium" title="Cargo">
+                            <Typography.Text className="text-layout-content">
+                                {header.charge || 'No encontrado'}
+                            </Typography.Text>
                         </Card>
                     </Col>
                 </Row>
@@ -139,9 +160,9 @@ export function PersonDetailPage() {
                             <Card className="data-box" title="Salarios SFP" style={{ height: cardHeight }} extra={<Icon component={SalarioSfp} style={{ color: 'rgba(0, 52, 91, 1)', fontSize: '30px' }} />}>
                                 <Typography.Text>Año: {(local.staging.hacienda_funcionarios[0] as any).anio} </Typography.Text>
                                 <br />
-                                <Typography.Text>Presupuesto: {(local.staging.hacienda_funcionarios[0] as any).montopresupuestado} </Typography.Text>
+                                <Typography.Text>Presupuesto: {formatMoney((local.staging.hacienda_funcionarios[0] as any).montopresupuestado)} </Typography.Text>
                                 <br />
-                                <Typography.Text>Devengado: {(local.staging.hacienda_funcionarios[0] as any).montodevengado} </Typography.Text>
+                                <Typography.Text>Devengado: {formatMoney((local.staging.hacienda_funcionarios[0] as any).montodevengado)} </Typography.Text>
                             </Card>
                         </Col>
                     }
@@ -151,9 +172,9 @@ export function PersonDetailPage() {
                             <Card className="data-box" title="Policía Nacional" style={{ height: cardHeight }} extra={<Icon component={PoliciaNacional} style={{ color: 'rgba(0, 52, 91, 1)', fontSize: '30px' }} />}>
                                 <Typography.Text>Año: {(local.staging.policia[0] as any).ano} </Typography.Text>
                                 <br />
-                                <Typography.Text>Presupuesto: {(local.staging.policia[0] as any).presupuesto} </Typography.Text>
+                                <Typography.Text>Presupuesto: {formatMoney((local.staging.policia[0] as any).presupuesto)} </Typography.Text>
                                 <br />
-                                <Typography.Text>Remuneración: {(local.staging.policia[0] as any).remuneracion} </Typography.Text>
+                                <Typography.Text>Remuneración: {formatMoney((local.staging.policia[0] as any).remuneracion)} </Typography.Text>
                             </Card>
                         </Col>
                     }
@@ -170,19 +191,38 @@ export function PersonDetailPage() {
                     }
                     {
                         affidavit && affidavit.length > 0 &&
-                        <Col {...spans}>
-                            <Card className="data-box" title="Declaración Jurada" style={{ height: cardHeight }} extra={<Icon component={Ddjj} style={{ color: 'rgba(0, 52, 91, 1)', fontSize: '30px' }} />}    >
-                                <Typography.Text>Año (Revisión): {affidavit[0].year} ({affidavit[0].revision}) </Typography.Text>
-                                <br />
-                                <Typography.Text>Activos: {affidavit[0].actives} </Typography.Text>
-                                <br />
-                                <Typography.Text>Pasivos: {affidavit[0].passive} </Typography.Text>
-                                <br />
-                                <Typography.Text>Patrimonio Neto: {affidavit[0].networth} </Typography.Text>
-                                <br />
-                                <a href={`${affidavit[0].source}`} target="_blank" rel="noopener noreferrer">Link</a>
-                            </Card>
-                        </Col>
+                        affidavit.map(
+                            declaration =>
+                            <Col {...spans}>
+                                <Card className="data-box" title="Declaración Jurada" style={{ height: cardHeight }} extra={<Icon component={Ddjj} style={{ color: 'rgba(0, 52, 91, 1)', fontSize: '30px' }} />}    >
+                                    <Typography.Text>Año (Revisión): {declaration.year} ({declaration.revision}) </Typography.Text>
+                                    <br />
+                                    <Typography.Text>Activos: {formatMoney(declaration.actives)} </Typography.Text>
+                                    <br />
+                                    <Typography.Text>Pasivos: {formatMoney(declaration.passive)} </Typography.Text>
+                                    <br />
+                                    <Typography.Text>Patrimonio Neto: {formatMoney(declaration.networth)} </Typography.Text>
+                                    <br />
+                                    <a href={`${declaration.link}`} target="_blank" rel="noopener noreferrer">Link</a>
+                                </Card>
+                            </Col>
+                        )
+                    }
+                    {
+                        tsje && tsje.length > 0 &&
+                        tsje.map(
+                            election =>
+                            <Col {...spans}>
+                                <Card className="data-box" title="TSJE" style={{ height: cardHeight }} extra={<Icon component={Ddjj} style={{ color: 'rgba(0, 52, 91, 1)', fontSize: '30px' }} />}    >
+                                    <Typography.Text>Año: {election.ano} </Typography.Text>
+                                    <br />
+                                    <Typography.Text>Candidatura: {election.cand_desc} </Typography.Text>
+                                    <br />
+                                    <Typography.Text>Nombre Lista: {election.nombre_lista} ({election.siglas_lista}) </Typography.Text>
+                                    <br />
+                                </Card>
+                            </Col>
+                        )
                     }
                 </Row>
             </Layout.Content>

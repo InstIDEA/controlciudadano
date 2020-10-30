@@ -2,6 +2,10 @@
   font-size: 20px;
 }
 
+.header-title-medium .ant-card-head {
+  font-size: 16px;
+}
+
 .data-box {
   margin: 10px 0;
   border-radius: 10px;
