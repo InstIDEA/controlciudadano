@@ -9,20 +9,20 @@ export function Sidebar(props: {
 }) {
   const { Sider } = Layout;
   const actionMenu = [
-    { key: 'items', link: '/action/ocds/items', label: 'Items Adquiridos' },
-    { key: 'itemsRanking', link: '/action/ocds/covid/itemsRanking', label: 'Ranking de items adquiridos' },
-    { key: 'sanctionedSuppliers', link: '/action/ocds/sanctioned_suppliers', label: 'Proveedores' },
-    { key: 'buyers', link: '/action/ocds/buyers', label: 'Entidades Compradoras' },
-    { key: 'tenders', link: '/action/ocds/tenders', label: 'Licitaciones' },
-    { key: 'relations', link: '/action/ocds/relations', label: 'Relaciones entre proveedores' },
+    { key: 'items', link: '/action/ocds/items', label: "¿Se compró más caro?" },
+    { key: 'itemsRanking', link: '/action/ocds/covid/itemsRanking', label: "¿Qué se compró?" },
+    { key: 'sanctionedSuppliers', link: '/action/ocds/sanctioned_suppliers', label: '¿A quiénes se compró?' },
+    { key: 'buyers', link: '/action/ocds/buyers', label: "¿Quienes compraron?" },
+    { key: 'tenders', link: '/action/ocds/tenders', label: "¿Conocés las licitaciones más grandes?" },
+    { key: 'relations', link: '/action/ocds/relations', label: "¿Tienen vínculos a quienes se compró?" },
   ];
   const exploreMenu = [
     { key: 'affidavit', link: '/explore/contralory/affidavit', label: 'Declaraciones juradas' },
     { key: 'authorities', link: '/explore/authorities/elected', label: 'Autoridades Electas' },
-    { key: 'items', link: '/explore/ocds/items', label: 'Items Adquiridos' },
-    { key: 'itemsRanking', link: '/explore/ocds/covid/itemsRanking', label: 'Ranking de items adquiridos' },
+    { key: 'items', link: '/explore/ocds/items', label: "¿Se compró más caro?" },
+    { key: 'itemsRanking', link: '/explore/ocds/covid/itemsRanking', label: "¿Qué se compró?" },
     { key: 'suppliers', link: '/explore/ocds/suppliers', label: 'Proveedores' },
-    { key: 'relations', link: '/explore/ocds/relations', label: 'Relaciones entre proveedores' },
+    { key: 'relations', link: '/explore/ocds/relations', label: "¿Tienen vínculos a quienes se compró?" },
     { key: 'ande', link: '/explore/covid/ande', label: 'ANDE exoneradas por COVID-19' },
     { key: 'essap', link: '/explore/covid/essap', label: 'ESSAP exoneradas por COVID-19' },
     { key: 'sources', link: '/sources', label: 'Fuentes' },

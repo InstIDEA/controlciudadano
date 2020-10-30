@@ -40,13 +40,13 @@ export function OCDSSupplierWithSanctionPage() {
             style={{ border: '1px solid rgb(235, 237, 240)' }}
             onBack={() => history.push('/')}
             backIcon={null}
-            title="Proveedores"
+            title="¿A quiénes se compró?"
             subTitle="CDS - IDEA">
 
 
             <Typography.Paragraph>
-                Ranking de proveedores que han ganado licitaciones realizadas con fondos de emergencia
-        </Typography.Paragraph>
+                Ránking de proveedores por monto total adjudicado durante la pandemia
+            </Typography.Paragraph>
 
             <Table<OCDSSupplierWithSanction>
                 className="hide-responsive"

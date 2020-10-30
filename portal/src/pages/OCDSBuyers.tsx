@@ -38,13 +38,13 @@ export function OCDSBuyersPage() {
             style={{ border: '1px solid rgb(235, 237, 240)' }}
             onBack={() => history.push('/')}
             backIcon={null}
-            title="Entidades gubernamentales"
+            title="¿Quienes compraron?"
             subTitle="CDS - IDEA">
 
 
             <Typography.Paragraph>
-                Listado de las entidades que han realizado licitaciones durante la pandemia
-        </Typography.Paragraph>
+                Ránking de entidades públicas por monto total adjudicado durante la pandemia
+            </Typography.Paragraph>
 
             <Table<OCDSBuyerWithAmount> dataSource={filtered}
                 className="hide-responsive"

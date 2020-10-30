@@ -52,13 +52,13 @@ export function OCDSCovidTenders() {
             style={{ border: '1px solid rgb(235, 237, 240)' }}
             onBack={() => history.push('/')}
             backIcon={null}
-            title="Licitaciones"
+            title="¿Conocés las licitaciones más grandes?"
             subTitle="CDS - IDEA">
 
 
             <Typography.Paragraph>
-                Listado de todas aquellas licitaciones que se hicieron con fondos de emergencia
-        </Typography.Paragraph>
+                Ránking de licitaciones por monto total adjudicado durante la pandemia
+            </Typography.Paragraph>
 
             <Table<OCDSCovidTenderWithQuery>
                 className="hide-responsive"

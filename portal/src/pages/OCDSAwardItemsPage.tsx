@@ -40,11 +40,11 @@ export function OCDSAwardItemsPage() {
             style={{ border: '1 px solid rgb(235, 237, 240)' }}
             onBack={() => history.push('/')}
             backIcon={null}
-            title="Lista de Items COVID-19">
+            title="¿Qué se compró?">
 
             <Typography.Paragraph>
-                Listado de ítems que fueron adjudicados en procesos de licitación marcados con COVID-19.
-        </Typography.Paragraph>
+                Ránking de items con mayores sobrecostos, comparados con sus precios antes de la pandemia
+            </Typography.Paragraph>
             <Table<OCDSItemsAwardedCOVID19>
                 dataSource={filtered}
                 loading={working}

@@ -39,14 +39,13 @@ export function OCDSItemsRankingPage() {
         <PageHeader ghost={false}
             onBack={() => history.push('/')}
             backIcon={null}
-            title="Contrataciones - COVID - Ranking de items adquiridos durante la pandemia"
+            title="¿Qué se compró?"
             className="page-header"
         >
 
             <Typography.Paragraph>
-                Ranking de ítems que fueron adjudicados en procesos de licitación marcados con COVID-19,
-                agrupados por moneda, presentación y unidad de medida.
-        </Typography.Paragraph>
+                Ránking de items adquiridos durante la pandemia por monto total, agrupados por unidad de medida y presentación.
+            </Typography.Paragraph>
 
             <Table<OCDSItemRankingListRow>
                 className="hide-responsive"
