@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { OCDSSupplierRelation, Supplier } from '../Model';
-import { Layout, PageHeader, Space, Timeline } from 'antd';
+import { Layout, PageHeader, Space, Timeline, Spin } from 'antd';
 import { Link, useHistory } from 'react-router-dom';
 import { Edge, Graph, Node, RelationGraph } from '../components/graphs/RelationGraph';
 import { RedashAPI } from '../RedashAPI';
@@ -136,7 +136,7 @@ export function SupplierCard({ id }: { id: string }) {
 
     }, [id])
 
-    if (!data) return <></>;
+    if (!data) return <><Spin/></>;
 
     return <Card
         title={<Link to={`/ocds/suppliers/${id}`} target="__blank">{data ? data.name : id}</Link>}

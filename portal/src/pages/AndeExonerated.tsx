@@ -3,9 +3,9 @@ import {useEffect, useMemo, useState} from 'react';
 import {filterRedashList, RedashAPI} from '../RedashAPI';
 import {AndeExonerated} from '../Model';
 import {Link, useHistory} from 'react-router-dom';
-import {Input, PageHeader, Table, Typography, List, Card} from 'antd';
+import { PageHeader, Table, Typography, List, Card} from 'antd';
 import { BaseDatosPage } from '../components/BaseDatosPage';
-import { SearchOutlined } from '@ant-design/icons'
+import { SearchBar } from '../components/SearchBar';
 
 export function AndeExoneratedList() {
 
@@ -31,17 +31,7 @@ export function AndeExoneratedList() {
 
     return <>
     <BaseDatosPage menuIndex="ande" sidebar={isExploreMenu} headerExtra={
-        <div className="header-search-wrapper">
-            <Input.Search
-            prefix={<SearchOutlined />}
-            suffix={null}
-            placeholder="Buscar"
-            key="search_input"
-            defaultValue={query}
-            style={{ width: 200 }}
-            onSearch={setQuery}
-            formMethod="submit"/>
-        </div>
+        <SearchBar defaultValue={query || ''} onSearch={setQuery}/>
     }>
     <PageHeader ghost={false}
                        style={{border: '1px solid rgb(235, 237, 240)'}}

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { Input, PageHeader, Table, Tag, Typography, Card, List } from 'antd';
+import { PageHeader, Table, Tag, Typography, Card, List } from 'antd';
 import { OCDSItemsAwardedCOVID19 } from '../Model';
 import { formatMoney } from '../formatters';
 import { Link, useHistory } from 'react-router-dom';
 import { filterRedashList, RedashAPI } from '../RedashAPI';
 import { BaseDatosPage } from '../components/BaseDatosPage';
-import { SearchOutlined } from '@ant-design/icons'
 import '../components/layout/Layout.css'
+import { SearchBar } from '../components/SearchBar';
 export function OCDSAwardItemsPage() {
 
     const [query, setQuery] = useState('');
@@ -33,17 +33,8 @@ export function OCDSAwardItemsPage() {
     ]), [data, query]);
 
     return <BaseDatosPage menuIndex="items" sidebar={isExploreMenu} headerExtra={
-        <div className="header-search-wrapper">
-            <Input.Search
-            prefix={<SearchOutlined />}
-            suffix={null}
-            placeholder="Buscar"
-            key="search_input"
-            defaultValue={query}
-            onSearch={setQuery}
-            style={{ width: 200 }}
-            formMethod="submit"/>
-        </div>
+        <SearchBar defaultValue={query}
+        onSearch={setQuery}/>
     }>
         <PageHeader ghost={false}
             style={{ border: '1 px solid rgb(235, 237, 240)' }}

@@ -9,11 +9,13 @@
   font-size: larger;
 }
 
-.ant-input-search-icon {
-  display: none;
+
+.ant-input-suffix {
+  font-size: 24px;
 }
 .ant-input-affix-wrapper {
-  border: none;
+  border: solid 1px  rgba(0, 52, 91, 1);
+  border-radius: 5px;
 }
 .ant-input-affix-wrapper > input.ant-input {
   font-weight: bold;
@@ -41,8 +43,7 @@
 }
 
 .header-search-wrapper {
-  padding-left: 20px;
-  display: inline-block;
+  padding-left: 40px;
   vertical-align: middle;
   line-height: 64px;
 }
@@ -95,4 +96,16 @@
 .control-logo {
   width: 200px;
   height: 70px;
+}
+
+.ant-input-search-icon {
+  color: rgba(0, 52, 91, 1);
+}
+
+.ant-input-affix-wrapper:hover {
+  border: solid 1px rgba(0, 52, 91, 1);
+}
+
+.header-shadow {
+  box-shadow: 0px 10px 5px rgba(42, 42, 42, 0.06);
 }

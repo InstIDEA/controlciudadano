@@ -3,13 +3,13 @@ import {useCallback, useEffect, useState} from 'react';
 import {GenericTable} from "../components/GenericTable";
 import {StringParam, useQueryParam} from 'use-query-params';
 import {LocalSearchResult} from '../Model';
-import {Card, Divider, Input, PageHeader, Typography} from 'antd';
+import {Card, Divider, PageHeader, Typography} from 'antd';
 import {ColumnProps} from 'antd/es/table';
 import {SimpleApi} from '../SimpleApi';
 import {Link, useHistory} from 'react-router-dom';
 import {buildSFPUrl} from '../SFPHelper';
 import { BaseDatosPage } from '../components/BaseDatosPage';
-import { SearchOutlined } from '@ant-design/icons'
+import { SearchBar } from '../components/SearchBar';
 
 export function DocumentSearchPage() {
 
@@ -46,17 +46,7 @@ export function DocumentSearchPage() {
 
     return <> 
     <BaseDatosPage menuIndex="people" sidebar={isExploreMenu} headerExtra={
-        <div className="header-search-wrapper">
-        <Input.Search
-            prefix={<SearchOutlined />}
-            suffix={null}
-            placeholder="Buscar"
-            key="search_input"
-            defaultValue={document || ''}
-            onSearch={v => setDocument(v)}
-            style={{ width: 200 }}
-            formMethod="submit"/>
-        </div>
+        <SearchBar defaultValue={document || ''} onSearch={v => setDocument(v)}/>
     }>
     <PageHeader ghost={false}
                        style={{border: '1px solid rgb(235, 237, 240)'}}
