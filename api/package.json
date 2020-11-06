@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "tsc": "tsc",
     "rsync": "tsc && rsync --exclude 'node_modules/typescript/' -rv ../api/ ideacds:services/simple_api ",
     "watch-node": "npx nodemon dist/index.js",
     "watch-ts": "tsc -w",
