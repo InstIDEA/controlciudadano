@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { Input, PageHeader, Space, Table, Typography, List, Card } from 'antd';
+import { PageHeader, Space, Table, Typography, List, Card } from 'antd';
 import { OCDSCovidTender } from '../Model';
 import { Link, useHistory } from 'react-router-dom';
 import { filterRedashList, RedashAPI, removeDuplicated } from '../RedashAPI';
 import { getTenderLink } from './OCDSAwardItemsPage';
 import { formatMoney } from '../formatters';
 import { BaseDatosPage } from '../components/BaseDatosPage';
-import { SearchOutlined } from '@ant-design/icons'
+import { SearchBar } from '../components/SearchBar';
 
 type OCDSCovidTenderWithQuery = OCDSCovidTender & {
     buyer_query: string;
@@ -46,29 +46,19 @@ export function OCDSCovidTenders() {
     ]), d => d.ocid), [data, query]);
 
     return <BaseDatosPage menuIndex="tenders" sidebar={isExploreMenu} headerExtra={
-        <div className="header-search-wrapper">
-            <Input.Search
-                prefix={<SearchOutlined />}
-                suffix={null}
-                placeholder="Buscar"
-                key="search_input"
-                defaultValue={query}
-                style={{ width: 200 }}
-                onSearch={setQuery}
-                formMethod="submit" />
-        </div>
+        <SearchBar defaultValue={query || ''} onSearch={setQuery}/>
     }>
         <PageHeader ghost={false}
             style={{ border: '1px solid rgb(235, 237, 240)' }}
             onBack={() => history.push('/')}
             backIcon={null}
-            title="Licitaciones"
+            title="¿Conocés las licitaciones más grandes?"
             subTitle="CDS - IDEA">
 
 
             <Typography.Paragraph>
-                Listado de todas aquellas licitaciones que se hicieron con fondos de emergencia
-        </Typography.Paragraph>
+                Ránking de licitaciones por monto total adjudicado durante la pandemia
+            </Typography.Paragraph>
 
             <Table<OCDSCovidTenderWithQuery>
                 className="hide-responsive"

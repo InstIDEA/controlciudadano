@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { OCDSSupplierRelation, Supplier } from '../Model';
-import { Layout, PageHeader, Space, Timeline } from 'antd';
+import { Layout, PageHeader, Space, Timeline, Spin, Typography } from 'antd';
 import { Link, useHistory } from 'react-router-dom';
 import { Edge, Graph, Node, RelationGraph } from '../components/graphs/RelationGraph';
 import { RedashAPI } from '../RedashAPI';
@@ -46,9 +46,12 @@ export function OCDSSupplierRelations() {
             onBack={() => history.push('')}
             backIcon={null}
             style={{ border: '1px solid rgb(235, 237, 240)' }}
-            title={"Relaciones ente proveedores"}
+            title={"¿Tienen vínculos a quienes se compró?Relaciones ente proveedores"}
             subTitle="CDS - IDEA"
         >
+             <Typography.Paragraph>
+                Grafo de relación entre proveedores con igual dirección o número de contacto
+            </Typography.Paragraph>
             <Layout>
                 <Layout>
                     <Layout.Content>
@@ -136,7 +139,7 @@ export function SupplierCard({ id }: { id: string }) {
 
     }, [id])
 
-    if (!data) return <></>;
+    if (!data) return <><Spin/></>;
 
     return <Card
         title={<Link to={`/ocds/suppliers/${id}`} target="__blank">{data ? data.name : id}</Link>}

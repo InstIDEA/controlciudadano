@@ -1,0 +1,60 @@
+.card-style {
+    margin: 10px 0;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(227, 232, 236, 1);
+}
+
+.card-style .ant-card-head {
+    color: rgba(0, 52, 91, 1);
+    font-size: 16px;
+    border-bottom: none;
+}
+
+.card-style .ant-card-body {
+    padding-top: 5px;
+}
+
+.float-right {
+    float: right;
+}
+
+.sidebar-title {
+    font-size: 18px;
+    font-weight: 500;
+    margin-left: 15px;
+}
+
+.card-layout-content {
+    margin: 10px 0;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(227, 232, 236, 1);
+}
+
+.text-layout-content {
+    font-size: 16px;
+}
+
+.title-layout-content {
+    color: rgba(0, 52, 91, 1) !important;
+    padding: 10px 0;
+}
+
+.mas-button {
+    min-width: 100px;
+    font-size: 12px;
+    height: 30px;
+    text-transform: none !important;
+    padding: 0 !important;
+    background-color: rgb(205 83 52);
+    color: white;
+    box-shadow: 0 5px 15px 0 rgba(0, 0, 0, 0.2), 0 5px 15px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 1rem;
+    border: none;
+    margin-right: 5px;
+}
+
+@media (max-width: 600px) {
+    .content-padding {
+        padding: 0 5px;
+    }
+}

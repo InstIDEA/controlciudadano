@@ -2,10 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { OCDSSupplierSanctions, OCDSSupplierWithSanction } from '../Model';
 import { filterRedashList, RedashAPI } from '../RedashAPI';
-import { Input, message, PageHeader, Space, Table, Tooltip, Typography, List, Card } from 'antd';
+import { message, PageHeader, Space, Table, Tooltip, Typography, List, Card } from 'antd';
 import { formatIsoDate, formatMoney } from '../formatters';
 import { BaseDatosPage } from '../components/BaseDatosPage';
-import { SearchOutlined } from '@ant-design/icons'
+import { SearchBar } from '../components/SearchBar';
 
 export function OCDSSupplierWithSanctionPage() {
 
@@ -34,29 +34,19 @@ export function OCDSSupplierWithSanctionPage() {
 
     return <BaseDatosPage
         menuIndex="sanctionedSuppliers" sidebar={isExploreMenu} headerExtra={
-            <div className="header-search-wrapper">
-                <Input.Search
-                prefix={<SearchOutlined />}
-                suffix={null}
-                placeholder="Buscar"
-                key="search_input"
-                defaultValue={query}
-                style={{ width: 200 }}
-                onSearch={setQuery}
-                formMethod="submit"/>
-            </div>
+            <SearchBar defaultValue={query || ''} onSearch={setQuery}/>
         }>
         <PageHeader ghost={false}
             style={{ border: '1px solid rgb(235, 237, 240)' }}
             onBack={() => history.push('/')}
             backIcon={null}
-            title="Proveedores"
+            title="¿A quiénes se compró?"
             subTitle="CDS - IDEA">
 
 
             <Typography.Paragraph>
-                Ranking de proveedores que han ganado licitaciones realizadas con fondos de emergencia
-        </Typography.Paragraph>
+                Ránking de proveedores por monto total adjudicado durante la pandemia
+            </Typography.Paragraph>
 
             <Table<OCDSSupplierWithSanction>
                 className="hide-responsive"

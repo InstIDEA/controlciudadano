@@ -15,7 +15,7 @@ import exoneradasAnde from '../assets/imgs/exoneradas_ande.svg'
 import exoneradasEssap from '../assets/imgs/exoneradas_essap.svg'
 
 const data = [{
-    link: "/explore/people",
+    link: "/explore/person/",
     title: "Buscador de personas",
     description: "Buscar personas que reciben ingresos del gobierno.",
     icon: buscadorPersonas
@@ -31,13 +31,13 @@ const data = [{
     icon: autoridades
 }, {
     link: '/explore/ocds/items',
-    title: 'Items adquiridos',
-    description: 'Todos los items que han sido comprados con recursos de emergencia nacional COVID-19',
+    title: '¿Se compró más caro?',
+    description: 'Ránking de items con mayores sobrecostos, comparados con sus precios antes de la pandemia',
     icon: items
 }, {
     link: '/explore/ocds/covid/itemsRanking',
-    title: 'Ranking de items adquiridos',
-    description: 'Ranking de ítems que fueron adjudicados en procesos de licitación marcados con COVID-19, agrupados por moneda, presentación y unidad de medida.',
+    title: '¿Qué se compró?',
+    description: 'Ránking de items adquiridos durante la pandemia por monto total, agrupados por unidad de medida y presentación.',
     icon: rankingItems
 }, {
     link: '/explore/ocds/suppliers',
@@ -46,8 +46,8 @@ const data = [{
     icon: proveedores
 }, {
     link: '/explore/ocds/relations',
-    title: 'Proveedores relacionados',
-    description: 'Gráfico de relaciones entre proveedores',
+    title: '¿Tienen vínculos a quienes se compró',
+    description: 'Grafo de relación entre proveedores con igual dirección o número de contacto',
     icon: proveedoresRelacionados
 }, {
     link: '/explore/covid/ande',
@@ -75,7 +75,7 @@ export function Welcome() {
                     <Col xl={8} lg={8} md={12} sm={12} xs={24} key={d.title}>
                         <Link to={d.link}>
                             <Card hoverable
-                                  style={{width: 320}}
+                                  style={{width: 320, height: 300}}
                                   cover={<img height="80px" src={d.icon} alt="Items adquiridos"/>}>
                                 <Card.Meta title={d.title}
                                            description={d.description}/>

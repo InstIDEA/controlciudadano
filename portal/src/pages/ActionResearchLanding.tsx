@@ -33,10 +33,10 @@ export function ActionResearchLanding() {
             <Col {...spans}>
                 <Link to="/action/ocds/items" target="_blank">
                     <Card hoverable
-                          style={{width: 320}}
+                          style={{width: 320, height: 300}}
                           cover={<img height="80px" alt="Items adquiridos" src={onlineReports}/>}>
-                        <Card.Meta title="Items adquiridos"
-                                   description="Todos los items que han sido adquiridos para la lucha contra el Covid-19"/>
+                        <Card.Meta title="¿Se compró más caro?"
+                                   description="Ránking de items con mayores sobrecostos, comparados con sus precios antes de la pandemia"/>
                     </Card>
                 </Link>
             </Col>
@@ -44,21 +44,20 @@ export function ActionResearchLanding() {
             <Col {...spans}>
                 <Link to="/action/ocds/covid/itemsRanking">
                     <Card hoverable
-                          style={{width: 350}}
+                          style={{width: 350, height: 300}}
                           cover={<img height="80px" alt="Ranking de items adquiridos" src={dataReports}/>}>
-                        <Card.Meta title="Ranking de items adquiridos"
-                                   description="Ranking de ítems que fueron adjudicados en procesos de licitación marcados con COVID-19, agrupados por moneda, presentación y unidad de medida."/>
+                        <Card.Meta title="¿Qué se compró?"
+                                   description="Ránking de items adquiridos durante la pandemia por monto total, agrupados por unidad de medida y presentación."/>
                     </Card>
                 </Link>
             </Col>
-
             <Col {...spans}>
                 <Link to="/action/ocds/sanctioned_suppliers" target="_blank">
                     <Card hoverable
-                          style={{width: 340}}
+                          style={{width: 340, height: 300}}
                           cover={<img height="80px" alt="Proveedores" src={suppliers}/>}>
-                        <Card.Meta title="Proveedores"
-                                   description="Todos aquellos que han proveído al estado en una licitación pública."/>
+                        <Card.Meta title="¿A quiénes se compró?"
+                                   description="Ránking de proveedores por monto total adjudicado durante la pandemia"/>
                     </Card>
                 </Link>
             </Col>
@@ -66,10 +65,10 @@ export function ActionResearchLanding() {
             <Col {...spans}>
                 <Link to="/action/ocds/buyers" target="_blank">
                     <Card hoverable
-                          style={{width: 340}}
+                          style={{width: 340, height: 300}}
                           cover={<img height="80px" alt="Compradoras" src={buyers}/>}>
-                        <Card.Meta title="Entidades compradoras"
-                                   description="Todas las entidades públicas que han adquirido bienes durante la pandemia"/>
+                        <Card.Meta title="¿Quienes compraron?"
+                                   description="Ránking de entidades públicas por monto total adjudicado durante la pandemia"/>
                     </Card>
                 </Link>
             </Col>
@@ -77,11 +76,11 @@ export function ActionResearchLanding() {
             <Col {...spans}>
                 <Link to="/action/ocds/tenders" target="_blank">
                     <Card hoverable
-                          style={{width: 340}}
+                          style={{width: 340, height: 300}}
                           cover={<img height="80px" alt="Licitaciones" src={contracts} style={{
                           }}/>}>
-                        <Card.Meta title="Licitaciones"
-                                   description="Las licitaciones realizadas en la pandemia"/>
+                        <Card.Meta title="¿Conocés las licitaciones más grandes?"
+                                   description="Ránking de licitaciones por monto total adjudicado durante la pandemia"/>
                     </Card>
                 </Link>
             </Col>
@@ -89,10 +88,10 @@ export function ActionResearchLanding() {
             <Col {...spans}>
                 <Link to="/action/ocds/relations" target="_blank">
                     <Card hoverable
-                          style={{width: 340}}
+                          style={{width: 340, height: 300}}
                           cover={<img height="80px" alt="Relations" src={relation}/>}>
-                        <Card.Meta title="Relaciones entre proveedores"
-                                   description="Relación entre los distintos proveedores del estado"/>
+                        <Card.Meta title="¿Tienen vínculos a quienes se compró?"
+                                   description="Grafo de relación entre proveedores con igual dirección o número de contacto"/>
                     </Card>
                 </Link>
             </Col>

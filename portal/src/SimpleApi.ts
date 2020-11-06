@@ -12,7 +12,8 @@ import {
     OCDSSupplierResult,
     OCDSSuppliersPaginatedResult,
     PaginatedResult,
-    SimpleAPINotPaginatedResult
+    SimpleAPINotPaginatedResult,
+    LocalSearchPersonResult
 } from './Model';
 
 const BASE_API = "https://api.controlciudadanopy.org/api";
@@ -22,6 +23,11 @@ export class SimpleApi {
 
     async findPeople(query: string): Promise<LocalSearchResult> {
         const d = await fetch(`${BASE_API}/find?query=${query}`);
+        return await d.json();
+    }
+
+    async findPeopleByName(query: string): Promise<LocalSearchPersonResult> {
+        const d = await fetch(`${BASE_API}/search?query=${query}`);
         return await d.json();
     }
 

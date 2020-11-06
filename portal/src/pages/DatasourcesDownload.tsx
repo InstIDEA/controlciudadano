@@ -1,9 +1,8 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {Button, Card, Col, Input, List, PageHeader, Row, Space, Table, Typography} from 'antd';
-import {DownloadOutlined, SearchOutlined} from '@ant-design/icons';
+import {Button, Card, Col, List, PageHeader, Row, Space, Table, Typography} from 'antd';
+import {DownloadOutlined} from '@ant-design/icons';
 import {useHistory, useParams} from 'react-router-dom';
 import {RedashAPI} from '../RedashAPI';
-import {StringParam, useQueryParam} from 'use-query-params';
 import {Header} from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import './Datasources.css';
@@ -28,7 +27,6 @@ interface SingleYearData {
 export function DSDownload() {
     const {dataSetId} = useParams();
     const [working, setWorking] = useState(false);
-    const [query, setQuery] = useQueryParam('query', StringParam);
     const [data, setData] = useState<DataSet[]>();
     const history = useHistory();
 
@@ -49,19 +47,7 @@ export function DSDownload() {
     }, [first])
 
     return <>
-        <Header tableMode={true} searchBar={
-            <div className="header-search-wrapper">
-                <Input.Search
-                    prefix={<SearchOutlined/>}
-                    suffix={null}
-                    placeholder="Buscar"
-                    key="search_input"
-                    defaultValue={query || ''}
-                    onSearch={v => setQuery(v)}
-                    style={{width: 200}}
-                    formMethod="submit"/>
-            </div>
-        }/>
+        <Header tableMode={true} showSeparator={false}/>
         <PageHeader title={name}
                     onBack={() => history.push('/sources')}
                     subTitle="Descargas de archivos"

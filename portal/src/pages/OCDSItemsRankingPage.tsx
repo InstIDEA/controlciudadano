@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { Input, PageHeader, Table, Typography, List, Card } from 'antd';
+import { PageHeader, Table, Typography, List, Card } from 'antd';
 import { OCDSItemRankingListRow } from '../Model';
 import { formatMoney } from '../formatters';
 import { Link, useHistory } from 'react-router-dom';
 import { filterRedashList, RedashAPI } from '../RedashAPI';
 import { BaseDatosPage } from '../components/BaseDatosPage';
-import { SearchOutlined } from '@ant-design/icons'
+import { SearchBar } from '../components/SearchBar';
 
 export function OCDSItemsRankingPage() {
 
@@ -34,29 +34,18 @@ export function OCDSItemsRankingPage() {
 
     return <BaseDatosPage
         menuIndex="itemsRanking" sidebar={isExploreMenu} headerExtra={
-            <div className="header-search-wrapper">
-                <Input.Search
-                    prefix={<SearchOutlined />}
-                    suffix={null}
-                    placeholder="Buscar"
-                    key="search_input"
-                    defaultValue={query}
-                    onSearch={setQuery}
-                    style={{ width: 200 }}
-                    formMethod="submit" />
-            </div>
+            <SearchBar defaultValue={query || ''} onSearch={setQuery}/>
         }>
         <PageHeader ghost={false}
             onBack={() => history.push('/')}
             backIcon={null}
-            title="Contrataciones - COVID - Ranking de items adquiridos durante la pandemia"
+            title="¿Qué se compró?"
             className="page-header"
         >
 
             <Typography.Paragraph>
-                Ranking de ítems que fueron adjudicados en procesos de licitación marcados con COVID-19,
-                agrupados por moneda, presentación y unidad de medida.
-        </Typography.Paragraph>
+                Ránking de items adquiridos durante la pandemia por monto total, agrupados por unidad de medida y presentación.
+            </Typography.Paragraph>
 
             <Table<OCDSItemRankingListRow>
                 className="hide-responsive"

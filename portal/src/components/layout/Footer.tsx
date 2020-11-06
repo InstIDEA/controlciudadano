@@ -3,7 +3,6 @@ import {Col, Row, Typography} from 'antd';
 import './Footer.css';
 import cds from '../../assets/logos/cds.png';
 import cdsBlanco from '../../assets/logos/cds_blanco.png';
-import usaid from '../../assets/logos/usaid.png';
 import ocp from '../../assets/logos/ocp.png';
 import reaccion from '../../assets/logos/reaccion_fondo.png';
 import idea from '../../assets/logos/logo_idea.png';
@@ -25,7 +24,6 @@ function Footer(props: {
                     <span className="footer-label">Es una iniciativa de:</span>
                     <div id="logo">
                         <img src={idea} alt="logo"/>
-                        <img src={usaid} alt="logo"/>
                     </div>
                 </Col>
                 <Col offset={props.aboutFooter ? 6 : 0}
@@ -45,21 +43,6 @@ function Footer(props: {
                     <div id="logo">
                         <img src={ocp} alt="logo"/>
                     </div>
-                </Col>
-            </Row>
-            <Row className="footer-background">
-                <Col xxl={24} xl={24} lg={24} md={24} sm={24} xs={24}>
-                    <Typography.Paragraph className="footer-paragraph">
-                        Este sitio web fue posible gracias al generoso apoyo del pueblo de los Estados Unidos de América
-                        a través
-                        de la Agencia de los Estados Unidos para el Desarrollo Internacional (USAID). El contenido de
-                        este sitio
-                        web es responsabilidad de sus autores y no refleja necesariamente las opiniones o posiciones de
-                        la Agencia de los Estados Unidos para el Desarrollo Internacional o del Gobierno de los Estados
-                        Unidos.
-
-                    </Typography.Paragraph>
-
                 </Col>
             </Row>
             <Row className="footer-background">

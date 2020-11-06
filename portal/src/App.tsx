@@ -12,6 +12,8 @@ import {DS} from './pages/Datasources';
 import {OCDSSupplierRelations} from './pages/OCDSSupplierRelations';
 import {AffidavitList} from './pages/AffidavitList';
 import {PersonPage} from './pages/Person';
+import {PersonSearchPage} from './pages/PersonSearchPage'
+import {PersonDetailPage} from './pages/PersonDetailPage'
 import {OCDSItem} from './pages/OCDSItem';
 import {OCDSItemsRankingPage} from './pages/OCDSItemsRankingPage';
 import {AndeExoneratedList} from './pages/AndeExonerated';
@@ -65,6 +67,8 @@ function Routes() {
                 <Route path="/action" exact render={() => <ActionResearchLanding/>}/>
                 <Route path="/explore" exact render={() => <Welcome/>}/>
                 <Route path="/about" exact render={() => <AboutPage/>}/>
+                <Route path="/explore/person/:query?" exact render={() => <PersonSearchPage/>}/>
+                <Route path="/person/detail/:document" exact render={() => <PersonDetailPage/>}/>
                 <Route path="/">
                     <LandingPage/>
                 </Route>
