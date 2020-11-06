@@ -36,13 +36,6 @@ function AboutPage() {
       </Col>
 
     </Row>
-    <Row gutter={[8, 24]} className="about-paragraph" style={{ fontSize: '20px' }}>
-      <Col span={12} offset={6}>
-        <Typography.Paragraph style={{ textAlign: 'justify' }}>
-          Este portal es una iniciativa de IDEA con apoyo de USAID/Paraguay. Son impulsores del proyecto: IDEA, CDS, reAcción
-        </Typography.Paragraph>
-      </Col>
-    </Row>
     <Row>
       <Col offset={1} xxl={22} xl={22} lg={22} md={22} sm={22} xs={22} style={{ textAlign: 'center' }}>
         <Typography.Title level={2} className="about-title">Datos</Typography.Title>
