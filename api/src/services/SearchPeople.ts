@@ -20,7 +20,7 @@ export class SearchPeople {
         if (!query || !query.trim()) return {query: query, data: {}};
 
         const promises = [];
-        const toSearch = `%${query.toUpperCase().replace(/\s+/g, '').replace(/%/g, '')}%`;
+        const toSearch = `%${query.toUpperCase().replace(/%/g, '').replace(/\s+/g, '%')}%`;
         // now we search by name
         const tables = Object.keys(queries).map((key: keyof typeof queries) => ({name: key, sql: queries[key]}))
         for (let table of tables) {
