@@ -17,11 +17,7 @@ services:
 
 
   searcher:
-    image: node:14.2.0-slim
-    volumes:
-      - ./simple_searcher:/app
-    working_dir: /app
-    command: npx serve -l 80 -s .
+    image: docker.pkg.github.com/instidea/controlciudadano/portal:latest
     networks:
       - proxy
     restart: always
@@ -35,11 +31,7 @@ services:
 
 
   api:
-    image: node:14.2.0-slim
-    volumes:
-      - ./simple_api:/app
-    working_dir: /app
-    command: npx nodemon dist/index.js
+    image: docker.pkg.github.com/instidea/controlciudadano/api:latest
     networks:
       - proxy
       - db
@@ -100,7 +92,14 @@ services:
       - "traefik.http.routers.redirs.middlewares=redirect-to-https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
 
-
+  typesense:
+    image: typesense/typesense:0.16.1
+    volumes:
+      - "./typesense_data:/data"
+    env_file:
+      - .env
+    ports:
+    - 8108:8108
 
 networks:
   db:
