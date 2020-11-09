@@ -22,21 +22,25 @@ class ColumnMapping:
         return self.column_name
 
     def get_format(self):
-        if self.sql_type == 'number':
-            return "%d"
+        if self.sql_type == 'integer':
+            return "%s"
         return "%s"
 
 
-def batch_read_csv_file(file_path: str, batch_size=10000):
-    with open(file_path, "rb") as csv_file:
+def batch_read_csv_file(file_path: str, batch_size=10000, skip_header=True):
+    with open(file_path, "r") as csv_file:
         reader = csv.reader(csv_file)
 
         to_yield = []
         counter = 0
+        if skip_header:
+            next(reader, None)
+
         for row in reader:
+            # print(f" -> brcf -> read: {','.join(row)}")
             to_yield.append(row)
             counter += 1
-            if divmod(counter, batch_size):
+            if divmod(counter, batch_size)[1] == 0:
                 print(f" -> yielding {len(to_yield)}")
                 yield to_yield
                 to_yield = []
@@ -49,9 +53,9 @@ def batch_insert_csv_file(file_path: str,
                           table_name: str,
                           columns: List[ColumnMapping],
                           con_id="postgres_default",
-                          schema_name="public",
+                          db_name="postgres",
                           batch_size=10000):
-    db_hook = PostgresHook(postgres_conn_id=con_id, schema=schema_name)
+    db_hook = PostgresHook(postgres_conn_id=con_id, schema=db_name)
     db_conn = db_hook.get_conn()
     db_cursor = db_conn.cursor()
 
@@ -62,9 +66,10 @@ def batch_insert_csv_file(file_path: str,
         sql_format.append(column.get_format())
 
     sql = """
-            INSERT INTO {} ({}}) VALUES ({})
+            INSERT INTO {} ({}) VALUES ({})
     """.format(table_name, ', '.join(column_names), ', '.join(sql_format))
 
+    print(f" -> bi -> SQL to execute {sql} ")
     # db_cursor.execute(sql, group)
     # get the generated id back
     # vendor_id = db_cursor.fetchone()[0]
