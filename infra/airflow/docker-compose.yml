@@ -14,8 +14,8 @@ services:
         max-file: "3"
 
   webserver:
-#    image: docker.pkg.github.com/instidea/controlciudadano/dags:latest
-    build: ../../scripts/python/airflow/
+    image: docker.pkg.github.com/instidea/controlciudadano/dags:latest
+#    build: ../../scripts/python/airflow/
     restart: always
     depends_on:
       - postgres
