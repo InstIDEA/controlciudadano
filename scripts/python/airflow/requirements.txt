@@ -1,0 +1,1 @@
+flask_bcrypt==0.7.1

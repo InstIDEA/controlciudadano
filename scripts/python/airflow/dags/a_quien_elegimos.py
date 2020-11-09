@@ -38,7 +38,7 @@ default_args = {
     # 'sla_miss_callback': yet_another_function,
     # 'trigger_rule': 'all_success',
     'params': {
-        'data_folder': f'{os.environ["AIRFLOW_HOME"]}data',
+        'data_folder': f'/tmp/',
         'table_name': 'staging.a_quien_elegimos',
         'file_name': 'a_quien_elegimos.csv',
         'data_set': 'a_quien_elegimos',
