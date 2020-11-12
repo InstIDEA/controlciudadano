@@ -6,6 +6,7 @@ const queries = {
     'ande_exonerados': "SELECT array_agg(cliente) as names, documento as document FROM staging.ande_exonerados WHERE upper(trim(regexp_replace(cliente, '\\s+', '', 'g')))  LIKE $1 GROUP BY documento",
     'tsje_elected': "SELECT array_agg(nombre || ' ' || apellido) as names, cedula as document, max(edad) as age FROM analysis.tsje_elected WHERE upper(trim(regexp_replace(nombre || apellido, '\\s+', '', 'g')))  LIKE $1 GROUP BY cedula",
     'declarations': "SELECT array_agg(name) as names, document, max(active) as active, max(passive) as passive, max(net_worth) as net_worth FROM analysis.declarations WHERE upper(trim(regexp_replace(name, '\\s+', '', 'g'))) LIKE $1 GROUP BY document",
+    'a_quien_elegimos': "SELECT array_agg(name || ' ' || lastname) as names, regexp_replace(identifier, '\\.', '', 'g') as document, array_agg(head_shot) as photos FROM staging.aquieneselegimos WHERE upper(trim(regexp_replace(name || lastname, '\\s+', '', 'g'))) LIKE $1 GROUP BY identifier"
 }
 
 
@@ -25,7 +26,6 @@ export class SearchPeople {
         const tables = Object.keys(queries).map((key: keyof typeof queries) => ({name: key, sql: queries[key]}))
         for (let table of tables) {
             const sql = table.sql;
-            console.log(`Executing query: "${sql}" with param "${toSearch}"`)
             promises.push(this.db.query(sql, [toSearch]));
         }
 
