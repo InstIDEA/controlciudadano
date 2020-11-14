@@ -25,7 +25,8 @@ interface SingleYearData {
 
 
 export function DSDownload() {
-    const {dataSetId} = useParams();
+
+    const {dataSetId} = useParams<{dataSetId: string}>();
     const [working, setWorking] = useState(false);
     const [data, setData] = useState<DataSet[]>();
     const history = useHistory();

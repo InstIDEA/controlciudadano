@@ -12,7 +12,7 @@ import {BooleanParam, useQueryParam} from 'use-query-params';
 
 export function OCDSBuyerPage() {
 
-    const {id} = useParams();
+    const {id} = useParams<{ id: string }>();
     const history = useHistory();
     const [items, setItems] = useState<OCDSBuyerWithSuppliers[]>();
     const [data, setData] = useState<OCDSBuyer>();

@@ -14,7 +14,7 @@ import {GenericTable} from '../components/GenericTable';
 
 export function PersonPage() {
 
-    const {document} = useParams();
+    const {document} = useParams<{ document: string }>();
     const [affidavit, setAffidavit] = useState<Affidavit[]>();
     const [sfpData, setSfpData] = useState<SFPLocalData>({});
     const [analysis, setAnalysis] = useState<AnalysisSearchResult>();

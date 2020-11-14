@@ -18,12 +18,13 @@ import { Affidavit, AnalysisSearchResult, LocalSearchResult, Authorities } from 
 import { SFPRow, SFPFetcher } from '../SFPHelper';
 import { GenericTable } from '../components/GenericTable';
 import { formatMoney } from '../formatters';
+
 export function PersonDetailPage() {
 
     const spans = { xxl: 8, xl: 8, lg: 8, md: 12, sm: 24, xs: 24};
     const config = { xxl: { offset: 0, span: 24 }, xl: { offset: 0, span: 24 }, lg: { offset: 0, span: 24 }, md: { offset: 0, span: 24 }, sm: { offset: 0, span: 24 }, xs: { offset: 0, span: 24 } };
     const cardHeight = 200;
-    const { document } = useParams();
+    const {document} = useParams<{ document: string }>();
     const [affidavit, setAffidavit] = useState<Affidavit[]>();
     const [tsje, setTsje] = useState<Authorities[]>();
     const [sfpData, setSfpData] = useState<SFPLocalData>({});
