@@ -4,11 +4,11 @@ export interface LocalSearchPersonResult {
     data: {
         [key: string]: [
             {
-            source: string;
-            document: string;
-            names: string[];
-            net_worth?: number;
-        }
+                source: string;
+                document: string;
+                names: string[];
+                net_worth?: number;
+            }
 
         ]
     }
@@ -426,6 +426,7 @@ export interface PersonDataStatistics {
     current_year: number,
     nangareko_count: number
 }
+
 export interface DataSetFile {
     hash: string,
     original_url: string,
