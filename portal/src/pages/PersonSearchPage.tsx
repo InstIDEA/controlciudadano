@@ -464,13 +464,14 @@ function FilterMenu(props: {
     const [from, setFrom] = useState<number>();
     const [to, setTo] = useState<number>();
     const [query, setQuery] = useState('');
-    const dataOptions: { name: string; key: string; qty: number; }[] =
-        [{name: 'Pytyvo', key: 'pytyvo', qty: props.counters.pytyvo},
-            {name: 'Ñangareko', key: 'nangareko', qty: props.counters.nangareko},
-            {name: 'Funcionarios de Hacienda', key: 'hacienda', qty: 0},
-            {name: 'SFP', key: 'sfp', qty: 0},
-            {name: 'Personal Policía Nacional', key: 'policia', qty: props.counters.policia},
-            {name: 'Exonerado Ande', key: 'ande_exonerados', qty: props.counters.ande}];
+    const dataOptions: { name: string; key: string; qty: number; }[] = useMemo(() => [
+        {name: 'Pytyvo', key: 'pytyvo', qty: props.counters.pytyvo},
+        {name: 'Ñangareko', key: 'nangareko', qty: props.counters.nangareko},
+        {name: 'Funcionarios de Hacienda', key: 'hacienda', qty: 0},
+        {name: 'SFP', key: 'sfp', qty: 0},
+        {name: 'Personal Policía Nacional', key: 'policia', qty: props.counters.policia},
+        {name: 'Exonerado Ande', key: 'ande_exonerados', qty: props.counters.ande}
+    ], [props.counters]);
 
     const filtered = useMemo(() => filterList(dataOptions, query), [dataOptions, query]);
 
