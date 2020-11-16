@@ -100,7 +100,7 @@ export function PersonDetailPage() {
                     </Col>
                     <Space direction="vertical" />
                     <Col {...config}>
-                        <Card className="card-style header-title-big" title="Datos Personales" cover={<img src={header.imageURL} style={{width: '25%'}} />}>
+                        <Card className="card-style header-title-big" title="Datos Personales" cover={<img alt="" src={header.imageURL} style={{width: '25%'}} />}>
                             <Typography.Text className="text-layout-content">
                                 <strong>Documento: </strong> {header.document || 'No encontrado'}
                             </Typography.Text>
