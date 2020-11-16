@@ -26,6 +26,7 @@ export interface LocalSearchResult {
         sfp: unknown[];
         policia: unknown[];
         ande_exonerados: AndeExonerated[];
+        a_quien_elegimos: AquienesElegimos[];
     }
 }
 
@@ -445,6 +446,25 @@ export interface DataSet {
     id: number,
     institution: string,
     name: string
+}
+
+export interface AquienesElegimos {
+    id: number,
+    name: string,
+    lastName: string,
+    date_of_birth: string,
+    date_of_death: string,
+    estado_civil: string,
+    fb: string,
+    tw: string,
+    insta: string,
+    city_of_residence: string,
+    decendents: string,
+    email_address: string,
+    head_shot: string,
+    national_identity: string,
+    phone: string,
+    contact_detail: string
 }
 
 /**

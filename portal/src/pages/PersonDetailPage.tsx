@@ -9,6 +9,7 @@ import { ReactComponent as Ande } from '../assets/logos/ande.svg';
 import { ReactComponent as SalarioSfp } from '../assets/logos/salario_sfp.svg';
 import { ReactComponent as Sfp } from '../assets/logos/sfp.svg';
 import { ReactComponent as Ddjj } from '../assets/logos/ddjj.svg';
+import { ReactComponent as Aqe } from '../assets/logos/a_quienes_elegimos.svg';
 import { ReactComponent as PoliciaNacional } from '../assets/logos/policia_nacional.svg';
 import Icon from '@ant-design/icons';
 import { useEffect, useState } from 'react';
@@ -18,6 +19,7 @@ import { Affidavit, AnalysisSearchResult, LocalSearchResult, Authorities } from 
 import { SFPRow, SFPFetcher } from '../SFPHelper';
 import { GenericTable } from '../components/GenericTable';
 import { formatMoney } from '../formatters';
+import { AQE_URL, ESTADOS_CIVILES, PAISES_NACIMIENTO } from "../AQuienElegimosData";
 export function PersonDetailPage() {
 
     const spans = { xxl: 8, xl: 8, lg: 8, md: 12, sm: 24, xs: 24};
@@ -92,10 +94,13 @@ export function PersonDetailPage() {
                         <Tooltip title="Policia Nacional">
                             <Icon component={PoliciaNacional} style={{ color: ((local?.staging.policia.length || []) > 0 ? 'rgba(0, 52, 91, 1)' : 'rgba(171, 171, 171, 1)'), fontSize: '30px' }} />
                         </Tooltip>
+                        <Tooltip title="A Quien Elegimos">
+                            <Icon component={Aqe} style={{ color: ((local?.staging.a_quien_elegimos.length || []) > 0 ? 'rgba(0, 52, 91, 1)' : 'rgba(171, 171, 171, 1)'), fontSize: '30px' }} />
+                        </Tooltip>
                     </Col>
                     <Space direction="vertical" />
                     <Col {...config}>
-                        <Card className="card-style header-title-big" title="Datos Personales">
+                        <Card className="card-style header-title-big" title="Datos Personales" cover={<img src={header.imageURL} style={{width: '25%'}} />}>
                             <Typography.Text className="text-layout-content">
                                 <strong>Documento: </strong> {header.document || 'No encontrado'}
                             </Typography.Text>
@@ -224,6 +229,26 @@ export function PersonDetailPage() {
                             </Col>
                         )
                     }
+                    {
+                        local && local.staging && local.staging.a_quien_elegimos && local.staging.a_quien_elegimos.length > 0 &&
+                        <Col {...spans}>
+                            <Card className="data-box" title="A quien elegimos" extra={<Icon component={Aqe} style={{ color: 'rgba(0, 52, 91, 1)', fontSize: '30px' }} />}>
+                                {local.staging.a_quien_elegimos[0].date_of_death && local.staging.a_quien_elegimos[0].date_of_death.length > 1 ?<Typography.Text>Fecha de muerte: {local.staging.a_quien_elegimos[0].date_of_death} <br /> </Typography.Text>: ''}
+                                {local.staging.a_quien_elegimos[0].national_identity ?<Typography.Text>País de nacimiento: {PAISES_NACIMIENTO[local.staging.a_quien_elegimos[0].national_identity]} <br /> </Typography.Text>: ''}
+                                {local.staging.a_quien_elegimos[0].city_of_residence ?<Typography.Text>Ciudad de residencia: {local.staging.a_quien_elegimos[0].city_of_residence} <br /> </Typography.Text>: ''}
+                                {local.staging.a_quien_elegimos[0].estado_civil ?<Typography.Text>Estado civil: {ESTADOS_CIVILES[local.staging.a_quien_elegimos[0].estado_civil]} <br /> </Typography.Text>: ''}
+                                {local.staging.a_quien_elegimos[0].decendents ?<Typography.Text>Cantidad de hijos: {local.staging.a_quien_elegimos[0].decendents} <br /> </Typography.Text>: ''}
+                                {local.staging.a_quien_elegimos[0].email_address ?<Typography.Text>Email: {local.staging.a_quien_elegimos[0].email_address} <br /> </Typography.Text>: ''}
+                                {local.staging.a_quien_elegimos[0].phone ?<Typography.Text>Teléfono de contacto: {local.staging.a_quien_elegimos[0].phone} <br /> </Typography.Text>: ''}
+                                {local.staging.a_quien_elegimos[0].contact_detail ?<Typography.Text>Teléfono celular: {local.staging.a_quien_elegimos[0].contact_detail} <br /> </Typography.Text>: ''}
+                                {local.staging.a_quien_elegimos[0].tw ? <Typography.Text>- <a href={local.staging.a_quien_elegimos[0].tw}>Twitter</a> </Typography.Text> : '' }
+                                {local.staging.a_quien_elegimos[0].fb ? <Typography.Text>- <a href={local.staging.a_quien_elegimos[0].fb}>Facebook</a> </Typography.Text> : '' }
+                                {local.staging.a_quien_elegimos[0].insta ? <Typography.Text>- <a href={local.staging.a_quien_elegimos[0].insta}>Instagram</a> </Typography.Text> : ''}
+                                {local.staging.a_quien_elegimos[0].insta || local.staging.a_quien_elegimos[0].fb || local.staging.a_quien_elegimos[0].tw ? <br/>: '' }
+                                <a href={`${AQE_URL}/detalle-persona/${local.staging.a_quien_elegimos[0].id}`} target="_blank" rel="noopener noreferrer">Link</a>
+                            </Card>
+                        </Col>
+                    }
                 </Row>
             </Layout.Content>
         </Layout>
@@ -248,6 +273,7 @@ function tryToGuestHeader(baseDoc: string,
     let found = false;
     let charge = '';
     let birthDate = '';
+    let imageURL = '';
     if (affidavit !== undefined) {
         found = true;
         if (affidavit.length > 0) {
@@ -273,7 +299,6 @@ function tryToGuestHeader(baseDoc: string,
             name = name || `${election[0].nombre} ${election[0].apellido}`;
         }
     }
-
     if (local && local.staging) {
         const ande = local.staging.ande_exonerados;
         if (ande && ande.length > 0) {
@@ -287,6 +312,21 @@ function tryToGuestHeader(baseDoc: string,
         if (hacienda && hacienda.length) {
             name = name || `${hacienda[0].nombres} ${hacienda[0].apellidos}`;
         }
+        const aquienelegimos: any = local.staging.a_quien_elegimos[0];
+        if (aquienelegimos) {
+            if(aquienelegimos.head_shot) {
+                imageURL = `${AQE_URL}/media/${local.staging.a_quien_elegimos[0].head_shot}`;
+            }
+            if(aquienelegimos.identifier) {
+                document = aquienelegimos.identifier
+            }
+            if(aquienelegimos.name && aquienelegimos.lastName) {
+                name =  `${aquienelegimos.name} ${aquienelegimos.lastName}`
+            }
+            if(aquienelegimos.date_of_birth) {
+                birthDate = aquienelegimos.date_of_birth.substr(0, 10);
+            }
+        }
     }
 
     return {
@@ -294,7 +334,8 @@ function tryToGuestHeader(baseDoc: string,
         name,
         document,
         charge,
-        birthDate
+        birthDate,
+        imageURL
     }
 }
 
