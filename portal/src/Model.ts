@@ -4,11 +4,11 @@ export interface LocalSearchPersonResult {
     data: {
         [key: string]: [
             {
-            source: string;
-            document: string;
-            names: string[];
-            net_worth?: number;
-        }
+                source: string;
+                document: string;
+                names: string[];
+                net_worth?: number;
+            }
 
         ]
     }
@@ -18,12 +18,23 @@ export interface LocalSearchResult {
 
     query: string;
     staging: {
-        pytyvo: unknown[];
-        nangareko: unknown[];
+        pytyvo: Array<{
+            department: string,
+            district: string,
+        }>;
+        nangareko: Array<{
+            department: string,
+            district: string
+        }>;
         nangareko_2: unknown[];
         nangareko_transparencia: unknown[];
         hacienda_funcionarios: unknown[];
-        sfp: unknown[];
+        sfp: Array<{
+            anho: string,
+            profesion: string,
+            funcion: string,
+            source: string
+        }>;
         policia: unknown[];
         ande_exonerados: AndeExonerated[];
         a_quien_elegimos: AquienesElegimos[];
@@ -427,6 +438,7 @@ export interface PersonDataStatistics {
     current_year: number,
     nangareko_count: number
 }
+
 export interface DataSetFile {
     hash: string,
     original_url: string,
@@ -449,6 +461,7 @@ export interface DataSet {
 }
 
 export interface AquienesElegimos {
+    identifier: number;
     id: number,
     name: string,
     lastName: string,
