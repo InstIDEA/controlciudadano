@@ -65,6 +65,7 @@ jobs:
         docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
         docker push $IMAGE_ID:$VERSION
 
+        [ "$VERSION" == "master" ] && curl "$HOOK_API"
 
 
 
