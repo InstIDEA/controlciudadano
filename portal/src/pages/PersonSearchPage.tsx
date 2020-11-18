@@ -62,7 +62,7 @@ export function PersonSearchPage() {
 function Filter() {
     return <>
         ASSSSSS
-        <SingleList componentId="SourceSensor" dataField="source"
+        <SingleList componentId="SourceSensor" dataField="source.keyword"
                     react={{
                         and: ['Nombre'],
                     }}
