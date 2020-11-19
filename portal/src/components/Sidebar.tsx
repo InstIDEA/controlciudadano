@@ -14,7 +14,7 @@ export function Sidebar(props: {
     { key: 'sanctionedSuppliers', link: '/action/ocds/sanctioned_suppliers', label: '¿A quiénes se compró?' },
     { key: 'buyers', link: '/action/ocds/buyers', label: "¿Quienes compraron?" },
     { key: 'tenders', link: '/action/ocds/tenders', label: "¿Conocés las licitaciones más grandes?" },
-    { key: 'relations', link: '/action/ocds/relations', label: "¿Tienen vínculos a quienes se compró?" },
+    { key: 'relations', link: '/action/ocds/relations', label: "Relación entre proveedores" },
   ];
   const exploreMenu = [
     { key: 'affidavit', link: '/explore/contralory/affidavit', label: 'Declaraciones juradas' },
@@ -22,9 +22,9 @@ export function Sidebar(props: {
     { key: 'items', link: '/explore/ocds/items', label: "¿Se compró más caro?" },
     { key: 'itemsRanking', link: '/explore/ocds/covid/itemsRanking', label: "¿Qué se compró?" },
     { key: 'suppliers', link: '/explore/ocds/suppliers', label: 'Proveedores' },
-    { key: 'relations', link: '/explore/ocds/relations', label: "¿Tienen vínculos a quienes se compró?" },
-    { key: 'ande', link: '/explore/covid/ande', label: 'ANDE exoneradas por COVID-19' },
-    { key: 'essap', link: '/explore/covid/essap', label: 'ESSAP exoneradas por COVID-19' },
+    { key: 'relations', link: '/explore/ocds/relations', label: "Relación entre proveedores" },
+    { key: 'ande', link: '/explore/covid/ande', label: 'ANDE: exoneraciones' },
+    { key: 'essap', link: '/explore/covid/essap', label: 'ESSAP: exoneraciones' },
     { key: 'sources', link: '/sources', label: 'Fuentes' },
   ];
   const menuItems = props.sidebar ? exploreMenu : actionMenu;
