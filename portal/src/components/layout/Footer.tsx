@@ -8,7 +8,6 @@ import reaccion from '../../assets/logos/reaccion_fondo.png';
 import idea from '../../assets/logos/logo_idea.png';
 import cc from '../../assets/logos/cc.png';
 import github from '../../assets/logos/github.svg';
-import {Link} from "react-router-dom";
 
 const GITHUB_REPO = 'https://github.com/InstIDEA/controlciudadano';
 
