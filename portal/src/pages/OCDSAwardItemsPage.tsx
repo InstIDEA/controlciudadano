@@ -43,7 +43,8 @@ export function OCDSAwardItemsPage() {
             title="¿Qué se compró?">
 
             <Typography.Paragraph>
-                Ránking de items con mayores sobrecostos, comparados con sus precios antes de la pandemia
+                Ránking de items con posibles sobrecostos, comparados con sus precios antes de la pandemia.<br />
+                <i>Las unidades de medida no especificadas en el portal de la Dirección Nacional de Contrataciones Públicas (DNCP) pueden arrojar datos no específicos respecto al porcentaje de sobrecostos.</i>
             </Typography.Paragraph>
             <Table<OCDSItemsAwardedCOVID19>
                 dataSource={filtered}
