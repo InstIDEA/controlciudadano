@@ -27,6 +27,7 @@ import {OCDSCovidTenders} from './pages/OCDSCovidTenders';
 import AboutPage from "./pages/AboutPage";
 import {LandingPage} from "./pages/Landing";
 import { DSDownload } from "./pages/DatasourcesDownload";
+import DisclaimerPage from "./pages/DisclaimerPage";
 
 export default function App() {
     return <Routes/>
@@ -67,6 +68,7 @@ function Routes() {
                 <Route path="/action" exact render={() => <ActionResearchLanding/>}/>
                 <Route path="/explore" exact render={() => <Welcome/>}/>
                 <Route path="/about" exact render={() => <AboutPage/>}/>
+                <Route path="/disclaimer" exact render={() => <DisclaimerPage/>}/>
                 <Route path="/explore/person/:query?" exact render={() => <PersonSearchPage/>}/>
                 <Route path="/person/detail/:document" exact render={() => <PersonDetailPage/>}/>
                 <Route path="/">
