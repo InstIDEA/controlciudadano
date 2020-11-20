@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import csv
-from typing import List
+from typing import List, Dict, Union
 
 from airflow.hooks.postgres_hook import PostgresHook
 
@@ -10,11 +10,15 @@ class ColumnMapping:
     csv_name: str
     column_name: str
     sql_type: str
+    maps: Dict[Union[str, None], Union[str, None]]
+    rules: List[str]
 
     def __init__(self, csv_name='', sql_type='text', column_name='SAME_AS_CSV'):
         self.csv_name = csv_name
         self.column_name = column_name
         self.sql_type = sql_type
+        self.maps = {}
+        self.rules = []
 
     def get_column_name(self):
         if self.column_name == 'SAME_AS_CSV':
@@ -25,6 +29,38 @@ class ColumnMapping:
         if self.sql_type == 'integer':
             return "%s"
         return "%s"
+
+    def map(self, f: str, to: Union[str, None]) -> ColumnMapping:
+        self.maps[f] = to
+        return self
+
+    def empty_to_none(self) -> ColumnMapping:
+        self.rules.append("EMPTY_TO_NONE")
+        return self
+
+    def remove_dots(self) -> ColumnMapping:
+        self.rules.append("REMOVE_DOTS")
+        return self
+
+
+    def do_map(self, val: Union[str,None]) -> Union[str, None]:
+        """
+        Maps the val to using the list of mapping
+        :param val: the value to map
+        :return: the mapped value
+        """
+        to_ret = val
+        if val in self.maps:
+            to_ret = self.maps[val]
+
+        if isinstance(to_ret, str):
+            if "EMPTY_TO_NONE" in self.rules and "" == to_ret.strip():
+                to_ret = None
+
+            if "REMOVE_DOTS" in self.rules and to_ret is not None:
+                to_ret = to_ret.replace(".", "")
+
+        return to_ret
 
 
 def batch_read_csv_file(file_path: str, batch_size=10000, skip_header=True):
@@ -75,5 +111,13 @@ def batch_insert_csv_file(file_path: str,
     # vendor_id = db_cursor.fetchone()[0]
     # execute the INSERT statement
     for batch in batch_read_csv_file(file_path, batch_size):
+        # do the mapping
+        for row in batch:
+            for idx in range(len(row)):
+                definition = columns[idx]
+                row[idx] = definition.do_map(row[idx])
+
+
+        # END MAPPING
         db_cursor.executemany(sql, batch)
         db_conn.commit()

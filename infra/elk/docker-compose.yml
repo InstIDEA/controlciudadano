@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    ports:
+      - "9201:9200"
+      - "9301:9300"
+    env_file:
+      - .env
+
+  logstash:
+    build: logstash_jdbc_input
+    env_file:
+      - .env
+    ports:
+      - 9600:9600
+      - 5044:5044
+    depends_on:
+      - elasticsearch
+      - postgres

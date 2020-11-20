@@ -19,13 +19,13 @@ export function ActionResearchLanding() {
         <div className="action-landing">
         <Row className="title">
             <div>
-                Can urgency be exploited by corruption?
+                ¿Puede la urgencia ser aprovechada por la corrupción?
             </div>
         </Row>
 
         <Row className="description">
             <Typography.Paragraph>
-            Análisis de datos aplicado a compras en Paraguay con uso de fondos públicos y procedimientos abreviados atendiendo la pandemia de Covid-19
+                Análisis de datos de compras públicas en Paraguay con uso de fondos públicos de emergencia atendiendo a la pandemia de COVID-19
             </Typography.Paragraph>
         </Row>
 
@@ -42,7 +42,7 @@ export function ActionResearchLanding() {
             </Col>
 
             <Col {...spans}>
-                <Link to="/action/ocds/covid/itemsRanking">
+                <Link to="/action/ocds/itemsRanking">
                     <Card hoverable
                           style={{width: 350, height: 300}}
                           cover={<img height="80px" alt="Ranking de items adquiridos" src={dataReports}/>}>

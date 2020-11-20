@@ -17,46 +17,46 @@ import exoneradasEssap from '../assets/imgs/exoneradas_essap.svg'
 const data = [{
     link: "/explore/person/",
     title: "Buscador de personas",
-    description: "Buscar personas que reciben ingresos del gobierno.",
+    description: "Buscar personas que reciben ingresos del gobierno",
     icon: buscadorPersonas
 }, {
     link: '/explore/contralory/affidavit',
     title: 'Declaraciones juradas',
-    description: 'Todas las declaraciones juradas que se subieron hasta la fecha en el portal de la contraloria',
+    description: 'Declaraciones juradas que se subieron hasta la fecha en el portal de la contraloría',
     icon: declaraciones
 }, {
     link: '/explore/authorities/elected',
     title: 'Autoridades electas',
-    description: 'Todas las autoridades que han sido electas en elecciones generales.',
+    description: 'Autoridades electas en elecciones generales',
     icon: autoridades
 }, {
     link: '/explore/ocds/items',
     title: '¿Se compró más caro?',
-    description: 'Ránking de items con mayores sobrecostos, comparados con sus precios antes de la pandemia',
+    description: 'Ránking de items con posibles sobrecostos, comparados con sus precios antes de la pandemia',
     icon: items
 }, {
-    link: '/explore/ocds/covid/itemsRanking',
+    link: '/explore/ocds/itemsRanking',
     title: '¿Qué se compró?',
-    description: 'Ránking de items adquiridos durante la pandemia por monto total, agrupados por unidad de medida y presentación.',
+    description: 'Ránking de items adquiridos durante la pandemia por monto total, agrupados por unidad de medida y presentación',
     icon: rankingItems
 }, {
     link: '/explore/ocds/suppliers',
     title: 'Proveedores',
-    description: 'Listado de todas aquellas personas físicas o jurídicas que han participado en una licitación pública.',
+    description: 'Listado de todas aquellas personas físicas o jurídicas que han participado en una licitación pública',
     icon: proveedores
 }, {
     link: '/explore/ocds/relations',
-    title: '¿Tienen vínculos a quienes se compró',
-    description: 'Grafo de relación entre proveedores con igual dirección o número de contacto',
+    title: 'Relación entre proveedores',
+    description: 'Nodos de relación entre proveedores con igual dirección o número de contacto',
     icon: proveedoresRelacionados
 }, {
     link: '/explore/covid/ande',
-    title: 'ANDE exoneradas por COVID-19',
+    title: 'ANDE: exoneraciones',
     description: 'Listado de facturas exoneradas por la ANDE por baja consumición',
     icon: exoneradasAnde
 }, {
     link: '/explore/covid/essap',
-    title: 'ESSAP exoneradas por COVID-19',
+    title: 'ESSAP: exoneraciones',
     description: 'Listado de exonerados por la ESSAP',
     icon: exoneradasEssap
 }, {
