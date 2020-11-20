@@ -18,10 +18,11 @@ import {useParams} from 'react-router-dom';
 import {Affidavit, AnalysisSearchResult, Authorities, LocalSearchResult} from '../Model';
 import {SFPFetcher, SFPRow} from '../SFPHelper';
 import {GenericTable} from '../components/GenericTable';
-import {formatMoney} from '../formatters';
-import {AQE_URL} from "../AQuienElegimosData";
+import {formatMoney, getInitials} from '../formatters';
 import {AQECard} from '../components/person_cards/AQE';
-import {AffidavitCard} from '../components/person_cards/Affidavit';
+import {TSJECard} from '../components/person_cards/TSJE';
+import {DDJJCard} from "../components/person_cards/DDJJ";
+import {Cargo, ChargeCard} from "../components/person_cards/Charge";
 
 export function PersonDetailPage() {
 
@@ -82,10 +83,7 @@ export function PersonDetailPage() {
         <Layout>
             <Layout.Content style={{minHeight: '80vh', padding: '0 5%'}}>
                 <Row gutter={[16, 16]} justify="space-around" align="middle" style={{paddingTop: 20}}>
-                    <Col md={2} xs={4}>
-                        {header.imageURL && <Avatar src={header.imageURL}/>}
-                    </Col>
-                    <Col md={14} xs={20} style={{alignSelf: 'end'}}>
+                    <Col md={14} xs={20} style={{alignSelf: 'flex-end'}}>
                         <Typography.Title style={{color: "rgba(0, 52, 91, 1)"}} level={2}>
                             {header.name}
                         </Typography.Title>
@@ -138,33 +136,38 @@ export function PersonDetailPage() {
                 <Row>
                     <Col {...config}>
                         <Card className="card-style header-title-big">
-                            <Col>
-                                <Typography.Title style={{color: "rgba(0, 52, 91, 1)"}} level={3}>
-                                    Datos Personales
-                                </Typography.Title>
-                                <Typography.Text className="text-layout-content">
-                                    <strong>Documento: </strong> {header.document || 'No encontrado'}
-                                </Typography.Text>
-                                <br/>
-                                <Typography.Text className="text-layout-content">
-                                    <strong>Nombre: </strong>{header.name || 'No encontrado'}
-                                </Typography.Text>
-                                <br/>
-                                <Typography.Text className="text-layout-content">
-                                    <strong>Fecha de nacimiento: </strong> {header.birthDate || 'No encontrado'}
-                                </Typography.Text>
-                            </Col>
-                        </Card>
-                    </Col>
-                    <Col {...config}>
-                        <Card className="card-style header-title-medium" title="Cargo">
-                            <Typography.Text className="text-layout-content">
-                                {header.charge || 'No encontrado'}
-                            </Typography.Text>
+                            <Row gutter={[16, 16]} align="middle">
+                                <Col xxl={2} xl={2} md={2} xs={4}>
+                                    {header.imageURL && <Avatar size={100} shape="square" src={header.imageURL}/>}
+                                    {!header.imageURL && <Avatar size={100} shape="square" style={{ color: '#00345b', backgroundColor: '#dfedfb' }}>{getInitials(header.name)}</Avatar>}
+                                </Col>
+                                <Col xxl={14} xl={14} md={12}>
+                                    <Typography.Title style={{color: "rgba(0, 52, 91, 1)"}} level={3}>
+                                        Datos Personales
+                                    </Typography.Title>
+                                    <Typography.Text className="text-layout-content">
+                                        <strong>Documento: </strong> {header.document || 'No encontrado'}
+                                    </Typography.Text>
+                                    <br/>
+                                    <Typography.Text className="text-layout-content">
+                                        <strong>Nombre: </strong>{header.name || 'No encontrado'}
+                                    </Typography.Text>
+                                    <br/>
+                                    <Typography.Text className="text-layout-content">
+                                        <strong>Fecha de nacimiento: </strong> {header.birthDate || 'No encontrado'}
+                                    </Typography.Text>
+                                </Col>
+                            </Row>
                         </Card>
                     </Col>
                 </Row>
                 <Row gutter={[16, 16]}>
+                    {
+                        affidavit && affidavit.length > 0 && <DDJJCard affidavit={affidavit} />
+                    }
+                    {
+                        tsje && tsje.length > 0 && <TSJECard tsje={tsje} />
+                    }
                     {
                         local?.staging.pytyvo && local?.staging.pytyvo.length > 0 &&
                         <Col {...spans}>
@@ -247,27 +250,8 @@ export function PersonDetailPage() {
                         </Col>
 
                     }
-                    {(affidavit || []).map(declaration => <AffidavitCard key={declaration.id}
-                                                                         height={cardHeight}
-                                                                         colProps={spans}
-                                                                         affidavit={declaration}/>)}
                     {
-                        tsje && tsje.length > 0 &&
-                        tsje.map(
-                            election => <Col {...spans} key={election.ano}>
-                                <Card className="data-box" title="TSJE" style={{height: cardHeight}}
-                                      extra={<Icon component={Ddjj}
-                                                   style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}>
-                                    <Typography.Text>Año: {election.ano} </Typography.Text>
-                                    <br/>
-                                    <Typography.Text>Candidatura: {election.cand_desc} </Typography.Text>
-                                    <br/>
-                                    <Typography.Text>Nombre
-                                        Lista: {election.nombre_lista} ({election.siglas_lista}) </Typography.Text>
-                                    <br/>
-                                </Card>
-                            </Col>
-                        )
+                        header.charge && header.charge.length > 0 && <ChargeCard cargos={header.charge} spans={spans} />
                     }
                     {
                         local && local.staging && local.staging.a_quien_elegimos && local.staging.a_quien_elegimos.length > 0 &&
@@ -295,14 +279,18 @@ function tryToGuestHeader(baseDoc: string,
     let name = '';
     let document = baseDoc;
     let found = false;
-    let charge = '';
+    let charge: Array<Cargo> = new Array<Cargo>();
     let birthDate = '';
     let imageURL = '';
     if (affidavit !== undefined) {
         found = true;
         if (affidavit.length > 0) {
             name = affidavit[0].name;
-            charge = affidavit[0].charge;
+            affidavit.forEach(a => {
+                if(a.charge){
+                    charge.push({cargo: a.charge, ano:a.year});
+                }
+            });
         }
     }
 
@@ -339,13 +327,13 @@ function tryToGuestHeader(baseDoc: string,
         const aqe = local.staging && local.staging.a_quien_elegimos && local.staging.a_quien_elegimos[0];
         if (aqe) {
             if (aqe.head_shot) {
-                imageURL = `${AQE_URL}/media/${local.staging.a_quien_elegimos[0].head_shot}`;
+                imageURL = `https://datos.aquieneselegimos.org.py/media/${local.staging.a_quien_elegimos[0].head_shot}`;
             }
             if (aqe.identifier) {
                 document = aqe.identifier + "";
             }
-            if (aqe.name && aqe.lastName) {
-                name = `${aqe.name} ${aqe.lastName}`
+            if (aqe.name && aqe.lastname) {
+                name = `${aqe.name} ${aqe.lastname}`
             }
             if (aqe.date_of_birth) {
                 birthDate = aqe.date_of_birth.substr(0, 10);

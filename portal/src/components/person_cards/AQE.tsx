@@ -15,7 +15,7 @@ export function AQECard(props: {
     const person = props.person;
 
     return <Col {...props.colProps}>
-        <Card className="data-box" title="A quien elegimos"
+        <Card className="data-box" title={<a href={AQE_URL}>aquieneselegimos.org.py</a>}
               extra={<Icon component={Aqe} style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}
               actions={[
                   person.tw ? <Typography.Text><a href={person.tw}>Twitter</a> </Typography.Text> : null,

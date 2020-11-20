@@ -95,3 +95,10 @@ export function formatSecondsDuration(seconds: number) {
     return prefix + formatDistance(0, seconds * 1000, {includeSeconds: true, locale: es})
 }
 
+export function getInitials(name: string) {
+    const split = name.split(" ");
+    let initials = "";
+    split.forEach(s => initials = initials + s.substr(0,1));
+    return initials;
+}
+

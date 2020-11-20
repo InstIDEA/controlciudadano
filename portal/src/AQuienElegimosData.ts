@@ -24,4 +24,4 @@ export const PAISES_NACIMIENTO: { [k: string]: string } = {
     "13": "Chile"
 };
 
-export const AQE_URL: string = "https://datos.aquieneselegimos.org.py";
+export const AQE_URL: string = "https://aquieneselegimos.org.py";
