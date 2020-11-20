@@ -42,7 +42,7 @@ export function ActionResearchLanding() {
             </Col>
 
             <Col {...spans}>
-                <Link to="/action/ocds/covid/itemsRanking">
+                <Link to="/action/ocds/itemsRanking">
                     <Card hoverable
                           style={{width: 350, height: 300}}
                           cover={<img height="80px" alt="Ranking de items adquiridos" src={dataReports}/>}>

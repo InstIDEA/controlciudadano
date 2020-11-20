@@ -51,9 +51,10 @@ function Footer(props: {
                         <img src={cc} alt="logo"/>
                     </div>
                 </Col>
-                <Col xxl={6} xl={6} lg={6} md={6} sm={6} xs={6}>
+                <Col xxl={10} xl={10} lg={10} md={10} sm={6} xs={6} style={{textAlign: "right"}}>
+                    <a href={`/disclaimer`} className="footer-paragraph">Descargo de responsabilidad</a>
                 </Col>
-                <Col xxl={14} xl={14} lg={14} md={14} sm={16} xs={16} style={{textAlign: "right"}}>
+                <Col xxl={10} xl={10} lg={10} md={10} sm={16} xs={16} style={{textAlign: "right"}}>
                     <a href={GITHUB_REPO} target="_blank" rel="noopener noreferrer">
                         <div className="footer-logo-wrapper">
                             <img className="logo-small" src={github} alt="logo"/>

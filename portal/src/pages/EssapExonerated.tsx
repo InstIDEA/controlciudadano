@@ -38,7 +38,7 @@ export function EssapExoneratedList() {
                 style={{ border: '1px solid rgb(235, 237, 240)' }}
                 onBack={() => history.push('/')}
                 backIcon={null}
-                title="COVID - Facturas exoneradas de la Essap"
+                title="COVID-19 - Facturas exoneradas de la Essap"
                 extra={[
                     <Link to="/sources?query=essap_exonerados">
                         Fuente
@@ -46,7 +46,7 @@ export function EssapExoneratedList() {
                 ]}>
 
                 <Typography.Paragraph>
-                    Todas las facturas que fueron exoneradas por la Essap en el marco de ayuda por el COVID.
+                    Todas las facturas que fueron exoneradas por la Essap en el marco de ayuda por el COVID-19.
                 </Typography.Paragraph>
 
                 <Table<EssapExonerated>
