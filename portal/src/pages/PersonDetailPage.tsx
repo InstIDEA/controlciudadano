@@ -137,11 +137,11 @@ export function PersonDetailPage() {
                     <Col {...config}>
                         <Card className="card-style header-title-big">
                             <Row gutter={[16, 16]} align="middle">
-                                <Col xxl={2} xl={2} md={2} xs={4}>
+                                <Col xxl={3} xl={3} md={4} xs={6} style={{alignSelf: 'flex-end', textAlign: "center"}}>
                                     {header.imageURL && <Avatar size={100} shape="square" src={header.imageURL}/>}
                                     {!header.imageURL && <Avatar size={100} shape="square" style={{ color: '#00345b', backgroundColor: '#dfedfb' }}>{getInitials(header.name)}</Avatar>}
                                 </Col>
-                                <Col xxl={14} xl={14} md={12}>
+                                <Col xxl={21} xl={21} md={20} xs={18} style={{alignSelf: 'flex-end'}}>
                                     <Typography.Title style={{color: "rgba(0, 52, 91, 1)"}} level={3}>
                                         Datos Personales
                                     </Typography.Title>
