@@ -102,7 +102,7 @@ export function AndeExoneratedList() {
                 renderItem={(r: AndeExonerated) =>
                     <List.Item className="list-item">
                         <Card bordered={false}>
-                            Beneficiario:  <Link to={`/people/${r.documento}`}
+                            Beneficiario:  <Link to={`/person/${r.documento}`}
                                  rel="noopener noreferrer"
                                  target="_blank">
                         {r.cliente}

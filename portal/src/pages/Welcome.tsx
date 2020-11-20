@@ -35,7 +35,7 @@ const data = [{
     description: 'Ránking de items con posibles sobrecostos, comparados con sus precios antes de la pandemia',
     icon: items
 }, {
-    link: '/explore/ocds/covid/itemsRanking',
+    link: '/explore/ocds/itemsRanking',
     title: '¿Qué se compró?',
     description: 'Ránking de items adquiridos durante la pandemia por monto total, agrupados por unidad de medida y presentación',
     icon: rankingItems

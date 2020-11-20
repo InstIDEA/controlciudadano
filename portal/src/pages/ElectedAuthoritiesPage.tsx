@@ -71,7 +71,7 @@ export function ElectedAuthoritiesPage() {
                                 Ayudanos a completar!
                     </>
                             return <>
-                                <Link to={`/people/${r.cedula}`}>
+                                <Link to={`/person/${r.cedula}`}>
                                     {r.nombre} {r.apellido} <br />
                                     {r.cedula}
                                 </Link>
@@ -122,7 +122,7 @@ export function ElectedAuthoritiesPage() {
                             <Card bordered={false}>
                                 Nombre: {!r.cedula ? <> {r.nombre} {r.apellido} <br />
                                     Ayudanos a completar! </> :
-                                    <>  <Link to={`/people/${r.cedula}`}>
+                                    <>  <Link to={`/person/${r.cedula}`}>
                                         {r.nombre} {r.apellido} <br />
                                         {r.cedula}
                                     </Link> </>

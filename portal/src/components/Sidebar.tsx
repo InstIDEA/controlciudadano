@@ -10,7 +10,7 @@ export function Sidebar(props: {
   const { Sider } = Layout;
   const actionMenu = [
     { key: 'items', link: '/action/ocds/items', label: "¿Se compró más caro?" },
-    { key: 'itemsRanking', link: '/action/ocds/covid/itemsRanking', label: "¿Qué se compró?" },
+    { key: 'itemsRanking', link: '/action/ocds/itemsRanking', label: "¿Qué se compró?" },
     { key: 'sanctionedSuppliers', link: '/action/ocds/sanctioned_suppliers', label: '¿A quiénes se compró?' },
     { key: 'buyers', link: '/action/ocds/buyers', label: "¿Quienes compraron?" },
     { key: 'tenders', link: '/action/ocds/tenders', label: "¿Conocés las licitaciones más grandes?" },
@@ -20,7 +20,7 @@ export function Sidebar(props: {
     { key: 'affidavit', link: '/explore/contralory/affidavit', label: 'Declaraciones juradas' },
     { key: 'authorities', link: '/explore/authorities/elected', label: 'Autoridades Electas' },
     { key: 'items', link: '/explore/ocds/items', label: "¿Se compró más caro?" },
-    { key: 'itemsRanking', link: '/explore/ocds/covid/itemsRanking', label: "¿Qué se compró?" },
+    { key: 'itemsRanking', link: '/explore/ocds/itemsRanking', label: "¿Qué se compró?" },
     { key: 'suppliers', link: '/explore/ocds/suppliers', label: 'Proveedores' },
     { key: 'relations', link: '/explore/ocds/relations', label: "Relación entre proveedores" },
     { key: 'ande', link: '/explore/covid/ande', label: 'ANDE: exoneraciones' },

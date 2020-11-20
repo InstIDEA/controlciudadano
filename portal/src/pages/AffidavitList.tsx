@@ -63,7 +63,7 @@ export function AffidavitList() {
                         dataIndex: 'document',
                         title: 'Documento',
                         align: 'right',
-                        render: document => <Link to={`/people/${document}`}>{document}</Link>,
+                        render: document => <Link to={`/person/${document}`}>{document}</Link>,
                         sorter: (a, b) => (a.document || '').localeCompare(b.document)
                     }, {
                         dataIndex: 'name',
@@ -132,7 +132,7 @@ export function AffidavitList() {
                     renderItem={(r: Affidavit) =>
                         <List.Item className="list-item">
                             <Card bordered={false}>
-                                Documento: <Link to={`/people/${r.document}`}>{r.document}</Link>
+                                Documento: <Link to={`/person/${r.document}`}>{r.document}</Link>
                                 <br />
                                 Nombre: {r.name}
                                 <br />
