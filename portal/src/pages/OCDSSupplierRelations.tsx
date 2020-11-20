@@ -46,11 +46,13 @@ export function OCDSSupplierRelations() {
             onBack={() => history.push('')}
             backIcon={null}
             style={{ border: '1px solid rgb(235, 237, 240)' }}
-            title={"¿Tienen vínculos a quienes se compró?Relaciones ente proveedores"}
+            title={"Relaciones ente proveedores ¿Tienen vínculos a quienes se compró?"}
             subTitle="CDS - IDEA"
         >
              <Typography.Paragraph>
-                Grafo de relación entre proveedores con igual dirección o número de contacto
+                Nodos de relación entre proveedores con igual dirección o número de contacto. Se considera
+                 “relación entre proveedores” a las empresas que cuenten con el mismo contacto y/o dirección,
+                 lo cual no implica una relación directa con la contratación ni se considera un delito en sí.
             </Typography.Paragraph>
             <Layout>
                 <Layout>
