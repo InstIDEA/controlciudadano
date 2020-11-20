@@ -464,7 +464,7 @@ export interface AquienesElegimos {
     identifier: number;
     id: number,
     name: string,
-    lastName: string,
+    lastname: string,
     date_of_birth: string,
     date_of_death: string,
     estado_civil: string,

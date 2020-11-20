@@ -336,7 +336,7 @@ export function PersonSearchPage() {
                                                             xl={2}
                                                             lg={2}
                                                             md={24} sm={24} xs={24}>
-                                                            <Link to={`/person/detail/${row.document}`}>
+                                                            <Link to={`/person/${row.document}`}>
                                                                 <Button className="mas-button">Ver más</Button>
                                                             </Link>
                                                         </Col>
