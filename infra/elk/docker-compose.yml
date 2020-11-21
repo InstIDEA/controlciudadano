@@ -9,6 +9,8 @@ services:
       - "9301:9300"
     env_file:
       - .env
+    volumes:
+      - ./elasticsearch_data:/usr/share/elasticsearch/data
 
   logstash:
     build: logstash_jdbc_input
