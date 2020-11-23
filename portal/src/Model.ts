@@ -26,16 +26,16 @@ export interface LocalSearchResult {
             department: string,
             district: string
         }>;
-        nangareko_2: unknown[];
-        nangareko_transparencia: unknown[];
-        hacienda_funcionarios: unknown[];
+        nangareko_2: object[];
+        nangareko_transparencia: object[];
+        hacienda_funcionarios: object[];
         sfp: Array<{
             anho: string,
             profesion: string,
             funcion: string,
             source: string
         }>;
-        policia: unknown[];
+        policia: object[];
         ande_exonerados: AndeExonerated[];
         a_quien_elegimos: AquienesElegimos[];
     }

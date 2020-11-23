@@ -17,7 +17,6 @@ import {SimpleApi} from '../SimpleApi';
 import {useParams} from 'react-router-dom';
 import {Affidavit, AnalysisSearchResult, Authorities, LocalSearchResult} from '../Model';
 import {SFPFetcher, SFPRow} from '../SFPHelper';
-import {GenericTable} from '../components/GenericTable';
 import {formatMoney, getInitials} from '../formatters';
 import {AQECard} from '../components/person_cards/AQE';
 import {TSJECard} from '../components/person_cards/TSJE';
@@ -139,7 +138,10 @@ export function PersonDetailPage() {
                             <Row gutter={[16, 16]} align="middle">
                                 <Col xxl={3} xl={3} md={4} xs={6} style={{alignSelf: 'flex-end', textAlign: "center"}}>
                                     {header.imageURL && <Avatar size={100} shape="square" src={header.imageURL}/>}
-                                    {!header.imageURL && <Avatar size={100} shape="square" style={{ color: '#00345b', backgroundColor: '#dfedfb' }}>{getInitials(header.name)}</Avatar>}
+                                    {!header.imageURL && <Avatar size={100} shape="square" style={{
+                                        color: '#00345b',
+                                        backgroundColor: '#dfedfb'
+                                    }}>{getInitials(header.name)}</Avatar>}
                                 </Col>
                                 <Col xxl={21} xl={21} md={20} xs={18} style={{alignSelf: 'flex-end'}}>
                                     <Typography.Title style={{color: "rgba(0, 52, 91, 1)"}} level={3}>
@@ -163,10 +165,10 @@ export function PersonDetailPage() {
                 </Row>
                 <Row gutter={[16, 16]}>
                     {
-                        affidavit && affidavit.length > 0 && <DDJJCard affidavit={affidavit} />
+                        affidavit && affidavit.length > 0 && <DDJJCard affidavit={affidavit}/>
                     }
                     {
-                        tsje && tsje.length > 0 && <TSJECard tsje={tsje} />
+                        tsje && tsje.length > 0 && <TSJECard tsje={tsje}/>
                     }
                     {
                         local?.staging.pytyvo && local?.staging.pytyvo.length > 0 &&
@@ -251,7 +253,7 @@ export function PersonDetailPage() {
 
                     }
                     {
-                        header.charge && header.charge.length > 0 && <ChargeCard cargos={header.charge} spans={spans} />
+                        header.charge && header.charge.length > 0 && <ChargeCard cargos={header.charge} spans={spans}/>
                     }
                     {
                         local && local.staging && local.staging.a_quien_elegimos && local.staging.a_quien_elegimos.length > 0 &&
@@ -287,8 +289,8 @@ function tryToGuestHeader(baseDoc: string,
         if (affidavit.length > 0) {
             name = affidavit[0].name;
             affidavit.forEach(a => {
-                if(a.charge){
-                    charge.push({cargo: a.charge, ano:a.year});
+                if (a.charge) {
+                    charge.push({cargo: a.charge, ano: a.year});
                 }
             });
         }
@@ -351,26 +353,3 @@ function tryToGuestHeader(baseDoc: string,
     }
 }
 
-export function LocalData(props: { s: string, result: LocalSearchResult, showEmpty: boolean }) {
-    if (!props.result || !props.result.staging) {
-        return <></>
-    }
-    const {staging} = props.result;
-
-    let toShow = Object.keys(staging)
-        .map(key => {
-            const data: unknown[] = staging[key as keyof LocalSearchResult['staging']] || [];
-            return {key, data}
-        });
-
-    if (!props.showEmpty) {
-        toShow = toShow.filter(f => f.data.length);
-    }
-
-    return <>
-        {toShow.map(source =>
-            <GenericTable data={source.data}/>
-        )}
-    </>
-
-}
