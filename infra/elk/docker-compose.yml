@@ -5,8 +5,8 @@ services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
     ports:
-      - "9201:9200"
-      - "9301:9300"
+      - "49201:9200"
+      - "49301:9300"
     env_file:
       - .env
     volumes:
@@ -17,8 +17,9 @@ services:
     env_file:
       - .env
     ports:
-      - 9600:9600
-      - 5044:5044
+      - 49600:9600
+      - 45044:5044
     depends_on:
       - elasticsearch
-      - postgres
+    volumes:
+      - ./logstash_data:/logstash_data
