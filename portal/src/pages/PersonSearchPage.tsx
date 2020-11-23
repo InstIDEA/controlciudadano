@@ -1,20 +1,19 @@
 import * as React from 'react';
 import {useMemo} from 'react';
-import {Avatar, Checkbox, Col, Collapse, Comment, Layout, Row, Typography} from 'antd';
+import {Avatar, Button, Card, Checkbox, Col, Collapse, Layout, Row, Tooltip, Typography} from 'antd';
 import {Header} from '../components/layout/Header';
 import './PersonSearchPage.css'
 import Footer from '../components/layout/Footer';
-import {
-    DataSearch,
-    MultiList,
-    ReactiveBase,
-    ReactiveComponent,
-    ReactiveList,
-    SelectedFilters
-} from '@appbaseio/reactivesearch';
+import {DataSearch, MultiList, ReactiveBase, ReactiveList, SelectedFilters} from '@appbaseio/reactivesearch';
 import {useMediaQuery} from '@react-hook/media-query'
 import {formatMoney} from '../formatters';
 import {getAQEImage} from '../AQuienElegimosData';
+import Icon from '@ant-design/icons';
+import {ReactComponent as Sfp} from '../assets/logos/sfp.svg';
+import {ReactComponent as Ddjj} from '../assets/logos/ddjj.svg';
+import {ReactComponent as Ande} from '../assets/logos/ande.svg';
+import {ReactComponent as Aqe} from '../assets/logos/a_quienes_elegimos.svg';
+import {Link} from 'react-router-dom';
 
 const sourceNameMap: { [k: string]: string } = {
     'tsje_elected': 'Autoridades electas',
@@ -36,7 +35,10 @@ export function PersonSearchPage() {
         <Header tableMode={true}/>
 
         <Layout>
-            {!isSmall && <Layout.Sider width="30vw">
+            {!isSmall && <Layout.Sider width="20vw">
+              <Typography.Title level={5} style={{textAlign: 'center', paddingTop: 20}}>
+                Filtros
+              </Typography.Title>
                 {filter}
             </Layout.Sider>}
             <Layout>
@@ -54,8 +56,11 @@ export function PersonSearchPage() {
                         <Col xs={{span: 24}}>
                             <DataSearch componentId="query"
                                         URLParams
+                                        enableQuerySuggestions={false}
+                                        enablePopularSuggestions={false}
+                                        debounce={300}
                                         placeholder="Búsqueda por nombre o cédula"
-                                        dataField={['name', 'lastname', 'document']}/>
+                                        dataField={['name', 'document']}/>
                         </Col>
                     </Row>
                     <Row>
@@ -76,37 +81,38 @@ export function PersonSearchPage() {
 
 function Filter() {
     return <Col xs={{span: 24}} style={{padding: 5}}>
-        <MultiList title="Fuente de datos"
-                   componentId="Fuente"
-                   dataField="source.keyword"
-                   showCheckbox
-                   URLParams
-                   showSearch={false}
-                   react={{
-                       and: ['query'],
-                   }}
-                   render={({loading, error, data, handleChange, value}) => {
-                       if (loading) {
-                           return <div>Cargando ...</div>;
-                       }
-                       if (error) {
-                           return <div>Error al cargar datos</div>;
-                       }
-                       return (<Row>
-                           {data.map((item: { key: string, doc_count: number }) => <React.Fragment key={item.key}>
-                               <Col xs={{span: 16}}>
-                                   <Checkbox checked={value[item.key]}
-                                             onChange={() => handleChange(item.key)}>
-                                       {sourceNameMap[item.key] || item.key}
-                                   </Checkbox>
-                               </Col>
-                               <Col xs={{span: 8}} style={{textAlign: 'right'}}>
-                                   {formatMoney(item.doc_count)}
-                               </Col>
-                           </React.Fragment>)}
-                       </Row>);
-                   }}
-        />
+        <Card title="Fuente de datos" className="card-style">
+            <MultiList componentId="Fuente"
+                       dataField="source.keyword"
+                       showCheckbox
+                       URLParams
+                       showSearch={false}
+                       react={{
+                           and: ['query'],
+                       }}
+                       render={({loading, error, data, handleChange, value}) => {
+                           if (loading) {
+                               return <div>Cargando ...</div>;
+                           }
+                           if (error) {
+                               return <div>Error al cargar datos</div>;
+                           }
+                           return (<Row>
+                               {data.map((item: { key: string, doc_count: number }) => <React.Fragment key={item.key}>
+                                   <Col xs={{span: 18}}>
+                                       <Checkbox checked={value[item.key]}
+                                                 onChange={() => handleChange(item.key)}>
+                                           {sourceNameMap[item.key] || item.key}
+                                       </Checkbox>
+                                   </Col>
+                                   <Col xs={{span: 6}} style={{textAlign: 'right'}}>
+                                       {formatMoney(item.doc_count)}
+                                   </Col>
+                               </React.Fragment>)}
+                           </Row>);
+                       }}
+            />
+        </Card>
     </Col>
 }
 
@@ -120,15 +126,7 @@ function ResultComponent() {
         </Row>
         <Row>
             <Col xs={{span: 24}}>
-                <ReactiveComponent componentId="test"
-                                   react={{
-                                       and: ['query', 'Fuente']
-                                   }}
-                                   customQuery={(args: any) => {
-                                       console.log('rc.cq', args);
-                                       return {};
-                                   }}
-                />
+                <ResultHeader />
                 <ReactiveList
                     dataField="document.keyword"
                     componentId="SearchResult"
@@ -136,42 +134,15 @@ function ResultComponent() {
                         and: ['query', 'Fuente']
                     }}
                     infiniteScroll={false}
-                    // aggregationField="document.keyword"
-                    defaultQuery={(args: any) => {
-                        // console.log(args)
-                        return { "aggs": {
-                            "result": {
-                                "terms": {
-                                    "field": "document.keyword",
-                                    "size": 10
-                                },
-                                "aggs": {
-                                    "tops": {
-                                        "top_hits": {
-                                            "size": 10
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "size": 0
-                    }}}
                     size={10}
                     pagination
                     paginationAt="bottom"
-                    renderResultStats={stats => `Mostrando ${stats.displayedResults} de un total de ${formatMoney(stats.numberOfResults)}`}
-                    render={data => {
-                        // console.log(data)
-                        if (!data.rawData) {
-                            return <div>Ingresa un nombre para buscar!</div>
-                        }
-                        // return <pre>{JSON.stringify(data.aggregationData, null, 2)}</pre>
-                        const rows = data.rawData.aggregations.result.buckets;
-                        // console.log('rows', rows)
-                        return <>
-                            {rows.map((r: any) => <ResultCard data={r} key={r.key}/>)}
-                        </>
-                    }}
+                    renderResultStats={() => <></>}
+                    renderItem={(item: ElasticFtsPeopleResult) => <SingleResultCard
+                        data={[item]}
+                        id={item._id}
+                        key={item._id}
+                    />}
                 />
             </Col>
         </Row>
@@ -202,19 +173,62 @@ function ResultCard(props: {
 
     const id = props.data.key;
     const rows: Array<ElasticFtsPeopleResult> = props.data.tops.hits.hits.map(h => h._source);
-    const data = getData(rows);
+    return <SingleResultCard data={rows} id={id}/>
 
+}
 
-    return <Comment avatar={<Avatar
-        style={{backgroundColor: getColorByIdx(id), verticalAlign: 'middle'}}
-        src={data.photo ? undefined : data.photo}
-        alt={data.name}
-    >{data.photo ? undefined : getInitials(data.name)}</Avatar>}
-                    content={data.name}
-                    datetime={props.data.key}
-                    author={data.sources.join(", ")}
-    />
+function ResultHeader() {
 
+    return <Row gutter={[8, 8]} justify="start" align="middle">
+        <Col span={1}>
+        </Col>
+        <Col span={11}>
+            <b>Nombre</b>
+        </Col>
+
+        <Col span={4} style={{textAlign: 'right'}} offset={1}>
+            <b>Patrimonio neto</b>
+        </Col>
+        <Col span={2} offset={1}>
+            <b>Fuente</b>
+        </Col>
+        <Col span={2} offset={1}>
+        </Col>
+    </Row>
+}
+
+function SingleResultCard(props: {
+    data: ElasticFtsPeopleResult[],
+    id: string
+}) {
+
+    const data = getData(props.data);
+
+    return <Row gutter={[8, 8]} justify="start" align="middle">
+        <Col span={1}>
+            <Avatar
+                style={{backgroundColor: getColorByIdx(props.id), verticalAlign: 'middle'}}
+                src={data.photo}
+                alt={data.name}>{getInitials(data.name)}</Avatar>
+        </Col>
+        <Col span={11}>
+            {data.name}
+            <br/>
+            <small>{data.document}</small>
+        </Col>
+
+        <Col span={4} style={{textAlign: 'right'}} offset={1}>
+            {formatMoney(data.net_worth, 'Gs')}
+        </Col>
+        <Col span={2} offset={1}>
+            <SourcesIconListComponent sources={data.sources}/>
+        </Col>
+        <Col span={2} offset={1}>
+            <Link to={`/person/${data.document}`}>
+                <Button className="mas-button">Ver más</Button>
+            </Link>
+        </Col>
+    </Row>
 }
 
 interface ElasticFtsPeopleResult {
@@ -224,6 +238,9 @@ interface ElasticFtsPeopleResult {
     document: string | null;
     age?: number;
     photo?: string;
+    active?: string;
+    passive?: string;
+    net_worth?: string;
 }
 
 const ColorList = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae'];
@@ -244,6 +261,7 @@ function getColorByIdx(_id: string) {
 function getData(data: Array<ElasticFtsPeopleResult>) {
     let name: { val: string, confidence: number } = {val: "", confidence: 0};
     let photo: { val: string, confidence: number } = {val: "", confidence: 0};
+    let net_worth: { val: string, confidence: number } = {val: "", confidence: 0};
     const sources: { [k: string]: boolean } = {};
 
     for (const row of data) {
@@ -260,12 +278,20 @@ function getData(data: Array<ElasticFtsPeopleResult>) {
             photo.val = row.source === 'a_quien_elegimos' ? getAQEImage(row.photo) : row.photo;
             photo.confidence = dsInfo.photo;
         }
+
+        if (dsInfo.net_worth !== undefined && row.net_worth !== undefined && net_worth.confidence < dsInfo.net_worth) {
+            net_worth.val = row.net_worth;
+            net_worth.confidence = dsInfo.net_worth;
+        }
+
     }
 
     return {
         name: name.val,
         photo: photo.confidence === 0 ? undefined : photo.val,
-        sources: Object.keys(sources)
+        sources: Object.keys(sources),
+        document: data.map(d => d.document).filter(d => !!d)[0],
+        net_worth: net_worth.val
     }
 }
 
@@ -300,3 +326,21 @@ const confidenceByDS: { [k: string]: { name: number, photo?: number, net_worth?:
     }
 }
 
+const sourceNameIcon: { [k: string]: React.FunctionComponent } = {
+    'declarations': Ddjj,
+    'a_quien_elegimos': Aqe,
+    'ande_exonerados': Ande,
+    'sfp': Sfp
+}
+
+function SourcesIconListComponent(props: {
+    sources: string[]
+}) {
+    return <>
+        {props.sources.map(s =>
+            <Tooltip title={sourceNameMap[s] || s} key={s}>
+                <Icon component={sourceNameIcon[s] || s} className="source-icon"/>
+            </Tooltip>
+        )}
+    </>
+}

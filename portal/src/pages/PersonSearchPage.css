@@ -62,3 +62,9 @@
         padding: 0 5px;
     }
 }
+
+
+.source-icon {
+    color: rgba(0, 52, 91, 1);
+    font-size: 30px;
+}
