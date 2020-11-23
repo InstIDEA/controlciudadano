@@ -53,6 +53,10 @@
     margin-right: 5px;
 }
 
+.content-padding {
+    padding-top: 20px;
+}
+
 @media (max-width: 600px) {
     .content-padding {
         padding: 0 5px;
