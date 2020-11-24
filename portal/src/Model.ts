@@ -29,16 +29,25 @@ export interface LocalSearchResult {
         nangareko_2: object[];
         nangareko_transparencia: object[];
         hacienda_funcionarios: Hacienda[];
-        sfp: Array<{
-            anho: string,
-            profesion: string,
-            funcion: string,
-            source: string
-        }>;
+        sfp: Array<SFPLocalData>;
         policia: object[];
         ande_exonerados: AndeExonerated[];
         a_quien_elegimos: AquienesElegimos[];
     }
+}
+
+export interface SFPLocalData {
+    devengado: number;
+    presupuestado: number;
+    mes: number;
+    fecha_nacimiento: string;
+    nombres: string;
+    apellidos: string;
+    cargo: string;
+    anho: number,
+    profesion: string,
+    funcion: string,
+    source: string
 }
 
 export interface AnalysisSearchResult {
@@ -480,6 +489,8 @@ export interface AquienesElegimos {
     contact_detail: string
 }
 export interface Hacienda {
+    nombres: string;
+    apellidos: string;
     anio: number,
     mes: number,
     cargo: string,

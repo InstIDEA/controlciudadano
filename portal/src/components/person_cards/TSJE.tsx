@@ -12,29 +12,27 @@ export function TSJECard(props: {
         <Card className="data-box" title="TSJE"
               extra={<Icon component={Ddjj} style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}>
             <Row gutter={[8, 8]} style={{background: '#fafafa'}}>
-                <Col span={3} >
+                <Col span={3}>
                     <Typography.Text><strong>Año</strong></Typography.Text>
                 </Col>
                 <Col span={11}>
                     <Typography.Text><strong>Candidatura</strong></Typography.Text>
-                </Col >
+                </Col>
                 <Col span={10}>
                     <Typography.Text><strong>Lista</strong></Typography.Text>
                 </Col>
             </Row>
-            {tsje.map(
-                election =>
-                    <Row gutter={[8, 8]}>
-                        <Col span={3} >
-                            {election.ano}
-                        </Col>
-                        <Col span={11}>
-                            {election.cand_desc}
-                        </Col >
-                        <Col span={10}>
-                            {election.nombre_lista} ({election.siglas_lista})
-                        </Col>
-                    </Row>
+            {tsje.map(election => <Row gutter={[8, 8]} key={election.ano}>
+                    <Col span={3}>
+                        {election.ano}
+                    </Col>
+                    <Col span={11}>
+                        {election.cand_desc}
+                    </Col>
+                    <Col span={10}>
+                        {election.nombre_lista} ({election.siglas_lista})
+                    </Col>
+                </Row>
             )}
         </Card>
     </Col>

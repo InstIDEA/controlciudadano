@@ -1,7 +1,7 @@
 import * as React from "react";
 import 'antd/dist/antd.css';
 import './App.css';
-import {BrowserRouter as Router, Route, Redirect, Switch} from "react-router-dom";
+import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import {DocumentSearchPage} from "./pages/DocumentSearchPage";
 import {QueryParamProvider} from "use-query-params";
 import {OCDSAwardItemsPage} from './pages/OCDSAwardItemsPage';

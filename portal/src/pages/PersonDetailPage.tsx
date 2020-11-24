@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useEffect, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {Avatar, Card, Col, Layout, Row, Tooltip, Typography} from 'antd';
 import {Header} from '../components/layout/Header';
 import './PersonDetailPage.css'
@@ -7,7 +7,6 @@ import Footer from '../components/layout/Footer';
 import {ReactComponent as Pytyvo} from '../assets/logos/pytyvo.svg';
 import {ReactComponent as Nangareko} from '../assets/logos/nangareko.svg';
 import {ReactComponent as Ande} from '../assets/logos/ande.svg';
-import {ReactComponent as SalarioSfp} from '../assets/logos/sfp.svg';
 import {ReactComponent as Sfp} from '../assets/logos/hacienda.svg';
 import {ReactComponent as Ddjj} from '../assets/logos/ddjj.svg';
 import {ReactComponent as Aqe} from '../assets/logos/a_quienes_elegimos.svg';
@@ -15,17 +14,15 @@ import {ReactComponent as PoliciaNacional} from '../assets/logos/policia_naciona
 import Icon from '@ant-design/icons';
 import {SimpleApi} from '../SimpleApi';
 import {useParams} from 'react-router-dom';
-import {Affidavit, AnalysisSearchResult, Authorities, LocalSearchResult} from '../Model';
-import {SFPFetcher, SFPRow} from '../SFPHelper';
-import {GenericTable} from '../components/GenericTable';
+import {Affidavit, AnalysisSearchResult, Authorities, Hacienda, LocalSearchResult} from '../Model';
+import {SFPRow} from '../SFPHelper';
 import {formatMoney, getInitials} from '../formatters';
 import {AQECard} from '../components/person_cards/AQE';
 import {TSJECard} from '../components/person_cards/TSJE';
 import {DDJJCard} from "../components/person_cards/DDJJ";
-import {Cargo, ChargeCard} from "../components/person_cards/Charge";
-import {AQE_URL} from "../AQuienElegimosData";
+import {Charge, ChargeCard} from "../components/person_cards/Charge";
 import {HaciendaCard} from "../components/person_cards/Hacienda";
-import {SFPCard} from "../components/person_cards/SFP";
+import {SFPCard} from '../components/person_cards/SFP';
 
 export function PersonDetailPage() {
 
@@ -42,7 +39,6 @@ export function PersonDetailPage() {
     const {document} = useParams<{ document: string }>();
     const [affidavit, setAffidavit] = useState<Affidavit[]>();
     const [tsje, setTsje] = useState<Authorities[]>();
-    const [sfpData, setSfpData] = useState<SFPLocalData>({});
     const [analysis, setAnalysis] = useState<AnalysisSearchResult>();
     const [local, setLocal] = useState<LocalSearchResult>();
 
@@ -62,25 +58,11 @@ export function PersonDetailPage() {
             });
     }, [document]);
 
-    useEffect(() => {
+    const header = useMemo(
+        () => tryToGuestHeader(document, affidavit, analysis, local),
+        [document, affidavit, analysis, local]
+    );
 
-        const fetcher = new SFPFetcher();
-
-        fetcher.addHandler(data => {
-            if (data.type === 'error') {
-                console.warn(`No se puede cargar datos del año ${data.year} para ${document}`, 5000);
-                return;
-            }
-            setSfpData(prev => ({
-                ...prev,
-                [`${data.year}`]: data.data
-            }));
-        });
-        fetcher.fetchAllYears(document)
-        return () => fetcher.cancel();
-    }, [document])
-
-    const header = tryToGuestHeader(document, affidavit, sfpData, analysis, local);
     return <>
         <Header tableMode={true}/>
         <Layout>
@@ -169,12 +151,13 @@ export function PersonDetailPage() {
                 </Row>
                 <Row gutter={[16, 16]} align="middle">
                     <Col xs={24} style={{alignSelf: 'flex-end'}}>
-                        <Typography.Title style={{color: "rgba(0, 52, 91, 1)"}} level={3}>Datos públicos según fuentes</Typography.Title>
+                        <Typography.Title style={{color: "rgba(0, 52, 91, 1)"}} level={3}>Datos públicos según
+                            fuentes</Typography.Title>
                     </Col>
                 </Row>
                 <Row gutter={[16, 16]}>
                     {
-                        affidavit && affidavit.length > 0 && <DDJJCard affidavit={affidavit} />
+                        affidavit && affidavit.length > 0 && <DDJJCard affidavit={affidavit}/>
                     }
                     {
                         tsje && tsje.length > 0 && <TSJECard tsje={tsje}/>
@@ -206,41 +189,16 @@ export function PersonDetailPage() {
 
                     {
                         local?.staging.hacienda_funcionarios && local?.staging.hacienda_funcionarios.length > 0 &&
-                        <HaciendaCard data={local.staging.hacienda_funcionarios} document={header.document}></HaciendaCard>
+                        <HaciendaCard data={local.staging.hacienda_funcionarios}
+                                      document={header.document}/>
                     }
-                    {/*
-                        local?.staging.hacienda_funcionarios && local?.staging.hacienda_funcionarios.length > 0 &&
-                        <Col {...spans}>
-                          <Card className="data-box" title="Salarios de hacienda" style={{height: cardHeight}}
-                                extra={<Icon component={Sfp}
-                                             style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}
-                                actions={[
-                                    <a href={`https://datos.hacienda.gov.py/doc/nomina/${header.document}`} target="_blank" rel="noopener noreferrer">Mas info</a>
-                                ]}>
-                            <Typography.Text>Año: {(local.staging.hacienda_funcionarios[0] as any).anio} </Typography.Text>
-                            <br/>
-                            <Typography.Text>Presupuesto: {formatMoney((local.staging.hacienda_funcionarios[0] as any).montopresupuestado)} </Typography.Text>
-                            <br/>
-                            <Typography.Text>Devengado: {formatMoney((local.staging.hacienda_funcionarios[0] as any).montodevengado)} </Typography.Text>
-                          </Card>
-                        </Col>*/
-                    }
+
                     {
-                        /*sfpData && sfpData. > 0 && <SFPCard data={sfpData.} document={header.document} />
-                        /*<Col {...spans}>
-                            <Card className="data-box" title="SFP" style={{height: cardHeight}}
-                                  extra={<Icon component={SalarioSfp} style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}>
-                                <Typography.Text>Año: {local.staging.sfp[0].anho} </Typography.Text>
-                                <br/>
-                                <Typography.Text>Profesión: {(local.staging.sfp[0]).profesion} </Typography.Text>
-                                <br/>
-                                <Typography.Text>Función: {local.staging.sfp[0].funcion} </Typography.Text>
-                                <br/>
-                                <a href={`${local.staging.sfp[0].source}`} target="_blank"
-                                   rel="noopener noreferrer">Link</a>
-                            </Card>
-                        </Col>*/
+                        local?.staging.sfp && local?.staging.sfp.length > 0 &&
+                        <SFPCard data={local.staging.sfp}
+                                 document={header.document}/>
                     }
+
                     {
                         local?.staging.policia && local?.staging.policia.length > 0 &&
                         <Col {...spans}>
@@ -269,7 +227,8 @@ export function PersonDetailPage() {
 
                     }
                     {
-                        header.charge && header.charge.length > 0 && <ChargeCard cargos={header.charge} spans={spans} document={header.document} />
+                        header.charge && header.charge.length > 0 &&
+                        <ChargeCard cargos={header.charge} spans={spans} document={header.document}/>
                     }
                     {
                         local && local.staging && local.staging.a_quien_elegimos && local.staging.a_quien_elegimos.length > 0 &&
@@ -289,7 +248,6 @@ export type SFPLocalData = {
 
 function tryToGuestHeader(baseDoc: string,
                           affidavit: Affidavit[] | undefined,
-                          sfpData: SFPLocalData,
                           analysis?: AnalysisSearchResult,
                           local?: LocalSearchResult
 ) {
@@ -297,7 +255,7 @@ function tryToGuestHeader(baseDoc: string,
     let name = '';
     let document = baseDoc;
     let found = false;
-    let charge: Array<Cargo> = new Array<Cargo>();
+    let charge: Array<Charge> = [];
     let birthDate = '';
     let imageURL = '';
     if (affidavit !== undefined) {
@@ -305,20 +263,44 @@ function tryToGuestHeader(baseDoc: string,
         if (affidavit.length > 0) {
             name = affidavit[0].name;
             affidavit.forEach(a => {
-                if(a.charge){
-                    charge.push({cargo: a.charge, ano:a.year});
+                if (a.charge) {
+                    charge.push({charge: a.charge, year: a.year, source: 'ddjj'});
                 }
             });
         }
     }
 
-    Object.values(sfpData).forEach(rows => {
-        if (!rows || !rows.length) return;
-        const d = rows[0];
+    if (local && local.staging.sfp && local.staging.sfp.length > 0) {
+
+
+        const localClone = local.staging.sfp.map(s => s)
+            .sort((s1, s2) => s1.anho > s2.anho
+                ? -1
+                : s1.anho !== s2.anho
+                    ? 1
+                    : s1.mes - s2.mes
+            );
+
+        const d = localClone[0];
+
         name = d.nombres + ' ' + d.apellidos;
         found = true;
-        birthDate = d.fechaNacimiento;
-    })
+        birthDate = d.fecha_nacimiento;
+
+
+        const chargeData: Record<string, number> = {};
+        localClone.filter(h => !!h.cargo)
+            .forEach(h => {
+                if (chargeData[h.cargo]) {
+                    return;
+                } else {
+                    chargeData[h.cargo] = h.anho
+                }
+            });
+
+
+        Object.keys(chargeData).forEach(c => charge.push({charge: c, year: chargeData[c], source: 'sfp'}));
+    }
 
     if (analysis && analysis.analysis) {
         const election = analysis.analysis.tsje_elected;
@@ -335,9 +317,27 @@ function tryToGuestHeader(baseDoc: string,
         if (nangareko && nangareko.length) {
             name = name || `${nangareko[0].name}`;
         }
-        const hacienda: any = local.staging.hacienda_funcionarios;
+        const hacienda: Hacienda[] = local.staging.hacienda_funcionarios;
         if (hacienda && hacienda.length) {
             name = name || `${hacienda[0].nombres} ${hacienda[0].apellidos}`;
+
+            const chargeData: Record<string, number> = {};
+
+            hacienda
+                .map(h => h) // clone the array
+                .sort((h1, h2) => h1.anio > h2.anio ? 1 : -1)
+                .filter(h => !!h.cargo)
+                .forEach(h => {
+                    if (chargeData[h.cargo]) {
+                        return;
+                    } else {
+                        chargeData[h.cargo] = h.anio
+                    }
+                });
+
+
+            Object.keys(chargeData).forEach(c => charge.push({charge: c, year: chargeData[c], source: 'hacienda'}));
+
         }
         const aqe = local.staging && local.staging.a_quien_elegimos && local.staging.a_quien_elegimos[0];
         if (aqe) {
