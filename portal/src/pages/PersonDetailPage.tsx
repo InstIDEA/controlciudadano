@@ -7,7 +7,8 @@ import Footer from '../components/layout/Footer';
 import {ReactComponent as Pytyvo} from '../assets/logos/pytyvo.svg';
 import {ReactComponent as Nangareko} from '../assets/logos/nangareko.svg';
 import {ReactComponent as Ande} from '../assets/logos/ande.svg';
-import {ReactComponent as Sfp} from '../assets/logos/hacienda.svg';
+import {ReactComponent as HaciendaIcon} from '../assets/logos/hacienda.svg';
+import {ReactComponent as Sfp} from '../assets/logos/sfp.svg';
 import {ReactComponent as Ddjj} from '../assets/logos/ddjj.svg';
 import {ReactComponent as Aqe} from '../assets/logos/a_quienes_elegimos.svg';
 import {ReactComponent as PoliciaNacional} from '../assets/logos/policia_nacional.svg';
@@ -74,6 +75,12 @@ export function PersonDetailPage() {
                         </Typography.Title>
                     </Col>
                     <Col md={8} xs={24} style={{padding: 25, textAlign: 'right'}}>
+                        <Tooltip title="Hacienda">
+                            <Icon component={HaciendaIcon} style={{
+                                color: ((local?.staging.hacienda_funcionarios.length || []) > 0 ? 'rgba(0, 52, 91, 1)' : 'rgba(171, 171, 171, 1)'),
+                                fontSize: '30px'
+                            }}/>
+                        </Tooltip>
                         <Tooltip title="SFP">
                             <Icon component={Sfp} style={{
                                 color: ((local?.staging.sfp.length || []) > 0 ? 'rgba(0, 52, 91, 1)' : 'rgba(171, 171, 171, 1)'),

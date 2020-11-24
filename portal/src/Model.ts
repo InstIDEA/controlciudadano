@@ -37,6 +37,7 @@ export interface LocalSearchResult {
 }
 
 export interface SFPLocalData {
+    descripcion_entidad: string;
     devengado: number;
     presupuestado: number;
     mes: number;
@@ -489,7 +490,9 @@ export interface AquienesElegimos {
     contact_detail: string
 }
 export interface Hacienda {
+    montopresupuestado: number;
     nombres: string;
+    descripcionentidad: string;
     apellidos: string;
     anio: number,
     mes: number,
