@@ -25,3 +25,7 @@ export const PAISES_NACIMIENTO: { [k: string]: string } = {
 };
 
 export const AQE_URL: string = "https://aquieneselegimos.org.py";
+
+export function getAQEImage(id: string) {
+    return `https://datos.aquieneselegimos.org.py/media/${id}`
+}

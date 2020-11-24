@@ -1,507 +1,474 @@
 import * as React from 'react';
-import { Layout, Row, Col, Card, Input, Typography, Button, Badge, Select, Tooltip, Collapse, InputNumber, Tag } from 'antd';
-import { Header } from '../components/layout/Header';
+import {useMemo} from 'react';
+import {
+    Avatar,
+    Button,
+    Card,
+    Checkbox,
+    Col,
+    Collapse,
+    Comment,
+    Descriptions,
+    Layout,
+    Row,
+    Tooltip,
+    Typography
+} from 'antd';
+import {Header} from '../components/layout/Header';
 import './PersonSearchPage.css'
 import Footer from '../components/layout/Footer';
-import { useQueryParam, StringParam } from 'use-query-params';
-import { Link } from 'react-router-dom';
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Async, PersonDataStatistics, AsyncHelper } from '../Model';
-import { RedashAPI } from '../RedashAPI';
-import { formatMoney } from '../formatters';
-import { SimpleApi } from '../SimpleApi';
-import { ReactComponent as Pytyvo } from '../assets/logos/pytyvo.svg';
-import { ReactComponent as Nangareko } from '../assets/logos/nangareko.svg';
-import { ReactComponent as Ande } from '../assets/logos/ande.svg';
-import { ReactComponent as Sfp } from '../assets/logos/sfp.svg';
-import { ReactComponent as Ddjj } from '../assets/logos/ddjj.svg';
-import { ReactComponent as PoliciaNacional } from '../assets/logos/policia_nacional.svg';
+import {
+    DataSearch,
+    MultiList,
+    ReactiveBase,
+    ReactiveList,
+    SelectedFilters,
+    SingleRange
+} from '@appbaseio/reactivesearch';
+import {useMediaQuery} from '@react-hook/media-query'
+import {formatMoney} from '../formatters';
+import {getAQEImage} from '../AQuienElegimosData';
 import Icon from '@ant-design/icons';
-interface Filter {
-    key: string;
-    name: string;
-    from?: number;
-    to?: number;
-}
-interface QueryResuls {
-    document: string;
-    name: string;
-    sources: string[];
-    netWorth: number;
-    salary: number;
+import {ReactComponent as Sfp} from '../assets/logos/sfp.svg';
+import {ReactComponent as Ddjj} from '../assets/logos/ddjj.svg';
+import {ReactComponent as Ande} from '../assets/logos/ande.svg';
+import {ReactComponent as Aqe} from '../assets/logos/a_quienes_elegimos.svg';
+import {ReactComponent as Pytyvo} from '../assets/logos/pytyvo.svg';
+import {ReactComponent as Nangareko} from '../assets/logos/nangareko.svg';
+import {ReactComponent as PoliciaNacional} from '../assets/logos/policia_nacional.svg';
+import {Link} from 'react-router-dom';
+
+const sourceNameMap: { [k: string]: string } = {
+    'tsje_elected': 'Autoridades electas',
+    'declarations': 'Declaraciones juradas',
+    'a_quien_elegimos': 'A quien elegimos',
+    'ande_exonerados': 'Exonerados ANDE',
+    'mh': 'Ministerio de Hacienda',
+    'sfp': 'Secretaria de la función pública',
+    'pytyvo': 'Subsidio Pytyvo',
+    'nangareko': 'Subsidio Nangareko',
+    'policia': 'Policia Nacional'
 }
 
-interface FilterCounter {
-    salary: number;
-    assets: number;
-    pytyvo: number;
-    nangareko: number;
-    policia: number;
-    ande: number;
-}
 
 export function PersonSearchPage() {
 
-    const [document, setDocument] = useQueryParam('document', StringParam);
+    const isSmall = useMediaQuery('only screen and (max-width: 600px)');
 
+    const filter = useMemo(() => <Filter/>, []);
 
-    const [stats, setStats] = useState<Async<PersonDataStatistics>>({
-        state: 'NO_REQUESTED'
-    })
-    const [data, setData] = useState<QueryResuls[]>();
-    const [local, setLocal] = useState<QueryResuls[]>();
-    const [filterCounter, setFilterCounter] = useState<FilterCounter>({ salary: 0, assets: 0, pytyvo: 0, nangareko: 0, policia: 0, ande: 0 });
-    const [appliedFilters, setAppliedFilters] = useState<Filter[]>([]);
+    return <ReactiveBase url="https://data.controlciudadanopy.org/" app="fts_full_data">
+        <Header tableMode={true}/>
 
-    useEffect(() => {
-        setStats({ state: 'FETCHING' })
-        new RedashAPI().getPersonDataStatistics()
-            .then(d => setStats({
-                state: 'LOADED',
-                data: d.query_result.data.rows[0]
-            }))
-            .catch(e => setStats({
-                state: 'ERROR',
-                error: e
-            }))
-    }, [])
-
-    useEffect(() => {
-        if (!data) return;
-        let totalSalario = 0;
-        let totalPatrimonio = 0;
-        let totalPytyvo = 0;
-        let totalNangareko = 0;
-        let totalPolicia = 0;
-        let totalAnde = 0;
-
-        data.forEach(e => {
-            if (e.sources.indexOf('spf') !== -1) totalSalario += 1;
-            if (e.sources.indexOf('declarations') !== -1) totalPatrimonio += 1;
-            if (e.sources.indexOf('pytyvo') !== -1) totalPytyvo += 1;
-            if (e.sources.indexOf('nangareko') !== -1) totalNangareko += 1;
-            if (e.sources.indexOf('policia') !== -1) totalPolicia += 1;
-            if (e.sources.indexOf('ande_exonerados') !== -1) totalAnde += 1;
-            setFilterCounter({
-                salary: totalSalario,
-                assets: totalPatrimonio,
-                pytyvo: totalPytyvo,
-                policia: totalPolicia,
-                nangareko: totalNangareko,
-                ande: totalAnde
-            })
-        })
-    }, [data])
-
-    function doLocalSearch(cedula: string) {
-        new SimpleApi().findPeopleByName(cedula)
-            .then(d => {
-                let results: QueryResuls[] = [];
-                Object.keys(d.data).forEach((ci: string) => {
-                    const document = ci;
-                    const name = d.data[ci][0].names[0];
-                    let netWorth: number;
-                    let sources: string[] = [];
-                    d.data[ci].forEach(row => {
-                        if (row.source === 'declarations') netWorth = row.net_worth!;
-                        sources.push(row.source);
-                    });
-                    results.push({ document: document, name: name, sources: sources, netWorth: netWorth!, salary: 0 });
-                })
-                setLocal(results);
-                setData(results);
-            });
-    }
-
-    const doSearch = useCallback((toSearch: string) => {
-        setLocal(undefined);
-        if (!toSearch) return;
-        doLocalSearch(toSearch);
-    }, []);
-
-    useEffect(() => doSearch(document || ''), [document, doSearch]);
-
-
-    useEffect(() => {
-        if (!appliedFilters) return;
-    }, [appliedFilters])
-
-
-    const sortResultHandler = (key: string) => {
-        if (!data) return;
-        if (key === 'salary') {
-            const sort = [...data].sort((r1, r2) => r2.salary || 0 - r1.salary || 0);
-            setData(sort)
-        }
-        else if (key === 'networth') {
-            const sort = [...data].sort((r1, r2) => r2.netWorth || 0 - r1.netWorth || 0);
-            setData(sort)
-        }
-    }
-
-    const applyFilterHandler = (event: Filter) => {
-        debugger
-        if (appliedFilters.find(e => e.key === event.key)) return;
-        setAppliedFilters(oldArray => [...oldArray, event]);
-    }
-
-    const deleteFilterHandler = (removedTag: Filter) => {
-        const tags = appliedFilters.filter(tag => tag !== removedTag);
-        setAppliedFilters(tags);
-    };
-
-    useEffect(() => {
-        if (!local) return;
-        if (appliedFilters.length <= 0) {
-            setData(local);
-            return;
-        }
-        let newData: QueryResuls[] = local;
-        appliedFilters.forEach(filter => {
-            if (filter.key === 'Salario') {
-                newData = newData.filter(e => e.salary < (filter.to || 0) && e.salary > (filter.from || 0))
-            }
-            else if (filter.key === 'Patrimonio Neto') {
-                newData = newData.filter(e => e.netWorth < (filter.to || 0) && e.netWorth > (filter.from || 0))
-            }
-            else {
-                newData = newData.filter(e => e.sources.includes(filter.key))
-            }
-        })
-        setData(newData);
-
-    }, [appliedFilters, local])
-
-    return <>
-        <Header tableMode={true} />
         <Layout>
-            <Layout.Sider width={400} className="hide-responsive">
-                <FilterMenu spans={{ xxl: 24, xl: 24, lg: 24, md: 24, sm: 24, xs: 24 }} cardsWidth={300} filterCallback={applyFilterHandler}
-                    counters={filterCounter} sorter={sortResultHandler} />
-            </Layout.Sider>
+            {!isSmall && <Layout.Sider width="20vw">
+              <Typography.Title level={5} style={{textAlign: 'center', paddingTop: 20}}>
+                Filtros
+              </Typography.Title>
+                {filter}
+            </Layout.Sider>}
             <Layout>
                 <Layout.Content className="content-padding">
-                    <Row gutter={[8, 16]}>
-                        <Col className="show-responsive" xxl={{ offset: 0, span: 20 }} xl={{ offset: 0, span: 20 }} lg={{ offset: 0, span: 20 }} md={{ offset: 0, span: 20 }} sm={{ offset: 1, span: 22 }} xs={{ offset: 1, span: 22 }} style={{ textAlign: 'left' }}>
-                            <Collapse defaultActiveKey={['1']}>
-                                <Collapse.Panel header="Filtros" key="1">
-                                    <FilterMenu spans={{ xxl: 24, xl: 24, lg: 24, md: 24, sm: 24, xs: 24 }} cardsWidth={250} filterCallback={applyFilterHandler}
-                                        counters={filterCounter} sorter={sortResultHandler} />
-                                </Collapse.Panel>
-                            </Collapse>
+                    {isSmall && <Row>
+                      <Col xs={{span: 24}}>
+                        <Collapse defaultActiveKey={['2']} bordered={false}>
+                          <Collapse.Panel header="Mas filtros" key="1">
+                              {filter}
+                          </Collapse.Panel>
+                        </Collapse>
+                      </Col>
+                    </Row>}
+                    <Row>
+                        <Col xs={{span: 24}}>
+                            <DataSearch componentId="query"
+                                        URLParams
+                                        enableQuerySuggestions={false}
+                                        enablePopularSuggestions={false}
+                                        debounce={300}
+                                        placeholder="Búsqueda por nombre o cédula"
+                                        dataField={['name', 'document.keyword']}/>
                         </Col>
-                        <Col xxl={{ offset: 0, span: 20 }} xl={{ offset: 0, span: 20 }} lg={{ offset: 0, span: 20 }} md={{ offset: 0, span: 20 }} sm={{ offset: 1, span: 22 }} xs={{ offset: 1, span: 22 }} style={{ textAlign: 'left' }}>
-                            <Input.Search
-                                placeholder="Buscar"
-                                key="search_input"
-                                style={{ color: 'rgba(0, 52, 91, 1)', border: '2px solid', borderRadius: '5px', textAlign: 'left' }}
-                                defaultValue={document || ''}
-                                onSearch={v => setDocument(v)}
-                                formMethod="submit" />
-                        </Col>
-                        <Col xxl={{ offset: 0, span: 20 }} xl={{ offset: 0, span: 20 }} lg={{ offset: 0, span: 20 }} md={{ offset: 0, span: 20 }} sm={{ offset: 1, span: 22 }} xs={{ offset: 1, span: 22 }} style={{ textAlign: 'left' }}>
-                            <Card className="card-layout-content">
-                                <Typography.Text className="text-layout-content">
-                                    <strong>Filtros Aplicados: </strong> {(appliedFilters || []).map(filter =>
-                                        <Tag key={filter.key} closable onClose={() => deleteFilterHandler(filter)}>{filter.name} </Tag>
-                                    )}
-                                </Typography.Text>
-                            </Card>
-                        </Col>
-                        <Col xxl={{ offset: 0, span: 20 }} xl={{ offset: 0, span: 20 }} lg={{ offset: 0, span: 20 }} md={{ offset: 0, span: 20 }} sm={{ offset: 1, span: 22 }} xs={{ offset: 1, span: 22 }} style={{ textAlign: 'left' }}>
-                            <Card className="card-layout-content"
-                            >
-                                <Row gutter={[8, 16]}>
-                                    <Col xxl={{ offset: 0, span: 12 }}
-                                        xl={{ offset: 0, span: 12 }}
-                                        lg={{ offset: 0, span: 12 }}
-                                        md={{ offset: 0, span: 24 }} sm={{ offset: 1, span: 24 }} xs={{ offset: 1, span: 24 }}>
-                                        <Statistic name="Cantidad Funcionarios MH:"
-                                            obs={AsyncHelper.map(stats, d => '')}
-                                            data={AsyncHelper.map(stats, d => d.treasury_data_payed_salaries)} />
-                                    </Col>
-                                    <Col xxl={{ offset: 0, span: 12 }}
-                                        xl={{ offset: 0, span: 12 }}
-                                        lg={{ offset: 0, span: 12 }}
-                                        md={{ offset: 0, span: 24 }} sm={{ offset: 1, span: 24 }} xs={{ offset: 1, span: 24 }}>
-                                        <Statistic name="Cantidad Funcionarios SFP:"
-                                            obs={AsyncHelper.map(stats, d => '')}
-                                            data={AsyncHelper.map(stats, d => d.sfp_payed_salaries)} />
-                                    </Col>
-                                    <Col xxl={{ offset: 0, span: 12 }}
-                                        xl={{ offset: 0, span: 12 }}
-                                        lg={{ offset: 0, span: 12 }}
-                                        md={{ offset: 0, span: 24 }} sm={{ offset: 1, span: 24 }} xs={{ offset: 1, span: 24 }}>
-                                        <Typography.Text className="text-layout-content" strong> Cantidad de personas con </Typography.Text>
-                                        <Statistic name="Pytyvo:"
-                                            obs={AsyncHelper.map(stats, d => '')}
-                                            data={AsyncHelper.map(stats, d => d.pytyvo_count)} />
-                                        <Statistic name="Ñangareko:"
-                                            obs={AsyncHelper.map(stats, d => '')}
-                                            data={AsyncHelper.map(stats, d => d.nangareko_count)} />
-                                        <Statistic name="ANDE:"
-                                            obs={AsyncHelper.map(stats, d => '')}
-                                            data={AsyncHelper.map(stats, d => d.ande_count)} />
-                                    </Col>
-                                    <Col xxl={{ offset: 0, span: 12 }}
-                                        xl={{ offset: 0, span: 12 }}
-                                        lg={{ offset: 0, span: 12 }}
-                                        md={{ offset: 0, span: 24 }} sm={{ offset: 1, span: 24 }} xs={{ offset: 1, span: 24 }}>
-                                        <Statistic name="Cantidad de personas con DDJJ:"
-                                            obs={AsyncHelper.map(stats, d => '')}
-                                            data={AsyncHelper.map(stats, d => d.affidavid_count)} />
-                                    </Col>
-
-                                </Row>
-                            </Card>
-                        </Col>
-                        <Col xxl={{ offset: 0, span: 20 }} xl={{ offset: 0, span: 20 }} lg={{ offset: 0, span: 20 }} md={{ offset: 0, span: 20 }} sm={{ offset: 1, span: 20 }} xs={{ offset: 1, span: 20 }} style={{ textAlign: 'left' }}>
-                            <Typography.Title level={3} className="title-layout-content"> Resultados </Typography.Title>
-                        </Col>
-                        {
-                            data && <>
-                                <Col xxl={{ offset: 0, span: 20 }} xl={{ offset: 0, span: 20 }} lg={{ offset: 0, span: 20 }} md={{ offset: 0, span: 20 }} sm={{ offset: 1, span: 20 }} xs={{ offset: 1, span: 20 }} style={{ textAlign: 'left' }}>
-                                    <Row>
-                                        <Col xxl={7} xl={7} lg={7} md={0} sm={0} xs={0}>
-                                            <Typography.Text>
-                                                Nombre
-                                            </Typography.Text>
-                                        </Col>
-                                        <Col xxl={5} xl={5} lg={5} md={0} sm={0} xs={0}>
-                                            <Typography.Text>
-                                                Salario
-                                    </Typography.Text>
-                                        </Col>
-                                        <Col xxl={5} xl={5} lg={5} md={0} sm={0} xs={0}>
-                                            <Typography.Text>
-                                                Patrimonio Neto
-                                    </Typography.Text>
-                                        </Col>
-                                        <Col xxl={5} xl={5} lg={5} md={0} sm={0} xs={0}>
-                                            <Typography.Text>
-                                                Fuente de Datos
-                                    </Typography.Text>
-                                        </Col>
-                                    </Row>
-                                </Col>
-                                {
-                                    data.map(
-                                        row =>
-                                            <Col xxl={{ offset: 0, span: 20 }} xl={{ offset: 0, span: 20 }} lg={{ offset: 0, span: 20 }} md={{ offset: 0, span: 20 }} sm={{ offset: 0, span: 24 }} xs={{ offset: 0, span: 24 }} style={{ textAlign: 'left' }}
-                                                key={row.document}>
-                                                <Card className="card-layout-content">
-                                                    <Row gutter={[8, 16]}>
-
-                                                        <Col xxl={0} xl={0} lg={0} md={6} sm={6} xs={6}>
-                                                            <Typography.Text className="text-layout-content" strong>Nombre: </Typography.Text>
-                                                        </Col>
-                                                        <Col xxl={7}
-                                                            xl={7}
-                                                            lg={7}
-                                                            md={18}
-                                                            sm={18}
-                                                            xs={18}>
-                                                            {<Typography.Text className="text-layout-content"> {row.name} </Typography.Text>}
-                                                        </Col>
-                                                        <Col xxl={0} xl={0} lg={0} md={6} sm={6} xs={6}>
-                                                            <Typography.Text className="text-layout-content" strong> Salario: </Typography.Text>
-                                                        </Col>
-                                                        <Col xxl={5}
-                                                            xl={5}
-                                                            lg={5}
-                                                            md={18} sm={18} xs={18}>
-                                                            <Typography.Text className="text-layout-content"> </Typography.Text>
-                                                        </Col>
-                                                        <Col xxl={0} xl={0} lg={0} md={6} sm={6} xs={6}>
-                                                            <Typography.Text className="text-layout-content" strong> Patrimonio Neto: </Typography.Text>
-                                                        </Col>
-                                                        <Col xxl={5}
-                                                            xl={5}
-                                                            lg={5}
-                                                            md={18} sm={18} xs={18}>
-                                                            <Typography.Text className="text-layout-content"> {formatMoney(row.netWorth)} </Typography.Text>
-                                                        </Col>
-                                                        <Col xxl={5}
-                                                            xl={5}
-                                                            lg={5}
-                                                            md={24} sm={24} xs={24}>
-                                                            {row.sources.indexOf('sfp') !== -1 && <Tooltip title="SFP"><Icon component={Sfp} style={{ color: 'rgba(0, 52, 91, 1)', fontSize: '30px' }} /></Tooltip>}
-                                                            {row.sources.indexOf('declarations') !== -1 && <Tooltip title="Declaraciones Juradas"> <Icon component={Ddjj} style={{ color: 'rgba(0, 52, 91, 1)', fontSize: '30px' }} /> </Tooltip>}
-                                                            {row.sources.indexOf('pytyvo') !== -1 && <Tooltip title="Pytyvo"> <Icon component={Pytyvo} style={{ color: 'rgba(0, 52, 91, 1)', fontSize: '30px' }} /> </Tooltip>}
-                                                            {row.sources.indexOf('nangareko') !== -1 && <Tooltip title="Ñangareko"> <Icon component={Nangareko} style={{ color: 'rgba(0, 52, 91, 1)', fontSize: '30px' }} /> </Tooltip>}
-                                                            {row.sources.indexOf('ande_exonerados') !== -1 && <Tooltip title="ANDE"> <Icon component={Ande} style={{ color: 'rgba(0, 52, 91, 1)', fontSize: '30px' }} /> </Tooltip>}
-                                                            {row.sources.indexOf('policia') !== -1 && <Tooltip title="Policia Nacional"> <Icon component={PoliciaNacional} style={{ color: 'rgba(0, 52, 91, 1)', fontSize: '30px' }} /> </Tooltip>}
-                                                        </Col>
-                                                        <Col xxl={2}
-                                                            xl={2}
-                                                            lg={2}
-                                                            md={24} sm={24} xs={24}>
-                                                            <Link to={`/person/${row.document}`}>
-                                                                <Button className="mas-button">Ver más</Button>
-                                                            </Link>
-                                                        </Col>
-                                                    </Row>
-                                                </Card>
-                                            </Col>
-                                    )
-
-                                }
-                            </>
-                        }
-
                     </Row>
+                    <Row>
+                        <Col xs={{span: 24}}>
+                            <SelectedFilters showClearAll={true}
+                                             clearAllLabel="Limpiar"/>
+                        </Col>
+                    </Row>
+                    <ResultComponent isSmall={isSmall}/>
                 </Layout.Content>
             </Layout>
         </Layout>
-        <Footer tableMode={true} />
-    </>
+        <Footer tableMode={true}/>
+    </ReactiveBase>
 
-} function Statistic(props: {
-    data: Async<number>,
-    name: string,
-    obs: Async<string>
-}) {
-    const number = AsyncHelper.or(props.data, 0)
-    const isLoaded = props.data.state === 'LOADED';
-    const observation = AsyncHelper.or(props.obs, "Cargando...")
-    const numberClasses = isLoaded
-        ? "description"
-        : "description loading"
-    return <Tooltip placement="top" title={observation}>
-        <Col className="info-box">
-            <Typography.Text className="text-layout-content"><strong>{props.name}</strong> <span className={numberClasses}>{formatMoney(number)}</span></Typography.Text>
-        </Col>
-    </Tooltip>
 }
 
-function FilterMenu(props: {
-    spans: any;
-    cardsWidth: number;
-    counters: FilterCounter;
-    filterCallback: (filter: Filter) => void;
-    sorter: (key: string) => void;
+
+function Filter() {
+    return <Col xs={{span: 24}} style={{padding: 5}}>
+        <Card title="Fuente de datos" className="card-style">
+
+            <MultiList componentId="Fuente"
+                       dataField="sources.keyword"
+                       showCheckbox
+                       URLParams
+                       showSearch={false}
+                       react={{
+                           and: ['query', 'Patrimonio', 'Salario'],
+                       }}
+                       render={({loading, error, data, handleChange, value}) => {
+                           if (loading) {
+                               return <div>Cargando ...</div>;
+                           }
+                           if (error) {
+                               return <div>Error al cargar datos</div>;
+                           }
+                           return (<Row>
+                               {data.map((item: { key: string, doc_count: number }) => <React.Fragment key={item.key}>
+                                   <Col xs={{span: 18}}>
+                                       <Checkbox checked={value[item.key]}
+                                                 onChange={() => handleChange(item.key)}>
+                                           {sourceNameMap[item.key] || item.key}
+                                       </Checkbox>
+                                   </Col>
+                                   <Col xs={{span: 6}} style={{textAlign: 'right'}}>
+                                       {formatMoney(item.doc_count)}
+                                   </Col>
+                               </React.Fragment>)}
+                           </Row>);
+                       }}
+            />
+        </Card>
+
+        <Card title="Salario" className="card-style">
+            <SingleRange componentId="Salario"
+                         dataField="salary"
+                         showRadio
+                         URLParams
+                         includeNullValues={true}
+                         data={[
+                             {start: 0, end: 2500000, label: 'Hasta sueldo mínimo'},
+                             {start: 2500001, end: 5000000, label: 'De sueldo mínimo a 5 millones'},
+                             {start: 5000001, end: 10000000, label: 'De 5 a 10 millones'},
+                             {start: 10000001, label: 'Mas de 10 millones'},
+                         ]}
+                         style={{}}/>
+        </Card>
+
+        <Card title="Patrimonio neto" className="card-style">
+            <SingleRange componentId="Patrimonio"
+                         dataField="net_worth"
+                         showRadio
+                         URLParams
+                         includeNullValues={false}
+                         data={[
+                             {end: 100000000, label: 'Hasta 100M'},
+                             {start: 100000001, end: 500000000, label: 'De 100M a 500M'},
+                             {start: 500000001, end: 1000000000, label: 'De 500M a 1.000M'},
+                             {start: 1000000001, label: 'Mas de 1.000M'},
+                         ]}
+                         style={{}}/>
+        </Card>
+    </Col>
+}
+
+
+function ResultComponent(props: {
+    isSmall: boolean
 }) {
-    const filterOptions = [{ name: 'Salario', key: 'salary' }, { name: 'Patrimonio Neto', key: 'networth' }];
-    const [selected, setSelected] = useState<string>();
-    const [from, setFrom] = useState<number>();
-    const [to, setTo] = useState<number>();
-    const [query, setQuery] = useState('');
-    const dataOptions: { name: string; key: string; qty: number; }[] =
-        [{ name: 'Pytyvo', key: 'pytyvo', qty: props.counters.pytyvo },
-        { name: 'Ñangareko', key: 'nangareko', qty: props.counters.nangareko },
-        { name: 'Funcionarios de Hacienda', key: 'hacienda', qty: 0 },
-        { name: 'SFP', key: 'sfp', qty: 0 },
-        { name: 'Personal Policía Nacional', key: 'policia', qty: props.counters.policia },
-        { name: 'Exonerado Ande', key: 'ande_exonerados', qty: props.counters.ande }];
 
-    const filtered = useMemo(() => filterList(dataOptions, query), [dataOptions, query]);
-    function filterList(options: { name: string; key: string; qty: number; }[], query: string) {
-        if (!query || query.trim() === "") return options;
+    return <Col xs={{span: 24}}>
+        <Row>
+            <Typography.Title level={3} className="title-layout-content result-title">
+                Resultados
+            </Typography.Title>
+        </Row>
+        <Row>
+            <Col xs={{span: 24}}>
+                {!props.isSmall && <ResultHeader/>}
+                <ReactiveList
+                    dataField="document.keyword"
+                    componentId="SearchResult"
+                    react={{
+                        and: ['query', 'Fuente', 'Salario', 'Patrimonio']
+                    }}
+                    infiniteScroll={false}
+                    size={10}
+                    pagination
+                    paginationAt="bottom"
+                    renderResultStats={() => <></>}
+                    renderItem={(item: ElasticFullDataResult) => <SingleResultCard
+                        data={mapFullDataToFTS(item)}
+                        isSmall={props.isSmall}
+                        id={item._id}
+                        key={item._id}
+                    />}
+                />
+            </Col>
+        </Row>
+    </Col>
+}
 
-        const fToSearch = query.toLowerCase();
+function ResultHeader() {
 
-        const toRet = options.filter(op => {
-            return op.name.toLowerCase().includes(fToSearch);
-        })
-        return toRet;
-    }
-    function onChange(value: any) {
-        setFrom(value);
-    }
-    function changeTo(value: any) {
-        setTo(value);
-    }
-
-    function applyRangeFilter() {
-        const filter: Filter = {
-            key: selected!,
-            name: filterOptions.find(e => e.key === selected)?.name || '',
-            from: from!,
-            to: to!
-        }
-        props.filterCallback(filter);
-    }
-
-    function addFilter(key: string) {
-        const filter: Filter = {
-            key: key,
-            name: dataOptions.find(e => e.key === key)?.name || '',
-        }
-        props.filterCallback(filter);
-    }
-
-    function sort(key: string) {
-        props.sorter(key);
-    }
-    return <Row className="cards" gutter={[16, 24]}>
-        <Col xxl={{ offset: 1, span: 20 }} xl={{ offset: 1, span: 20 }} lg={{ offset: 1, span: 20 }} md={{ offset: 1, span: 20 }} sm={{ offset: 1, span: 20 }} xs={{ offset: 1, span: 20 }}>
-            <Typography.Text className="sidebar-title">Ordenar Por</Typography.Text>
-            <Card size="small"
-                style={{ width: props.cardsWidth }}
-                className="card-style">
-                <Row gutter={[8, 16]}>
-                    <Col {...props.spans}>
-                        <Typography.Text> <Button type="text" style={{ color: 'rgba(0, 52, 91, 1)' }} onClick={() => sort('salary')}>Salario</Button> </Typography.Text>
-                        <Badge className="float-right" count={props.counters.salary} style={{ backgroundColor: '#b2c1cc' }} />
-
-                    </Col>
-                    <Col {...props.spans}>
-
-                        <Typography.Text> <Button type="text" style={{ color: 'rgba(0, 52, 91, 1)' }} onClick={() => sort('networth')}>Patrimonio Neto</Button> </Typography.Text>
-                        <Badge className="float-right" count={props.counters.assets} style={{ backgroundColor: '#b2c1cc' }} />
-                    </Col>
-                </Row>
-            </Card>
+    return <Row gutter={[8, 8]} justify="start" align="middle">
+        <Col span={1}>
         </Col>
-
-        <Col xxl={{ offset: 1, span: 20 }} xl={{ offset: 1, span: 20 }} lg={{ offset: 1, span: 20 }} md={{ offset: 1, span: 20 }} sm={{ offset: 1, span: 20 }} xs={{ offset: 1, span: 20 }}>
-            <Typography.Text className="sidebar-title">Filtros</Typography.Text>
-            <Card size="small"
-                style={{ width: props.cardsWidth }}
-                className="card-style" title="Rango monetario">
-                <Input.Group>
-                    <Row gutter={[8, 16]}>
-                        <Col {...props.spans}>
-                            <Select style={{ width: '100%' }} defaultValue={selected} onChange={setSelected}>
-                                {filterOptions.map(k => <Select.Option value={k.key} key={k.key}>{k.name} </Select.Option>)}
-                            </Select>
-                        </Col>
-                        <Col {...props.spans}>
-                            <InputNumber type="number" style={{ width: '100%' }} placeholder="Desde" defaultValue={from} onChange={onChange} />
-                        </Col>
-                        <Col {...props.spans}>
-                            <InputNumber type="number" style={{ width: '100%' }} placeholder="Hasta" defaultValue={to} onChange={changeTo} />
-                        </Col>
-                        <Col {...props.spans}>
-                            <Button className="mas-button" style={{ float: "right" }} onClick={applyRangeFilter}>Aplicar</Button>
-                        </Col>
-                    </Row>
-                </Input.Group>
-            </Card>
+        <Col span={8}>
+            <b>Nombre</b>
         </Col>
-        <Col xxl={{ offset: 1, span: 20 }} xl={{ offset: 1, span: 20 }} lg={{ offset: 1, span: 20 }} md={{ offset: 1, span: 20 }} sm={{ offset: 1, span: 20 }} xs={{ offset: 1, span: 20 }}>
-            <Card size="small"
-                style={{ width: props.cardsWidth }}
-                className="card-style" title="Datos">
-                <Row gutter={[8, 16]}>
-                    <Col {...props.spans}>
-                        <Input.Search
-                            placeholder="Buscar"
-                            key="search_input"
-                            style={{ color: 'rgba(0, 52, 91, 1)', border: '1px solid', borderRadius: '5px', textAlign: 'left' }}
-                            onSearch={setQuery}
-                            formMethod="submit" />
-                    </Col>
-                    {
-                        filtered.map(option =>
-                            <Col {...props.spans} key={option.name}>
-                                <Typography.Text><Button type="text" style={{ color: 'rgba(0, 52, 91, 1)' }} onClick={() => addFilter(option.key)}>{option.name}</Button></Typography.Text>
-                                <Badge className="float-right" count={option.qty} style={{ backgroundColor: '#b2c1cc' }} />
-                            </Col>
-                        )
-                    }
-                </Row>
-            </Card>
+        <Col span={4} style={{textAlign: 'right', fontSize: '0.8em', paddingRight: 10}}>
+            <b>Salario</b>
+        </Col>
+        <Col span={4} style={{textAlign: 'right', fontSize: '0.8em', paddingRight: 10}}>
+            <b>Patrimonio</b>
+        </Col>
+        <Col span={3} offset={1} style={{textAlign: 'right'}}>
+            <b>Fuente</b>
+        </Col>
+        <Col span={2} offset={1}>
         </Col>
     </Row>
+}
+
+function SingleResultCard(props: {
+    data: ElasticFtsPeopleResult[],
+    id: string,
+    isSmall: boolean
+}) {
+
+    const data = getData(props.data);
+
+    if (props.isSmall) {
+        return <Card className="card-style">
+            <Comment author={data.document}
+                     className="small-card"
+                     avatar={
+                         <Avatar
+                             style={{backgroundColor: getColorByIdx(props.id), verticalAlign: 'middle'}}
+                             src={data.photo}
+                             alt={data.name}>{getInitials(data.name)}</Avatar>
+                     }
+                     content={<><Descriptions title={data.name}>
+                         {data.salary &&
+                         <Descriptions.Item label="Salario">{formatMoney(data.salary)}</Descriptions.Item>}
+                         {data.net_worth &&
+                         <Descriptions.Item label="Patrimonio">{formatMoney(data.net_worth)}</Descriptions.Item>}
+                     </Descriptions>
+                         <Row justify="space-between" align="middle">
+                             <Col>
+                                 <SourcesIconListComponent sources={data.sources}/>
+                             </Col>
+                             <Col>
+                                 <Link to={`/person/${data.document}`}>
+                                     <Button className="mas-button">Ver más</Button>
+                                 </Link>
+                             </Col>
+                         </Row>
+                     </>
+                     }
+            />
+        </Card>
+    }
+
+    return <Row gutter={[8, 8]} justify="start" align="middle">
+        <Col span={1}>
+            <Avatar
+                style={{backgroundColor: getColorByIdx(props.id), verticalAlign: 'middle'}}
+                src={data.photo}
+                alt={data.name}>{getInitials(data.name)}</Avatar>
+        </Col>
+        <Col span={8}>
+            {data.name}
+            <br/>
+            <small>Cédula: <b>{data.document}</b></small>
+        </Col>
+        <Col span={4} style={{textAlign: 'right', fontSize: '0.8em', paddingRight: 10}}>
+            {formatMoney(data.salary, 'Gs')}
+        </Col>
+        <Col span={4} style={{textAlign: 'right', fontSize: '0.8em', paddingRight: 10}}>
+            {formatMoney(data.net_worth, 'Gs')}
+        </Col>
+        <Col span={3} offset={1} style={{textAlign: 'right'}}>
+            <SourcesIconListComponent sources={data.sources}/>
+        </Col>
+        <Col span={2} offset={1}>
+            <Link to={`/person/${data.document}`}>
+                <Button className="mas-button">Ver más</Button>
+            </Link>
+        </Col>
+    </Row>
+}
+
+
+const ColorList = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae'];
+
+function getInitials(name: string = ""): string {
+    return (name || "").split(/\s+/)
+        .map((n) => n[0])
+        .join(".")
+        .toUpperCase();
+}
+
+function getColorByIdx(_id: string) {
+    let asNumber = parseInt(_id);
+    if (isNaN(asNumber)) asNumber = _id.length;
+    return ColorList[asNumber % ColorList.length];
+}
+
+function getData(data: Array<ElasticFtsPeopleResult>) {
+    const name: { val: string, confidence: number } = {val: "", confidence: 0};
+    const photo: { val: string, confidence: number } = {val: "", confidence: 0};
+    const net_worth: { val?: number, confidence: number } = {val: undefined, confidence: 0};
+    const salary: { val?: number, confidence: number } = {val: undefined, confidence: 0};
+    const sources: { [k: string]: boolean } = {};
+
+    for (const row of data) {
+        sources[row.source] = true;
+        const dsInfo = confidenceByDS[row.source];
+        if (!dsInfo) continue;
+
+        if (name.confidence < dsInfo.name) {
+            name.val = row.name;
+            name.confidence = dsInfo.name;
+        }
+
+        if (dsInfo.photo && row.photo && photo.confidence < dsInfo.photo) {
+            photo.val = row.source === 'a_quien_elegimos' ? getAQEImage(row.photo) : row.photo;
+            photo.confidence = dsInfo.photo;
+        }
+
+        if (dsInfo.net_worth !== undefined && row.net_worth !== undefined && net_worth.confidence < dsInfo.net_worth) {
+            net_worth.val = row.net_worth;
+            net_worth.confidence = dsInfo.net_worth;
+        }
+
+        if (dsInfo.salary !== undefined
+            && row.salary !== undefined
+            && salary.confidence < dsInfo.salary
+            && (!salary.val || salary.val < row.salary)
+        ) {
+            salary.val = row.salary;
+            salary.confidence = dsInfo.salary;
+        }
+
+    }
+
+    return {
+        name: name.val,
+        photo: photo.confidence === 0 ? undefined : photo.val,
+        sources: Object.keys(sources),
+        document: data.map(d => d.document).filter(d => !!d)[0],
+        net_worth: net_worth.val,
+        salary: salary.val
+    }
+}
+
+// 'tsje_elected': 'Autoridades electas',
+//     'declarations': 'Declaraciones juradas',
+//     'a_quien_elegimos': 'A quien elegimos',
+//     'ande_exonerados': 'Exonerados ANDE',
+//     'mh': 'Ministerio de Hacienda',
+//     'sfp': 'Secretaria de la función pública'
+const confidenceByDS: { [k: string]: { name: number, photo?: number, net_worth?: number, salary?: number } } = {
+    'a_quien_elegimos': {
+        name: 100,
+        photo: 100
+    },
+    'tsje_elected': {
+        name: 90,
+    },
+    'declarations': {
+        name: 90,
+        net_worth: 100,
+    },
+    'ande_exonerados': {
+        name: 92
+    },
+    'mh': {
+        name: 92
+    },
+    'sfp': {
+        name: 93,
+        salary: 100
+    },
+    'pytyvo': {
+        name: 85
+    },
+    'nangareko': {
+        name: 85
+    },
+    'policia': {
+        name: 90,
+        salary: 95
+    }
+}
+
+interface ElasticFtsPeopleResult {
+    _id: string;
+    source: string;
+    name: string;
+    document: string | null;
+    salary?: number;
+    age?: number;
+    photo?: string;
+    net_worth?: number;
+}
+
+interface ElasticFullDataResult {
+    _id: string;
+    sources: string[];
+    name: Array<string | null>;
+    document: number;
+    age?: Array<number | null>;
+    photo?: Array<string | null>;
+    net_worth?: Array<number | null>;
+    salary?: Array<number | null>
+}
+
+const sourceNameIcon: { [k: string]: React.FunctionComponent } = {
+    'declarations': Ddjj,
+    'a_quien_elegimos': Aqe,
+    'ande_exonerados': Ande,
+    'sfp': Sfp,
+    'mh': Sfp,
+    'pytyvo': Pytyvo,
+    'nangareko': Nangareko,
+    'policia': PoliciaNacional,
+    'tsje_elected': Ddjj
+}
+
+function SourcesIconListComponent(props: {
+    sources: string[]
+}) {
+    return <>
+        {props.sources.map(s =>
+            <Tooltip title={sourceNameMap[s] || s} key={s}>
+                {sourceNameIcon[s]
+                    ? <Icon component={sourceNameIcon[s]} className="source-icon"/>
+                    : <small>{s}</small>
+                }
+            </Tooltip>
+        )}
+    </>
+}
+
+function mapFullDataToFTS(item: ElasticFullDataResult): ElasticFtsPeopleResult[] {
+    const toRet: Array<ElasticFtsPeopleResult> = [];
+
+    item.sources.forEach((s, idx) => {
+        toRet.push({
+            source: s,
+            net_worth: item.net_worth?.[idx] || undefined,
+            document: item.document + "",
+            _id: item._id,
+            photo: item.photo?.[idx] || "",
+            salary: item.salary?.[idx] || undefined,
+            name: item.name && item.name[idx] + "",
+            age: item.age?.[idx] || undefined
+        })
+    })
+
+    return toRet;
 }

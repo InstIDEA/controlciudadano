@@ -3,7 +3,7 @@ import * as React from "react";
 import {ColumnProps} from 'antd/es/table/Column';
 
 export function GenericTable({data, title, columns}: {
-    data: unknown[],
+    data: object[],
     title?: string,
     columns?: {
         [k: string]: ColumnProps<any>
