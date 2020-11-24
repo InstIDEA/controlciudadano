@@ -23,6 +23,9 @@ import {AQECard} from '../components/person_cards/AQE';
 import {TSJECard} from '../components/person_cards/TSJE';
 import {DDJJCard} from "../components/person_cards/DDJJ";
 import {Cargo, ChargeCard} from "../components/person_cards/Charge";
+import {AQE_URL} from "../AQuienElegimosData";
+import {HaciendaCard} from "../components/person_cards/Hacienda";
+import {SFPCard} from "../components/person_cards/SFP";
 
 export function PersonDetailPage() {
 
@@ -138,8 +141,8 @@ export function PersonDetailPage() {
                         <Card className="card-style header-title-big">
                             <Row gutter={[16, 16]} align="middle">
                                 <Col xxl={3} xl={3} md={4} xs={6} style={{alignSelf: 'flex-end', textAlign: "center"}}>
-                                    {header.imageURL && <Avatar size={100} shape="square" src={header.imageURL}/>}
-                                    {!header.imageURL && <Avatar size={100} shape="square" style={{ color: '#00345b', backgroundColor: '#dfedfb' }}>{getInitials(header.name)}</Avatar>}
+                                    {header.imageURL && <Avatar size={100} src={header.imageURL}/>}
+                                    {!header.imageURL && <Avatar size={100} style={{ color: '#00345b', backgroundColor: '#dfedfb' }}>{getInitials(header.name)}</Avatar>}
                                 </Col>
                                 <Col xxl={21} xl={21} md={20} xs={18} style={{alignSelf: 'flex-end'}}>
                                     <Typography.Title style={{color: "rgba(0, 52, 91, 1)"}} level={3}>
@@ -159,6 +162,11 @@ export function PersonDetailPage() {
                                 </Col>
                             </Row>
                         </Card>
+                    </Col>
+                </Row>
+                <Row gutter={[16, 16]} align="middle">
+                    <Col xs={24} style={{alignSelf: 'flex-end'}}>
+                        <Typography.Title style={{color: "rgba(0, 52, 91, 1)"}} level={3}>Datos públicos según fuentes</Typography.Title>
                     </Col>
                 </Row>
                 <Row gutter={[16, 16]}>
@@ -192,36 +200,43 @@ export function PersonDetailPage() {
                           </Card>
                         </Col>
                     }
-                    {
-                        local?.staging.sfp && local?.staging.sfp.length > 0 &&
-                        <Col {...spans}>
-                          <Card className="data-box" title="SFP" style={{height: cardHeight}}
-                                extra={<Icon component={Sfp} style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}>
-                            <Typography.Text>Año: {local.staging.sfp[0].anho} </Typography.Text>
-                            <br/>
-                            <Typography.Text>Profesión: {(local.staging.sfp[0]).profesion} </Typography.Text>
-                            <br/>
-                            <Typography.Text>Función: {local.staging.sfp[0].funcion} </Typography.Text>
-                            <br/>
-                            <a href={`${local.staging.sfp[0].source}`} target="_blank"
-                               rel="noopener noreferrer">Link</a>
-                          </Card>
-                        </Col>
 
-                    }
                     {
                         local?.staging.hacienda_funcionarios && local?.staging.hacienda_funcionarios.length > 0 &&
+                        <HaciendaCard data={local.staging.hacienda_funcionarios} document={header.document}></HaciendaCard>
+                    }
+                    {/*
+                        local?.staging.hacienda_funcionarios && local?.staging.hacienda_funcionarios.length > 0 &&
                         <Col {...spans}>
-                          <Card className="data-box" title="Salarios SFP" style={{height: cardHeight}}
-                                extra={<Icon component={SalarioSfp}
-                                             style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}>
+                          <Card className="data-box" title="Salarios de hacienda" style={{height: cardHeight}}
+                                extra={<Icon component={Sfp}
+                                             style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}
+                                actions={[
+                                    <a href={`https://datos.hacienda.gov.py/doc/nomina/${header.document}`} target="_blank" rel="noopener noreferrer">Mas info</a>
+                                ]}>
                             <Typography.Text>Año: {(local.staging.hacienda_funcionarios[0] as any).anio} </Typography.Text>
                             <br/>
                             <Typography.Text>Presupuesto: {formatMoney((local.staging.hacienda_funcionarios[0] as any).montopresupuestado)} </Typography.Text>
                             <br/>
                             <Typography.Text>Devengado: {formatMoney((local.staging.hacienda_funcionarios[0] as any).montodevengado)} </Typography.Text>
                           </Card>
-                        </Col>
+                        </Col>*/
+                    }
+                    {
+                        /*sfpData && sfpData. > 0 && <SFPCard data={sfpData.} document={header.document} />
+                        /*<Col {...spans}>
+                            <Card className="data-box" title="SFP" style={{height: cardHeight}}
+                                  extra={<Icon component={SalarioSfp} style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}>
+                                <Typography.Text>Año: {local.staging.sfp[0].anho} </Typography.Text>
+                                <br/>
+                                <Typography.Text>Profesión: {(local.staging.sfp[0]).profesion} </Typography.Text>
+                                <br/>
+                                <Typography.Text>Función: {local.staging.sfp[0].funcion} </Typography.Text>
+                                <br/>
+                                <a href={`${local.staging.sfp[0].source}`} target="_blank"
+                                   rel="noopener noreferrer">Link</a>
+                            </Card>
+                        </Col>*/
                     }
                     {
                         local?.staging.policia && local?.staging.policia.length > 0 &&
@@ -251,7 +266,7 @@ export function PersonDetailPage() {
 
                     }
                     {
-                        header.charge && header.charge.length > 0 && <ChargeCard cargos={header.charge} spans={spans} />
+                        header.charge && header.charge.length > 0 && <ChargeCard cargos={header.charge} spans={spans} document={header.document} />
                     }
                     {
                         local && local.staging && local.staging.a_quien_elegimos && local.staging.a_quien_elegimos.length > 0 &&
@@ -265,7 +280,7 @@ export function PersonDetailPage() {
 
 }
 
-type SFPLocalData = {
+export type SFPLocalData = {
     [k: string]: SFPRow[]
 }
 
@@ -299,9 +314,6 @@ function tryToGuestHeader(baseDoc: string,
         const d = rows[0];
         name = d.nombres + ' ' + d.apellidos;
         found = true;
-        if (d.funcion) {
-            charge = d.funcion
-        }
         birthDate = d.fechaNacimiento;
     })
 

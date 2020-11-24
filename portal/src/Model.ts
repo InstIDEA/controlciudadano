@@ -28,7 +28,7 @@ export interface LocalSearchResult {
         }>;
         nangareko_2: unknown[];
         nangareko_transparencia: unknown[];
-        hacienda_funcionarios: unknown[];
+        hacienda_funcionarios: Hacienda[];
         sfp: Array<{
             anho: string,
             profesion: string,
@@ -478,6 +478,16 @@ export interface AquienesElegimos {
     national_identity: string,
     phone: string,
     contact_detail: string
+}
+
+export interface Hacienda {
+    anio: number,
+    mes: number,
+    cargo: string,
+    montodevengado: number,
+    montopresupestado:number,
+    descripcionunidadresponsable: string,
+    nivelabr: string
 }
 
 /**

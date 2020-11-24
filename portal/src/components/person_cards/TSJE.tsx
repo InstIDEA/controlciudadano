@@ -1,5 +1,5 @@
 import {Authorities} from "../../Model";
-import {Card, Col, Row} from "antd";
+import {Card, Col, Row, Typography} from "antd";
 import Icon from "@ant-design/icons";
 import {ReactComponent as Ddjj} from "../../assets/logos/ddjj.svg";
 import * as React from "react";
@@ -13,13 +13,13 @@ export function TSJECard(props: {
               extra={<Icon component={Ddjj} style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}>
             <Row gutter={[8, 8]} style={{background: '#fafafa'}}>
                 <Col span={3} >
-                    Año
+                    <Typography.Text><strong>Año</strong></Typography.Text>
                 </Col>
                 <Col span={11}>
-                    Candidatura
+                    <Typography.Text><strong>Candidatura</strong></Typography.Text>
                 </Col >
                 <Col span={10}>
-                    Lista
+                    <Typography.Text><strong>Lista</strong></Typography.Text>
                 </Col>
             </Row>
             {tsje.map(

@@ -1,5 +1,5 @@
 import {Affidavit} from "../../Model";
-import {Card, Col, Row} from "antd";
+import {Card, Col, Row, Typography} from "antd";
 import Icon from "@ant-design/icons";
 import {ReactComponent as Ddjj} from "../../assets/logos/ddjj.svg";
 import * as React from "react";
@@ -14,16 +14,16 @@ export function DDJJCard(props: {
               extra={<Icon component={Ddjj} style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}>
             <Row gutter={[8, 8]} style={{background: '#fafafa'}}>
                 <Col span={3} >
-                    Año
+                    <Typography.Text><strong>Año</strong></Typography.Text>
                 </Col>
                 <Col span={7}>
-                    Activos
+                    <Typography.Text><strong>Activos</strong></Typography.Text>
                 </Col >
                 <Col span={7}>
-                    Pasivos
+                    <Typography.Text><strong>Pasivos</strong></Typography.Text>
                 </Col>
                 <Col span={7}>
-                    Patrimonio Neto
+                    <Typography.Text><strong>Patrimonio Neto</strong></Typography.Text>
                 </Col>
             </Row>
             {affidavit.map(
