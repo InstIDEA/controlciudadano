@@ -1,10 +1,7 @@
-import {Hacienda} from "../../Model";
-import {SFPLocalData} from "../../pages/PersonDetailPage";
 import {useMemo} from "react";
 import {Card, Col, Row, Typography} from "antd";
 import Icon from "@ant-design/icons";
 import {ReactComponent as Sfp} from "../../assets/logos/sfp.svg";
-import {formatMoney} from "../../formatters";
 import * as React from "react";
 import {SFPRow} from "../../SFPHelper";
 

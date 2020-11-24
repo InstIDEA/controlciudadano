@@ -1,7 +1,7 @@
 import {Hacienda} from "../../Model";
 import {Card, Col, Row, Typography} from "antd";
 import Icon from "@ant-design/icons";
-import {ReactComponent as Sfp} from "../../assets/logos/sfp.svg";
+import {ReactComponent as HaciendaI} from "../../assets/logos/hacienda.svg";
 import * as React from "react";
 import {formatMoney} from "../../formatters";
 import {useMemo} from "react";
@@ -13,7 +13,7 @@ export function HaciendaCard(props: {
     let lista = useMemo(() => agrupameEsta(props.data), [props.data]);
     return <Col {...{xxl: 12, xl: 12, lg: 12, md: 12, sm: 24, xs: 24}}>
         <Card className="data-box" title="Salarios de Hacienda"
-              extra={<Icon component={Sfp} style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}
+              extra={<Icon component={HaciendaI} style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}
               actions={[
                   <a href={`https://datos.hacienda.gov.py/doc/nomina/${props.document}`} target="_blank" rel="noopener noreferrer">Mas info</a>
               ]}>
