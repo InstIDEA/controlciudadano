@@ -11,7 +11,7 @@ export class SFPFetcher extends EventTarget {
     cancelled = false;
 
     fetchAllYears(document: string) {
-        for (let i = 2020; i > 2000; i--) {
+        for (let i = 2020; i > 2018; i--) {
             fetchSFPData(document, `${i}`)
                 .then(data => {
                     if (this.cancelled) return;
