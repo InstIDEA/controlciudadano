@@ -1,18 +1,3 @@
-export interface LocalSearchPersonResult {
-
-    query: string;
-    data: {
-        [key: string]: [
-            {
-                source: string;
-                document: string;
-                names: string[];
-                net_worth?: number;
-            }
-
-        ]
-    }
-}
 
 export interface LocalSearchResult {
 
