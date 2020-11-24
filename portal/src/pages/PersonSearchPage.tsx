@@ -460,13 +460,13 @@ function mapFullDataToFTS(item: ElasticFullDataResult): ElasticFtsPeopleResult[]
     item.sources.forEach((s, idx) => {
         toRet.push({
             source: s,
-            net_worth: item.net_worth && item.net_worth[idx] || undefined,
+            net_worth: item.net_worth?.[idx] || undefined,
             document: item.document + "",
             _id: item._id,
-            photo: item.photo && item.photo[idx] || "",
-            salary: item.salary && item.salary[idx] || undefined,
+            photo: item.photo?.[idx] || "",
+            salary: item.salary?.[idx] || undefined,
             name: item.name && item.name[idx] + "",
-            age: item.age && item.age[idx] || undefined
+            age: item.age?.[idx] || undefined
         })
     })
 
