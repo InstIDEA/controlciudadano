@@ -103,7 +103,8 @@ export function ItemPriceEvolutionGraph(props: {
             format: '%Y-%m',
             tickValues: 'every 6 month',
             legend: 'Fecha',
-            legendOffset: 25,
+            legendOffset: 60,
+            tickRotation: -90
         }}
         useMesh={false}
         renderNode={CustomNode}

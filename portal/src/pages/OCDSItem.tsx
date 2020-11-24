@@ -172,7 +172,7 @@ function PartyTab(props: { header: HeaderData }) {
 
     const graph = toGraph(data, props.header);
 
-    return <Tabs defaultActiveKey="GRAPH">
+    return <Tabs defaultActiveKey="TABLE">
         <Tabs.TabPane tab="Tabla" key="TABLE">
             <OCDSPartyTable parties={data}/>
         </Tabs.TabPane>
