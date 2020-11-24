@@ -5,7 +5,7 @@ import {MenuOutlined} from '@ant-design/icons';
 import {Link} from 'react-router-dom';
 import controlCiudadano from '../../assets/logos/control_ciudadano.svg';
 
-const menu = <Menu mode='horizontal' id="nav" key="nav">
+const menu = <Menu mode="horizontal" id="nav" key="nav">
     <Menu.Item key="home">
         <Link className="menu-item" to="/">Inicio</Link>
     </Menu.Item>
@@ -59,7 +59,7 @@ export function Header(props: {
                     </Col>
                 </Row>
                 <Row>
-                    {showSeparator && <Col xxl={4} xl={5} lg={7} md={0} sm={0} xs={0}> </Col> }
+                    {showSeparator && <Col xxl={4} xl={5} lg={7} md={0} sm={0} xs={0}> </Col>}
                     <Col xxl={20} xl={19} lg={17} md={24} sm={22} xs={22}>
                         {props.searchBar}
                     </Col>

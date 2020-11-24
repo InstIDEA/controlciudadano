@@ -53,8 +53,36 @@
     margin-right: 5px;
 }
 
+.content-padding {
+    padding-top: 20px;
+}
+
 @media (max-width: 600px) {
     .content-padding {
         padding: 0 5px;
+    }
+}
+
+
+.source-icon {
+    color: rgba(0, 52, 91, 1);
+    font-size: 2em !important;
+}
+
+.small-card .ant-comment-actions {
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .small-card .ant-descriptions-title {
+        overflow: auto;
+        max-width: 300px;
+    }
+
+    .ant-typography.title-layout-content.result-title {
+        text-align: center;
+        width: 100%;
+        margin-bottom: 0;
+        padding-bottom: 0;
     }
 }

@@ -14,7 +14,7 @@ import { SearchBar } from '../components/SearchBar';
 export function DocumentSearchPage() {
 
     const [document, setDocument] = useQueryParam('document', StringParam);
-    const [sfp, setSFP] = useState<unknown[]>();
+    const [sfp, setSFP] = useState<object[]>();
     const [local, setLocal] = useState<LocalSearchResult>();
     const history = useHistory();
     const isExploreMenu = history.location.pathname.includes('explore');
@@ -121,7 +121,7 @@ export function LocalData(props: { result: LocalSearchResult, showEmpty: boolean
 
     let toShow = Object.keys(staging)
         .map(key =>  {
-            const data: unknown[] = staging[key as keyof LocalSearchResult['staging']] || [];
+            const data: object[] = staging[key as keyof LocalSearchResult['staging']] || [];
             return { key, data }
         });
 

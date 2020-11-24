@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import QueueAnim from 'rc-queue-anim';
-import {Col, Row, Tooltip, Input} from 'antd';
+import {Col, Input, Row, Tooltip} from 'antd';
 import './Landing.css';
 import explorarDatos from '../assets/imgs/explorar_datos.svg';
 import comprasCovid from '../assets/imgs/compras_covid.svg';
@@ -9,9 +9,8 @@ import Footer from '../components/layout/Footer';
 import {Async, AsyncHelper, GlobalStatistics} from '../Model';
 import {RedashAPI} from '../RedashAPI';
 import {formatIsoDate, formatMoney, formatToMonth} from '../formatters';
-import {Link} from 'react-router-dom';
-import { FilterOutlined } from '@ant-design/icons'
-import { useHistory } from 'react-router-dom';
+import {Link, useHistory} from 'react-router-dom';
+import {FilterOutlined} from '@ant-design/icons'
 
 export const page1 = [
     {
@@ -64,23 +63,42 @@ export function LandingPage() {
     return (<>
             <Header tableMode={false}/>
             <Row className="banner-wrapper" gutter={[16, 48]}>
-                <Col xxl={{offset: 0, span: 7}} xl={{offset: 0, span: 7}} lg={{offset: 0, span: 7}} md={{offset: 0, span: 7}} sm={{offset: 1, span: 1}} xs={{offset: 1, span: 1}} style={{textAlign: 'right'}}>
-                    <FilterOutlined style={{ fontSize: '24px', color: 'rgba(0, 52, 91, 1)', border: '2px solid', borderRadius: '5px', padding: '3px' }}/>
+                <Col md={{offset: 0, span: 7}}
+                     sm={{offset: 1, span: 1}}
+                     xs={{offset: 1, span: 1}}
+                     style={{textAlign: 'right'}}>
+                    <FilterOutlined style={{
+                        fontSize: '24px',
+                        color: 'rgba(0, 52, 91, 1)',
+                        border: '2px solid',
+                        borderRadius: '5px',
+                        padding: '3px'
+                    }}/>
                 </Col>
-                <Col xxl={{offset: 0, span: 10}} xl={{offset: 0, span: 10}} lg={{offset: 0, span: 10}} md={{offset: 0, span: 10}} sm={{offset: 1, span: 16}} xs={{offset: 1, span: 16}} style={{textAlign: 'left'}}>
+                <Col lg={{offset: 0, span: 10}}
+                     md={{offset: 0, span: 12}}
+                     sm={{offset: 2, span: 19}}
+                     xs={{offset: 2, span: 19}}
+                     style={{textAlign: 'left'}}>
                     <Input.Search
                         placeholder="Buscar persona"
                         key="search_input"
-                        onSearch={ v =>
-                            history.push(`/explore/person/search?document=${v}`)
+                        onSearch={v =>
+                            history.push(`/explore/person/search?query="${v.replace(/\s+/, "+")}"`)
                         }
-                        style={{  color: 'rgba(0, 52, 91, 1)', border: '2px solid', borderRadius: '5px', textAlign: 'left'}}
-                        formMethod="submit" />
+                        style={{
+                            color: 'rgba(0, 52, 91, 1)',
+                            border: '2px solid',
+                            borderRadius: '5px',
+                            textAlign: 'left'
+                        }}
+                        formMethod="submit"/>
                 </Col>
                 <Col xxl={24} xl={24} lg={24} md={24} sm={24} xs={24}>
                     <QueueAnim className="banner-title-wrapper">
                         <p className="banner-text" key="content">
-                        En este portal podés explorar <strong>Datos Abiertos</strong> y <strong>controlar los gastos del COVID-19</strong>
+                            En este portal podés explorar <strong>Datos Abiertos</strong> y <strong>controlar los gastos
+                            del COVID-19</strong>
                         </p>
                     </QueueAnim>
                 </Col>

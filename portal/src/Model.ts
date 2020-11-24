@@ -26,8 +26,8 @@ export interface LocalSearchResult {
             department: string,
             district: string
         }>;
-        nangareko_2: unknown[];
-        nangareko_transparencia: unknown[];
+        nangareko_2: object[];
+        nangareko_transparencia: object[];
         hacienda_funcionarios: Hacienda[];
         sfp: Array<{
             anho: string,
@@ -35,7 +35,7 @@ export interface LocalSearchResult {
             funcion: string,
             source: string
         }>;
-        policia: unknown[];
+        policia: object[];
         ande_exonerados: AndeExonerated[];
         a_quien_elegimos: AquienesElegimos[];
     }
@@ -479,7 +479,6 @@ export interface AquienesElegimos {
     phone: string,
     contact_detail: string
 }
-
 export interface Hacienda {
     anio: number,
     mes: number,
@@ -489,7 +488,6 @@ export interface Hacienda {
     descripcionunidadresponsable: string,
     nivelabr: string
 }
-
 /**
  * Represents a networks resource.
  *

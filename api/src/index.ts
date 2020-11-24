@@ -5,7 +5,6 @@ import {StagingService} from './services/Staging';
 import {OCDSService} from './services/OCDS';
 import helmet from 'helmet';
 import {ContraloryService} from './services/ContraloryService';
-import {SearchPeople} from './services/SearchPeople';
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -22,14 +21,6 @@ app.get('/api/find', wrap(req => {
         throw new ApiError('invalid.cedula', 409, {cedula});
     }
     return new StagingService(pool).findStaging(cedula);
-}))
-
-app.get('/api/search', wrap(req => {
-    const query = req.query.query;
-    if (!query || typeof query !== 'string' || query.trim() === '') {
-        throw new ApiError('invalid.query', 409, {query});
-    }
-    return new SearchPeople(pool).findPerson(query);
 }))
 
 app.get('/api/findAnalysis', wrap(req => {

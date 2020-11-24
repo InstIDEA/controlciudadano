@@ -28,11 +28,11 @@ import {Edge, Graph, Node, RelationGraph} from '../components/graphs/RelationGra
 import {IMPORTANT_RELATIONS, PARTY_ROLES} from '../Constants';
 import {Card} from 'antd/es';
 import {SupplierDescription} from '../components/SupplierDescription';
-import { BaseDatosPage } from '../components/BaseDatosPage';
+import {BaseDatosPage} from '../components/BaseDatosPage';
 
 export function OCDSItem() {
 
-    const {itemId} = useParams();
+    const {itemId} = useParams<{itemId: string}>();
     const history = useHistory();
 
     const [data, setData] = useState<OCDSItemAwardInfo[]>();
@@ -47,51 +47,51 @@ export function OCDSItem() {
     const header = getHeader(data);
 
     return <BaseDatosPage headerExtra={false}
-    menuIndex="1">
-    
-    <PageHeader ghost={false}
-                       onBack={() => history.push('/ocds/items')}
-                       backIcon={null}
-                       style={{border: '1px solid rgb(235, 237, 240)'}}
-                       title={data ? `${header.name}` : 'Cargando...'}
-                       subTitle="CDS - IDEA"
-                       footer={<Tabs defaultActiveKey="PARTIES">
-                           <Tabs.TabPane tab="Llamados" key="PROCESS">
-                               {data && <OCDSItemDetailTable data={data}/>}
-                           </Tabs.TabPane>
-                           <Tabs.TabPane tab="Evolución de precios" key="EVOLUTION">
-                               <PriceEvolutionTab id={itemId}/>
-                           </Tabs.TabPane>
-                           <Tabs.TabPane tab="Participantes" key="PARTIES">
-                               {data && <PartyTab header={header}/>}
-                           </Tabs.TabPane>
-                       </Tabs>}>
+                          menuIndex="1">
 
-        <div className="content">
-            <div className="main">
-                {data && <Descriptions column={2} size="small">
-                  <Descriptions.Item label="Nombre">{header.name}</Descriptions.Item>
-                  <Descriptions.Item label="ID">{header.id}</Descriptions.Item>
-                  <Descriptions.Item label="Llamados">{header.processCount}</Descriptions.Item>
-                  <Descriptions.Item label="Concursantes">
-                    <Space>
-                      <Tooltip title="Cantidad total de concursantes. Puede haber duplicados.">
-                        <InfoCircleOutlined/>
-                      </Tooltip>
-                        {header.tendersCount}
-                    </Space>
-                  </Descriptions.Item>
-                    {Object.keys(header.totalAmount).map(currency =>
-                        <Descriptions.Item label={`Total ${currency}`} key={currency}>
-                            {formatMoney(header.totalAmount[currency], currency)}
-                        </Descriptions.Item>)
-                    }
-                </Descriptions>}
+        <PageHeader ghost={false}
+                    onBack={() => history.push('/ocds/items')}
+                    backIcon={null}
+                    style={{border: '1px solid rgb(235, 237, 240)'}}
+                    title={data ? `${header.name}` : 'Cargando...'}
+                    subTitle="CDS - IDEA"
+                    footer={<Tabs defaultActiveKey="PARTIES">
+                        <Tabs.TabPane tab="Llamados" key="PROCESS">
+                            {data && <OCDSItemDetailTable data={data}/>}
+                        </Tabs.TabPane>
+                        <Tabs.TabPane tab="Evolución de precios" key="EVOLUTION">
+                            <PriceEvolutionTab id={itemId}/>
+                        </Tabs.TabPane>
+                        <Tabs.TabPane tab="Participantes" key="PARTIES">
+                            {data && <PartyTab header={header}/>}
+                        </Tabs.TabPane>
+                    </Tabs>}>
+
+            <div className="content">
+                <div className="main">
+                    {data && <Descriptions column={2} size="small">
+                      <Descriptions.Item label="Nombre">{header.name}</Descriptions.Item>
+                      <Descriptions.Item label="ID">{header.id}</Descriptions.Item>
+                      <Descriptions.Item label="Llamados">{header.processCount}</Descriptions.Item>
+                      <Descriptions.Item label="Concursantes">
+                        <Space>
+                          <Tooltip title="Cantidad total de concursantes. Puede haber duplicados.">
+                            <InfoCircleOutlined/>
+                          </Tooltip>
+                            {header.tendersCount}
+                        </Space>
+                      </Descriptions.Item>
+                        {Object.keys(header.totalAmount).map(currency =>
+                            <Descriptions.Item label={`Total ${currency}`} key={currency}>
+                                {formatMoney(header.totalAmount[currency], currency)}
+                            </Descriptions.Item>)
+                        }
+                    </Descriptions>}
+                </div>
             </div>
-        </div>
 
 
-    </PageHeader>
+        </PageHeader>
     </BaseDatosPage>
 }
 
