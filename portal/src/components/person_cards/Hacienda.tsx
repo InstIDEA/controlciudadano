@@ -23,10 +23,10 @@ export function HaciendaCard(props: {
                 <Col span={4}>
                     <Typography.Text><strong>Año</strong></Typography.Text>
                 </Col>
-                <Col span={10}>
+                <Col span={12}>
                     <Typography.Text><strong>Unidad</strong></Typography.Text>
                 </Col>
-                <Col span={10} style={{textAlign: 'right'}}>
+                <Col span={8} style={{textAlign: 'right'}}>
                     <Typography.Text><strong>Monto</strong></Typography.Text>
                 </Col>
             </Row>
@@ -34,10 +34,10 @@ export function HaciendaCard(props: {
                     <Col span={4}>
                         {election.year}/{election.month}
                     </Col>
-                    <Col span={10}>
-                        {election.charge}
+                    <Col span={12}>
+                        {election.place} / {election.charge}
                     </Col>
-                    <Col span={10} style={{textAlign: 'right'}}>
+                    <Col span={8} style={{textAlign: 'right'}}>
                         {formatMoney(election.salary)}
                     </Col>
                 </Row>
@@ -51,10 +51,10 @@ function groupByYear(list: Array<Hacienda>): Array<GroupedInfo> {
     const toRet: Record<string, GroupedInfo> = {};
 
     list.forEach(value => {
-        const key = `${value.anio}${value.mes}`
+        const key = `${value.anio}${value.mes}${value.descripcionentidad}`
         let current = toRet[key];
         if (current) {
-            current.salary += value.montodevengado;
+            current.salary += value.montopresupuestado;
             current.charge = current.charge || value.descripcionunidadresponsable;
         } else {
             toRet[key] = {
@@ -62,7 +62,8 @@ function groupByYear(list: Array<Hacienda>): Array<GroupedInfo> {
                 year: value.anio,
                 month: value.mes,
                 charge: value.descripcionunidadresponsable,
-                salary: value.montodevengado
+                salary: value.montopresupuestado,
+                place: (value.descripcionentidad || "").replace("�", "")
             };
         }
 
@@ -78,4 +79,5 @@ interface GroupedInfo {
     month: number;
     salary: number;
     charge: string;
+    place: string;
 }

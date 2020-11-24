@@ -34,10 +34,10 @@ export function SFPCard(props: {
                     <Col span={4}>
                         {row.year}/{row.month}
                     </Col>
-                    <Col span={10}>
-                        {row.charge}
+                    <Col span={12}>
+                        {row.place} / {row.charge}
                     </Col>
-                    <Col span={10} style={{textAlign: 'right'}}>
+                    <Col span={8} style={{textAlign: 'right'}}>
                         {formatMoney(row.salary)}
                     </Col>
                 </Row>
@@ -51,7 +51,7 @@ function groupByYear(list: Array<SFPLocalData>): Array<GroupedInfo> {
     const toRet: Record<string, GroupedInfo> = {};
 
     list.forEach(value => {
-        const key = `${value.anho}${value.mes}`
+        const key = `${value.anho}${value.mes}${value.descripcion_entidad}`
         let current = toRet[key];
         if (current) {
             current.salary += value.devengado;
@@ -62,7 +62,8 @@ function groupByYear(list: Array<SFPLocalData>): Array<GroupedInfo> {
                 year: value.anho,
                 month: value.mes,
                 charge: value.cargo,
-                salary: value.devengado
+                salary: value.devengado,
+                place: (value.descripcion_entidad || "").replace("�", "")
             };
         }
 
@@ -78,4 +79,5 @@ interface GroupedInfo {
     month: number;
     salary: number;
     charge: string;
+    place: string;
 }
