@@ -71,8 +71,8 @@ export function PersonSearchPage() {
                 <Layout.Content className="content-padding">
                     {isSmall && <Row>
                       <Col xs={{span: 24}}>
-                        <Collapse defaultActiveKey={['1']} bordered={false}>
-                          <Collapse.Panel header="Filtros" key="1">
+                        <Collapse defaultActiveKey={['2']} bordered={false}>
+                          <Collapse.Panel header="Mas filtros" key="1">
                               {filter}
                           </Collapse.Panel>
                         </Collapse>
