@@ -1,12 +1,13 @@
-import {Card, Col, Row} from "antd";
+import {Card, Col, Row, Typography} from "antd";
 import Icon from "@ant-design/icons";
 import {ReactComponent as Ddjj} from "../../assets/logos/ddjj.svg";
 import * as React from "react";
 import {ColProps} from "antd/es/col";
 
 export function ChargeCard(props: {
-    cargos: Cargo[],
-    spans: ColProps
+    cargos: Charge[],
+    spans: ColProps,
+    document: string
 }) {
     const cargos = props.cargos;
     const spans = props.spans
@@ -14,27 +15,31 @@ export function ChargeCard(props: {
         <Card className="data-box" title="Cargos públicos"
               extra={<Icon component={Ddjj} className="icon-card"/>}>
             <Row gutter={[8, 8]} style={{background: '#fafafa'}}>
-                <Col span={4} >
-                    Año
+                <Col span={4}>
+                    <Typography.Text><strong>Año</strong></Typography.Text>
                 </Col>
                 <Col span={20}>
-                    Cargo
-                </Col >
+                    <Typography.Text><strong>Cargo</strong></Typography.Text>
+                </Col>
             </Row>
-            {cargos.map(
-                cargo =>
-                    <Row gutter={[8, 8]}>
-                        <Col span={4} >
-                            {cargo.ano}
+            {cargos
+                .map(c => c)
+                .sort((c1, c2) => c1.year < c2.year ? 1 : -1)
+                .map(charge => <Row gutter={[8, 8]} key={`${charge.year}${charge.source}`}>
+                        <Col span={4}>
+                            {charge.year}
                         </Col>
                         <Col span={20}>
-                            {cargo.cargo}
-                        </Col >
+                            {charge.charge}
+                        </Col>
                     </Row>
-            )}
+                )}
         </Card>
     </Col>
 }
-export interface Cargo {
-    cargo: string, ano:number
+
+export interface Charge {
+    charge: string;
+    year: number;
+    source: string;
 }

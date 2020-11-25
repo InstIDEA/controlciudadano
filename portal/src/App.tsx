@@ -1,7 +1,7 @@
 import * as React from "react";
 import 'antd/dist/antd.css';
 import './App.css';
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import {DocumentSearchPage} from "./pages/DocumentSearchPage";
 import {QueryParamProvider} from "use-query-params";
 import {OCDSAwardItemsPage} from './pages/OCDSAwardItemsPage';
@@ -24,6 +24,9 @@ import AboutPage from "./pages/AboutPage";
 import {LandingPage} from "./pages/Landing";
 import {DSDownload} from "./pages/DatasourcesDownload";
 import {DisclaimerPage} from "./pages/DisclaimerPage";
+import {OCDSItem} from "./pages/OCDSItem";
+import {OCDSBuyerPage} from "./pages/OCDSBuyer";
+import {OCDSSupplier} from "./pages/OCDSSupplier";
 
 export default function App() {
     return <Routes/>
@@ -47,6 +50,11 @@ function Routes() {
                 <Route path="/action/ocds/sanctioned_suppliers" exact render={() => <OCDSSupplierWithSanctionPage/>}/>
                 <Route path="/action/ocds/suppliers" exact render={() => <OCDSSuppliers/>}/>
                 <Route path="/action/ocds/tenders" exact render={() => <OCDSCovidTenders/>}/>
+
+                <Route path="/ocds/items/:itemId" exact render={() => <OCDSItem/>}/>
+                <Route path="/ocds/suppliers/:ruc" exact render={() => <OCDSSupplier/>}/>
+                <Route path="/ocds/buyer/:id" exact render={() => <OCDSBuyerPage/>}/>
+                <Route path="/ocds/" exact render={() => <Redirect to="/ocds/items"/>}/>
 
                 <Route path="/disclaimer" exact render={() => <DisclaimerPage/>}/>
 

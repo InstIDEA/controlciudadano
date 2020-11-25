@@ -1,3 +1,18 @@
+export interface LocalSearchPersonResult {
+
+    query: string;
+    data: {
+        [key: string]: [
+            {
+                source: string;
+                document: string;
+                names: string[];
+                net_worth?: number;
+            }
+
+        ]
+    }
+}
 
 export interface LocalSearchResult {
 
@@ -13,17 +28,27 @@ export interface LocalSearchResult {
         }>;
         nangareko_2: object[];
         nangareko_transparencia: object[];
-        hacienda_funcionarios: object[];
-        sfp: Array<{
-            anho: string,
-            profesion: string,
-            funcion: string,
-            source: string
-        }>;
+        hacienda_funcionarios: Hacienda[];
+        sfp: Array<SFPLocalData>;
         policia: object[];
         ande_exonerados: AndeExonerated[];
         a_quien_elegimos: AquienesElegimos[];
     }
+}
+
+export interface SFPLocalData {
+    descripcion_entidad: string;
+    devengado: number;
+    presupuestado: number;
+    mes: number;
+    fecha_nacimiento: string;
+    nombres: string;
+    apellidos: string;
+    cargo: string;
+    anho: number,
+    profesion: string,
+    funcion: string,
+    source: string
 }
 
 export interface AnalysisSearchResult {
@@ -464,7 +489,19 @@ export interface AquienesElegimos {
     phone: string,
     contact_detail: string
 }
-
+export interface Hacienda {
+    montopresupuestado: number;
+    nombres: string;
+    descripcionentidad: string;
+    apellidos: string;
+    anio: number,
+    mes: number,
+    cargo: string,
+    montodevengado: number,
+    montopresupestado:number,
+    descripcionunidadresponsable: string,
+    nivelabr: string
+}
 /**
  * Represents a networks resource.
  *

@@ -1,5 +1,5 @@
 import {Affidavit} from "../../Model";
-import {Card, Col, Row} from "antd";
+import {Card, Col, Row, Typography} from "antd";
 import Icon from "@ant-design/icons";
 import {ReactComponent as Ddjj} from "../../assets/logos/ddjj.svg";
 import * as React from "react";
@@ -13,35 +13,31 @@ export function DDJJCard(props: {
         <Card className="data-box" title="Declaraciones juradas de bienes y rentas"
               extra={<Icon component={Ddjj} className="icon-card"/>}>
             <Row gutter={[8, 8]} style={{background: '#fafafa'}}>
-                <Col span={3} >
-                    Año
+                <Col span={3}>
+                    <Typography.Text><strong>Año</strong></Typography.Text>
                 </Col>
                 <Col span={7}>
-                    Activos
-                </Col >
-                <Col span={7}>
-                    Pasivos
+                    <Typography.Text><strong>Activos</strong></Typography.Text>
                 </Col>
                 <Col span={7}>
-                    Patrimonio Neto
+                    <Typography.Text><strong>Pasivos</strong></Typography.Text>
+                </Col>
+                <Col span={7}>
+                    <Typography.Text><strong>Patrimonio Neto</strong></Typography.Text>
                 </Col>
             </Row>
-            {affidavit.map(
-                declaracion =>
-                    <DJResumeCols data={declaracion} />
-            )}
+            {affidavit.map(declaracion => <DJResumeCols data={declaracion} key={declaracion.id}/>)}
         </Card>
     </Col>
 }
 
 
-export function DJResumeCols(props: {
-    data: Affidavit}
-) {
+export function DJResumeCols(props: { data: Affidavit }) {
+
     const declaracion = props.data;
-    if(declaracion.actives) {
-        return  <Row gutter={[8, 8]}>
-            <Col span={3} >
+    if (declaracion.actives) {
+        return <Row gutter={[8, 8]}>
+            <Col span={3}>
                 <a href={declaracion.linksandwich || declaracion.link} target="_blank" rel="noopener noreferrer"
                    title="Ver">
                     {declaracion.year}
@@ -49,7 +45,7 @@ export function DJResumeCols(props: {
             </Col>
             <Col span={7}>
                 {formatMoney(declaracion.actives)}
-            </Col >
+            </Col>
             <Col span={7}>
                 {formatMoney(declaracion.passive)}
             </Col>
@@ -58,8 +54,8 @@ export function DJResumeCols(props: {
             </Col>
         </Row>
     } else {
-        return  <Row gutter={[8, 8]}>
-            <Col span={3} >
+        return <Row gutter={[8, 8]}>
+            <Col span={3}>
                 <a href={declaracion.linksandwich || declaracion.link} target="_blank" rel="noopener noreferrer"
                    title="Ver">
                     {declaracion.year}
@@ -67,7 +63,7 @@ export function DJResumeCols(props: {
             </Col>
             <Col span={21}>
                 Ayudanos a completar!
-            </Col >
+            </Col>
         </Row>;
     }
 }

@@ -29,6 +29,7 @@ import {useMediaQuery} from '@react-hook/media-query'
 import {formatMoney} from '../formatters';
 import {getAQEImage} from '../AQuienElegimosData';
 import Icon from '@ant-design/icons';
+import {ReactComponent as Hacienda} from '../assets/logos/hacienda.svg';
 import {ReactComponent as Sfp} from '../assets/logos/sfp.svg';
 import {ReactComponent as Ddjj} from '../assets/logos/ddjj.svg';
 import {ReactComponent as Ande} from '../assets/logos/ande.svg';
@@ -432,7 +433,7 @@ const sourceNameIcon: { [k: string]: React.FunctionComponent } = {
     'a_quien_elegimos': Aqe,
     'ande_exonerados': Ande,
     'sfp': Sfp,
-    'mh': Sfp,
+    'mh': Hacienda,
     'pytyvo': Pytyvo,
     'nangareko': Nangareko,
     'policia': PoliciaNacional,
