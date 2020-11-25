@@ -14,7 +14,7 @@ export function HaciendaCard(props: {
 
     return <Col {...{xxl: 12, xl: 12, lg: 12, md: 12, sm: 24, xs: 24}}>
         <Card className="data-box" title="Salarios de Hacienda"
-              extra={<Icon component={HaciendaIcon} style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}
+              extra={<Icon component={HaciendaIcon} className="icon-card"/>}
               actions={[
                   <a href={`https://datos.hacienda.gov.py/doc/nomina/${props.document}`} target="_blank"
                      rel="noopener noreferrer">Mas info</a>

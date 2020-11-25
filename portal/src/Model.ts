@@ -30,7 +30,11 @@ export interface LocalSearchResult {
         nangareko_transparencia: object[];
         hacienda_funcionarios: Hacienda[];
         sfp: Array<SFPLocalData>;
-        policia: object[];
+        policia: Array<{
+            ano: string,
+            presupuesto: string,
+            remuneracion: string,
+        }>;
         ande_exonerados: AndeExonerated[];
         a_quien_elegimos: AquienesElegimos[];
     }

@@ -16,7 +16,7 @@ export function AffidavitCard(props: {
 
     return <Col {...props.colProps} >
         <Card className="data-box" title="Declaración Jurada"
-              extra={<Icon component={Ddjj} style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}
+              extra={<Icon component={Ddjj} className="icon-card"/>}
               actions={[
                   <a href={`${declaration.link}`} target="_blank" rel="noopener noreferrer">Ver Archivo</a>
               ]}

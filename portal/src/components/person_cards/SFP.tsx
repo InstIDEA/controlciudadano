@@ -14,7 +14,7 @@ export function SFPCard(props: {
     let lista = useMemo(() => groupByYear(props.data), [props.data]);
     return <Col {...{xxl: 12, xl: 12, lg: 12, md: 12, sm: 24, xs: 24}}>
         <Card className="data-box" title="Secretaría de la Función Pública"
-              extra={<Icon component={Sfp} style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}
+              extra={<Icon component={Sfp} className="icon-card"/>}
               actions={[
                   <a href={`https://datos.sfp.gov.py/doc/funcionarios/${props.document}`} target="_blank"
                      rel="noopener noreferrer">Mas info</a>
