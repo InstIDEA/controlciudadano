@@ -1,6 +1,6 @@
 import {Card, Col, Row, Typography} from "antd";
 import Icon from "@ant-design/icons";
-import {ReactComponent as Ddjj} from "../../assets/logos/ddjj.svg";
+import {ReactComponent as Hacienda} from "../../assets/logos/hacienda.svg";
 import * as React from "react";
 import {ColProps} from "antd/es/col";
 
@@ -13,7 +13,7 @@ export function ChargeCard(props: {
     const spans = props.spans
     return <Col {...spans}>
         <Card className="data-box" title="Cargos públicos"
-              extra={<Icon component={Ddjj} className="icon-card"/>}>
+              extra={<Icon component={Hacienda} className="icon-card"/>}>
             <Row gutter={[8, 8]} style={{background: '#fafafa'}}>
                 <Col span={4}>
                     <Typography.Text><strong>Año</strong></Typography.Text>
