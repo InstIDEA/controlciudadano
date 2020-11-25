@@ -10,7 +10,7 @@ export function TSJECard(props: {
     const tsje = props.tsje;
     return <Col {...{xxl: 12, xl: 12, lg: 12, md: 12, sm: 24, xs: 24}}>
         <Card className="data-box" title="TSJE"
-              extra={<Icon component={Ddjj} style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}>
+              extra={<Icon component={Ddjj} className="icon-card"/>}>
             <Row gutter={[8, 8]} style={{background: '#fafafa'}}>
                 <Col span={3} >
                     Año

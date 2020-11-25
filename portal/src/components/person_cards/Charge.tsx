@@ -12,7 +12,7 @@ export function ChargeCard(props: {
     const spans = props.spans
     return <Col {...spans}>
         <Card className="data-box" title="Cargos públicos"
-              extra={<Icon component={Ddjj} style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}>
+              extra={<Icon component={Ddjj} className="icon-card"/>}>
             <Row gutter={[8, 8]} style={{background: '#fafafa'}}>
                 <Col span={4} >
                     Año

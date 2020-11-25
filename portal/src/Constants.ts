@@ -92,3 +92,7 @@ export const PARTY_ROLES: { [k: string]: { title: string, description: string, c
         color: '#ffd500'
     }
 }
+
+export const COLOR_ORANGE = 'rgba(205, 83, 52, 1)';
+export const COLOR_BLUE = 'rgba(0, 52, 91, 1)';
+export const COLOR_GREY = 'rgba(171, 171, 171, 1)';

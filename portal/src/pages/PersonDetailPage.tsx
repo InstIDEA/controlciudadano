@@ -22,6 +22,7 @@ import {AQECard} from '../components/person_cards/AQE';
 import {TSJECard} from '../components/person_cards/TSJE';
 import {DDJJCard} from "../components/person_cards/DDJJ";
 import {Cargo, ChargeCard} from "../components/person_cards/Charge";
+import {COLOR_GREY, COLOR_ORANGE} from "../Constants";
 
 export function PersonDetailPage() {
 
@@ -83,50 +84,50 @@ export function PersonDetailPage() {
             <Layout.Content style={{minHeight: '80vh', padding: '0 5%'}}>
                 <Row gutter={[16, 16]} justify="space-around" align="middle" style={{paddingTop: 20}}>
                     <Col md={14} xs={20} style={{alignSelf: 'flex-end'}}>
-                        <Typography.Title style={{color: "rgba(0, 52, 91, 1)"}} level={2}>
+                        <Typography.Title style={{color: COLOR_ORANGE}} level={2}>
                             {header.name}
                         </Typography.Title>
                     </Col>
                     <Col md={8} xs={24} style={{padding: 25, textAlign: 'right'}}>
                         <Tooltip title="SFP">
                             <Icon component={Sfp} style={{
-                                color: ((local?.staging.sfp.length || []) > 0 ? 'rgba(0, 52, 91, 1)' : 'rgba(171, 171, 171, 1)'),
+                                color: ((local?.staging.sfp.length || []) > 0 ? COLOR_ORANGE : COLOR_GREY),
                                 fontSize: '30px'
                             }}/>
                         </Tooltip>
                         <Tooltip title="Declaraciones Juradas">
                             <Icon component={Ddjj} style={{
-                                color: ((analysis?.analysis.declarations.length || []) > 0 ? 'rgba(0, 52, 91, 1)' : 'rgba(171, 171, 171, 1)'),
+                                color: ((analysis?.analysis.declarations.length || []) > 0 ? COLOR_ORANGE : COLOR_GREY),
                                 fontSize: '30px'
                             }}/>
                         </Tooltip>
                         <Tooltip title="Pytyvo">
                             <Icon component={Pytyvo} style={{
-                                color: ((local?.staging.pytyvo.length || []) > 0 ? 'rgba(0, 52, 91, 1)' : 'rgba(171, 171, 171, 1)'),
+                                color: ((local?.staging.pytyvo.length || []) > 0 ? COLOR_ORANGE : COLOR_GREY),
                                 fontSize: '30px'
                             }}/>
                         </Tooltip>
                         <Tooltip title="Ñangareko">
                             <Icon component={Nangareko} style={{
-                                color: ((local?.staging.nangareko.length || []) > 0 ? 'rgba(0, 52, 91, 1)' : 'rgba(171, 171, 171, 1)'),
+                                color: ((local?.staging.nangareko.length || []) > 0 ? COLOR_ORANGE : COLOR_GREY),
                                 fontSize: '30px'
                             }}/>
                         </Tooltip>
                         <Tooltip title="ANDE">
                             <Icon component={Ande} style={{
-                                color: ((local?.staging.ande_exonerados.length || []) > 0 ? 'rgba(0, 52, 91, 1)' : 'rgba(171, 171, 171, 1)'),
+                                color: ((local?.staging.ande_exonerados.length || []) > 0 ? COLOR_ORANGE : COLOR_GREY),
                                 fontSize: '30px'
                             }}/>
                         </Tooltip>
                         <Tooltip title="Policia Nacional">
                             <Icon component={PoliciaNacional} style={{
-                                color: ((local?.staging.policia.length || []) > 0 ? 'rgba(0, 52, 91, 1)' : 'rgba(171, 171, 171, 1)'),
+                                color: ((local?.staging.policia.length || []) > 0 ? COLOR_ORANGE : COLOR_GREY),
                                 fontSize: '30px'
                             }}/>
                         </Tooltip>
                         <Tooltip title="A Quien Elegimos">
                             <Icon component={Aqe} style={{
-                                color: ((local?.staging?.a_quien_elegimos || []).length > 0 ? 'rgba(0, 52, 91, 1)' : 'rgba(171, 171, 171, 1)'),
+                                color: ((local?.staging?.a_quien_elegimos || []).length > 0 ? COLOR_ORANGE : COLOR_GREY),
                                 fontSize: '30px'
                             }}/>
                         </Tooltip>
@@ -137,8 +138,8 @@ export function PersonDetailPage() {
                         <Card className="card-style header-title-big">
                             <Row gutter={[16, 16]} align="middle">
                                 <Col xxl={3} xl={3} md={4} xs={6} style={{alignSelf: 'flex-end', textAlign: "center"}}>
-                                    {header.imageURL && <Avatar size={100} shape="square" src={header.imageURL}/>}
-                                    {!header.imageURL && <Avatar size={100} shape="square" style={{
+                                    {header.imageURL && <Avatar size={100} src={header.imageURL}/>}
+                                    {!header.imageURL && <Avatar size={100}  style={{
                                         color: '#00345b',
                                         backgroundColor: '#dfedfb'
                                     }}>{getInitials(header.name)}</Avatar>}
@@ -174,8 +175,7 @@ export function PersonDetailPage() {
                         local?.staging.pytyvo && local?.staging.pytyvo.length > 0 &&
                         <Col {...spans}>
                           <Card className="data-box" title="Pytyvo" style={{height: cardHeight}}
-                                extra={<Icon component={Pytyvo}
-                                             style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}>
+                                extra={<Icon component={Pytyvo} className="icon-card"/>}>
                             <Typography.Text>Departamento: {local.staging.pytyvo[0].department} </Typography.Text>
                             <br/>
                             <Typography.Text>Distrito: {local.staging.pytyvo[0].district} </Typography.Text>
@@ -186,8 +186,7 @@ export function PersonDetailPage() {
                         local?.staging.nangareko && local?.staging.nangareko.length > 0 &&
                         <Col {...spans}>
                           <Card className="data-box" title="Ñangareko" style={{height: cardHeight}}
-                                extra={<Icon component={Nangareko}
-                                             style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}>
+                                extra={<Icon component={Nangareko} className="icon-card"/>}>
                             <Typography.Text>Departamento: {local.staging.nangareko[0].department} </Typography.Text>
                             <br/>
                             <Typography.Text>Distrito: {local.staging.nangareko[0].district} </Typography.Text>
@@ -229,8 +228,7 @@ export function PersonDetailPage() {
                         local?.staging.policia && local?.staging.policia.length > 0 &&
                         <Col {...spans}>
                           <Card className="data-box" title="Policía Nacional" style={{height: cardHeight}}
-                                extra={<Icon component={PoliciaNacional}
-                                             style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}>
+                                extra={<Icon component={PoliciaNacional} className="icon-card"/>}>
                             <Typography.Text>Año: {(local.staging.policia[0] as any).ano} </Typography.Text>
                             <br/>
                             <Typography.Text>Presupuesto: {formatMoney((local.staging.policia[0] as any).presupuesto)} </Typography.Text>
@@ -243,8 +241,7 @@ export function PersonDetailPage() {
                         local?.staging.ande_exonerados && local?.staging.ande_exonerados.length > 0 &&
                         <Col {...spans}>
                           <Card className="data-box" title="ANDE" style={{height: cardHeight}}
-                                extra={<Icon component={Ande}
-                                             style={{color: 'rgba(0, 52, 91, 1)', fontSize: '30px'}}/>}>
+                                extra={<Icon component={Ande} className="icon-card"/>}>
                             <Typography.Text>Agencia: {local.staging.ande_exonerados[0].agencia} </Typography.Text>
                             <br/>
                             <Typography.Text>NIS: {local.staging.ande_exonerados[0].nis} </Typography.Text>
