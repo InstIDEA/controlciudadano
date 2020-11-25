@@ -17,7 +17,7 @@ import {SimpleApi} from '../SimpleApi';
 import {useParams} from 'react-router-dom';
 import {Affidavit, AnalysisSearchResult, Authorities, Hacienda, LocalSearchResult} from '../Model';
 import {SFPRow} from '../SFPHelper';
-import {formatMoney, getInitials} from '../formatters';
+import {getInitials} from '../formatters';
 import {AQECard} from '../components/person_cards/AQE';
 import {TSJECard} from '../components/person_cards/TSJE';
 import {DDJJCard} from "../components/person_cards/DDJJ";
