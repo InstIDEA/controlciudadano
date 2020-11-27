@@ -9,6 +9,7 @@ import {formatIsoDate, formatMoney} from '../formatters';
 import {groupBy} from './OCDSItem';
 import {NivoBuyerSuppliersPie} from '../components/graphs/NivoBuyerSuppliersPie';
 import {BooleanParam, useQueryParam} from 'use-query-params';
+import {Header} from "../components/layout/Header";
 
 export function OCDSBuyerPage() {
 
@@ -51,37 +52,39 @@ export function OCDSBuyerPage() {
         : undefined;
     console.log(items, finalItems);
 
-    return <PageHeader ghost={false}
-                       onBack={() => history.push('/ocds/')}
-                       style={{border: '1px solid rgb(235, 237, 240)'}}
-                       title={data ? `${data.name}` : 'Cargando...'}
-                       subTitle="CDS - IDEA"
-                       extra={[
-                           <Checkbox checked={!!onlyCovid} key="covid" onChange={_ => setOnlyCovid(a => !a)}>
-                               Solo fondos de emergencia
-                           </Checkbox>
-                       ]}
-                       footer={<Tabs defaultActiveKey="SUPPLIER">
-                           <Tabs.TabPane tab="Contratos" key="CONTRACTS">
-                               <ContractsTable data={finalItems}/>
-                           </Tabs.TabPane>
-                           <Tabs.TabPane tab="Proveedores" key="SUPPLIER">
-                               {finalItems ? <SuppliersTable data={finalItems}/>
-                                   : <div>Cargando ... </div>}
-                           </Tabs.TabPane>
-                       </Tabs>}>
+    return <>
+        <Header tableMode={true}/>
+        <PageHeader ghost={false}
+                    style={{border: '1px solid rgb(235, 237, 240)'}}
+                    title={data ? `${data.name}` : 'Cargando...'}
+                    subTitle="CDS - IDEA"
+                    extra={[
+                        <Checkbox checked={!!onlyCovid} key="covid" onChange={_ => setOnlyCovid(a => !a)}>
+                            Solo fondos de emergencia
+                        </Checkbox>
+                    ]}
+                    footer={<Tabs defaultActiveKey="SUPPLIER">
+                        <Tabs.TabPane tab="Contratos" key="CONTRACTS">
+                            <ContractsTable data={finalItems}/>
+                        </Tabs.TabPane>
+                        <Tabs.TabPane tab="Proveedores" key="SUPPLIER">
+                            {finalItems ? <SuppliersTable data={finalItems}/>
+                                : <div>Cargando ... </div>}
+                        </Tabs.TabPane>
+                    </Tabs>}>
 
-        <div className="content">
-            <div className="main">
-                {data && <Descriptions column={2} size="small">
-                  <Descriptions.Item label="Nombre">{data.name}</Descriptions.Item>
-                  <Descriptions.Item label="Identificador">{data.id}</Descriptions.Item>
-                </Descriptions>}
+            <div className="content">
+                <div className="main">
+                    {data && <Descriptions column={2} size="small">
+                        <Descriptions.Item label="Nombre">{data.name}</Descriptions.Item>
+                        <Descriptions.Item label="Identificador">{data.id}</Descriptions.Item>
+                    </Descriptions>}
+                </div>
             </div>
-        </div>
 
 
-    </PageHeader>
+        </PageHeader>
+    </>
 
 }
 

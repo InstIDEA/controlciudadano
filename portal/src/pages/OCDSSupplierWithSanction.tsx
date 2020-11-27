@@ -62,7 +62,7 @@ export function OCDSSupplierWithSanctionPage() {
                     dataIndex: 'supplier_name',
                     title: 'Proveedor',
                     align: 'left',
-                    render: (_, r) => <Link to={`/ocds/suppliers/${r.supplier_id}?onlyCovid=1`}>{r.supplier_name}</Link>,
+                    render: (_, r) => <Link to={`/ocds/suppliers/${r.supplier_id}?onlyCovid=1`} target="_blank">{r.supplier_name}</Link>,
                     sorter: (a, b) => (a.supplier_name || '').localeCompare(b.supplier_name)
                 }, {
                     dataIndex: 'sanctions',
@@ -97,7 +97,7 @@ export function OCDSSupplierWithSanctionPage() {
                     renderItem={(r: OCDSSupplierWithSanction) =>
                         <List.Item className="list-item">
                             <Card bordered={false}>
-                                Proveedor: <Link to={`/ocds/suppliers/${r.supplier_id}?onlyCovid=1`}>{r.supplier_name}</Link>
+                                Proveedor: <Link to={`/ocds/suppliers/${r.supplier_id}?onlyCovid=1`} target="_blank">{r.supplier_name}</Link>
                                 <br />
                                 Sanciones: <SanctionComponent data={r.sanctions} />
                                 <br />

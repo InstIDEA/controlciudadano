@@ -1,6 +1,6 @@
 import * as React from "react";
 import {useMemo} from "react";
-import {Card, Col, Row, Tooltip, Typography} from "antd";
+import {Card, Col, Row, Typography} from "antd";
 import Icon from "@ant-design/icons";
 import {ReactComponent as Sfp} from "../../assets/logos/sfp.svg";
 import {SFPLocalData} from '../../Model';
