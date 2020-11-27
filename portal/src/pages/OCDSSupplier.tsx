@@ -12,6 +12,7 @@ import {toGraph} from './OCDSSupplierRelations';
 import {SupplierRelationsTable} from '../components/SupplierRelationsTable';
 import {getTenderLink} from './OCDSAwardItemsPage';
 import {BooleanParam, useQueryParam} from 'use-query-params';
+import {Header} from "../components/layout/Header";
 
 export function OCDSSupplier() {
 
@@ -44,33 +45,36 @@ export function OCDSSupplier() {
         : [];
 
 
-    return <PageHeader ghost={false}
-                       onBack={() => history.push('/ocds/suppliers')}
-                       style={{border: '1px solid rgb(235, 237, 240)'}}
-                       title={data ? `${data.name}` : 'Cargando...'}
-                       subTitle="CDS - IDEA"
-                       extra={[
-                           <Checkbox key="onlyCovid" checked={!!onlyCovid} onChange={_ => setOnlyCovid(a => !a)}>
-                               Solo fondos de emergencia
-                           </Checkbox>
-                       ]}
-                       footer={<Tabs defaultActiveKey="CONTRACTS">
-                           <Tabs.TabPane tab="Contratos" key="CONTRACTS">
-                               <ContractsTable contracts={finalContracts} page={page} setPage={setPage}/>
-                           </Tabs.TabPane>
-                           <Tabs.TabPane tab="Asociaciones" key="RELATIONS">
-                               <SupplierRelations ruc={ruc}/>
-                           </Tabs.TabPane>
-                       </Tabs>}>
+    return <>
+        <Header tableMode={true}/>
+        <PageHeader ghost={false}
+                    onBack={() => history.goBack()}
+                    style={{border: '1px solid rgb(235, 237, 240)'}}
+                    title={data ? `${data.name}` : 'Cargando...'}
+                    subTitle="CDS - IDEA"
+                    extra={[
+                        <Checkbox key="onlyCovid" checked={!!onlyCovid} onChange={_ => setOnlyCovid(a => !a)}>
+                            Solo fondos de emergencia
+                        </Checkbox>
+                    ]}
+                    footer={<Tabs defaultActiveKey="CONTRACTS">
+                        <Tabs.TabPane tab="Contratos" key="CONTRACTS">
+                            <ContractsTable contracts={finalContracts} page={page} setPage={setPage}/>
+                        </Tabs.TabPane>
+                        <Tabs.TabPane tab="Asociaciones" key="RELATIONS">
+                            <SupplierRelations ruc={ruc}/>
+                        </Tabs.TabPane>
+                    </Tabs>}>
 
-        <div className="content">
-            <div className="main">
-                {data && <SupplierDescription data={data} columns={2}/>}
+            <div className="content">
+                <div className="main">
+                    {data && <SupplierDescription data={data} columns={2}/>}
+                </div>
             </div>
-        </div>
 
 
-    </PageHeader>
+        </PageHeader>
+    </>
 }
 
 export function ContractsTable(props: {
