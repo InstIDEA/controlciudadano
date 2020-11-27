@@ -29,14 +29,12 @@ function getColumns(showOrigin: boolean = true): ColumnProps<OCDSSupplierRelatio
         key: 'p1ruc',
         dataIndex: 'p1ruc',
         title: 'Proveedor 1',
-        render: (_, r) => <Link to={`/ocds/suppliers/${r.p1ruc}`}
-                                target="__blank">{r.p1name} ({r.p1ruc})</Link>
+        render: (_, r) => <Link to={`/ocds/suppliers/${r.p1ruc}`}>{r.p1name} ({r.p1ruc})</Link>
     }, {
         key: 'p2ruc',
         dataIndex: 'p2ruc',
         title: 'Proveedor 2',
-        render: (_, r) => <Link to={`/ocds/suppliers/${r.p2ruc}`}
-                                target="__blank">{r.p2name} ({r.p2ruc})</Link>
+        render: (_, r) => <Link to={`/ocds/suppliers/${r.p2ruc}`}>{r.p2name} ({r.p2ruc})</Link>
     }, {
         key: 'relation',
         dataIndex: 'relation',

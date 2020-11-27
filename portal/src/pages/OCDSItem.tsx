@@ -50,7 +50,7 @@ export function OCDSItem() {
                           menuIndex="1">
 
         <PageHeader ghost={false}
-                    onBack={() => history.push('/ocds/items')}
+                    onBack={() => history.goBack()}
                     backIcon={null}
                     style={{border: '1px solid rgb(235, 237, 240)'}}
                     title={data ? `${header.name}` : 'Cargando...'}
@@ -194,7 +194,7 @@ function PartyTab(props: { header: HeaderData }) {
                 }} width={400}>
                     <Space direction="vertical" style={{width: '100%'}}>
                         {party && <Card
-                          title={<Link to={`/ocds/suppliers/${party.ruc}`} target="__blank">{party.name}</Link>}>
+                          title={<Link to={`/ocds/suppliers/${party.ruc}`}>{party.name}</Link>}>
                             {data && <SupplierDescription data={party} columns={1}/>}
                         </Card>}
                         <Card title="Relaciones"
@@ -305,7 +305,7 @@ function TenderSubTable(props: { data: OCDSItemTenderInfo[] }) {
             title: 'Adjudicado',
             dataIndex: 'supplier',
             render: (_, r) => r.supplier
-                ? <Link to={`/ocds/suppliers/${r.supplier.id}`} target="__blank" rel="noopener noreferrer">
+                ? <Link to={`/ocds/suppliers/${r.supplier.id}`}>
                     {r.supplier.name}
                     <br/>
                     <small>{r.supplier.id}</small>

@@ -73,7 +73,7 @@ export function OCDSAwardItemsPage() {
                     title: 'Proveedor',
                     responsive: ['lg'],
                     render: (_, r) => {
-                        return <Link to={`/ocds/suppliers/${r.supplier_ruc}`} target="_blank">
+                        return <Link to={`/ocds/suppliers/${r.supplier_ruc}`}>
                             {r.supplier_name}
                             <br />
                             <small>{r.supplier_ruc}</small>
@@ -87,7 +87,7 @@ export function OCDSAwardItemsPage() {
                     title: 'Comprador',
                     responsive: ['lg'],
                     render: (_, r) => {
-                        return <Link to={`/ocds/buyer/${r.buyer_id}`} target="_blank">
+                        return <Link to={`/ocds/buyer/${r.buyer_id}`}>
                             {r.buyer_name}
                             <br />
                             <small>{r.buyer_id}</small>

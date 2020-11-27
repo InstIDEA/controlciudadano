@@ -55,6 +55,7 @@ export function OCDSBuyerPage() {
     return <>
         <Header tableMode={true}/>
         <PageHeader ghost={false}
+                    onBack={() => history.goBack()}
                     style={{border: '1px solid rgb(235, 237, 240)'}}
                     title={data ? `${data.name}` : 'Cargando...'}
                     subTitle="CDS - IDEA"
@@ -193,7 +194,7 @@ function SuppliersTable({data}: { data: OCDSBuyerWithSuppliers[] }) {
                    columns={[{
                        title: 'Proveedor',
                        dataIndex: 'name',
-                       render: (_, r) => <Link to={`/ocds/suppliers/${r.id}`} target="_blank">
+                       render: (_, r) => <Link to={`/ocds/suppliers/${r.id}`}>
                            {r.name} <br/>
                            <small>{r.id}</small>
                        </Link>,

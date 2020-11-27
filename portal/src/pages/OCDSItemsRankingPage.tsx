@@ -61,9 +61,7 @@ export function OCDSItemsRankingPage() {
                     key: 'item_classification_nivel_5_id',
                     title: 'Item',
                     render: (_, r) => {
-                        return <Link to={`/ocds/items/${r.item_classification_nivel_5_id}`}
-                            rel="noopener noreferrer"
-                            target="_blank">
+                        return <Link to={`/ocds/items/${r.item_classification_nivel_5_id}`}>
                             {r.item_classification_nivel_5_nombre}
                             <br />
                             {r.item_classification_nivel_5_id}
@@ -121,9 +119,7 @@ export function OCDSItemsRankingPage() {
                 renderItem={(r: OCDSItemRankingListRow) =>
                     <List.Item className="list-item">
                         <Card bordered={false}>
-                            Item:  <Link to={`/ocds/items/${r.item_classification_nivel_5_id}`}
-                                rel="noopener noreferrer"
-                                target="_blank">
+                            Item:  <Link to={`/ocds/items/${r.item_classification_nivel_5_id}`}>
                                 {r.item_classification_nivel_5_nombre}
                                 <br />
                                 {r.item_classification_nivel_5_id}

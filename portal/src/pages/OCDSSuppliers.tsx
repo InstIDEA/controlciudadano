@@ -59,7 +59,7 @@ export function OCDSSuppliers() {
                         dataIndex: 'ruc',
                         title: 'RUC',
                         align: 'right',
-                        render: ruc => <Link to={`/ocds/suppliers/${ruc}`} target="__blank" rel="noopener noreferrer">{ruc}</Link>,
+                        render: ruc => <Link to={`/ocds/suppliers/${ruc}`}>{ruc}</Link>,
                         sorter: (a, b) => (a.ruc || '').localeCompare(b.ruc)
                     }, {
                         dataIndex: 'name',

@@ -48,6 +48,7 @@ export function OCDSSupplier() {
     return <>
         <Header tableMode={true}/>
         <PageHeader ghost={false}
+                    onBack={() => history.goBack()}
                     style={{border: '1px solid rgb(235, 237, 240)'}}
                     title={data ? `${data.name}` : 'Cargando...'}
                     subTitle="CDS - IDEA"

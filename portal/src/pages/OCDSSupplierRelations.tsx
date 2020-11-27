@@ -144,7 +144,7 @@ export function SupplierCard({ id }: { id: string }) {
     if (!data) return <><Spin/></>;
 
     return <Card
-        title={<Link to={`/ocds/suppliers/${id}`} target="__blank">{data ? data.name : id}</Link>}
+        title={<Link to={`/ocds/suppliers/${id}`}>{data ? data.name : id}</Link>}
     >
         {data && <SupplierDescription data={data} columns={1} />}
     </Card>
