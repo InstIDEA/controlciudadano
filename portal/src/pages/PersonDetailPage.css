@@ -25,3 +25,9 @@
   color: rgba(205, 83, 52, 1);
   font-size: 30px;
 }
+
+@media (max-width: 600px) {
+  .avatar-person {
+    display: none;
+  }
+}
