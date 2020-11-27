@@ -31,7 +31,7 @@ export function ActionResearchLanding() {
 
         <Row className="cards" gutter={[8, 24]}>
             <Col {...spans}>
-                <Link to="/action/ocds/items" target="_blank">
+                <Link to="/action/ocds/items">
                     <Card hoverable
                           style={{width: 320, height: 300}}
                           cover={<img height="80px" alt="Items adquiridos" src={onlineReports}/>}>
@@ -52,7 +52,7 @@ export function ActionResearchLanding() {
                 </Link>
             </Col>
             <Col {...spans}>
-                <Link to="/action/ocds/sanctioned_suppliers" target="_blank">
+                <Link to="/action/ocds/sanctioned_suppliers">
                     <Card hoverable
                           style={{width: 340, height: 300}}
                           cover={<img height="80px" alt="Proveedores" src={suppliers}/>}>
@@ -63,7 +63,7 @@ export function ActionResearchLanding() {
             </Col>
 
             <Col {...spans}>
-                <Link to="/action/ocds/buyers" target="_blank">
+                <Link to="/action/ocds/buyers">
                     <Card hoverable
                           style={{width: 340, height: 300}}
                           cover={<img height="80px" alt="Compradoras" src={buyers}/>}>
@@ -74,7 +74,7 @@ export function ActionResearchLanding() {
             </Col>
 
             <Col {...spans}>
-                <Link to="/action/ocds/tenders" target="_blank">
+                <Link to="/action/ocds/tenders">
                     <Card hoverable
                           style={{width: 340, height: 300}}
                           cover={<img height="80px" alt="Licitaciones" src={contracts} style={{
@@ -86,7 +86,7 @@ export function ActionResearchLanding() {
             </Col>
 
             <Col {...spans}>
-                <Link to="/action/ocds/relations" target="_blank">
+                <Link to="/action/ocds/relations">
                     <Card hoverable
                           style={{width: 340, height: 300}}
                           cover={<img height="80px" alt="Relations" src={relation}/>}>
