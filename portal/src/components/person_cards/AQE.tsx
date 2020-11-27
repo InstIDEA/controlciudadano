@@ -21,7 +21,7 @@ export function AQECard(props: {
                   person.tw ? <Typography.Text><a href={person.tw}>Twitter</a> </Typography.Text> : null,
                   person.fb ? <Typography.Text><a href={person.fb}>Facebook</a> </Typography.Text> : null,
                   person.insta ? <Typography.Text><a href={person.insta}>Instagram</a> </Typography.Text> : null,
-                  <a href={`${AQE_URL}/detalle-persona/${person.id}`} target="_blank" rel="noopener noreferrer">Mas info</a>
+                  <a href={`${AQE_URL}/detalle-persona/${person.id}`} target="_blank" rel="noopener noreferrer">Más info</a>
               ]}
         ><Space direction="vertical">
             {person.date_of_death && person.date_of_death.length > 1 ? <LVRow label={"Fecha de muerte"} value={person.date_of_death} /> : ''}

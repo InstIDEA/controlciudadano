@@ -1,6 +1,6 @@
 import * as React from "react";
 import {useMemo} from "react";
-import {Card, Col, Row, Typography} from "antd";
+import {Card, Col, Row, Tooltip, Typography} from "antd";
 import Icon from "@ant-design/icons";
 import {ReactComponent as Sfp} from "../../assets/logos/sfp.svg";
 import {SFPLocalData} from '../../Model';
@@ -13,21 +13,21 @@ export function SFPCard(props: {
 }) {
     let lista = useMemo(() => groupByYear(props.data), [props.data]);
     return <Col {...{xxl: 12, xl: 12, lg: 12, md: 12, sm: 24, xs: 24}}>
-        <Card className="data-box" title="Secretaría de la Función Pública"
-              extra={<Icon component={Sfp} className="icon-card"/>}
+        <Card className="data-box" title="Salarios s/ la Secretaría de la Función Pública"
+              extra={<Icon component={Sfp} className="icon-card" />}
               actions={[
                   <a href={`https://datos.sfp.gov.py/doc/funcionarios/${props.document}`} target="_blank"
-                     rel="noopener noreferrer">Mas info</a>
+                     rel="noopener noreferrer">Ver más información en el portal de la SFP</a>
               ]}>
             <Row gutter={[8, 8]} style={{background: '#fafafa'}}>
                 <Col span={4}>
-                    <Typography.Text><strong>Año</strong></Typography.Text>
+                    <Typography.Text><strong>Año/Mes</strong></Typography.Text>
                 </Col>
                 <Col span={10}>
-                    <Typography.Text><strong>Unidad</strong></Typography.Text>
+                    <Typography.Text><strong>Entidad</strong></Typography.Text>
                 </Col>
                 <Col span={10} style={{textAlign: 'right'}}>
-                    <Typography.Text><strong>Monto</strong></Typography.Text>
+                    <Typography.Text><strong>Monto presupuestado</strong></Typography.Text>
                 </Col>
             </Row>
             {lista.map(row => <Row gutter={[8, 8]} key={row.key}>

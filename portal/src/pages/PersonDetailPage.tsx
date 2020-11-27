@@ -76,7 +76,7 @@ export function PersonDetailPage() {
                         </Typography.Title>
                     </Col>
                     <Col md={8} xs={24} style={{padding: 25, textAlign: 'right'}}>
-                        <Tooltip title="Hacienda">
+                        <Tooltip title="Ministerio de Hacienda">
                             <Icon component={HaciendaIcon} style={{
                                 color: ((local?.staging.hacienda_funcionarios.length || []) > 0 ? COLOR_ORANGE : COLOR_GREY),
                                 fontSize: '30px'
@@ -112,13 +112,13 @@ export function PersonDetailPage() {
                                 fontSize: '30px'
                             }}/>
                         </Tooltip>
-                        <Tooltip title="Policia Nacional">
+                        <Tooltip title="Policía Nacional">
                             <Icon component={PoliciaNacional} style={{
                                 color: ((local?.staging.policia.length || []) > 0 ? COLOR_ORANGE : COLOR_GREY),
                                 fontSize: '30px'
                             }}/>
                         </Tooltip>
-                        <Tooltip title="A Quien Elegimos">
+                        <Tooltip title="A Quienes Elegimos">
                             <Icon component={Aqe} style={{
                                 color: ((local?.staging?.a_quien_elegimos || []).length > 0 ? COLOR_ORANGE : COLOR_GREY),
                                 fontSize: '30px'
@@ -271,7 +271,7 @@ function tryToGuestHeader(baseDoc: string,
             name = affidavit[0].name;
             affidavit.forEach(a => {
                 if (a.charge) {
-                    charge.push({charge: a.charge, year: a.year, source: 'ddjj'});
+                    charge.push({charge: a.charge, year: a.year, source: Ddjj});
                 }
             });
         }
@@ -302,7 +302,7 @@ function tryToGuestHeader(baseDoc: string,
                 }
             });
 
-        Object.keys(chargeData).forEach(c => charge.push({charge: c, year: chargeData[c], source: 'sfp'}));
+        Object.keys(chargeData).forEach(c => charge.push({charge: c, year: chargeData[c], source: Sfp}));
     }
 
     if (analysis && analysis.analysis) {
@@ -339,7 +339,7 @@ function tryToGuestHeader(baseDoc: string,
                 });
 
 
-            Object.keys(chargeData).forEach(c => charge.push({charge: c, year: chargeData[c], source: 'hacienda'}));
+            Object.keys(chargeData).forEach(c => charge.push({charge: c, year: chargeData[c], source: HaciendaIcon}));
 
         }
         const aqe = local.staging && local.staging.a_quien_elegimos && local.staging.a_quien_elegimos[0];

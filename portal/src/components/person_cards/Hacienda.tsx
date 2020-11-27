@@ -13,21 +13,21 @@ export function HaciendaCard(props: {
     let lista = useMemo(() => groupByYear(props.data), [props.data]);
 
     return <Col {...{xxl: 12, xl: 12, lg: 12, md: 12, sm: 24, xs: 24}}>
-        <Card className="data-box" title="Salarios de Hacienda"
+        <Card className="data-box" title="Salarios s/ el Ministerio de Hacienda"
               extra={<Icon component={HaciendaIcon} className="icon-card"/>}
               actions={[
                   <a href={`https://datos.hacienda.gov.py/doc/nomina/${props.document}`} target="_blank"
-                     rel="noopener noreferrer">Mas info</a>
+                     rel="noopener noreferrer">Ver más información en el portal del Ministerio de Hacienda</a>
               ]}>
             <Row gutter={[8, 8]} style={{background: '#fafafa'}}>
                 <Col span={4}>
-                    <Typography.Text><strong>Año</strong></Typography.Text>
+                    <Typography.Text><strong>Año/Mes</strong></Typography.Text>
                 </Col>
                 <Col span={12}>
-                    <Typography.Text><strong>Unidad</strong></Typography.Text>
+                    <Typography.Text><strong>Entidad</strong></Typography.Text>
                 </Col>
                 <Col span={8} style={{textAlign: 'right'}}>
-                    <Typography.Text><strong>Monto</strong></Typography.Text>
+                    <Typography.Text><strong>Monto presupuestado</strong></Typography.Text>
                 </Col>
             </Row>
             {lista.map(election => <Row gutter={[8, 8]} key={election.key}>
@@ -35,7 +35,7 @@ export function HaciendaCard(props: {
                         {election.year}/{election.month}
                     </Col>
                     <Col span={12}>
-                        {election.place} / {election.charge}
+                        {election.place.replace("�", "")} / {election.charge.replace("�", "")}
                     </Col>
                     <Col span={8} style={{textAlign: 'right'}}>
                         {formatMoney(election.salary)}

@@ -4,6 +4,7 @@ import Icon from "@ant-design/icons";
 import {ReactComponent as Ddjj} from "../../assets/logos/ddjj.svg";
 import * as React from "react";
 import {formatMoney} from "../../formatters";
+import './DDJJ.css'
 
 export function DDJJCard(props: {
     affidavit: Affidavit[]
@@ -12,7 +13,7 @@ export function DDJJCard(props: {
     return <Col {...{xxl: 12, xl: 12, lg: 12, md: 12, sm: 24, xs: 24}}>
         <Card className="data-box" title="Declaraciones juradas de bienes y rentas"
               extra={<Icon component={Ddjj} className="icon-card"/>}>
-            <Row gutter={[8, 8]} style={{background: '#fafafa'}}>
+            <Row gutter={[8, 8]} style={{background: '#fafafa', minWidth: '450px'}}>
                 <Col span={3}>
                     <Typography.Text><strong>Año</strong></Typography.Text>
                 </Col>
@@ -36,7 +37,7 @@ export function DJResumeCols(props: { data: Affidavit }) {
 
     const declaracion = props.data;
     if (declaracion.actives) {
-        return <Row gutter={[8, 8]}>
+        return <Row gutter={[8, 8]} style={{minWidth: '450px'}}>
             <Col span={3}>
                 <a href={declaracion.linksandwich || declaracion.link} target="_blank" rel="noopener noreferrer"
                    title="Ver">
