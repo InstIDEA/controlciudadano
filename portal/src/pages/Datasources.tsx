@@ -25,7 +25,7 @@ export function DS() {
     }, []);
 
     const filtered = useMemo(() => filterRedashList(data || [], query || '', [
-        'name',
+        'description',
         'institution'
     ]), [data, query]);
 
