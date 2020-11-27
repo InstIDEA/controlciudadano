@@ -279,7 +279,6 @@ function tryToGuestHeader(baseDoc: string,
 
     if (local && local.staging.sfp && local.staging.sfp.length > 0) {
 
-
         const localClone = local.staging.sfp.map(s => s)
             .sort((s1, s2) => s1.anho > s2.anho
                 ? -1
@@ -289,11 +288,9 @@ function tryToGuestHeader(baseDoc: string,
             );
 
         const d = localClone[0];
-
         name = d.nombres + ' ' + d.apellidos;
         found = true;
-        birthDate = d.fecha_nacimiento;
-
+        birthDate = d.fecha_nacimiento ? d.fecha_nacimiento.substr(0, 10) : d.fecha_nacimiento;
 
         const chargeData: Record<string, number> = {};
         localClone.filter(h => !!h.cargo)
@@ -304,7 +301,6 @@ function tryToGuestHeader(baseDoc: string,
                     chargeData[h.cargo] = h.anho
                 }
             });
-
 
         Object.keys(chargeData).forEach(c => charge.push({charge: c, year: chargeData[c], source: 'sfp'}));
     }
