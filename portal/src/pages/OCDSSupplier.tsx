@@ -155,7 +155,7 @@ export function SupplierRelations(props: {
         new RedashAPI()
             .getRelations()
             .then(relations => setData(relations.query_result.data.rows.filter(r => {
-                return ruc.endsWith(r.p1ruc);
+                return ruc.endsWith(r.p1ruc) || ruc.endsWith(r.p2ruc);
             })))
     }, [ruc])
 
