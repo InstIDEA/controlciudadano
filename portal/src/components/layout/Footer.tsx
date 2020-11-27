@@ -46,15 +46,15 @@ function Footer(props: {
                 </Col>
             </Row>
             <Row className="footer-background">
-                <Col xs={2} sm={4} md={6} lg={8} xl={10} xxl={10}>
+                <Col xs={24} sm={24} md={6} lg={8} xl={10} xxl={10} className="copyright">
                     <div className="footer-logo-wrapper">
                         <img src={cc} alt="logo"/>
                     </div>
                 </Col>
-                <Col xs={20} sm={16} md={12} lg={8} xl={4} xxl={4} style={{textAlign: "center"}}>
+                <Col xs={24} sm={24} md={12} lg={8} xl={4} xxl={4} style={{textAlign: "center"}}>
                     <a href={`/disclaimer`} className="footer-paragraph">Descargo de responsabilidad</a>
                 </Col>
-                <Col xs={2} sm={4} md={6} lg={8} xl={10} xxl={10} style={{textAlign: "right"}}>
+                <Col xs={24} sm={24} md={6} lg={8} xl={10} xxl={10} className="repo">
                     <a href={GITHUB_REPO} target="_blank" rel="noopener noreferrer">
                         <div className="footer-logo-wrapper">
                             <img className="logo-small" src={github} alt="logo"/>
