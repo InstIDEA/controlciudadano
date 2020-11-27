@@ -118,7 +118,7 @@ export function PersonDetailPage() {
                                 fontSize: '30px'
                             }}/>
                         </Tooltip>
-                        <Tooltip title="A Quien Elegimos">
+                        <Tooltip title="A Quíenes Elegimos">
                             <Icon component={Aqe} style={{
                                 color: ((local?.staging?.a_quien_elegimos || []).length > 0 ? COLOR_ORANGE : COLOR_GREY),
                                 fontSize: '30px'
