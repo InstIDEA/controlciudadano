@@ -62,7 +62,7 @@ export function AndeExoneratedList() {
                 key: 'cliente',
                 title: 'Beneficiario',
                 render: (_, r) => {
-                    return <Link to={`/people/${r.documento}`}
+                    return <Link to={`/person/${r.documento}`}
                                  rel="noopener noreferrer"
                                  target="_blank">
                         {r.cliente}
