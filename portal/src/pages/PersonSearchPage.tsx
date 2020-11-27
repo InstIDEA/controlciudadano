@@ -42,7 +42,7 @@ import {Link} from 'react-router-dom';
 const sourceNameMap: { [k: string]: string } = {
     'tsje_elected': 'Autoridades electas',
     'declarations': 'Declaraciones juradas',
-    'a_quien_elegimos': 'A quienes elegimos',
+    'a_quien_elegimos': 'A Quíenes Elegimos',
     'ande_exonerados': 'Exonerados ANDE',
     'mh': 'Ministerio de Hacienda',
     'sfp': 'Secretaria de la función pública',
