@@ -321,6 +321,10 @@ function tryToGuestHeader(baseDoc: string,
         if (nangareko && nangareko.length) {
             name = name || `${nangareko[0].name}`;
         }
+        const pytyvo: any = local.staging.pytyvo;
+        if (pytyvo && pytyvo.length) {
+            name = name || `${pytyvo[0].name}`;
+        }
         const hacienda: Hacienda[] = local.staging.hacienda_funcionarios;
         if (hacienda && hacienda.length) {
             name = name || `${hacienda[0].nombres} ${hacienda[0].apellidos}`;
