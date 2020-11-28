@@ -18,19 +18,44 @@
     </parameter>
     <parameter>
       <name>MES</name>
-      <default_value>4</default_value>
+      <default_value>8</default_value>
       <description>Mes a bajar</description>
+    </parameter>
+    <parameter>
+      <name>PG_DB_HOST</name>
+      <default_value/>
+      <description/>
+    </parameter>
+    <parameter>
+      <name>PG_DB_NAME</name>
+      <default_value>db</default_value>
+      <description/>
+    </parameter>
+    <parameter>
+      <name>PG_DB_PASS</name>
+      <default_value/>
+      <description/>
+    </parameter>
+    <parameter>
+      <name>PG_DB_PORT</name>
+      <default_value/>
+      <description/>
+    </parameter>
+    <parameter>
+      <name>PG_DB_USER</name>
+      <default_value>postgres</default_value>
+      <description/>
     </parameter>
   </parameters>
   <connection>
     <name>maindb</name>
-    <server>a</server>
+    <server>${PG_DB_HOST}</server>
     <type>POSTGRESQL</type>
     <access>Native</access>
-    <database>a</database>
-    <port/>
-    <username>postgres</username>
-    <password>Encrypted </password>
+    <database>${PG_DB_NAME}</database>
+    <port>${PG_DB_PORT}</port>
+    <username>${PG_DB_USER}</username>
+    <password>${PG_DB_PASS}</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -46,6 +71,10 @@
       <attribute>
         <code>IS_CLUSTERED</code>
         <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>PORT_NUMBER</code>
+        <attribute>${PG_DB_PORT}</attribute>
       </attribute>
       <attribute>
         <code>PRESERVE_RESERVED_WORD_CASE</code>
