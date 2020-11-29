@@ -11,7 +11,8 @@ export function SFPCard(props: {
     data: SFPLocalData[],
     document: string
 }) {
-    let lista = useMemo(() => groupByYear(props.data), [props.data]);
+    const data = useMemo(() => groupByYear(props.data), [props.data]);
+
     return <Col {...{xxl: 12, xl: 12, lg: 12, md: 12, sm: 24, xs: 24}}>
         <Card className="data-box" title="Salarios s/ la Secretaría de la Función Pública"
               extra={<Icon component={Sfp} className="icon-card" />}
@@ -30,7 +31,7 @@ export function SFPCard(props: {
                     <Typography.Text><strong>Monto presupuestado</strong></Typography.Text>
                 </Col>
             </Row>
-            {lista.map(row => <Row gutter={[8, 8]} key={row.key}>
+            {data.map(row => <Row gutter={[8, 8]} key={row.key}>
                     <Col span={4}>
                         {row.year}/{row.month}
                     </Col>

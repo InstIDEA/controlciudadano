@@ -1,8 +1,8 @@
 import {Card, Col, Row, Typography} from "antd";
 import Icon from "@ant-design/icons";
 import * as React from "react";
+import {FunctionComponent, useMemo} from "react";
 import {ColProps} from "antd/es/col";
-import {FunctionComponent} from "react";
 
 export function ChargeCard(props: {
     cargos: Charge[],
@@ -11,13 +11,12 @@ export function ChargeCard(props: {
 }) {
     const cargos = props.cargos;
     const spans = props.spans;
-    let fuentes: FunctionComponent[] = [];
-    cargos.forEach(value => fuentes.push(value.source))
-    const distinctFuentes: FunctionComponent[] = fuentes.filter(
-        (n, i) => fuentes.indexOf(n) === i);
+    const icons = useMemo(() => buildIcons(props.cargos), [props.cargos])
+
     return <Col {...spans}>
         <Card className="data-box" title="Cargos públicos"
-              extra={<> {distinctFuentes.map(fuente => <Icon component={fuente} className="icon-card"/>)} </>}>
+              extra={Object.keys(icons).map((key: string) => <Icon key={key} component={icons[key]}
+                                                                   className="icon-card"/>)}>
             <Row gutter={[8, 8]} style={{background: '#fafafa'}}>
                 <Col span={4}>
                     <Typography.Text><strong>Año</strong></Typography.Text>
@@ -46,4 +45,12 @@ export interface Charge {
     charge: string;
     year: number;
     source: FunctionComponent;
+    sourceName: string;
+}
+
+function buildIcons(charges: Charge[]): { [k: string]: FunctionComponent } {
+    return charges.reduce((toRet, current) => ({
+        ...toRet,
+        [current.sourceName]: current.source
+    }), {})
 }

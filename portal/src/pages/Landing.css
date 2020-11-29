@@ -65,8 +65,7 @@ svg g {
 @media screen and (max-width: 767px) {
   .banner-wrapper .banner-title-wrapper {
     text-align: center;
-    margin: 10px;
-    margin-left: 30px;
+    margin: 10px 10px 10px 30px;
     position: static;
     width: 100%;
 
