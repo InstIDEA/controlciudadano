@@ -51,7 +51,7 @@ export function OCDSSupplier() {
                     onBack={() => history.goBack()}
                     style={{border: '1px solid rgb(235, 237, 240)'}}
                     title={data ? `${data.name}` : 'Cargando...'}
-                    subTitle="CDS - IDEA"
+                    subTitle=""
                     extra={[
                         <Checkbox key="onlyCovid" checked={!!onlyCovid} onChange={_ => setOnlyCovid(a => !a)}>
                             Solo fondos de emergencia

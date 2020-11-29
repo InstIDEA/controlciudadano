@@ -8,7 +8,8 @@ import {Header} from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import './Datasources.css';
 import {DataSet} from '../Model';
-import { SearchBar } from '../components/SearchBar';
+import {SearchBar} from '../components/SearchBar';
+import {DisclaimerComponent} from '../components/Disclaimer';
 
 export function DS() {
 
@@ -35,15 +36,23 @@ export function DS() {
                 searchBar={
                     <SearchBar defaultValue={query || ''} onSearch={v => setQuery(v)}/>
                 }/>
-        <PageHeader title="Fuentes de datos"
+        <PageHeader title="Listado de fuentes de datos que son utilizados dentro del Portal."
                     onBack={() => history.push('/')}
                     backIcon={null}
                     subTitle="">
 
+            <DisclaimerComponent>
+                Esta lista no abarca todas las fuentes de datos que son de datos abiertos, para una lista mas
+                exhaustiva puedes visitar <a href="https://datos.org.py">datos.org.py</a> para ver datos
+                recolectados por la Sociedad Civil, Academia y Sector Privado, y puedes visitar <a
+                href="https://www.datos.gov.py">datos.gov.py</a> para ver datos abiertos gubernamentales
+                publicados por el Gobierno.
+            </DisclaimerComponent>
+
             <div style={{padding: 12}}>
                 <Table<DataSet>
                     loading={working}
-                    rowKey="url"
+                    rowKey="id"
                     dataSource={filtered}
                     columns={[{
                         title: 'Institución',

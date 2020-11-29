@@ -25,9 +25,11 @@ import {Charge, ChargeCard} from "../components/person_cards/Charge";
 import {HaciendaCard} from "../components/person_cards/Hacienda";
 import {SFPCard} from '../components/person_cards/SFP';
 import {COLOR_GREY, COLOR_ORANGE} from "../Constants";
+import {useMediaQuery} from '@react-hook/media-query';
 
 export function PersonDetailPage() {
 
+    const isSmall = useMediaQuery('only screen and (max-width: 768px)');
     const spans = {xxl: 8, xl: 8, lg: 8, md: 12, sm: 24, xs: 24};
     const config = {
         xxl: {offset: 0, span: 24},
@@ -75,55 +77,8 @@ export function PersonDetailPage() {
                             {header.name}
                         </Typography.Title>
                     </Col>
-                    <Col md={8} xs={24} style={{padding: 25, textAlign: 'right'}}>
-                        <Tooltip title="Ministerio de Hacienda">
-                            <Icon component={HaciendaIcon} style={{
-                                color: ((local?.staging.hacienda_funcionarios.length || []) > 0 ? COLOR_ORANGE : COLOR_GREY),
-                                fontSize: '30px'
-                            }}/>
-                        </Tooltip>
-                        <Tooltip title="SFP">
-                            <Icon component={Sfp} style={{
-                                color: ((local?.staging.sfp.length || []) > 0 ? COLOR_ORANGE : COLOR_GREY),
-                                fontSize: '30px'
-                            }}/>
-                        </Tooltip>
-                        <Tooltip title="Declaraciones Juradas">
-                            <Icon component={Ddjj} style={{
-                                color: ((analysis?.analysis.declarations.length || []) > 0 ? COLOR_ORANGE : COLOR_GREY),
-                                fontSize: '30px'
-                            }}/>
-                        </Tooltip>
-                        <Tooltip title="Pytyvo">
-                            <Icon component={Pytyvo} style={{
-                                color: ((local?.staging.pytyvo.length || []) > 0 ? COLOR_ORANGE : COLOR_GREY),
-                                fontSize: '30px'
-                            }}/>
-                        </Tooltip>
-                        <Tooltip title="Ñangareko">
-                            <Icon component={Nangareko} style={{
-                                color: ((local?.staging.nangareko.length || []) > 0 ? COLOR_ORANGE : COLOR_GREY),
-                                fontSize: '30px'
-                            }}/>
-                        </Tooltip>
-                        <Tooltip title="ANDE">
-                            <Icon component={Ande} style={{
-                                color: ((local?.staging.ande_exonerados.length || []) > 0 ? COLOR_ORANGE : COLOR_GREY),
-                                fontSize: '30px'
-                            }}/>
-                        </Tooltip>
-                        <Tooltip title="Policía Nacional">
-                            <Icon component={PoliciaNacional} style={{
-                                color: ((local?.staging.policia.length || []) > 0 ? COLOR_ORANGE : COLOR_GREY),
-                                fontSize: '30px'
-                            }}/>
-                        </Tooltip>
-                        <Tooltip title="A Quíenes Elegimos">
-                            <Icon component={Aqe} style={{
-                                color: ((local?.staging?.a_quien_elegimos || []).length > 0 ? COLOR_ORANGE : COLOR_GREY),
-                                fontSize: '30px'
-                            }}/>
-                        </Tooltip>
+                    <Col md={8} xs={24} style={{padding: isSmall ? 0 : 25, textAlign: isSmall ? 'center' : 'right'}}>
+                        <Sources local={local} analysis={analysis}/>
                     </Col>
                 </Row>
                 <Row>
@@ -176,10 +131,10 @@ export function PersonDetailPage() {
                         <Col {...spans}>
                           <Card className="data-box" title="Pytyvo" style={{height: cardHeight}}
                                 extra={<Icon component={Pytyvo} className="icon-card"/>}>
-                              <Space direction="vertical">
-                                  <LVRow label={"Departamento"} value={local.staging.pytyvo[0].department} />
-                                  <LVRow label={"Distrito"} value={local.staging.pytyvo[0].district} />
-                              </Space>
+                            <Space direction="vertical">
+                              <LVRow label={"Departamento"} value={local.staging.pytyvo[0].department}/>
+                              <LVRow label={"Distrito"} value={local.staging.pytyvo[0].district}/>
+                            </Space>
                           </Card>
                         </Col>
                     }
@@ -188,10 +143,10 @@ export function PersonDetailPage() {
                         <Col {...spans}>
                           <Card className="data-box" title="Ñangareko" style={{height: cardHeight}}
                                 extra={<Icon component={Nangareko} className="icon-card"/>}>
-                              <Space direction="vertical">
-                                  <LVRow label={"Departamento"} value={local.staging.nangareko[0].department} />
-                                  <LVRow label={"Distrito"} value={local.staging.nangareko[0].district} />
-                              </Space>
+                            <Space direction="vertical">
+                              <LVRow label={"Departamento"} value={local.staging.nangareko[0].department}/>
+                              <LVRow label={"Distrito"} value={local.staging.nangareko[0].district}/>
+                            </Space>
                           </Card>
                         </Col>
                     }
@@ -213,11 +168,11 @@ export function PersonDetailPage() {
                         <Col {...spans}>
                           <Card className="data-box" title="Policía Nacional" style={{height: cardHeight}}
                                 extra={<Icon component={PoliciaNacional} className="icon-card"/>}>
-                              <Space direction="vertical">
-                                  <LVRow label={"Año"} value={local.staging.policia[0].ano} />
-                                  <LVRow label={"Presupuesto"} value={local.staging.policia[0].presupuesto} />
-                                  <LVRow label={"Remuneración"} value={local.staging.policia[0].remuneracion} />
-                              </Space>
+                            <Space direction="vertical">
+                              <LVRow label={"Año"} value={local.staging.policia[0].ano}/>
+                              <LVRow label={"Presupuesto"} value={local.staging.policia[0].presupuesto}/>
+                              <LVRow label={"Remuneración"} value={local.staging.policia[0].remuneracion}/>
+                            </Space>
                           </Card>
                         </Col>
                     }
@@ -226,10 +181,10 @@ export function PersonDetailPage() {
                         <Col {...spans}>
                           <Card className="data-box" title="ANDE" style={{height: cardHeight}}
                                 extra={<Icon component={Ande} className="icon-card"/>}>
-                              <Space direction="vertical">
-                                  <LVRow label={"Agencia"} value={local.staging.ande_exonerados[0].agencia} />
-                                  <LVRow label={"NIS"} value={local.staging.ande_exonerados[0].nis} />
-                              </Space>
+                            <Space direction="vertical">
+                              <LVRow label={"Agencia"} value={local.staging.ande_exonerados[0].agencia}/>
+                              <LVRow label={"NIS"} value={local.staging.ande_exonerados[0].nis}/>
+                            </Space>
                           </Card>
                         </Col>
 
@@ -272,7 +227,7 @@ function tryToGuestHeader(baseDoc: string,
             name = affidavit[0].name;
             affidavit.forEach(a => {
                 if (a.charge) {
-                    charge.push({charge: a.charge, year: a.year, source: Ddjj});
+                    charge.push({charge: a.charge, year: a.year, source: Ddjj, sourceName: 'ddjj'});
                 }
             });
         }
@@ -303,7 +258,12 @@ function tryToGuestHeader(baseDoc: string,
                 }
             });
 
-        Object.keys(chargeData).forEach(c => charge.push({charge: c, year: chargeData[c], source: Sfp}));
+        Object.keys(chargeData).forEach(c => charge.push({
+            charge: c,
+            year: chargeData[c],
+            source: Sfp,
+            sourceName: 'sfp'
+        }));
     }
 
     if (analysis && analysis.analysis) {
@@ -344,7 +304,12 @@ function tryToGuestHeader(baseDoc: string,
                 });
 
 
-            Object.keys(chargeData).forEach(c => charge.push({charge: c, year: chargeData[c], source: HaciendaIcon}));
+            Object.keys(chargeData).forEach(c => charge.push({
+                charge: c,
+                year: chargeData[c],
+                source: HaciendaIcon,
+                sourceName: 'hacienda'
+            }));
 
         }
         const aqe = local.staging && local.staging.a_quien_elegimos && local.staging.a_quien_elegimos[0];
@@ -373,12 +338,71 @@ function tryToGuestHeader(baseDoc: string,
         imageURL
     }
 }
+
 export function LVRow(props: {
     label: string,
     value: string
-}){
+}) {
     return <Space direction="horizontal">
         <Typography.Text><strong>{props.label}:</strong>
         </Typography.Text>{props.value}<br/>
     </Space>
+}
+
+
+export function Sources({local, analysis}: {
+    local?: LocalSearchResult,
+    analysis?: AnalysisSearchResult
+
+}) {
+    return <>
+        <Tooltip title="Ministerio de Hacienda">
+            <Icon component={HaciendaIcon} style={{
+                color: local?.staging.hacienda_funcionarios?.length ? COLOR_ORANGE : COLOR_GREY,
+                fontSize: '30px'
+            }}/>
+        </Tooltip>
+        <Tooltip title="SFP">
+            <Icon component={Sfp} style={{
+                color: local?.staging.sfp?.length ? COLOR_ORANGE : COLOR_GREY,
+                fontSize: '30px'
+            }}/>
+        </Tooltip>
+        <Tooltip title="Declaraciones Juradas">
+            <Icon component={Ddjj} style={{
+                color: analysis?.analysis.declarations?.length ? COLOR_ORANGE : COLOR_GREY,
+                fontSize: '30px'
+            }}/>
+        </Tooltip>
+        <Tooltip title="Pytyvo">
+            <Icon component={Pytyvo} style={{
+                color: local?.staging.pytyvo?.length ? COLOR_ORANGE : COLOR_GREY,
+                fontSize: '30px'
+            }}/>
+        </Tooltip>
+        <Tooltip title="Ñangareko">
+            <Icon component={Nangareko} style={{
+                color: local?.staging.nangareko?.length ? COLOR_ORANGE : COLOR_GREY,
+                fontSize: '30px'
+            }}/>
+        </Tooltip>
+        <Tooltip title="ANDE">
+            <Icon component={Ande} style={{
+                color: local?.staging.ande_exonerados?.length ? COLOR_ORANGE : COLOR_GREY,
+                fontSize: '30px'
+            }}/>
+        </Tooltip>
+        <Tooltip title="Policía Nacional">
+            <Icon component={PoliciaNacional} style={{
+                color: local?.staging.policia?.length ? COLOR_ORANGE : COLOR_GREY,
+                fontSize: '30px'
+            }}/>
+        </Tooltip>
+        <Tooltip title="A Quíenes Elegimos">
+            <Icon component={Aqe} style={{
+                color: local?.staging?.a_quien_elegimos?.length ? COLOR_ORANGE : COLOR_GREY,
+                fontSize: '30px'
+            }}/>
+        </Tooltip>
+    </>
 }

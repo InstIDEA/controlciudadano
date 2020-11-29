@@ -53,7 +53,7 @@ export function OCDSCovidTenders() {
             onBack={() => history.push('/')}
             backIcon={null}
             title="¿Conocés las licitaciones más grandes?"
-            subTitle="CDS - IDEA">
+            subTitle="">
 
 
             <Typography.Paragraph>

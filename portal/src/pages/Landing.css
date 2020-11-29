@@ -62,6 +62,25 @@ svg g {
   left: 10%;
 }
 
+@media screen and (max-width: 767px) {
+  .banner-wrapper .banner-title-wrapper {
+    text-align: center;
+    margin: 10px 10px 10px 30px;
+    position: static;
+    width: 100%;
+
+  }
+
+  .banner-wrapper .banner-title-wrapper p {
+    margin: 0;
+  }
+
+  .banner-wrapper .banner-title-col-wrapper {
+    padding: 0;
+  }
+
+}
+
 .banner-wrapper .banner-title-wrapper>* {
   will-change: transform;
 }

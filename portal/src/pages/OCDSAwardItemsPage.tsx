@@ -1,13 +1,15 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
-import { PageHeader, Table, Tag, Typography, Card, List } from 'antd';
-import { OCDSItemsAwardedCOVID19 } from '../Model';
-import { formatMoney } from '../formatters';
-import { Link, useHistory } from 'react-router-dom';
-import { filterRedashList, RedashAPI } from '../RedashAPI';
-import { BaseDatosPage } from '../components/BaseDatosPage';
+import {useEffect, useMemo, useState} from 'react';
+import {Card, List, PageHeader, Table, Tag, Typography} from 'antd';
+import {OCDSItemsAwardedCOVID19} from '../Model';
+import {formatMoney} from '../formatters';
+import {Link, useHistory} from 'react-router-dom';
+import {filterRedashList, RedashAPI} from '../RedashAPI';
+import {BaseDatosPage} from '../components/BaseDatosPage';
 import '../components/layout/Layout.css'
-import { SearchBar } from '../components/SearchBar';
+import {SearchBar} from '../components/SearchBar';
+import {DisclaimerComponent} from '../components/Disclaimer';
+
 export function OCDSAwardItemsPage() {
 
     const [query, setQuery] = useState('');
@@ -21,7 +23,7 @@ export function OCDSAwardItemsPage() {
         new RedashAPI().getItems()
             .then(d => setData(d.query_result.data.rows))
             .finally(() => setWorking(false))
-            ;
+        ;
     }, []);
 
     const filtered = useMemo(() => filterRedashList(data || [], query, [
@@ -29,27 +31,33 @@ export function OCDSAwardItemsPage() {
         'item_adjudicado',
         'supplier_name',
         'llamado_numero',
-        'supplier_ruc'
+        'supplier_ruc',
+        'buyer_name'
     ]), [data, query]);
 
     return <BaseDatosPage menuIndex="items" sidebar={isExploreMenu} headerExtra={
         <SearchBar defaultValue={query}
-        onSearch={setQuery}/>
+                   placeholder="Buscar ítems, proveedores, compradores"
+                   onSearch={setQuery}/>
     }>
         <PageHeader ghost={false}
-            style={{ border: '1 px solid rgb(235, 237, 240)' }}
-            onBack={() => history.push('/')}
-            backIcon={null}
-            title="¿Qué se compró?">
+                    style={{border: '1 px solid rgb(235, 237, 240)'}}
+                    onBack={() => history.push('/')}
+                    backIcon={null}
+                    title="¿Qué se compró?">
 
             <Typography.Paragraph>
-                Ránking de items con posibles sobrecostos, comparados con sus precios antes de la pandemia.<br />
-                <i>Las unidades de medida no especificadas en el portal de la Dirección Nacional de Contrataciones Públicas (DNCP) pueden arrojar datos no específicos respecto al porcentaje de sobrecostos.</i>
+                Ránking de items con posibles sobrecostos, comparados con sus precios antes de la pandemia.
             </Typography.Paragraph>
+            <DisclaimerComponent>
+                Las unidades de medida no especificadas en el portal de la <a href="https://contrataciones.gov.py/">Dirección
+                Nacional de Contrataciones Públicas (DNCP)</a> pueden arrojar datos no específicos respecto al
+                porcentaje de sobrecostos.
+            </DisclaimerComponent>
             <Table<OCDSItemsAwardedCOVID19>
                 dataSource={filtered}
                 loading={working}
-                rowKey="id"
+                rowKey={r => `${r.llamado_nombre}${r.precio_unitario}${r.cantidad}`}
                 size="small"
                 className="hide-responsive"
                 pagination={{
@@ -62,8 +70,8 @@ export function OCDSAwardItemsPage() {
                     render: (_, r) => {
                         const url = getTenderLink(r.llamado_slug, r.procurement_method);
                         return <a href={url} rel="noopener noreferrer" target="_blank">
-                            {r.llamado_nombre} <br />
-                            <small>{r.llamado_numero}</small> <br />
+                            {r.llamado_nombre} <br/>
+                            <small>{r.llamado_numero}</small> <br/>
                             {(r.covered_by || []).sort().map(f => <Tag key={f}>{f}</Tag>)}
                         </a>
                     },
@@ -75,7 +83,7 @@ export function OCDSAwardItemsPage() {
                     render: (_, r) => {
                         return <Link to={`/ocds/suppliers/${r.supplier_ruc}`}>
                             {r.supplier_name}
-                            <br />
+                            <br/>
                             <small>{r.supplier_ruc}</small>
                         </Link>
                     },
@@ -89,7 +97,7 @@ export function OCDSAwardItemsPage() {
                     render: (_, r) => {
                         return <Link to={`/ocds/buyer/${r.buyer_id}`}>
                             {r.buyer_name}
-                            <br />
+                            <br/>
                             <small>{r.buyer_id}</small>
                         </Link>
                     },
@@ -102,9 +110,9 @@ export function OCDSAwardItemsPage() {
                     render: (_, r) => {
                         return <Link to={`/ocds/items/${r.item_classification_nivel_5_id}`} target="_blank">
                             {r.item_adjudicado}
-                            <br />
+                            <br/>
                             <small>{r.item_classification_nivel_5_nombre}</small>
-                            <br />
+                            <br/>
                             <small>{(r.item_classification_nivel_5_id || "").replace("catalogoNivel5DNCP-", "")}</small>
                         </Link>
                     },
@@ -119,7 +127,7 @@ export function OCDSAwardItemsPage() {
                     render: (_, r) => {
                         return <>
                             {formatMoney(r.precio_unitario)}
-                            <br />
+                            <br/>
                             <small>{r.unidad_medida}</small>
                         </>
                     },
@@ -130,11 +138,12 @@ export function OCDSAwardItemsPage() {
                     align: 'right',
                     title: 'Incremento de precio durante pandemia',
                     defaultSortOrder: 'descend',
+                    sortOrder: 'descend',
                     responsive: ['lg'],
                     render: (_, r) => {
                         return <>
                             {formatMoney(r.porcentaje_mayor_precio_antes_pandemia)}%
-                    </>
+                        </>
                     },
                     sorter: (a, b) => (a || 0).porcentaje_mayor_precio_antes_pandemia - (b || 0).porcentaje_mayor_precio_antes_pandemia,
                 }, {
@@ -144,7 +153,7 @@ export function OCDSAwardItemsPage() {
                     title: 'Cantidad',
                     responsive: ['lg'],
                     render: (i) => formatMoney(i)
-                }]} />
+                }]}/>
             <List
                 className="show-responsive"
                 grid={{
@@ -168,22 +177,23 @@ export function OCDSAwardItemsPage() {
                         <Card bordered={false}>
                             Item: <Link to={`/ocds/items/${r.item_classification_nivel_5_id}`} target="_blank">
                             {r.item_adjudicado}
-                            <br />
-                            <small>{r.item_classification_nivel_5_nombre}</small>
-                            <br />
-                            <small>{(r.item_classification_nivel_5_id || "").replace("catalogoNivel5DNCP-", "")}</small>
-                            </Link>
                             <br/>
-                            Precio Unitario: { formatMoney(r.precio_unitario) }
+                            <small>{r.item_classification_nivel_5_nombre}</small>
+                            <br/>
+                            <small>{(r.item_classification_nivel_5_id || "").replace("catalogoNivel5DNCP-", "")}</small>
+                        </Link>
+                            <br/>
+                            Precio Unitario: {formatMoney(r.precio_unitario)}
                             <small> {' ' + r.unidad_medida} </small>
                             <br/>
-                            Incremento de precio durante pandemia: {formatMoney(r.porcentaje_mayor_precio_antes_pandemia)}%
+                            Incremento de precio durante
+                            pandemia: {formatMoney(r.porcentaje_mayor_precio_antes_pandemia)}%
                             <br/>
-                            Cantidad: { formatMoney(r.cantidad) }
+                            Cantidad: {formatMoney(r.cantidad)}
                         </Card>
                     </List.Item>
                 }
-                >
+            >
             </List>
         </PageHeader>
     </BaseDatosPage>

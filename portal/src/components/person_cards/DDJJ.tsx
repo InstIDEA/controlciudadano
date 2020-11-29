@@ -1,5 +1,5 @@
 import {Affidavit} from "../../Model";
-import {Card, Col, Row, Typography} from "antd";
+import {Card, Col, Table, Typography} from "antd";
 import Icon from "@ant-design/icons";
 import {ReactComponent as Ddjj} from "../../assets/logos/ddjj.svg";
 import * as React from "react";
@@ -13,58 +13,37 @@ export function DDJJCard(props: {
     return <Col {...{xxl: 12, xl: 12, lg: 12, md: 12, sm: 24, xs: 24}}>
         <Card className="data-box" title="Declaraciones juradas de bienes y rentas"
               extra={<Icon component={Ddjj} className="icon-card"/>}>
-            <Row gutter={[8, 8]} style={{background: '#fafafa', minWidth: '450px'}}>
-                <Col span={3}>
-                    <Typography.Text><strong>Año</strong></Typography.Text>
-                </Col>
-                <Col span={7}>
-                    <Typography.Text><strong>Activos</strong></Typography.Text>
-                </Col>
-                <Col span={7}>
-                    <Typography.Text><strong>Pasivos</strong></Typography.Text>
-                </Col>
-                <Col span={7}>
-                    <Typography.Text><strong>Patrimonio Neto</strong></Typography.Text>
-                </Col>
-            </Row>
-            {affidavit.map(declaracion => <DJResumeCols data={declaracion} key={declaracion.id}/>)}
+            <Table<Affidavit>
+                dataSource={affidavit}
+                size="small"
+                scroll={{x: 600, y: undefined}}
+                pagination={false}
+                columns={[{
+                    title: <Typography.Text><strong>Año</strong></Typography.Text>,
+                    render: (r: Affidavit) => <a href={r.linksandwich || r.link} target="_blank"
+                                                 rel="noopener noreferrer"
+                                                 title="Ver">
+                        {r.year}
+                    </a>
+
+                }, {
+                    title: <Typography.Text><strong>Activos</strong></Typography.Text>,
+                    render: (r: Affidavit) => formatMoney(r.actives),
+                    align: 'right'
+                }, {
+                    title: <Typography.Text><strong>Pasivos</strong></Typography.Text>,
+                    render: (r: Affidavit) => formatMoney(r.passive),
+                    align: 'right'
+                }, {
+                    title: <Typography.Text><strong>Patrimonio Neto</strong></Typography.Text>,
+                    render: (r: Affidavit) => formatMoney(r.networth),
+                    align: 'right'
+                }]}>
+
+
+            </Table>
+
         </Card>
     </Col>
 }
 
-
-export function DJResumeCols(props: { data: Affidavit }) {
-
-    const declaracion = props.data;
-    if (declaracion.actives) {
-        return <Row gutter={[8, 8]} style={{minWidth: '450px'}}>
-            <Col span={3}>
-                <a href={declaracion.linksandwich || declaracion.link} target="_blank" rel="noopener noreferrer"
-                   title="Ver">
-                    {declaracion.year}
-                </a>
-            </Col>
-            <Col span={7}>
-                {formatMoney(declaracion.actives)}
-            </Col>
-            <Col span={7}>
-                {formatMoney(declaracion.passive)}
-            </Col>
-            <Col span={7}>
-                {formatMoney(declaracion.networth)}
-            </Col>
-        </Row>
-    } else {
-        return <Row gutter={[8, 8]}>
-            <Col span={3}>
-                <a href={declaracion.linksandwich || declaracion.link} target="_blank" rel="noopener noreferrer"
-                   title="Ver">
-                    {declaracion.year}
-                </a>
-            </Col>
-            <Col span={21}>
-                Ayudanos a completar!
-            </Col>
-        </Row>;
-    }
-}

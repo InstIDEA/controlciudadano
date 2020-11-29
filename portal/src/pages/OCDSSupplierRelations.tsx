@@ -1,15 +1,16 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { OCDSSupplierRelation, Supplier } from '../Model';
-import { Layout, PageHeader, Space, Timeline, Spin, Typography } from 'antd';
-import { Link, useHistory } from 'react-router-dom';
-import { Edge, Graph, Node, RelationGraph } from '../components/graphs/RelationGraph';
-import { RedashAPI } from '../RedashAPI';
-import { Card } from 'antd/es';
-import { SimpleApi } from '../SimpleApi';
-import { SupplierDescription } from '../components/SupplierDescription';
-import { RELATIONS_COLORS, RELATIONS_NAMES } from '../Constants';
-import { BaseDatosPage } from '../components/BaseDatosPage';
+import {useCallback, useEffect, useMemo, useState} from 'react';
+import {OCDSSupplierRelation, Supplier} from '../Model';
+import {Layout, PageHeader, Space, Spin, Timeline, Typography} from 'antd';
+import {Link, useHistory} from 'react-router-dom';
+import {Edge, Graph, Node, RelationGraph} from '../components/graphs/RelationGraph';
+import {RedashAPI} from '../RedashAPI';
+import {Card} from 'antd/es';
+import {SimpleApi} from '../SimpleApi';
+import {SupplierDescription} from '../components/SupplierDescription';
+import {RELATIONS_COLORS, RELATIONS_NAMES} from '../Constants';
+import {BaseDatosPage} from '../components/BaseDatosPage';
+import './OCDSSupplierRelations.css';
 
 const colors = RELATIONS_COLORS;
 const names = RELATIONS_NAMES;
@@ -43,24 +44,24 @@ export function OCDSSupplierRelations() {
 
     return <BaseDatosPage menuIndex="relations" sidebar={isExploreMenu}>
         <PageHeader ghost={false}
-            onBack={() => history.push('')}
-            backIcon={null}
-            style={{ border: '1px solid rgb(235, 237, 240)' }}
-            title={"Relaciones ente proveedores ¿Tienen vínculos a quienes se compró?"}
-            subTitle="CDS - IDEA"
+                    onBack={() => history.push('')}
+                    backIcon={null}
+                    style={{border: '1px solid rgb(235, 237, 240)'}}
+                    title={"Relaciones ente proveedores ¿Tienen vínculos a quienes se compró?"}
+                    subTitle=""
         >
-             <Typography.Paragraph>
+            <Typography.Paragraph>
                 Nodos de relación entre proveedores con igual dirección o número de contacto. Se considera
-                 “relación entre proveedores” a las empresas que cuenten con el mismo contacto y/o dirección,
-                 lo cual no implica una relación directa con la contratación ni se considera un delito en sí.
+                “relación entre proveedores” a las empresas que cuenten con el mismo contacto y/o dirección,
+                lo cual no implica una relación directa con la contratación ni se considera un delito en sí.
             </Typography.Paragraph>
             <Layout>
                 <Layout>
                     <Layout.Content>
                         {data && <RelationGraph nodes={graph.nodes}
-                            edges={graph.edges}
-                            onSelect={setSelected}
-                            filterEdge={filter}
+                                                edges={graph.edges}
+                                                onSelect={setSelected}
+                                                filterEdge={filter}
                         />}
                         {!data && 'Cargando ...'}
                     </Layout.Content>
@@ -68,13 +69,16 @@ export function OCDSSupplierRelations() {
                         background: '#ececec',
                         padding: 10
                     }} width={400}>
-                        <Space direction="vertical" style={{ width: '100%' }}>
+                        <Space direction="vertical" style={{width: '100%'}}>
                             <Card title="Leyenda"
-                                bordered={false}
-                                style={{ width: '100%' }}>
+                                  bordered={false}
+                                  style={{width: '100%'}}>
 
                                 <Timeline>
-                                    {Object.keys(colors).map(type => <Timeline.Item color={colors[type]} key={type}>
+                                    {Object.keys(colors).map(type => <Timeline.Item
+                                        className="ocds-timeline-clickable"
+                                        color={colors[type]}
+                                        key={type}>
                                         <span style={{
                                             color: actives.includes(type) ? 'black' : 'gray'
                                         }} onClick={() => toggle(type)}>
@@ -83,7 +87,7 @@ export function OCDSSupplierRelations() {
                                     </Timeline.Item>)}
                                 </Timeline>
                             </Card>
-                            {selected && <SupplierCard id={selected} />}
+                            {selected && <SupplierCard id={selected}/>}
                         </Space>
                     </Layout.Sider>
                 </Layout>
@@ -94,7 +98,7 @@ export function OCDSSupplierRelations() {
 }
 
 export function toGraph(data?: OCDSSupplierRelation[]): Graph {
-    if (!data) return { edges: [], nodes: [] };
+    if (!data) return {edges: [], nodes: []};
     const edges = new Map<string, Edge>();
     const nodes = new Map<string, Node>();
 
@@ -102,8 +106,8 @@ export function toGraph(data?: OCDSSupplierRelation[]): Graph {
     const defColor = 'black';
 
     data.forEach(d => {
-        nodes.set(d.p1ruc, { id: d.p1ruc, label: d.p1name, color: '#000000' });
-        nodes.set(d.p2ruc, { id: d.p2ruc, label: d.p2name, color: '#000000' });
+        nodes.set(d.p1ruc, {id: d.p1ruc, label: d.p1name, color: '#000000'});
+        nodes.set(d.p2ruc, {id: d.p2ruc, label: d.p2name, color: '#000000'});
 
         if (edges.has(`${d.p1ruc}_${d.p2ruc}_${d.relation}`)
             || edges.has(`${d.p2ruc}_${d.p1ruc}_${d.relation}`)
@@ -124,7 +128,7 @@ export function toGraph(data?: OCDSSupplierRelation[]): Graph {
     }
 }
 
-export function SupplierCard({ id }: { id: string }) {
+export function SupplierCard({id}: { id: string }) {
 
     const [data, setData] = useState<Supplier>()
 
@@ -146,6 +150,6 @@ export function SupplierCard({ id }: { id: string }) {
     return <Card
         title={<Link to={`/ocds/suppliers/${id}`}>{data ? data.name : id}</Link>}
     >
-        {data && <SupplierDescription data={data} columns={1} />}
+        {data && <SupplierDescription data={data} columns={1}/>}
     </Card>
 }

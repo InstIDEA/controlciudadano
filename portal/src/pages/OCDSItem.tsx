@@ -54,7 +54,7 @@ export function OCDSItem() {
                     backIcon={null}
                     style={{border: '1px solid rgb(235, 237, 240)'}}
                     title={data ? `${header.name}` : 'Cargando...'}
-                    subTitle="CDS - IDEA"
+                    subTitle=""
                     footer={<Tabs defaultActiveKey="PARTIES">
                         <Tabs.TabPane tab="Llamados" key="PROCESS">
                             {data && <OCDSItemDetailTable data={data}/>}

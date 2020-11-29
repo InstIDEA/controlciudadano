@@ -41,7 +41,7 @@ export function OCDSSupplierWithSanctionPage() {
             onBack={() => history.push('/')}
             backIcon={null}
             title="¿A quiénes se compró?"
-            subTitle="CDS - IDEA">
+            subTitle="">
 
 
             <Typography.Paragraph>
