@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {Button, PageHeader, Space, Table} from 'antd';
-import {DownloadOutlined, LinkOutlined, SearchOutlined} from '@ant-design/icons';
+import {Button, Col, PageHeader, Row, Space, Table} from 'antd';
+import {DownloadOutlined, InfoCircleTwoTone, LinkOutlined, SearchOutlined} from '@ant-design/icons';
 import {Link, useHistory} from 'react-router-dom';
 import {filterRedashList, RedashAPI} from '../RedashAPI';
 import {StringParam, useQueryParam} from 'use-query-params';
@@ -8,7 +8,7 @@ import {Header} from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import './Datasources.css';
 import {DataSet} from '../Model';
-import { SearchBar } from '../components/SearchBar';
+import {SearchBar} from '../components/SearchBar';
 
 export function DS() {
 
@@ -35,15 +35,31 @@ export function DS() {
                 searchBar={
                     <SearchBar defaultValue={query || ''} onSearch={v => setQuery(v)}/>
                 }/>
-        <PageHeader title="Fuentes de datos"
+        <PageHeader title="Listado de fuentes de datos que son utilizados dentro del Portal."
                     onBack={() => history.push('/')}
                     backIcon={null}
                     subTitle="">
+            <Row className="disclaimer-sources"
+                 align="middle"
+                 justify="space-around"
+            >
+                <Col xs={24} md={2} xl={1} style={{textAlign: 'center'}}>
+                    <InfoCircleTwoTone style={{fontSize: 28}}/>
+                </Col>
+                <Col xs={24} md={22}>
+                    Esta lista no abarca todas las fuentes de datos que son de datos abiertos, para una lista mas
+                    exhaustiva puedes visitar <a href="https://datos.org.py">datos.org.py</a> para ver datos
+                    recolectados por la Sociedad Civil, Academia y Sector Privado, y puedes visitar <a
+                    href="https://www.datos.gov.py">datos.gov.py</a> para ver datos abiertos gubernamentales
+                    publicados por el Gobierno.
+
+                </Col>
+            </Row>
 
             <div style={{padding: 12}}>
                 <Table<DataSet>
                     loading={working}
-                    rowKey="url"
+                    rowKey="id"
                     dataSource={filtered}
                     columns={[{
                         title: 'Institución',

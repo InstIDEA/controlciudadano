@@ -1,29 +1,52 @@
 .ant-btn-primary {
-  background: rgb(205 83 52);
-  border-color: rgb(205 83 52);
+    background: rgb(205 83 52);
+    border-color: rgb(205 83 52);
 }
 
 .ant-btn-primary .ant-icon {
-  color: #ffffff;
+    color: #ffffff;
 }
 
 .btn-secondary {
-  border-color: rgb(205 83 52);
-  color: rgb(205 83 52);
+    border-color: rgb(205 83 52);
+    color: rgb(205 83 52);
 }
 
 .btn-secondary .ant-icon {
-  border-color: rgb(205 83 52);
+    border-color: rgb(205 83 52);
 }
 
 .action-column {
-  display: block;
+    display: block;
 }
 
 .btn-wrapper {
-  float: right;
+    float: right;
 }
 
 .datasource-card .ant-card-body {
-  min-height: 300px !important;
+    min-height: 300px !important;
+}
+
+.disclaimer-sources {
+    color: #322e2e;
+    font-size: 0.9em;
+    font-weight: bold;
+    padding: 10px;
+    background-color: #eff1f5;
+    border-radius: 5px;
+    text-align: left;
+}
+
+@media (max-width: 768px) {
+    .disclaimer-sources {
+        text-align: center;
+    }
+}
+
+@media (min-width: 1500px) {
+    .disclaimer-sources {
+        margin-left: 80px;
+        margin-right: 80px;
+    }
 }
