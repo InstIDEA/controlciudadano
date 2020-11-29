@@ -8,6 +8,7 @@ import {filterRedashList, RedashAPI} from '../RedashAPI';
 import {BaseDatosPage} from '../components/BaseDatosPage';
 import '../components/layout/Layout.css'
 import {SearchBar} from '../components/SearchBar';
+import {DisclaimerComponent} from '../components/Disclaimer';
 
 export function OCDSAwardItemsPage() {
 
@@ -46,10 +47,13 @@ export function OCDSAwardItemsPage() {
                     title="¿Qué se compró?">
 
             <Typography.Paragraph>
-                Ránking de items con posibles sobrecostos, comparados con sus precios antes de la pandemia.<br/>
-                <i>Las unidades de medida no especificadas en el portal de la Dirección Nacional de Contrataciones
-                    Públicas (DNCP) pueden arrojar datos no específicos respecto al porcentaje de sobrecostos.</i>
+                Ránking de items con posibles sobrecostos, comparados con sus precios antes de la pandemia.
             </Typography.Paragraph>
+            <DisclaimerComponent>
+                Las unidades de medida no especificadas en el portal de la <a href="https://contrataciones.gov.py/">Dirección
+                Nacional de Contrataciones Públicas (DNCP)</a> pueden arrojar datos no específicos respecto al
+                porcentaje de sobrecostos.
+            </DisclaimerComponent>
             <Table<OCDSItemsAwardedCOVID19>
                 dataSource={filtered}
                 loading={working}

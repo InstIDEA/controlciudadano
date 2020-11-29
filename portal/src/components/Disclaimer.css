@@ -1,0 +1,22 @@
+.disclaimer-component {
+    color: #322e2e;
+    font-size: 0.9em;
+    font-weight: bold;
+    padding: 10px;
+    background-color: #eff1f5;
+    border-radius: 5px;
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+    .disclaimer-component {
+        text-align: center;
+    }
+}
+
+@media (min-width: 1500px) {
+    .disclaimer-component {
+        margin-right: 10vw;
+    }
+}

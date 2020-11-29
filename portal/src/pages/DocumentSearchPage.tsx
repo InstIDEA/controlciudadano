@@ -50,7 +50,7 @@ export function DocumentSearchPage() {
     }>
     <PageHeader ghost={false}
                        style={{border: '1px solid rgb(235, 237, 240)'}}
-                       title="CDS - IDEA"
+                       title=""
                        subTitle="Búsqueda de personas por cédula"
                        onBack={() => history.push('/')}
                        backIcon={null}>

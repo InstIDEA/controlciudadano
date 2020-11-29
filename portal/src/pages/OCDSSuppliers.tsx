@@ -39,7 +39,7 @@ export function OCDSSuppliers() {
                 onBack={() => history.push('/')}
                 backIcon={null}
                 title="Proveedores"
-                subTitle="CDS - IDEA">
+                subTitle="">
 
 
                 <Typography.Paragraph>

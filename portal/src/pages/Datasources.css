@@ -28,25 +28,3 @@
     min-height: 300px !important;
 }
 
-.disclaimer-sources {
-    color: #322e2e;
-    font-size: 0.9em;
-    font-weight: bold;
-    padding: 10px;
-    background-color: #eff1f5;
-    border-radius: 5px;
-    text-align: left;
-}
-
-@media (max-width: 768px) {
-    .disclaimer-sources {
-        text-align: center;
-    }
-}
-
-@media (min-width: 1500px) {
-    .disclaimer-sources {
-        margin-left: 80px;
-        margin-right: 80px;
-    }
-}

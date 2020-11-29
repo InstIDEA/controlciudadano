@@ -39,7 +39,7 @@ export function OCDSBuyersPage() {
             onBack={() => history.push('/')}
             backIcon={null}
             title="¿Quienes compraron?"
-            subTitle="CDS - IDEA">
+            subTitle="">
 
 
             <Typography.Paragraph>

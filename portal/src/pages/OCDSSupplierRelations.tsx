@@ -47,7 +47,7 @@ export function OCDSSupplierRelations() {
             backIcon={null}
             style={{ border: '1px solid rgb(235, 237, 240)' }}
             title={"Relaciones ente proveedores ¿Tienen vínculos a quienes se compró?"}
-            subTitle="CDS - IDEA"
+            subTitle=""
         >
              <Typography.Paragraph>
                 Nodos de relación entre proveedores con igual dirección o número de contacto. Se considera

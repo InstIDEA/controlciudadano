@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useEffect, useMemo, useState} from 'react';
-import {Card, List, PageHeader, Table, Typography} from 'antd';
+import {Card, List, PageHeader, Table} from 'antd';
 import {Affidavit} from '../Model';
 import {Link, useHistory} from 'react-router-dom';
 import {filterRedashList, RedashAPI} from '../RedashAPI';
@@ -8,6 +8,7 @@ import {formatMoney} from '../formatters';
 import {FilePdfOutlined, ShareAltOutlined} from '@ant-design/icons';
 import {BaseDatosPage} from '../components/BaseDatosPage';
 import {SearchBar} from '../components/SearchBar';
+import {DisclaimerComponent} from '../components/Disclaimer';
 
 export function AffidavitList() {
 
@@ -41,23 +42,20 @@ export function AffidavitList() {
                         style={{border: '1px solid rgb(235, 237, 240)'}}
                         onBack={() => history.push('/')}
                         title="Declaraciones Juradas de Bienes y Rentas de Funcionarios públicos"
-                        subTitle="CDS - IDEA"
+                        subTitle=""
                         backIcon={null}>
 
 
-                <Typography.Paragraph>
-
+                <DisclaimerComponent>
                     Lista de las declaraciones juradas <b>públicas</b> que han sido publicadas al portal
                     de la <a href="https://djbpublico.contraloria.gov.py/index.php"> Contraloría General de la
                     República</a>.
 
                     <br/>
-                    <small>
-                        No contamos con todas las declaraciones juradas, pues las mismas se actualizan a diario,
-                        esta lista fue actualizada por última vez el 30 de Octubre de 2020.
-                    </small>
+                    No contamos con todas las declaraciones juradas, pues las mismas se actualizan a diario,
+                    esta lista fue actualizada por última vez el 30 de Octubre de 2020.
+                </DisclaimerComponent>
 
-                </Typography.Paragraph>
 
                 <Table<Affidavit> dataSource={filtered}
                                   className="hide-responsive"
