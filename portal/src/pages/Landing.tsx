@@ -11,6 +11,7 @@ import {RedashAPI} from '../RedashAPI';
 import {formatIsoDate, formatMoney, formatToMonth} from '../formatters';
 import {Link, useHistory} from 'react-router-dom';
 import {FilterOutlined} from '@ant-design/icons'
+import {useMediaQuery} from '@react-hook/media-query';
 
 export const page1 = [
     {
@@ -32,6 +33,8 @@ export function LandingPage() {
     const [data, setData] = useState<Async<GlobalStatistics>>({
         state: 'NO_REQUESTED'
     })
+
+    const isSmall = useMediaQuery('only screen and (max-width: 768px)');
 
     useEffect(() => {
         setData({state: 'FETCHING'})
@@ -62,7 +65,7 @@ export function LandingPage() {
 
     return (<>
             <Header tableMode={false}/>
-            <Row className="banner-wrapper" gutter={[16, 48]}>
+            <Row className="banner-wrapper" gutter={isSmall? 8: [16, 48]}>
                 <Col md={{offset: 0, span: 7}}
                      sm={{offset: 1, span: 1}}
                      xs={{offset: 1, span: 1}}
@@ -94,7 +97,7 @@ export function LandingPage() {
                         }}
                         formMethod="submit"/>
                 </Col>
-                <Col xxl={24} xl={24} lg={24} md={24} sm={24} xs={24}>
+                <Col xxl={24} xl={24} lg={24} md={24} sm={24} xs={24} className="banner-title-col-wrapper">
                     <QueueAnim className="banner-title-wrapper">
                         <p className="banner-text" key="content">
                             En este portal podés explorar <strong>Datos Abiertos</strong> y <strong>controlar los gastos

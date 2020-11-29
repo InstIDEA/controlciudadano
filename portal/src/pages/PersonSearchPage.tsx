@@ -54,7 +54,7 @@ const sourceNameMap: { [k: string]: string } = {
 
 export function PersonSearchPage() {
 
-    const isSmall = useMediaQuery('only screen and (max-width: 600px)');
+    const isSmall = useMediaQuery('only screen and (max-width: 7689px)');
 
     const filter = useMemo(() => <Filter/>, []);
 

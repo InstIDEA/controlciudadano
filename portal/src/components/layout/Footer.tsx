@@ -20,7 +20,7 @@ function Footer(props: {
             <Row className={props.tableMode ? "footer-background-secondary" : ""}>
                 <Col offset={props.aboutFooter ? 6 : 0}
                      xxl={props.aboutFooter ? 12 : 8} xl={props.aboutFooter ? 12 : 8}
-                     lg={props.aboutFooter ? 12 : 8} md={props.aboutFooter ? 12 : 8} sm={12} xs={12}>
+                     lg={props.aboutFooter ? 12 : 8} md={props.aboutFooter ? 12 : 8} sm={24}>
                     <span className="footer-label">Es una iniciativa de:</span>
                     <div id="logo">
                         <img src={idea} alt="logo"/>
@@ -28,7 +28,7 @@ function Footer(props: {
                 </Col>
                 <Col offset={props.aboutFooter ? 6 : 0}
                      xxl={props.aboutFooter ? 12 : 8} xl={props.aboutFooter ? 12 : 8}
-                     lg={props.aboutFooter ? 12 : 8} md={props.aboutFooter ? 12 : 8} sm={12} xs={12}>
+                     lg={props.aboutFooter ? 12 : 8} md={props.aboutFooter ? 12 : 8} sm={24}>
                     <span className="footer-label">Impulsores del proyecto:</span>
                     <div id="logo">
                         <img src={idea} alt="logo"/>
@@ -38,7 +38,7 @@ function Footer(props: {
                 </Col>
                 <Col offset={props.aboutFooter ? 6 : 0}
                      xxl={props.aboutFooter ? 12 : 8} xl={props.aboutFooter ? 12 : 8}
-                     lg={props.aboutFooter ? 12 : 8} md={props.aboutFooter ? 12 : 8} sm={12} xs={12}>
+                     lg={props.aboutFooter ? 12 : 8} md={props.aboutFooter ? 12 : 8} sm={24}>
                     <span className="footer-label">Herramientas de IA con apoyo de:</span>
                     <div id="logo">
                         <img src={ocp} alt="logo"/>
