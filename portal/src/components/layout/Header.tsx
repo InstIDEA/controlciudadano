@@ -60,7 +60,7 @@ export function Header(props: {
                 </Row>
                 <Row>
                     {showSeparator && <Col xxl={4} xl={5} lg={7} md={0} sm={0} xs={0}> </Col>}
-                    <Col xxl={20} xl={19} lg={17} md={24} sm={22} xs={22}>
+                    <Col xxl={20} xl={19} lg={17} md={24} sm={22} xs={22} style={{paddingTop: 15}}>
                         {props.searchBar}
                     </Col>
                 </Row>

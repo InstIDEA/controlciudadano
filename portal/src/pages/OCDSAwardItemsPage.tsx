@@ -30,11 +30,13 @@ export function OCDSAwardItemsPage() {
         'item_adjudicado',
         'supplier_name',
         'llamado_numero',
-        'supplier_ruc'
+        'supplier_ruc',
+        'buyer_name'
     ]), [data, query]);
 
     return <BaseDatosPage menuIndex="items" sidebar={isExploreMenu} headerExtra={
         <SearchBar defaultValue={query}
+                   placeholder="Buscar ítems, proveedores, compradores"
                    onSearch={setQuery}/>
     }>
         <PageHeader ghost={false}
