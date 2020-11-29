@@ -115,13 +115,13 @@ export function LandingPage() {
                         <Col className="card-wrapper" key="info" md={20} xs={24}>
                             <div className="info-card">
                                 <Statistic name="Salarios Pagados"
-                                           obs={AsyncHelper.map(data, d => `Salarios pagados a ${formatToMonth(d.payed_salaries_month)}`)}
+                                           obs={AsyncHelper.map(data, d => `Cantidad de funcionarios que recibieron salarios a ${formatToMonth(d.payed_salaries_month)} según la SFP`)}
                                            data={AsyncHelper.map(data, d => d.payed_salaries)}/>
                                 <Statistic name="Contratos del 2020"
-                                           obs={AsyncHelper.map(data, d => `Contratos firmados al ${formatIsoDate(d.calc_date)}`)}
+                                           obs={AsyncHelper.map(data, d => `Contratos firmados al ${formatIsoDate(d.calc_date)} reportados por la DNCP`)}
                                            data={AsyncHelper.map(data, d => d.ocds_current_year_contracts)}/>
                                 <Statistic name="Contratos COVID-19"
-                                           obs={AsyncHelper.map(data, d => `Contratos realizados contra la pandemia al ${formatIsoDate(d.calc_date)}`)}
+                                           obs={AsyncHelper.map(data, d => `Contratos realizados contra la pandemia al ${formatIsoDate(d.calc_date)} según la DNCP`)}
                                            data={AsyncHelper.map(data, d => d.ocds_covid_contracts)}/>
                             </div>
                         </Col>
