@@ -14,15 +14,18 @@ export function ChargeCard(props: {
     const icons = useMemo(() => buildIcons(props.cargos), [props.cargos])
 
     return <Col {...spans}>
-        <Card className="data-box" title={`Cargos públicos según ${Object.keys(icons).join(", ")}`}
+        <Card className="data-box" title={`Cargos públicos`}
               extra={Object.keys(icons).map((key: string) => <Icon key={key} component={icons[key]}
                                                                    className="icon-card"/>)}>
             <Row gutter={[8, 8]} style={{background: '#fafafa'}}>
                 <Col span={4}>
                     <Typography.Text><strong>Año</strong></Typography.Text>
                 </Col>
-                <Col span={20}>
+                <Col span={12}>
                     <Typography.Text><strong>Cargo</strong></Typography.Text>
+                </Col>
+                <Col span={8}>
+                    <Typography.Text><strong>Fuente</strong></Typography.Text>
                 </Col>
             </Row>
             {cargos
@@ -32,8 +35,11 @@ export function ChargeCard(props: {
                         <Col span={4}>
                             {charge.year}
                         </Col>
-                        <Col span={20}>
+                        <Col span={12}>
                             {charge.charge}
+                        </Col>
+                        <Col span={8}>
+                            {charge.sourceName}
                         </Col>
                     </Row>
                 )}

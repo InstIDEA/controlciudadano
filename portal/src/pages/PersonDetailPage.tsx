@@ -26,6 +26,7 @@ import {HaciendaCard} from "../components/person_cards/Hacienda";
 import {SFPCard} from '../components/person_cards/SFP';
 import {COLOR_GREY, COLOR_ORANGE} from "../Constants";
 import {useMediaQuery} from '@react-hook/media-query';
+import {SOURCE_NAME_MAP} from "./PersonSearchPage";
 
 export function PersonDetailPage() {
 
@@ -233,7 +234,7 @@ function tryToGuestHeader(baseDoc: string,
             name = affidavit[0].name;
             affidavit.forEach(a => {
                 if (a.charge) {
-                    charge.push({charge: a.charge, year: a.year, source: Ddjj, sourceName: 'ddjj'});
+                    charge.push({charge: a.charge, year: a.year, source: Ddjj, sourceName: SOURCE_NAME_MAP['declarations']});
                 }
             });
         }
@@ -268,7 +269,7 @@ function tryToGuestHeader(baseDoc: string,
             charge: c,
             year: chargeData[c],
             source: Sfp,
-            sourceName: 'sfp'
+            sourceName: SOURCE_NAME_MAP['sfp']
         }));
     }
 
@@ -314,7 +315,7 @@ function tryToGuestHeader(baseDoc: string,
                 charge: c,
                 year: chargeData[c],
                 source: HaciendaIcon,
-                sourceName: 'hacienda'
+                sourceName: SOURCE_NAME_MAP['mh']
             }));
 
         }

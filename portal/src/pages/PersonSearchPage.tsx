@@ -39,7 +39,7 @@ import {ReactComponent as Nangareko} from '../assets/logos/nangareko.svg';
 import {ReactComponent as PoliciaNacional} from '../assets/logos/policia_nacional.svg';
 import {Link} from 'react-router-dom';
 
-const sourceNameMap: { [k: string]: string } = {
+export const SOURCE_NAME_MAP: { [k: string]: string } = {
     'tsje_elected': 'Autoridades electas',
     'declarations': 'Declaraciones juradas',
     'a_quien_elegimos': 'A Quíenes Elegimos',
@@ -130,7 +130,7 @@ function Filter() {
                                    <Col xs={{span: 18}}>
                                        <Checkbox checked={value[item.key]}
                                                  onChange={() => handleChange(item.key)}>
-                                           {sourceNameMap[item.key] || item.key}
+                                           {SOURCE_NAME_MAP[item.key] || item.key}
                                        </Checkbox>
                                    </Col>
                                    <Col xs={{span: 6}} style={{textAlign: 'right'}}>
@@ -446,7 +446,7 @@ function SourcesIconListComponent(props: {
 }) {
     return <>
         {props.sources.map(s =>
-            <Tooltip title={sourceNameMap[s] || s} key={s}>
+            <Tooltip title={SOURCE_NAME_MAP[s] || s} key={s}>
                 {sourceNameIcon[s]
                     ? <Icon component={sourceNameIcon[s]} className="source-icon"/>
                     : <small>{s}</small>
