@@ -52,7 +52,8 @@ function groupByYear(list: Array<SFPLocalData>): Array<GroupedInfo> {
     const toRet: Record<string, GroupedInfo> = {};
 
     list.forEach(value => {
-        const key = `${value.anho}${value.mes}${value.descripcion_entidad}`
+        const month = value.mes < 10 ? `0${value.mes}` : `${value.mes}`;
+        const key = `${value.anho}${month}${value.descripcion_entidad}`;
         let current = toRet[key];
         if (current) {
             current.salary += value.presupuestado;
