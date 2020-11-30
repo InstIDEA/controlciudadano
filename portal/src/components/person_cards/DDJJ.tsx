@@ -11,7 +11,6 @@ export function DDJJCard(props: {
     affidavit: Affidavit[]
 }) {
     const affidavit = props.affidavit;
-    console.log(affidavit);
     return <>
         <Col {...{xxl: 12, xl: 12, lg: 12, md: 12, sm: 24, xs: 24}} className="ddjj">
             <Card className="data-box" title={SOURCE_NAME_MAP['declarations']}

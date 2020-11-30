@@ -31,7 +31,7 @@ export function ChargeCard(props: {
             {cargos
                 .map(c => c)
                 .sort((c1, c2) => c1.year < c2.year ? 1 : -1)
-                .map(charge => <Row gutter={[8, 8]} key={`${charge.year}${charge.source}`}>
+                .map(charge => <Row gutter={[8, 8]} key={`${charge.year}${charge.sourceName}${charge.charge}`}>
                         <Col span={4}>
                             {charge.year}
                         </Col>
