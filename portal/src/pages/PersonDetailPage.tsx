@@ -185,7 +185,8 @@ export function PersonDetailPage() {
                                 extra={<Icon component={Ande} className="icon-card"/>}
                                 actions={[
                                     <a href="https://informacionpublica.paraguay.gov.py/portal/#!/ciudadano/solicitud/31210"
-                                       target="_blank" rel="noopener noreferrer">Más info</a>
+                                       target="_blank" rel="noopener noreferrer">Ver solicitud de acceso a información pública
+                                    </a>
                                 ]}
                           >
                             <Space direction="vertical">

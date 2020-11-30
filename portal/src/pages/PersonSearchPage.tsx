@@ -41,14 +41,14 @@ import {Link} from 'react-router-dom';
 
 export const SOURCE_NAME_MAP: { [k: string]: string } = {
     'tsje_elected': 'Autoridades electas',
-    'declarations': 'Declaraciones juradas',
+    'declarations': 'Declaraciones Juradas de Bienes y Rentas',
     'a_quien_elegimos': 'A Quíenes Elegimos',
     'ande_exonerados': 'Exonerados ANDE',
     'mh': 'Ministerio de Hacienda',
-    'sfp': 'Secretaria de la función pública',
+    'sfp': 'Secretaria de la Función Pública',
     'pytyvo': 'Subsidio Pytyvo',
-    'nangareko': 'Subsidio Nangareko',
-    'policia': 'Policia Nacional'
+    'nangareko': 'Subsidio Ñangareko',
+    'policia': 'Policía Nacional'
 }
 
 
