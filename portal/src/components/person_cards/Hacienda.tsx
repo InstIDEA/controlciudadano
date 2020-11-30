@@ -27,7 +27,7 @@ export function HaciendaCard(props: {
                     <Typography.Text><strong>Entidad</strong></Typography.Text>
                 </Col>
                 <Col span={8} style={{textAlign: 'right'}}>
-                    <Typography.Text><strong>Monto presupuestado</strong></Typography.Text>
+                    <Typography.Text><strong>Monto presupuestado (Gs.)</strong></Typography.Text>
                 </Col>
             </Row>
             {lista.map(election => <Row gutter={[8, 8]} key={election.key}>

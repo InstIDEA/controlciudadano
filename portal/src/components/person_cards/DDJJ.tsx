@@ -30,17 +30,17 @@ export function DDJJCard(props: {
                         </a>
 
                     }, {
-                        title: <Typography.Text><strong>Activos</strong></Typography.Text>,
+                        title: <Typography.Text><strong>Activos (Gs.)</strong></Typography.Text>,
                         render: (r: Affidavit) => r.actives
                             ? formatMoney(r.actives)
                             : 'Ayudanos a completar',
                         align: 'right'
                     }, {
-                        title: <Typography.Text><strong>Pasivos</strong></Typography.Text>,
+                        title: <Typography.Text><strong>Pasivos (Gs.)</strong></Typography.Text>,
                         render: (r: Affidavit) => formatMoney(r.passive),
                         align: 'right'
                     }, {
-                        title: <Typography.Text><strong>Patrimonio Neto</strong></Typography.Text>,
+                        title: <Typography.Text><strong>Patrimonio Neto (Gs.)</strong></Typography.Text>,
                         render: (r: Affidavit) => formatMoney(r.networth),
                         align: 'right'
                     }]}>
