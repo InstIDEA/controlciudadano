@@ -220,7 +220,7 @@ function ResultHeader() {
             <b>Nombre</b>
         </Col>
         <Col span={4} style={{textAlign: 'right', fontSize: '0.8em', paddingRight: 10}}>
-            <b>Salario</b>
+            <b>Salario Presupuestado</b>
         </Col>
         <Col span={4} style={{textAlign: 'right', fontSize: '0.8em', paddingRight: 10}}>
             <b>Patrimonio</b>

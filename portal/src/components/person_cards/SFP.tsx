@@ -55,7 +55,7 @@ function groupByYear(list: Array<SFPLocalData>): Array<GroupedInfo> {
         const key = `${value.anho}${value.mes}${value.descripcion_entidad}`
         let current = toRet[key];
         if (current) {
-            current.salary += value.devengado;
+            current.salary += value.presupuestado;
             current.charge = current.charge || value.cargo;
         } else {
             toRet[key] = {
@@ -63,7 +63,7 @@ function groupByYear(list: Array<SFPLocalData>): Array<GroupedInfo> {
                 year: value.anho,
                 month: value.mes,
                 charge: value.cargo,
-                salary: value.devengado,
+                salary: value.presupuestado,
                 place: (value.descripcion_entidad || "").replace("�", "")
             };
         }
