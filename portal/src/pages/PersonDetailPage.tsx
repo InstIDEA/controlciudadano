@@ -27,6 +27,7 @@ import {SFPCard} from '../components/person_cards/SFP';
 import {COLOR_GREY, COLOR_ORANGE} from "../Constants";
 import {useMediaQuery} from '@react-hook/media-query';
 import {SOURCE_NAME_MAP} from "./PersonSearchPage";
+import {fixName} from '../nameUtils';
 
 export function PersonDetailPage() {
 
@@ -99,7 +100,7 @@ export function PersonDetailPage() {
                                         Datos Personales
                                     </Typography.Title>
                                     <Typography.Text className="text-layout-content">
-                                        <strong>Documento: </strong> {header.document || 'No encontrado'}
+                                        <strong>Documento: </strong> {formatMoney(header.document) || 'No encontrado'}
                                     </Typography.Text>
                                     <br/>
                                     <Typography.Text className="text-layout-content">
@@ -224,7 +225,7 @@ function tryToGuestHeader(baseDoc: string,
 ) {
 
     let name = '';
-    let document = formatMoney(baseDoc);
+    let document = baseDoc;
     let found = false;
     let charge: Array<Charge> = [];
     let birthDate = '';
@@ -326,7 +327,7 @@ function tryToGuestHeader(baseDoc: string,
                 imageURL = `https://datos.aquieneselegimos.org.py/media/${local.staging.a_quien_elegimos[0].head_shot}`;
             }
             if (aqe.identifier) {
-                document = formatMoney(aqe.identifier) + "";
+                document = aqe.identifier + "";
             }
             if (aqe.name && aqe.lastname) {
                 name = `${aqe.name} ${aqe.lastname}`
@@ -339,7 +340,7 @@ function tryToGuestHeader(baseDoc: string,
 
     return {
         found,
-        name,
+        name: fixName(name),
         document,
         charge,
         birthDate,

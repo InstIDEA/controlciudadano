@@ -28,7 +28,7 @@ export function SFPCard(props: {
                     <Typography.Text><strong>Entidad</strong></Typography.Text>
                 </Col>
                 <Col span={10} style={{textAlign: 'right'}}>
-                    <Typography.Text><strong>Monto presupuestado</strong></Typography.Text>
+                    <Typography.Text><strong>Monto presupuestado (Gs.)</strong></Typography.Text>
                 </Col>
             </Row>
             {data.map(row => <Row gutter={[8, 8]} key={row.key}>
