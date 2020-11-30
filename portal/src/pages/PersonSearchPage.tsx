@@ -283,7 +283,7 @@ function SingleResultCard(props: {
         <Col span={8}>
             {data.name}
             <br/>
-            <small>Cédula: <b>{data.document}</b></small>
+            <small>Cédula: <b>{formatMoney(data.document)}</b></small>
         </Col>
         <Col span={4} style={{textAlign: 'right', fontSize: '0.8em', paddingRight: 10}}>
             {formatMoney(data.salary, 'Gs')}

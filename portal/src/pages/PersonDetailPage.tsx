@@ -17,7 +17,7 @@ import {SimpleApi} from '../SimpleApi';
 import {useParams} from 'react-router-dom';
 import {Affidavit, AnalysisSearchResult, Authorities, Hacienda, LocalSearchResult} from '../Model';
 import {SFPRow} from '../SFPHelper';
-import {getInitials} from '../formatters';
+import {formatMoney, getInitials} from '../formatters';
 import {AQECard} from '../components/person_cards/AQE';
 import {TSJECard} from '../components/person_cards/TSJE';
 import {DDJJCard} from "../components/person_cards/DDJJ";
@@ -216,7 +216,7 @@ function tryToGuestHeader(baseDoc: string,
 ) {
 
     let name = '';
-    let document = baseDoc;
+    let document = formatMoney(baseDoc);
     let found = false;
     let charge: Array<Charge> = [];
     let birthDate = '';
@@ -318,7 +318,7 @@ function tryToGuestHeader(baseDoc: string,
                 imageURL = `https://datos.aquieneselegimos.org.py/media/${local.staging.a_quien_elegimos[0].head_shot}`;
             }
             if (aqe.identifier) {
-                document = aqe.identifier + "";
+                document = formatMoney(aqe.identifier) + "";
             }
             if (aqe.name && aqe.lastname) {
                 name = `${aqe.name} ${aqe.lastname}`
