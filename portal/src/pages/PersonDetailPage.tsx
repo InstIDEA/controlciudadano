@@ -179,8 +179,14 @@ export function PersonDetailPage() {
                     {
                         local?.staging.ande_exonerados && local?.staging.ande_exonerados.length > 0 &&
                         <Col {...spans}>
-                          <Card className="data-box" title="ANDE" style={{height: cardHeight}}
-                                extra={<Icon component={Ande} className="icon-card"/>}>
+                          <Card className="data-box" title="Exonerado por la ANDE durante la Pandemia COVID 19"
+                                style={{height: cardHeight}}
+                                extra={<Icon component={Ande} className="icon-card"/>}
+                                actions={[
+                                    <a href="https://informacionpublica.paraguay.gov.py/portal/#!/ciudadano/solicitud/31210"
+                                       target="_blank" rel="noopener noreferrer">Más info</a>
+                                ]}
+                          >
                             <Space direction="vertical">
                               <LVRow label={"Agencia"} value={local.staging.ande_exonerados[0].agencia}/>
                               <LVRow label={"NIS"} value={local.staging.ande_exonerados[0].nis}/>

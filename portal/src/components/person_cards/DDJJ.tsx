@@ -10,12 +10,14 @@ export function DDJJCard(props: {
     affidavit: Affidavit[]
 }) {
     const affidavit = props.affidavit;
+    console.log(affidavit);
     return <>
-        <Col {...{xxl: 12, xl: 12, lg: 12, md: 12, sm: 24, xs: 24}} className="ddjj" >
+        <Col {...{xxl: 12, xl: 12, lg: 12, md: 12, sm: 24, xs: 24}} className="ddjj">
             <Card className="data-box" title="Declaraciones juradas de bienes y rentas"
                   extra={<Icon component={Ddjj} className="icon-card"/>}>
                 <Table<Affidavit>
                     dataSource={affidavit}
+                    rowKey="id"
                     size="small"
                     scroll={{x: undefined, y: undefined}}
                     pagination={false}
@@ -29,7 +31,9 @@ export function DDJJCard(props: {
 
                     }, {
                         title: <Typography.Text><strong>Activos</strong></Typography.Text>,
-                        render: (r: Affidavit) => formatMoney(r.actives),
+                        render: (r: Affidavit) => r.actives
+                            ? formatMoney(r.actives)
+                            : 'Ayudanos a completar',
                         align: 'right'
                     }, {
                         title: <Typography.Text><strong>Pasivos</strong></Typography.Text>,

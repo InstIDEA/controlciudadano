@@ -14,7 +14,7 @@ export function ChargeCard(props: {
     const icons = useMemo(() => buildIcons(props.cargos), [props.cargos])
 
     return <Col {...spans}>
-        <Card className="data-box" title="Cargos públicos"
+        <Card className="data-box" title={`Cargos públicos según ${Object.keys(icons).join(", ")}`}
               extra={Object.keys(icons).map((key: string) => <Icon key={key} component={icons[key]}
                                                                    className="icon-card"/>)}>
             <Row gutter={[8, 8]} style={{background: '#fafafa'}}>

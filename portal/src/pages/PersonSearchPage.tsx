@@ -388,11 +388,12 @@ const confidenceByDS: { [k: string]: { name: number, photo?: number, net_worth?:
         name: 92
     },
     'mh': {
-        name: 92
+        name: 92,
+        salary: 100
     },
     'sfp': {
         name: 93,
-        salary: 100
+        salary: 99
     },
     'pytyvo': {
         name: 85
