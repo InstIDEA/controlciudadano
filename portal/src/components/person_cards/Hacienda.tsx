@@ -51,7 +51,8 @@ function groupByYear(list: Array<Hacienda>): Array<GroupedInfo> {
     const toRet: Record<string, GroupedInfo> = {};
 
     list.forEach(value => {
-        const key = `${value.anio}${value.mes}${value.descripcionentidad}`
+        const month = value.mes < 10 ? `0${value.mes}` : `${value.mes}`;
+        const key = `${value.anio}${month}${value.descripcionentidad}`;
         let current = toRet[key];
         if (current) {
             current.salary += value.montopresupuestado;

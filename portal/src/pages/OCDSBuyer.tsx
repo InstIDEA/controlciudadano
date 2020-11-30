@@ -10,6 +10,7 @@ import {groupBy} from './OCDSItem';
 import {NivoBuyerSuppliersPie} from '../components/graphs/NivoBuyerSuppliersPie';
 import {BooleanParam, useQueryParam} from 'use-query-params';
 import {Header} from "../components/layout/Header";
+import {useMediaQuery} from "@react-hook/media-query";
 
 export function OCDSBuyerPage() {
 
@@ -18,6 +19,8 @@ export function OCDSBuyerPage() {
     const [items, setItems] = useState<OCDSBuyerWithSuppliers[]>();
     const [data, setData] = useState<OCDSBuyer>();
     const [onlyCovid, setOnlyCovid] = useQueryParam('onlyCovid', BooleanParam);
+
+    const isSmall = useMediaQuery('only screen and (max-width: 768px)');
 
     useEffect(() => {
         new SimpleApi()
@@ -66,7 +69,7 @@ export function OCDSBuyerPage() {
                     ]}
                     footer={<Tabs defaultActiveKey="SUPPLIER">
                         <Tabs.TabPane tab="Contratos" key="CONTRACTS">
-                            <ContractsTable data={finalItems}/>
+                            <ContractsTable data={finalItems} isSmall={isSmall}/>
                         </Tabs.TabPane>
                         <Tabs.TabPane tab="Proveedores" key="SUPPLIER">
                             {finalItems ? <SuppliersTable data={finalItems}/>
@@ -89,12 +92,15 @@ export function OCDSBuyerPage() {
 
 }
 
-function ContractsTable(props: { data?: OCDSBuyerWithSuppliers[] }) {
+function ContractsTable(props: { data?: OCDSBuyerWithSuppliers[], isSmall: boolean }) {
     return <Table<OCDSBuyerWithSuppliers>
         dataSource={props.data}
         loading={!props.data}
         rowKey={r => `${r.ocid}${r.awarded}${r.supplier_id}`}
         size="small"
+        scroll={{
+            x: props.isSmall ? 1000 : undefined
+        }}
         columns={[{
             key: 'tender_slug',
             title: 'Llamado',

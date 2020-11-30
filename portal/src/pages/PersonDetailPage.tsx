@@ -17,7 +17,7 @@ import {SimpleApi} from '../SimpleApi';
 import {useParams} from 'react-router-dom';
 import {Affidavit, AnalysisSearchResult, Authorities, Hacienda, LocalSearchResult} from '../Model';
 import {SFPRow} from '../SFPHelper';
-import {getInitials} from '../formatters';
+import {formatMoney, getInitials} from '../formatters';
 import {AQECard} from '../components/person_cards/AQE';
 import {TSJECard} from '../components/person_cards/TSJE';
 import {DDJJCard} from "../components/person_cards/DDJJ";
@@ -26,6 +26,7 @@ import {HaciendaCard} from "../components/person_cards/Hacienda";
 import {SFPCard} from '../components/person_cards/SFP';
 import {COLOR_GREY, COLOR_ORANGE} from "../Constants";
 import {useMediaQuery} from '@react-hook/media-query';
+import {SOURCE_NAME_MAP} from "./PersonSearchPage";
 
 export function PersonDetailPage() {
 
@@ -179,8 +180,15 @@ export function PersonDetailPage() {
                     {
                         local?.staging.ande_exonerados && local?.staging.ande_exonerados.length > 0 &&
                         <Col {...spans}>
-                          <Card className="data-box" title="ANDE" style={{height: cardHeight}}
-                                extra={<Icon component={Ande} className="icon-card"/>}>
+                          <Card className="data-box" title="Exonerado por la ANDE durante la Pandemia COVID 19"
+                                style={{height: cardHeight}}
+                                extra={<Icon component={Ande} className="icon-card"/>}
+                                actions={[
+                                    <a href="https://informacionpublica.paraguay.gov.py/portal/#!/ciudadano/solicitud/31210"
+                                       target="_blank" rel="noopener noreferrer">Ver solicitud de acceso a información pública
+                                    </a>
+                                ]}
+                          >
                             <Space direction="vertical">
                               <LVRow label={"Agencia"} value={local.staging.ande_exonerados[0].agencia}/>
                               <LVRow label={"NIS"} value={local.staging.ande_exonerados[0].nis}/>
@@ -216,7 +224,7 @@ function tryToGuestHeader(baseDoc: string,
 ) {
 
     let name = '';
-    let document = baseDoc;
+    let document = formatMoney(baseDoc);
     let found = false;
     let charge: Array<Charge> = [];
     let birthDate = '';
@@ -227,7 +235,7 @@ function tryToGuestHeader(baseDoc: string,
             name = affidavit[0].name;
             affidavit.forEach(a => {
                 if (a.charge) {
-                    charge.push({charge: a.charge, year: a.year, source: Ddjj, sourceName: 'ddjj'});
+                    charge.push({charge: a.charge, year: a.year, source: Ddjj, sourceName: SOURCE_NAME_MAP['declarations']});
                 }
             });
         }
@@ -262,7 +270,7 @@ function tryToGuestHeader(baseDoc: string,
             charge: c,
             year: chargeData[c],
             source: Sfp,
-            sourceName: 'sfp'
+            sourceName: SOURCE_NAME_MAP['sfp']
         }));
     }
 
@@ -308,7 +316,7 @@ function tryToGuestHeader(baseDoc: string,
                 charge: c,
                 year: chargeData[c],
                 source: HaciendaIcon,
-                sourceName: 'hacienda'
+                sourceName: SOURCE_NAME_MAP['mh']
             }));
 
         }
@@ -318,7 +326,7 @@ function tryToGuestHeader(baseDoc: string,
                 imageURL = `https://datos.aquieneselegimos.org.py/media/${local.staging.a_quien_elegimos[0].head_shot}`;
             }
             if (aqe.identifier) {
-                document = aqe.identifier + "";
+                document = formatMoney(aqe.identifier) + "";
             }
             if (aqe.name && aqe.lastname) {
                 name = `${aqe.name} ${aqe.lastname}`

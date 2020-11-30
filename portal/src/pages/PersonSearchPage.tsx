@@ -39,16 +39,16 @@ import {ReactComponent as Nangareko} from '../assets/logos/nangareko.svg';
 import {ReactComponent as PoliciaNacional} from '../assets/logos/policia_nacional.svg';
 import {Link} from 'react-router-dom';
 
-const sourceNameMap: { [k: string]: string } = {
+export const SOURCE_NAME_MAP: { [k: string]: string } = {
     'tsje_elected': 'Autoridades electas',
-    'declarations': 'Declaraciones juradas',
+    'declarations': 'Declaraciones Juradas de Bienes y Rentas',
     'a_quien_elegimos': 'A Quíenes Elegimos',
     'ande_exonerados': 'Exonerados ANDE',
     'mh': 'Ministerio de Hacienda',
-    'sfp': 'Secretaria de la función pública',
+    'sfp': 'Secretaria de la Función Pública',
     'pytyvo': 'Subsidio Pytyvo',
-    'nangareko': 'Subsidio Nangareko',
-    'policia': 'Policia Nacional'
+    'nangareko': 'Subsidio Ñangareko',
+    'policia': 'Policía Nacional'
 }
 
 
@@ -86,8 +86,8 @@ export function PersonSearchPage() {
                                         enableQuerySuggestions={false}
                                         enablePopularSuggestions={false}
                                         debounce={300}
-                                        placeholder="Búsqueda por nombre o cédula"
-                                        dataField={['name', 'document.keyword']}/>
+                                        placeholder="Búsqueda por nombres o apellidos"
+                                        dataField={['name', 'document.raw']}/>
                         </Col>
                     </Row>
                     <Row>
@@ -130,7 +130,7 @@ function Filter() {
                                    <Col xs={{span: 18}}>
                                        <Checkbox checked={value[item.key]}
                                                  onChange={() => handleChange(item.key)}>
-                                           {sourceNameMap[item.key] || item.key}
+                                           {SOURCE_NAME_MAP[item.key] || item.key}
                                        </Checkbox>
                                    </Col>
                                    <Col xs={{span: 6}} style={{textAlign: 'right'}}>
@@ -220,7 +220,7 @@ function ResultHeader() {
             <b>Nombre</b>
         </Col>
         <Col span={4} style={{textAlign: 'right', fontSize: '0.8em', paddingRight: 10}}>
-            <b>Salario</b>
+            <b>Salario Presupuestado</b>
         </Col>
         <Col span={4} style={{textAlign: 'right', fontSize: '0.8em', paddingRight: 10}}>
             <b>Patrimonio</b>
@@ -283,7 +283,7 @@ function SingleResultCard(props: {
         <Col span={8}>
             {data.name}
             <br/>
-            <small>Cédula: <b>{data.document}</b></small>
+            <small>Cédula: <b>{formatMoney(data.document)}</b></small>
         </Col>
         <Col span={4} style={{textAlign: 'right', fontSize: '0.8em', paddingRight: 10}}>
             {formatMoney(data.salary, 'Gs')}
@@ -388,11 +388,12 @@ const confidenceByDS: { [k: string]: { name: number, photo?: number, net_worth?:
         name: 92
     },
     'mh': {
-        name: 92
+        name: 92,
+        salary: 100
     },
     'sfp': {
         name: 93,
-        salary: 100
+        salary: 99
     },
     'pytyvo': {
         name: 85
@@ -445,7 +446,7 @@ function SourcesIconListComponent(props: {
 }) {
     return <>
         {props.sources.map(s =>
-            <Tooltip title={sourceNameMap[s] || s} key={s}>
+            <Tooltip title={SOURCE_NAME_MAP[s] || s} key={s}>
                 {sourceNameIcon[s]
                     ? <Icon component={sourceNameIcon[s]} className="source-icon"/>
                     : <small>{s}</small>
