@@ -244,7 +244,7 @@ function SingleResultCard(props: {
 
     if (props.isSmall) {
         return <Card className="card-style">
-            <Comment author={data.document}
+            <Comment author={formatMoney(data.document)}
                      className="small-card"
                      avatar={
                          <Avatar
