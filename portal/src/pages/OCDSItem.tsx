@@ -128,7 +128,7 @@ function PriceEvolutionTab(props: { id: string }) {
     }}
     >
         <Col span={isSmall ? 24 : 20}
-             order={isSmall ? 2 : 1}
+             order={isSmall ? 2 : 0}
         >
             {graphData && <ItemPriceEvolutionGraph points={graphData} adjusted={adjusted} log={log}/>}
         </Col>
