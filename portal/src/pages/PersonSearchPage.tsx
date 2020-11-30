@@ -38,6 +38,7 @@ import {ReactComponent as Pytyvo} from '../assets/logos/pytyvo.svg';
 import {ReactComponent as Nangareko} from '../assets/logos/nangareko.svg';
 import {ReactComponent as PoliciaNacional} from '../assets/logos/policia_nacional.svg';
 import {Link} from 'react-router-dom';
+import {fixName} from '../nameUtils';
 
 export const SOURCE_NAME_MAP: { [k: string]: string } = {
     'tsje_elected': 'Autoridades electas',
@@ -357,7 +358,7 @@ function getData(data: Array<ElasticFtsPeopleResult>) {
     }
 
     return {
-        name: name.val,
+        name: fixName(name.val),
         photo: photo.confidence === 0 ? undefined : photo.val,
         sources: Object.keys(sources),
         document: data.map(d => d.document).filter(d => !!d)[0],
