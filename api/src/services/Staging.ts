@@ -12,7 +12,7 @@ const staging = [
     {table: 'hacienda_funcionarios', column: 'codigopersona'},
     {table: 'sfp', column: 'documento'},
     {table: 'policia', column: 'cedula'},
-    {table: 'ande_exonerados', column: 'documento'},
+    {table: 'ande_exonerados', column: 'regexp_replace(documento, \'[^0-9]+\', \'\', \'g\')'},
     {table: 'a_quien_elegimos', column: 'regexp_replace(identifier, \'\\.\', \'\', \'g\')'}
 ];
 

@@ -22,11 +22,11 @@ export function DDJJCard(props: {
                     scroll={{x: undefined, y: undefined}}
                     pagination={false}
                     columns={[{
-                        title: <Typography.Text><strong>Año</strong></Typography.Text>,
+                        title: <Typography.Text><strong>Año (revisión)</strong></Typography.Text>,
                         render: (r: Affidavit) => <a href={r.linksandwich || r.link} target="_blank"
                                                      rel="noopener noreferrer"
                                                      title="Ver">
-                            {r.year}
+                            {r.year} ({r.revision})
                         </a>
 
                     }, {
