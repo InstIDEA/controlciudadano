@@ -27,6 +27,7 @@ import {SFPCard} from '../components/person_cards/SFP';
 import {COLOR_GREY, COLOR_ORANGE} from "../Constants";
 import {useMediaQuery} from '@react-hook/media-query';
 import {SOURCE_NAME_MAP} from "./PersonSearchPage";
+import {fixName} from '../nameUtils';
 
 export function PersonDetailPage() {
 
@@ -339,7 +340,7 @@ function tryToGuestHeader(baseDoc: string,
 
     return {
         found,
-        name,
+        name: fixName(name),
         document,
         charge,
         birthDate,
