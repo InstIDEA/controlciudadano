@@ -99,7 +99,7 @@ export function PersonDetailPage() {
                                         Datos Personales
                                     </Typography.Title>
                                     <Typography.Text className="text-layout-content">
-                                        <strong>Documento: </strong> {header.document || 'No encontrado'}
+                                        <strong>Documento: </strong> {formatMoney(header.document) || 'No encontrado'}
                                     </Typography.Text>
                                     <br/>
                                     <Typography.Text className="text-layout-content">
@@ -224,7 +224,7 @@ function tryToGuestHeader(baseDoc: string,
 ) {
 
     let name = '';
-    let document = formatMoney(baseDoc);
+    let document = baseDoc;
     let found = false;
     let charge: Array<Charge> = [];
     let birthDate = '';
@@ -326,7 +326,7 @@ function tryToGuestHeader(baseDoc: string,
                 imageURL = `https://datos.aquieneselegimos.org.py/media/${local.staging.a_quien_elegimos[0].head_shot}`;
             }
             if (aqe.identifier) {
-                document = formatMoney(aqe.identifier) + "";
+                document = aqe.identifier + "";
             }
             if (aqe.name && aqe.lastname) {
                 name = `${aqe.name} ${aqe.lastname}`
