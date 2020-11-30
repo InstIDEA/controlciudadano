@@ -1,0 +1,10 @@
+@media (max-width: 768px) {
+    .ocds-item .ant-layout-content {
+        padding-right: 2px;
+        padding-left: 2px;
+    }
+
+    .ant-layout-sider-zero-width-trigger {
+        visibility: hidden;
+    }
+}

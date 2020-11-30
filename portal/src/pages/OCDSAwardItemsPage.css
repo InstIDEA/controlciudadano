@@ -1,0 +1,9 @@
+.oaip .list-item .ant-card-body {
+    padding: 2px
+}
+
+@media (max-width: 768px) {
+    .oaip .ant-layout-content {
+        padding-right: 2px;
+    }
+}

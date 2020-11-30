@@ -24,9 +24,22 @@
     margin-right: 20vw;
 }
 
+@media (max-width: 768px) {
+    .action-landing .description {
+        margin-left: 2vw;
+        margin-right: 2vw;
+    }
+}
+
 .action-landing .description > div {
     text-align: center;
     padding: 10px;
+}
+
+.cards .ant-card-meta-title {
+    overflow: visible;
+    white-space: normal;
+    text-overflow: unset;
 }
 
 .action-landing .cards {

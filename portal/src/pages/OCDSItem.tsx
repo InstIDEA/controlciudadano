@@ -29,12 +29,14 @@ import {IMPORTANT_RELATIONS, PARTY_ROLES} from '../Constants';
 import {Card} from 'antd/es';
 import {SupplierDescription} from '../components/SupplierDescription';
 import {BaseDatosPage} from '../components/BaseDatosPage';
+import './OCDSItem.css'
+import {useMediaQuery} from '@react-hook/media-query';
 
 export function OCDSItem() {
 
-    const {itemId} = useParams<{itemId: string}>();
+    const {itemId} = useParams<{ itemId: string }>();
     const history = useHistory();
-
+    const isSmall = useMediaQuery('only screen and (max-width: 768px)');
     const [data, setData] = useState<OCDSItemAwardInfo[]>();
 
     useEffect(() => {
@@ -47,6 +49,7 @@ export function OCDSItem() {
     const header = getHeader(data);
 
     return <BaseDatosPage headerExtra={false}
+                          className="ocds-item"
                           menuIndex="1">
 
         <PageHeader ghost={false}
@@ -55,21 +58,21 @@ export function OCDSItem() {
                     style={{border: '1px solid rgb(235, 237, 240)'}}
                     title={data ? `${header.name}` : 'Cargando...'}
                     subTitle=""
-                    footer={<Tabs defaultActiveKey="PARTIES">
+                    footer={<Tabs defaultActiveKey="PROCESS">
                         <Tabs.TabPane tab="Llamados" key="PROCESS">
-                            {data && <OCDSItemDetailTable data={data}/>}
+                            {data && <OCDSItemDetailTable data={data} isSmall={isSmall}/>}
                         </Tabs.TabPane>
                         <Tabs.TabPane tab="Evolución de precios" key="EVOLUTION">
                             <PriceEvolutionTab id={itemId}/>
                         </Tabs.TabPane>
                         <Tabs.TabPane tab="Participantes" key="PARTIES">
-                            {data && <PartyTab header={header}/>}
+                            {data && <PartyTab header={header} isSmall={isSmall}/>}
                         </Tabs.TabPane>
                     </Tabs>}>
 
             <div className="content">
                 <div className="main">
-                    {data && <Descriptions column={2} size="small">
+                    {data && <Descriptions column={isSmall ? 1 : 2} size="small">
                       <Descriptions.Item label="Nombre">{header.name}</Descriptions.Item>
                       <Descriptions.Item label="ID">{header.id}</Descriptions.Item>
                       <Descriptions.Item label="Llamados">{header.processCount}</Descriptions.Item>
@@ -99,10 +102,12 @@ export function OCDSItem() {
  * Widget that fetchs the price evolution and shows it in a table
  */
 function PriceEvolutionTab(props: { id: string }) {
+
     const [data, setData] = useState<OCDSItemPriceEvolution[]>();
     const [selected, setSelected] = useState<string>()
     const [adjusted, setAdjusted] = useState(true);
     const [log, setLog] = useState(false);
+    const isSmall = useMediaQuery('only screen and (max-width: 768px)');
 
     useEffect(() => {
         new SimpleApi().getItemPriceEvolution(props.id)
@@ -112,7 +117,6 @@ function PriceEvolutionTab(props: { id: string }) {
     if (!data) return <div>Cargando ... </div>;
 
     const groups = groupBy(data, row => `${row.presentation || 'N/A'} - ${row.unit || 'N/A'}`);
-    console.log(groups);
     const keys = Object.keys(groups).sort((k1, k2) => groups[k2].count - groups[k1].count);
     const def = keys.length > 0 ? keys[0] : undefined;
     const graphData = selected ? groups[selected].rows : def ? groups[def].rows : undefined;
@@ -121,12 +125,17 @@ function PriceEvolutionTab(props: { id: string }) {
     return <Row style={{
         width: '100%',
         height: '100%'
-    }}>
-        <Col span={20}>
+    }}
+    >
+        <Col span={isSmall ? 24 : 20}
+             order={isSmall ? 2 : 1}
+        >
             {graphData && <ItemPriceEvolutionGraph points={graphData} adjusted={adjusted} log={log}/>}
         </Col>
-        <Col span={4}>
-            <Select defaultValue={selected || def} onChange={setSelected}>
+        <Col span={isSmall ? 24 : 4}
+             style={{paddingTop: isSmall ? 10 : 0}}
+        >
+            <Select defaultValue={selected || def} onChange={setSelected} style={{width: isSmall ? '100%' : undefined}}>
                 {keys.map(k => <Select.Option value={k} key={k}>{k} ({groups[k]?.count} muestras)</Select.Option>)}
             </Select> <br/>
             <Checkbox checked={adjusted} onChange={_ => setAdjusted(a => !a)}>Ajustado por inflación</Checkbox> <br/>
@@ -145,7 +154,7 @@ function PriceEvolutionTab(props: { id: string }) {
  *
  * @param props the identifier to fetch data.
  */
-function PartyTab(props: { header: HeaderData }) {
+function PartyTab(props: { header: HeaderData, isSmall: boolean }) {
 
     const [data, setData] = useState<OCDSItemRelatedParty[]>();
     const [party, setParty] = useState<Supplier>();
@@ -174,7 +183,7 @@ function PartyTab(props: { header: HeaderData }) {
 
     return <Tabs defaultActiveKey="TABLE">
         <Tabs.TabPane tab="Tabla" key="TABLE">
-            <OCDSPartyTable parties={data}/>
+            <OCDSPartyTable parties={data} withXScroll={props.isSmall}/>
         </Tabs.TabPane>
         <Tabs.TabPane tab="Relaciones" key="GRAPH">
             <Layout>
@@ -191,7 +200,7 @@ function PartyTab(props: { header: HeaderData }) {
                 <Layout.Sider style={{
                     background: '#ececec',
                     padding: 10
-                }} width={400}>
+                }} width={props.isSmall ? 0 : 400}>
                     <Space direction="vertical" style={{width: '100%'}}>
                         {party && <Card
                           title={<Link to={`/ocds/suppliers/${party.ruc}`}>{party.name}</Link>}>
@@ -235,11 +244,14 @@ function PartyTab(props: { header: HeaderData }) {
 /**
  * Table that show complex data about a item
  */
-function OCDSItemDetailTable(props: { data: OCDSItemAwardInfo[] }) {
+function OCDSItemDetailTable(props: { data: OCDSItemAwardInfo[], isSmall: boolean }) {
 
     return <Table<OCDSItemAwardInfo>
         rowKey={d => `${d.unit}${d.currency}${d.presentation}`}
         dataSource={props.data}
+        scroll={{
+            x: props.isSmall ? 1000 : undefined
+        }}
         expandable={{
             expandedRowRender: record => <TenderSubTable data={record.tenders}/>,
             rowExpandable: record => parseInt(record.count) > 0,
@@ -292,7 +304,7 @@ function TenderSubTable(props: { data: OCDSItemTenderInfo[] }) {
 
     return <Table<OCDSItemTenderInfo>
         dataSource={props.data}
-        rowKey="slug"
+        rowKey={r => `${r.slug}.${r.supplier?.id}.${r.tenders}.${r.status}.${r.tenders}.${r.local_name}`}
         columns={[{
             title: 'Llamado',
             dataIndex: 'title',

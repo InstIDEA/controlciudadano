@@ -10,9 +10,9 @@ import {Descriptions} from 'antd';
 
 
 const commonProperties = {
-    // width: 1200,
+    width: 1200,
     height: 700,
-    margin: {top: 20, right: 20, bottom: 60, left: 80},
+    margin: {top: 20, right: 20, bottom: 60, left: 20},
     animate: false,
     enableSlices: 'x',
 }
@@ -51,9 +51,6 @@ export function ItemPriceEvolutionGraph(props: {
         })).sort((p1, p2) => p1.x.localeCompare(p2.x))
     }], [points, props.adjusted]);
 
-    console.log('min ', minPrice)
-    console.log('divideBy ', divideBy)
-
     return <ResponsiveScatterPlot
         {...commonProperties}
         data={serie}
@@ -89,7 +86,6 @@ export function ItemPriceEvolutionGraph(props: {
             legend: 'Precio',
             legendOffset: 12,
             format: val => {
-                console.log(val);
                 return formatMoney((val as number) / divideBy);
             }
         }}
@@ -97,7 +93,7 @@ export function ItemPriceEvolutionGraph(props: {
             top: 60,
             right: 50,
             bottom: 70,
-            left: 90,
+            left: props.log ? 30 : 45,
         }}
         axisBottom={{
             format: '%Y-%m',
@@ -111,23 +107,7 @@ export function ItemPriceEvolutionGraph(props: {
     />
 }
 
-// function LineLayer(min: number, max: number): CustomSvgLayer {
-//
-//     return (graph: any) => {
-//         console.log(graph);
-//         const lineGenerator = line()
-//             .x((d: any) => graph.xScale(d.data.index) + d.width / 2)
-//             .y((d: any) => {
-//                 graph.yScale(lerp(min, max, d.data.quantity))
-//             });
-//
-//         return (
-//             <path d={lineGenerator(graph.nodes)} fill="none" stroke="rgba(200, 30, 15, 1)"/>
-//         );
-//     }
-// }
 
-//CustomCanvasLayer
 const CustomNode: NodeComponent = ({
                                        node,
                                        x,
