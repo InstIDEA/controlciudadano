@@ -13,6 +13,7 @@ import {SupplierRelationsTable} from '../components/SupplierRelationsTable';
 import {getTenderLink} from './OCDSAwardItemsPage';
 import {BooleanParam, useQueryParam} from 'use-query-params';
 import {Header} from "../components/layout/Header";
+import {useMediaQuery} from "@react-hook/media-query";
 
 export function OCDSSupplier() {
 
@@ -23,6 +24,8 @@ export function OCDSSupplier() {
 
     const [contracts, setContracts] = useState<OCDSSupplierContract[]>();
     const [page, setPage] = useState({page: 1, pageSize: 100});
+
+    const isSmall = useMediaQuery('only screen and (max-width: 768px)');
 
     useEffect(() => {
         new SimpleApi().getSupplier(ruc)
@@ -59,7 +62,7 @@ export function OCDSSupplier() {
                     ]}
                     footer={<Tabs defaultActiveKey="CONTRACTS">
                         <Tabs.TabPane tab="Contratos" key="CONTRACTS">
-                            <ContractsTable contracts={finalContracts} page={page} setPage={setPage}/>
+                            <ContractsTable contracts={finalContracts} page={page} setPage={setPage} isSmall={isSmall}/>
                         </Tabs.TabPane>
                         <Tabs.TabPane tab="Asociaciones" key="RELATIONS">
                             <SupplierRelations ruc={ruc}/>
@@ -80,13 +83,17 @@ export function OCDSSupplier() {
 export function ContractsTable(props: {
     contracts: OCDSSupplierContract[],
     page: { page: number, pageSize: number },
-    setPage: (page: { page: number, pageSize: number }) => void
+    setPage: (page: { page: number, pageSize: number }) => void,
+    isSmall: boolean
 }) {
     return <Table<OCDSSupplierContract>
         dataSource={props.contracts}
         loading={!props.contracts}
         rowKey="ruc"
         size="small"
+        scroll={{
+            x: props.isSmall ? 1000 : undefined
+        }}
         pagination={{
             pageSize: props.page.pageSize,
             onChange: (p) => props.setPage({page: p, pageSize: props.page.pageSize}),
