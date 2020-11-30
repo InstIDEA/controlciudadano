@@ -9,6 +9,7 @@ import {BaseDatosPage} from '../components/BaseDatosPage';
 import '../components/layout/Layout.css'
 import {SearchBar} from '../components/SearchBar';
 import {DisclaimerComponent} from '../components/Disclaimer';
+import './OCDSAwardItemsPage.css';
 
 export function OCDSAwardItemsPage() {
 
@@ -35,11 +36,13 @@ export function OCDSAwardItemsPage() {
         'buyer_name'
     ]), [data, query]);
 
-    return <BaseDatosPage menuIndex="items" sidebar={isExploreMenu} headerExtra={
-        <SearchBar defaultValue={query}
-                   placeholder="Buscar ítems, proveedores, compradores"
-                   onSearch={setQuery}/>
-    }>
+    return <BaseDatosPage menuIndex="items" sidebar={isExploreMenu}
+                          className="oaip"
+                          headerExtra={
+                              <SearchBar defaultValue={query}
+                                         placeholder="Buscar ítems, proveedores, compradores"
+                                         onSearch={setQuery}/>
+                          }>
         <PageHeader ghost={false}
                     style={{border: '1 px solid rgb(235, 237, 240)'}}
                     onBack={() => history.push('/')}
@@ -157,7 +160,7 @@ export function OCDSAwardItemsPage() {
             <List
                 className="show-responsive"
                 grid={{
-                    gutter: 16,
+                    gutter: 8,
                     xs: 1,
                     sm: 1,
                     md: 1,
@@ -174,17 +177,17 @@ export function OCDSAwardItemsPage() {
                 dataSource={filtered}
                 renderItem={(r: OCDSItemsAwardedCOVID19) =>
                     <List.Item className="list-item">
-                        <Card bordered={false}>
-                            Item: <Link to={`/ocds/items/${r.item_classification_nivel_5_id}`} target="_blank">
-                            {r.item_adjudicado}
-                            <br/>
-                            <small>{r.item_classification_nivel_5_nombre}</small>
-                            <br/>
-                            <small>{(r.item_classification_nivel_5_id || "").replace("catalogoNivel5DNCP-", "")}</small>
-                        </Link>
+                        <Card bordered={false} style={{padding: 2}}>
+                            <Link to={`/ocds/items/${r.item_classification_nivel_5_id}`}>
+                                {r.item_adjudicado}
+                                <br/>
+                                <small>{r.item_classification_nivel_5_nombre}</small>
+                                <br/>
+                                <small>{(r.item_classification_nivel_5_id || "").replace("catalogoNivel5DNCP-", "")}</small>
+                            </Link>
                             <br/>
                             Precio Unitario: {formatMoney(r.precio_unitario)}
-                            <small> {' ' + r.unidad_medida} </small>
+                            <small> ({r.unidad_medida})</small>
                             <br/>
                             Incremento de precio durante
                             pandemia: {formatMoney(r.porcentaje_mayor_precio_antes_pandemia)}%

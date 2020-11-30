@@ -11,12 +11,16 @@ import {formatIsoDate, formatSortableDate} from '../formatters';
  * @see OCDSItemRelatedParty
  */
 export function OCDSPartyTable(props: {
-    parties: OCDSItemRelatedParty[]
+    parties: OCDSItemRelatedParty[],
+    withXScroll: boolean
 }) {
 
     return <Table<OCDSItemRelatedParty>
         rowKey={r => `${r.slug}${r.party_id}`}
         dataSource={props.parties}
+        scroll={{
+            x: props.withXScroll ? 400 : undefined
+        }}
         columns={[{
             title: 'Llamado',
             dataIndex: 'title',
