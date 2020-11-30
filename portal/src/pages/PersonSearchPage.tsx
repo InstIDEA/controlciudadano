@@ -86,8 +86,8 @@ export function PersonSearchPage() {
                                         enableQuerySuggestions={false}
                                         enablePopularSuggestions={false}
                                         debounce={300}
-                                        placeholder="Búsqueda por nombre o cédula"
-                                        dataField={['name', 'document.keyword']}/>
+                                        placeholder="Búsqueda por nombres o apellidos"
+                                        dataField={['name', 'document.raw']}/>
                         </Col>
                     </Row>
                     <Row>
