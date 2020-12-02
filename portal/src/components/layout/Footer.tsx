@@ -35,7 +35,7 @@ function Footer(props: {
                         <img src={idea} alt="logo"/>
                         <img src={reaccion} alt="logo"/>
                         <img src={cds} alt="logo"/>
-                        <img src={cemilla} alt="logo"/>
+                        <img src={semilla} alt="logo"/>
                     </div>
                 </Col>
                 <Col offset={props.aboutFooter ? 6 : 0}
