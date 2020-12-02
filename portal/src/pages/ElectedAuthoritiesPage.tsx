@@ -6,6 +6,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { PageHeader, Table, Typography, List, Card } from 'antd';
 import { BaseDatosPage } from '../components/BaseDatosPage';
 import { SearchBar } from '../components/SearchBar';
+import { formatMoney } from '../formatters';
 
 export function ElectedAuthoritiesPage() {
 
@@ -73,7 +74,7 @@ export function ElectedAuthoritiesPage() {
                             return <>
                                 <Link to={`/person/${r.cedula}`}>
                                     {r.nombre} {r.apellido} <br />
-                                    {r.cedula}
+                                    {formatMoney(r.cedula)}
                                 </Link>
                             </>
                         },
