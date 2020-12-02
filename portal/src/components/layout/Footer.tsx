@@ -8,6 +8,7 @@ import reaccion from '../../assets/logos/reaccion_fondo.png';
 import idea from '../../assets/logos/logo_idea.png';
 import cc from '../../assets/logos/cc.png';
 import github from '../../assets/logos/github.svg';
+import semilla from '../../assets/logos/semilla.svg';
 
 const GITHUB_REPO = 'https://github.com/InstIDEA/controlciudadano';
 
@@ -34,6 +35,7 @@ function Footer(props: {
                         <img src={idea} alt="logo"/>
                         <img src={reaccion} alt="logo"/>
                         <img src={cds} alt="logo"/>
+                        <img src={semilla} alt="logo"/>
                     </div>
                 </Col>
                 <Col offset={props.aboutFooter ? 6 : 0}
