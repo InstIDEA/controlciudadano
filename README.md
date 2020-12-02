@@ -1,5 +1,3 @@
-
-
 # Control ciudadano
 
 La plataforma de Control Ciudadano nace con el objetivo de poner a disposición
@@ -85,3 +83,9 @@ derivada de la conexión o contenidos de los enlaces de terceros a los que se
 hace referencia en el SICP, por lo que el usuario estará sujeto a las normas y
 condiciones de la página externa.
 
+
+# Cómo colaborar?
+
+El portal se encuentra abierto a contribuciones de toda la comunidad. Para colaborar
+primero se debe crear una [incidencia](https://github.com/InstIDEA/controlciudadano/issues/new),
+y en la misma describir la propuesta.
