@@ -136,3 +136,13 @@ footer .footer-flag {
 .footer-paragraph {
   text-align: center;
 }
+
+#logo .footer-logo-impulsor {
+  width: 100%;
+}
+
+@media screen and (max-width: 767px) {
+  #logo .footer-logo-impulsor {
+    width: 60%;
+  }
+}

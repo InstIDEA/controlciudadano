@@ -29,14 +29,25 @@ function Footer(props: {
                 </Col>
                 <Col offset={props.aboutFooter ? 6 : 0}
                      xxl={props.aboutFooter ? 12 : 8} xl={props.aboutFooter ? 12 : 8}
-                     lg={props.aboutFooter ? 12 : 8} md={props.aboutFooter ? 12 : 8} sm={24}>
+                     lg={props.aboutFooter ? 12 : 8} md={props.aboutFooter ? 12 : 8}
+                     sm={24}>
                     <span className="footer-label">Impulsores del proyecto:</span>
                     <div id="logo">
-                        <img src={idea} alt="logo"/>
-                        <img src={reaccion} alt="logo"/>
-                        <img src={cds} alt="logo"/>
-                        <img src={semilla} alt="logo"/>
-                    </div>
+                        <Row gutter={8} justify="center" align="middle">
+                            <Col xs={12} md={6}>
+                                <img src={idea} className="footer-logo-impulsor" alt="logo"/>
+                            </Col>
+                            <Col xs={12} md={6}>
+                                <img src={reaccion} className="footer-logo-impulsor" alt="logo"/>
+                            </Col>
+                            <Col xs={12} md={6}>
+                                <img src={cds} className="footer-logo-impulsor" alt="logo"/>
+                            </Col>
+                            <Col xs={12} md={6}>
+                                <img src={semilla} className="footer-logo-impulsor" alt="logo"/>
+                            </Col>
+                        </Row>
+                    </div>                            
                 </Col>
                 <Col offset={props.aboutFooter ? 6 : 0}
                      xxl={props.aboutFooter ? 12 : 8} xl={props.aboutFooter ? 12 : 8}
