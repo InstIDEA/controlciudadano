@@ -18,7 +18,7 @@ def find(pattern: str, path: str) -> List[str]:
     busca todos los pdfs del directorio
     """
     result = []
-    for root, dirs, files in os.walk(path):
+    for _, _, files in os.walk(path):
         for name in files:
             if fnmatch(name, pattern):
                 result.append(os.path.join(name))
