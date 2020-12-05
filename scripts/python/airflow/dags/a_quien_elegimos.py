@@ -1,4 +1,3 @@
-import os
 from datetime import timedelta
 
 # The DAG object; we'll need this to instantiate a DAG
@@ -127,21 +126,25 @@ with dag:
                                              'batch_size': 100,
                                              'columns': [
                                                  ColumnMapping('id', 'number'),
-                                                 ColumnMapping('name'),
-                                                 ColumnMapping('lastname'),
+                                                 ColumnMapping('name').fix_name(),
+                                                 ColumnMapping('lastname').fix_name(),
                                                  ColumnMapping("alternate_name", "text"),
                                                  ColumnMapping("former_name", "text"),
-                                                 ColumnMapping("identifier", "text").map("NULL", None).empty_to_none().remove_dots(),
-                                                 ColumnMapping("email_address", "text").map("NULL", None).empty_to_none(),
+                                                 ColumnMapping("identifier", "text").map("NULL", None)\
+                                                      .empty_to_none().remove_dots(),
+                                                 ColumnMapping("email_address", "text").map("NULL", None)\
+                                                      .empty_to_none(),
                                                  ColumnMapping("gender", "text"),
-                                                 ColumnMapping("date_of_birth", "date").map('0001-01-01', None).empty_to_none(),
+                                                 ColumnMapping("date_of_birth", "date").map('0001-01-01', None)\
+                                                      .empty_to_none(),
                                                  ColumnMapping("date_of_death", "text"),
                                                  ColumnMapping("head_shot", "text"),
                                                  ColumnMapping("one_line_biography", "text"),
                                                  ColumnMapping("biography", "text"),
                                                  ColumnMapping("national_identity", "integer"),
                                                  ColumnMapping("phone", "text"),
-                                                 ColumnMapping("contact_detail", "text").map("NULL", None).empty_to_none(),
+                                                 ColumnMapping("contact_detail", "text").map("NULL", None)\
+                                                      .empty_to_none(),
                                                  ColumnMapping("external_links", "text"),
                                                  ColumnMapping("decendents", "text"),
                                                  ColumnMapping("fb", "text").map("NULL", None).empty_to_none(),
@@ -180,16 +183,16 @@ with dag:
                                       autocommit=True
                                       )
 
-    upload_to_ftp = PythonOperator(task_id="upload_to_ftp",
-                                   python_callable=upload_to_ftp,
-                                   op_kwargs={
-                                       'con_id': 'ftp_data.controlciudadano.org.py',
-                                       'remote_path': "./data/{{ params.data_set }}/{{ task_instance.xcom_pull(task_ids='calc_hash') }}_{{ params.file_name }}",
-                                       'local_path': "{{ params.data_folder }}/{{ ds }}/{{ params.file_name }}"
-                                   })
+    upload_to_ftp_step = PythonOperator(task_id=f"upload_to_ftp",
+                                        python_callable=upload_to_ftp,
+                                        op_kwargs={
+                                            'con_id': 'ftp_data.controlciudadano.org.py',
+                                            'remote_path': "./data/{{ params.data_set }}/{{ task_instance.xcom_pull(task_ids='calc_hash') }}_{{ params.file_name }}",
+                                            'local_path': "{{ params.data_folder }}/{{ ds }}/{{ params.file_name }}"
+                                        })
 
     proceed >> clean_db >> batch_insert
-    proceed >> upload_to_ftp
+    proceed >> upload_to_ftp_step
     proceed >> insert_into_ds
 
     check_if_is_already_up >> proceed
