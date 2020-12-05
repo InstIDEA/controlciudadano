@@ -6,6 +6,19 @@ from typing import List, Dict, Union
 from airflow.hooks.postgres_hook import PostgresHook
 
 
+def fix_name(to_ret: str = ""):
+    return to_ret.replace("G�E", "GÜE") \
+        .replace('ARGA�A', 'ARGAÑA') \
+        .replace('NU�EZ', 'NUÑEZ') \
+        .replace('CA�ETE', 'CAÑETE') \
+        .replace('IBA�EZ', 'IBAÑEZ') \
+        .replace('PE�A', 'PEÑA') \
+        .replace('MU�OZ', 'MUÑOZ') \
+        .replace('ACU�A', 'ACUÑA') \
+        .replace('FARI�A', 'FARIÑA') \
+        .replace('QUI�ONEZ', 'QUIÑONEZ')
+
+
 class ColumnMapping:
     csv_name: str
     column_name: str
@@ -42,8 +55,11 @@ class ColumnMapping:
         self.rules.append("REMOVE_DOTS")
         return self
 
+    def fix_name(self) -> ColumnMapping:
+        self.rules.append("FIX_NAME")
+        return self
 
-    def do_map(self, val: Union[str,None]) -> Union[str, None]:
+    def do_map(self, val: Union[str, None]) -> Union[str, None]:
         """
         Maps the val to using the list of mapping
         :param val: the value to map
@@ -60,11 +76,15 @@ class ColumnMapping:
             if "REMOVE_DOTS" in self.rules and to_ret is not None:
                 to_ret = to_ret.replace(".", "")
 
+            if "FIX_NAME" in self.rules and to_ret is not None:
+                to_ret = fix_name(to_ret)
+
         return to_ret
 
 
-def batch_read_csv_file(file_path: str, batch_size=10000, skip_header=True):
-    with open(file_path, "r") as csv_file:
+def batch_read_csv_file(file_path: str, batch_size=10000, skip_header=True, encoding="UTF-8"):
+    print(f"Reading file {file_path} with encoding {encoding} batch_size {batch_size}")
+    with open(file_path, "r", encoding=encoding) as csv_file:
         reader = csv.reader(csv_file)
 
         to_yield = []
@@ -90,7 +110,8 @@ def batch_insert_csv_file(file_path: str,
                           columns: List[ColumnMapping],
                           con_id="postgres_default",
                           db_name="postgres",
-                          batch_size=10000):
+                          batch_size=10000,
+                          file_encoding="UTF-8"):
     db_hook = PostgresHook(postgres_conn_id=con_id, schema=db_name)
     db_conn = db_hook.get_conn()
     db_cursor = db_conn.cursor()
@@ -110,13 +131,12 @@ def batch_insert_csv_file(file_path: str,
     # get the generated id back
     # vendor_id = db_cursor.fetchone()[0]
     # execute the INSERT statement
-    for batch in batch_read_csv_file(file_path, batch_size):
+    for batch in batch_read_csv_file(file_path, batch_size, encoding=file_encoding):
         # do the mapping
         for row in batch:
             for idx in range(len(row)):
                 definition = columns[idx]
                 row[idx] = definition.do_map(row[idx])
-
 
         # END MAPPING
         db_cursor.executemany(sql, batch)

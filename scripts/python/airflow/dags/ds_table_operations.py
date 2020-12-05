@@ -19,19 +19,17 @@ class UnzipFile(BaseOperator):
     @apply_defaults
     def __init__(
             self,
-            name: str,
             path: str,
             target: str,
             is_single_file: bool,
             *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.name = name
         self.path = path
         self.target = target
         self.is_single_file = is_single_file
 
     def execute(self, context):
-        zip_file = self.target
+        zip_file = self.path
         target = self.target
         single_file = self.is_single_file
 
