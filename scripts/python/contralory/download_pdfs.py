@@ -75,8 +75,7 @@ def contraloria_download_pdfs(urlist: List[str], targetDir: str) -> None:
 
         fname = re.findall("filename=(.+)", r.headers['content-disposition'])
         fname = fname[0].replace('"', '').replace("'", "")
-        if (fname in cache_list):
-        else:
+        if not(fname in cache_list):
             print(f"Downloading {fname}...")
             with open(os.path.join(targetDir, fname), 'wb') as targetFile:
                 targetFile.write(r.content)
