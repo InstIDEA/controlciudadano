@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 # The DAG object; we'll need this to instantiate a DAG
 from airflow import DAG
@@ -17,7 +17,6 @@ from network_operators import download_file_if_changed
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'start_date': days_ago(2),
     'email': ['arturovolpe@gmail.com'],
     'email_on_failure': False,
     'email_on_retry': False,
@@ -47,6 +46,7 @@ dag = DAG(
     'sfp_download_employee_files',
     default_args=default_args,
     description='Downloads files from https://datos.sfp.gov.py/data/funcionarios/download',
+    start_date=datetime(2019, 1, 1),
     schedule_interval=timedelta(weeks=1),
 )
 

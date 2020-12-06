@@ -17,7 +17,6 @@ from ds_table_operations import CalculateHash, check_if_is_already_processed, up
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'start_date': days_ago(2),
     'email': ['arturovolpe@gmail.com'],
     'email_on_failure': False,
     'email_on_retry': False,
@@ -49,6 +48,7 @@ dag = DAG(
     'a_quien_elegimos',
     default_args=default_args,
     description='ETL for the data of https://www.aquieneselegimos.org.py',
+    start_date=days_ago(2),
     schedule_interval=timedelta(weeks=1),
 )
 
