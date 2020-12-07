@@ -89,6 +89,7 @@ export function PersonSearchPage() {
                                             enableQuerySuggestions={false}
                                             enablePopularSuggestions={false}
                                             debounce={300}
+                                            autosuggest={false}
                                             innerClass={{
                                                 input: 'fts-search-input'
                                             }}
@@ -107,8 +108,6 @@ export function PersonSearchPage() {
                                                      const clearFilter = (component: string) => {
                                                          setValue(component, null);
                                                      };
-
-                                                     console.log(props);
 
                                                      return <>
                                                          {Object.keys(selectedValues).map(key => {
