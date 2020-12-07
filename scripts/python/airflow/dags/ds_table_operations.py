@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import List
 
 import hashlib
 import os.path
@@ -9,11 +8,11 @@ from airflow import AirflowException
 from airflow.contrib.hooks.ftp_hook import FTPHook
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import BaseOperator
+from airflow.operators.postgres_operator import PostgresOperator
 from airflow.utils.decorators import apply_defaults
 
 
 class UnzipFile(BaseOperator):
-
     template_fields = ['path', 'target']
 
     @apply_defaults
@@ -54,7 +53,6 @@ class UnzipFile(BaseOperator):
 
 
 class CalculateHash(BaseOperator):
-
     template_fields = ['path']
 
     @apply_defaults
@@ -92,7 +90,6 @@ def check_if_is_already_processed(pull_hash_from: str,
                                   proceed_path="proceed",
                                   already_processed_path="already_processed",
                                   **context):
-
     file_hash = context['ti'].xcom_pull(task_ids=pull_hash_from)
 
     if not file_hash:
@@ -105,7 +102,8 @@ def check_if_is_already_processed(pull_hash_from: str,
     data_sets = db_hook.get_records(fetch_sql, [data_set])
 
     if len(data_sets) != 1:
-        raise AirflowException(f"The data_set {data_set} was not found, we found: {len(data_sets)} in the db, we need 1")
+        raise AirflowException(
+            f"The data_set {data_set} was not found, we found: {len(data_sets)} in the db, we need 1")
 
     data_set_id = data_sets[0][0]
 
@@ -115,7 +113,8 @@ def check_if_is_already_processed(pull_hash_from: str,
         return proceed_path
 
     if len(records) > 1:
-        raise AirflowException(f"The hash {file_hash} for the ds {data_set} was processed {len(records)} times, failing")
+        raise AirflowException(
+            f"The hash {file_hash} for the ds {data_set} was processed {len(records)} times, failing")
 
     return already_processed_path
 
@@ -128,3 +127,5 @@ def upload_to_ftp(
     hook = FTPHook(con_id)
 
     hook.store_file(remote_path, local_path)
+
+

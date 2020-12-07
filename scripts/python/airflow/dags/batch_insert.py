@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import csv
+import json
 from typing import List, Dict, Union
 
+from airflow import AirflowException
 from airflow.hooks.postgres_hook import PostgresHook
 
 
@@ -20,30 +22,39 @@ def fix_name(to_ret: str = ""):
 
 
 class ColumnMapping:
-    csv_name: str
+    source_name: str
     column_name: str
     sql_type: str
     maps: Dict[Union[str, None], Union[str, None]]
     rules: List[str]
 
-    def __init__(self, csv_name='', sql_type='text', column_name='SAME_AS_CSV'):
-        self.csv_name = csv_name
+    def __init__(self, source_name='', sql_type='text', column_name='SAME_AS_SOURCE'):
+        self.source_name = source_name
         self.column_name = column_name
         self.sql_type = sql_type
         self.maps = {}
         self.rules = []
+        self.constant_value = ""
+
+    @staticmethod
+    def constant_column(column_name: str, value: str) -> ColumnMapping:
+        """
+        Currently we only support constant as the last elements
+        :param column_name:  the column name
+        :param value:  the value
+        :return: a column mapping
+        """
+        return ColumnMapping("__CONSTANT__", "text", column_name).map(None, value)
 
     def get_column_name(self):
-        if self.column_name == 'SAME_AS_CSV':
-            return self.csv_name
+        if self.column_name == 'SAME_AS_SOURCE':
+            return self.source_name
         return self.column_name
 
     def get_format(self):
-        if self.sql_type == 'integer':
-            return "%s"
         return "%s"
 
-    def map(self, f: str, to: Union[str, None]) -> ColumnMapping:
+    def map(self, f: Union[str, None], to: Union[str, None]) -> ColumnMapping:
         self.maps[f] = to
         return self
 
@@ -59,6 +70,10 @@ class ColumnMapping:
         self.rules.append("FIX_NAME")
         return self
 
+    def dump_json(self) -> ColumnMapping:
+        self.rules.append("DUMP_JSON")
+        return self
+
     def do_map(self, val: Union[str, None]) -> Union[str, None]:
         """
         Maps the val to using the list of mapping
@@ -70,6 +85,10 @@ class ColumnMapping:
             to_ret = self.maps[val]
 
         if isinstance(to_ret, str):
+
+            if "DUMP_JSON" in self.rules and to_ret is not None:
+                to_ret = json.dumps(to_ret)
+
             if "EMPTY_TO_NONE" in self.rules and "" == to_ret.strip():
                 to_ret = None
 
@@ -105,6 +124,27 @@ def batch_read_csv_file(file_path: str, batch_size=10000, skip_header=True, enco
             yield to_yield
 
 
+def batch_read_json_file(file_path: str, batch_size=10000, skip_header=True, encoding="UTF-8"):
+    print(f"Reading json file {file_path} with encoding {encoding} batch_size {batch_size}")
+    with open(file_path, "r", encoding=encoding) as json_file:
+        # TODO make this load in batch
+        data = json.load(json_file)
+
+        to_yield = []
+        counter = 0
+
+        for row in data:
+            to_yield.append(row)
+            counter += 1
+            if divmod(counter, batch_size)[1] == 0:
+                print(f" -> yielding {len(to_yield)}")
+                yield to_yield
+                to_yield = []
+
+        if len(to_yield) > 0:
+            yield to_yield
+
+
 def batch_insert_csv_file(file_path: str,
                           table_name: str,
                           columns: List[ColumnMapping],
@@ -112,6 +152,17 @@ def batch_insert_csv_file(file_path: str,
                           db_name="postgres",
                           batch_size=10000,
                           file_encoding="UTF-8"):
+    return batch_insert_file(file_path, table_name, 'csv', columns, con_id, db_name, batch_size, file_encoding)
+
+
+def batch_insert_file(file_path: str,
+                      table_name: str,
+                      file_type: str,
+                      columns: List[ColumnMapping],
+                      con_id="postgres_default",
+                      db_name="postgres",
+                      batch_size=10000,
+                      file_encoding="UTF-8"):
     db_hook = PostgresHook(postgres_conn_id=con_id, schema=db_name)
     db_conn = db_hook.get_conn()
     db_cursor = db_conn.cursor()
@@ -127,17 +178,27 @@ def batch_insert_csv_file(file_path: str,
     """.format(table_name, ', '.join(column_names), ', '.join(sql_format))
 
     print(f" -> bi -> SQL to execute {sql} ")
-    # db_cursor.execute(sql, group)
-    # get the generated id back
-    # vendor_id = db_cursor.fetchone()[0]
-    # execute the INSERT statement
-    for batch in batch_read_csv_file(file_path, batch_size, encoding=file_encoding):
-        # do the mapping
+
+    def map_and_insert(batch: List[List]):
         for row in batch:
-            for idx in range(len(row)):
+            for idx in range(len(columns)):
                 definition = columns[idx]
-                row[idx] = definition.do_map(row[idx])
+                if definition.source_name == '__CONSTANT__':
+                    if idx > len(row):
+                        raise AirflowException(f"You can only put constants at end of ColumnMapping, error with {definition.constant_value}")
+                    row.append(definition.do_map(None))
+                else:
+                    row[idx] = definition.do_map(row[idx])
+
 
         # END MAPPING
         db_cursor.executemany(sql, batch)
         db_conn.commit()
+
+    if file_type == 'csv':
+        for batch in batch_read_csv_file(file_path, batch_size, encoding=file_encoding):
+            map_and_insert(batch)
+
+    if file_type == 'json':
+        for batch in batch_read_json_file(file_path, batch_size, encoding=file_encoding):
+            map_and_insert(batch)
