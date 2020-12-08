@@ -170,7 +170,7 @@ function Filter() {
                        URLParams
                        showSearch={false}
                        react={{
-                           and: ['query', 'Patrimonio', 'Salario'],
+                           and: ['query', 'Patrimonio', 'Salario', 'Fuente'],
                        }}
                        render={({loading, error, data, handleChange, value}) => {
                            if (loading) {
