@@ -361,7 +361,7 @@ function SingleResultCard(props: {
 
 const ColorList = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae'];
 const FilterColors: Record<string, string> = {
-    'Fuente': '#f56a00',
+    'Fuente': 'rgb(205 83 52)',
     'Salario': '#f50',
     'query': '#108ee9',
     'Patrimonio': '#00a2ae'
