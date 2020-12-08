@@ -86,3 +86,24 @@
         padding-bottom: 0;
     }
 }
+
+
+.card-style .fts-search-input {
+    border: none;
+    background-color: white;
+    /*padding: 10px;*/
+}
+
+.card-fts-search .ant-card-body {
+    margin: auto;
+    padding: 0;
+    width: 100%;
+}
+
+.card-fts-search .fts-search-input-wrapper {
+    padding: 5px;
+    border-style: solid;
+    border-radius: 10px;
+    border-color: #002E4D;
+    border-width: 2px;
+}

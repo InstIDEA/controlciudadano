@@ -11,6 +11,7 @@ import {
     Descriptions,
     Layout,
     Row,
+    Tag,
     Tooltip,
     Typography
 } from 'antd';
@@ -81,20 +82,71 @@ export function PersonSearchPage() {
                       </Col>
                     </Row>}
                     <Row>
-                        <Col xs={{span: 24}}>
-                            <DataSearch componentId="query"
-                                        URLParams
-                                        enableQuerySuggestions={false}
-                                        enablePopularSuggestions={false}
-                                        debounce={300}
-                                        placeholder="Búsqueda por nombres o apellidos"
-                                        dataField={['name', 'document.raw']}/>
-                        </Col>
+                        <Card className="card-style card-fts-search" style={{width: '100%'}}>
+                            <div className="fts-search-input-wrapper">
+                                <DataSearch componentId="query"
+                                            URLParams
+                                            enableQuerySuggestions={false}
+                                            enablePopularSuggestions={false}
+                                            debounce={300}
+                                            autosuggest={false}
+                                            innerClass={{
+                                                input: 'fts-search-input'
+                                            }}
+                                            placeholder="Búsqueda por nombres o apellidos"
+                                            dataField={['name', 'document.raw']}/>
+                            </div>
+                        </Card>
                     </Row>
                     <Row>
                         <Col xs={{span: 24}}>
-                            <SelectedFilters showClearAll={true}
-                                             clearAllLabel="Limpiar"/>
+                            <Card className="card-style" title="Filtros" style={{width: '100%'}}>
+                                <SelectedFilters showClearAll={true}
+                                                 clearAllLabel="Limpiar"
+                                                 render={(props) => {
+                                                     const {selectedValues, setValue} = props;
+                                                     const clearFilter = (component: string) => {
+                                                         setValue(component, null);
+                                                     };
+
+                                                     return <>
+                                                         {Object.keys(selectedValues).map(key => {
+                                                             const component = selectedValues[key];
+
+                                                             if (!component.value) {
+                                                                 return <> </>
+                                                             }
+
+                                                             if (Array.isArray(component.value)) {
+                                                                 return component.value.map((val: unknown) => <Tag
+                                                                     color={FilterColors[key] || 'gray'}
+                                                                     closable
+                                                                     key={`${key}_${val}`}
+                                                                     onClose={() => setValue(key, component.value.filter((sb: unknown) => sb !== val))}
+                                                                 >
+                                                                     {getFilterKeyName(key)}: {getFilterValueName(val)}
+                                                                 </Tag>)
+                                                             }
+
+                                                             let label = JSON.stringify(component.value);
+                                                             if (typeof component.value === 'string') {
+                                                                 label = component.value;
+                                                             }
+                                                             if (typeof component.value === 'object' && 'label' in component.value) {
+                                                                 label = component.value.label;
+                                                             }
+
+                                                             return <Tag closable
+                                                                         color={FilterColors[key] || 'gray'}
+                                                                         onClose={() => clearFilter(key)}
+                                                                         key={key}>
+                                                                 {getFilterKeyName(key)}: {getFilterValueName(label)}
+                                                             </Tag>
+                                                         })}
+                                                     </>;
+                                                 }}
+                                />
+                            </Card>
                         </Col>
                     </Row>
                     <ResultComponent isSmall={isSmall}/>
@@ -113,6 +165,7 @@ function Filter() {
 
             <MultiList componentId="Fuente"
                        dataField="sources.keyword"
+                       queryFormat="and"
                        showCheckbox
                        URLParams
                        showSearch={false}
@@ -148,6 +201,9 @@ function Filter() {
                          dataField="salary"
                          showRadio
                          URLParams
+                         react={{
+                             and: ['query', 'Patrimonio', 'Fuente'],
+                         }}
                          includeNullValues={true}
                          data={[
                              {start: 0, end: 2500000, label: 'Hasta sueldo mínimo'},
@@ -161,6 +217,9 @@ function Filter() {
         <Card title="Patrimonio neto" className="card-style">
             <SingleRange componentId="Patrimonio"
                          dataField="net_worth"
+                         react={{
+                             and: ['query', 'Salario', 'Fuente'],
+                         }}
                          showRadio
                          URLParams
                          includeNullValues={false}
@@ -181,12 +240,7 @@ function ResultComponent(props: {
 }) {
 
     return <Col xs={{span: 24}}>
-        <Row>
-            <Typography.Title level={3} className="title-layout-content result-title">
-                Resultados
-            </Typography.Title>
-        </Row>
-        <Row>
+        <Card title="Resultados" className="card-style">
             <Col xs={{span: 24}}>
                 {!props.isSmall && <ResultHeader/>}
                 <ReactiveList
@@ -196,6 +250,7 @@ function ResultComponent(props: {
                         and: ['query', 'Fuente', 'Salario', 'Patrimonio']
                     }}
                     infiniteScroll={false}
+                    renderNoResults={() => "Sin resultados que cumplan con tu búsqueda"}
                     size={10}
                     pagination
                     paginationAt="bottom"
@@ -208,7 +263,7 @@ function ResultComponent(props: {
                     />}
                 />
             </Col>
-        </Row>
+        </Card>
     </Col>
 }
 
@@ -217,14 +272,14 @@ function ResultHeader() {
     return <Row gutter={[8, 8]} justify="start" align="middle">
         <Col span={1}>
         </Col>
-        <Col span={8}>
+        <Col span={7}>
             <b>Nombre</b>
         </Col>
         <Col span={4} style={{textAlign: 'right', fontSize: '0.8em', paddingRight: 10}}>
-            <b>Salario Presupuestado</b>
+            <b>Salario Presupuestado (Gs.)</b>
         </Col>
         <Col span={4} style={{textAlign: 'right', fontSize: '0.8em', paddingRight: 10}}>
-            <b>Patrimonio</b>
+            <b>Patrimonio (Gs.)</b>
         </Col>
         <Col span={3} offset={1} style={{textAlign: 'right'}}>
             <b>Fuente</b>
@@ -281,16 +336,16 @@ function SingleResultCard(props: {
                 src={data.photo}
                 alt={data.name}>{getInitials(data.name)}</Avatar>
         </Col>
-        <Col span={8}>
+        <Col span={7}>
             {data.name}
             <br/>
             <small>Cédula: <b>{formatMoney(data.document)}</b></small>
         </Col>
         <Col span={4} style={{textAlign: 'right', fontSize: '0.8em', paddingRight: 10}}>
-            {formatMoney(data.salary, 'Gs')}
+            {formatMoney(data.salary)}
         </Col>
         <Col span={4} style={{textAlign: 'right', fontSize: '0.8em', paddingRight: 10}}>
-            {formatMoney(data.net_worth, 'Gs')}
+            {formatMoney(data.net_worth)}
         </Col>
         <Col span={3} offset={1} style={{textAlign: 'right'}}>
             <SourcesIconListComponent sources={data.sources}/>
@@ -305,6 +360,12 @@ function SingleResultCard(props: {
 
 
 const ColorList = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae'];
+const FilterColors: Record<string, string> = {
+    'Fuente': '#f56a00',
+    'Salario': '#f50',
+    'query': '#108ee9',
+    'Patrimonio': '#00a2ae'
+}
 
 function getInitials(name: string = ""): string {
     return (name || "").split(/\s+/)
@@ -474,4 +535,22 @@ function mapFullDataToFTS(item: ElasticFullDataResult): ElasticFtsPeopleResult[]
     })
 
     return toRet;
+}
+
+function getFilterValueName(val: unknown): string {
+
+    if (typeof val === 'string') {
+        return SOURCE_NAME_MAP[val] || val;
+    }
+
+    return `${val}`;
+}
+
+function getFilterKeyName(val: string): string {
+
+    if (val === 'query') {
+        return 'Nombre o apellido';
+    }
+
+    return val;
 }
