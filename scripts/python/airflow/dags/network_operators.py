@@ -19,7 +19,7 @@ def download_file_if_changed(
     if head_info.status_code != requests.codes.ok:
         raise NetworkError(f"The url '{url}' returned {head_info.status_code}")
 
-    url_date = datetime.datetime(1970, 1, 1, 0, 0, 0).replace(tzinfo=pytz.UTC)
+    url_date = datetime.datetime(3000, 1, 1, 0, 0, 0).replace(tzinfo=pytz.UTC)
     if 'last-modified' in head_info.headers:
         url_time = head_info.headers['last-modified']
         url_date = parsedate(url_time)

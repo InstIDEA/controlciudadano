@@ -81,13 +81,16 @@ class ColumnMapping:
         :return: the mapped value
         """
         to_ret = val
-        if val in self.maps:
+        if type(val) is str and val in self.maps:
             to_ret = self.maps[val]
 
-        if isinstance(to_ret, str):
+        if to_ret is None and None in self.maps:
+            to_ret = self.maps[None]
 
-            if "DUMP_JSON" in self.rules and to_ret is not None:
-                to_ret = json.dumps(to_ret)
+        if "DUMP_JSON" in self.rules and to_ret is not None:
+            to_ret = json.dumps(to_ret)
+
+        if isinstance(to_ret, str):
 
             if "EMPTY_TO_NONE" in self.rules and "" == to_ret.strip():
                 to_ret = None
@@ -124,11 +127,17 @@ def batch_read_csv_file(file_path: str, batch_size=10000, skip_header=True, enco
             yield to_yield
 
 
-def batch_read_json_file(file_path: str, batch_size=10000, skip_header=True, encoding="UTF-8"):
+def batch_read_json_file(file_path: str, batch_size=10000, encoding="UTF-8", sub_path=""):
     print(f"Reading json file {file_path} with encoding {encoding} batch_size {batch_size}")
     with open(file_path, "r", encoding=encoding) as json_file:
         # TODO make this load in batch
         data = json.load(json_file)
+
+        if sub_path is not None:
+            for part in sub_path.split("."):
+                if part not in data:
+                    raise AirflowException(f"The sub-path {part} (of {sub_path}) does not exists")
+                data = data[part]
 
         to_yield = []
         counter = 0
@@ -162,7 +171,9 @@ def batch_insert_file(file_path: str,
                       con_id="postgres_default",
                       db_name="postgres",
                       batch_size=10000,
-                      file_encoding="UTF-8"):
+                      file_encoding="UTF-8",
+                      json_sub_path=""
+                      ):
     db_hook = PostgresHook(postgres_conn_id=con_id, schema=db_name)
     db_conn = db_hook.get_conn()
     db_cursor = db_conn.cursor()
@@ -179,26 +190,36 @@ def batch_insert_file(file_path: str,
 
     print(f" -> bi -> SQL to execute {sql} ")
 
-    def map_and_insert(batch: List[List]):
-        for row in batch:
-            for idx in range(len(columns)):
-                definition = columns[idx]
-                if definition.source_name == '__CONSTANT__':
-                    if idx > len(row):
-                        raise AirflowException(f"You can only put constants at end of ColumnMapping, error with {definition.constant_value}")
-                    row.append(definition.do_map(None))
-                else:
-                    row[idx] = definition.do_map(row[idx])
-
-
-        # END MAPPING
-        db_cursor.executemany(sql, batch)
-        db_conn.commit()
-
     if file_type == 'csv':
         for batch in batch_read_csv_file(file_path, batch_size, encoding=file_encoding):
-            map_and_insert(batch)
+            for row in batch:
+                for idx in range(len(columns)):
+                    definition = columns[idx]
+                    if definition.source_name == '__CONSTANT__':
+                        if idx > len(row):
+                            raise AirflowException(f"You can only put constants at end of ColumnMapping, error with {definition.constant_value}")
+                        row.append(definition.do_map(None))
+                    else:
+                        row[idx] = definition.do_map(row[idx])
+
+            # END MAPPING
+            db_cursor.executemany(sql, batch)
+            db_conn.commit()
 
     if file_type == 'json':
-        for batch in batch_read_json_file(file_path, batch_size, encoding=file_encoding):
-            map_and_insert(batch)
+        for batch in batch_read_json_file(file_path, batch_size, encoding=file_encoding, sub_path=json_sub_path):
+            batch_to_insert = []
+            for row in batch:
+                row_to_insert = []
+                batch_to_insert.append(row_to_insert)
+                for idx in range(len(columns)):
+                    definition = columns[idx]
+                    if definition.source_name == '__CONSTANT__':
+                        row_to_insert.append(definition.do_map(None))
+                    else:
+                        val = row[definition.source_name]
+                        row_to_insert.append(definition.do_map(val))
+
+            db_cursor.executemany(sql, batch_to_insert)
+            db_conn.commit()
+

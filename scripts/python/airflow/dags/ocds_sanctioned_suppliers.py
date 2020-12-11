@@ -3,6 +3,7 @@ from datetime import timedelta
 # The DAG object; we'll need this to instantiate a DAG
 from airflow import DAG
 # Operators; we need this to operate!
+from airflow.operators.bash_operator import BashOperator
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.postgres_operator import PostgresOperator
 from airflow.operators.python_operator import PythonOperator, BranchPythonOperator
@@ -72,6 +73,14 @@ with dag:
         ftp_target_filename_exp = f"{hash_exp}_{ftp_target_filename_without_hash_exp}"
         ftp_target_path = f"./data/{{{{ params.data_set }}}}/{ftp_target_filename_exp}"
 
+        create_folder = BashOperator(
+            task_id=f'download_file_{in_type}',
+            bash_command=f"""
+            mkdir -pv "{target_folder_exp}"
+            """,
+            retries=10
+        )
+
         download_file = PythonOperator(task_id=f"download_file_if_changed_{in_type}",
                                        python_callable=download_file_if_changed,
                                        op_kwargs={
@@ -92,11 +101,11 @@ with dag:
 
         insert_into_ds = PostgresOperator(task_id=f"insert_into_ds_{in_type}",
                                           sql=f"""
-                                      INSERT INTO staging.data_set_file 
+                                      INSERT INTO staging.data_set_file
                                       (file_name, data_set_id, loaded_date, file_date, original_url, local_suffix, hash)
-                                      VALUES 
+                                      VALUES
                                       (
-                                        '{target_file_exp}',
+                                        '{in_type}.json',
                                         (SELECT id FROM staging.data_set WHERE name = '{{{{ params.data_set }}}}' LIMIT 1),
                                         '{{{{ ts }}}}',
                                         '{{{{ ds }}}}',
@@ -135,31 +144,31 @@ with dag:
                                           'file_path': target_file_exp,
                                           'table_name': '{{ params.table_name }}',
                                           'file_type': 'json',
+                                          'json_sub_path': 'list',
                                           'db_name': 'db',
                                           'batch_size': 100,
                                           'columns': [
                                               ColumnMapping("name", "text", "supplier_name"),
                                               ColumnMapping("id", "text", "supplier_id"),
                                               ColumnMapping("identifier", "jsonb").dump_json(),
-                                              ColumnMapping("contact_point", "jsonb", "contactPoint").dump_json(),
+                                              ColumnMapping("contactPoint", "jsonb", "contact_point").dump_json(),
                                               ColumnMapping("details", "jsonb", "details").dump_json(),
-                                              ColumnMapping("address", "jsonb", "details").dump_json(),
+                                              ColumnMapping("address", "jsonb", "address").dump_json(),
                                               ColumnMapping("date"),
-                                              ColumnMapping("awarded_tenders", "integer", "cantidad_adjudicaciones"),
+                                              ColumnMapping("cantidad_adjudicaciones", "integer", "awarded_tenders"),
                                               ColumnMapping.constant_column("type", in_type)
                                           ]
                                       })
 
         proceed = DummyOperator(task_id=f"proceed_to_insert_{in_type}")
 
-        proceed >> clean_db >> batch_insert
+        proceed >> clean_db >> batch_insert >> insert_into_ds
         proceed >> upload_to_ftp_step
-        proceed >> insert_into_ds
 
         check_if_is_already_up >> proceed
         check_if_is_already_up >> success
 
-        start >> download_file >> calc_hash >> check_if_is_already_up
+        start >> create_folder >> download_file >> calc_hash >> check_if_is_already_up
 
 if __name__ == '__main__':
     dag.clear(reset_dag_runs=True)
