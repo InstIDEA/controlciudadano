@@ -1,9 +1,10 @@
 import datetime
 import math
+import os
 
 import pytz
 import requests
-import os
+from airflow import AirflowException
 from dateutil.parser import parse as parsedate
 
 
@@ -11,16 +12,17 @@ def download_file_if_changed(
         url: str,
         target: str
 ):
-
     print(f"Downloading file {url} to {target}")
 
     head_info = requests.head(url)
 
     if head_info.status_code != requests.codes.ok:
-        raise NetworkError(f"The url {url} returned {head_info.status_code}")
+        raise NetworkError(f"The url '{url}' returned {head_info.status_code}")
 
-    url_time = head_info.headers['last-modified']
-    url_date = parsedate(url_time)
+    url_date = datetime.datetime(3000, 1, 1, 0, 0, 0).replace(tzinfo=pytz.UTC)
+    if 'last-modified' in head_info.headers:
+        url_time = head_info.headers['last-modified']
+        url_date = parsedate(url_time)
 
     print(head_info.headers)
     if 'Content-Length' in head_info.headers:
@@ -58,6 +60,5 @@ def download_file_if_changed(
                 print(f"Downloading file {url}. {downloaded} of {file_size}")
 
 
-
-class NetworkError(Exception):
+class NetworkError(AirflowException):
     pass

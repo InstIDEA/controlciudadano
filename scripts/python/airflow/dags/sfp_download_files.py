@@ -137,7 +137,7 @@ with dag:
                                           'file_path': csv_path_exp,
                                           'table_name': 'staging.sfp',
                                           'db_name': 'db',
-                                          'batch_size': 100,
+                                          'batch_size': 2000,
                                           'file_encoding': 'iso-8859-1',
                                           'columns': [
                                               ColumnMapping('anho'),
