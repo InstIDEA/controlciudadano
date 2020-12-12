@@ -7,7 +7,8 @@ from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator
 
-from _muni_operators import get_links, get_target_path
+from _muni_operators import get_target_path
+from _policia_operators import get_links
 from ds_table_operations import upload_to_ftp, create_dir_in_ftp
 # These args will get passed on to each operator
 # You can override them on a per-task basis during operator initialization
@@ -35,16 +36,16 @@ default_args = {
     # 'sla_miss_callback': yet_another_function,
     # 'trigger_rule': 'all_success',
     'params': {
-        'data_folder': f'/tmp/muni/',
-        'data_set': 'asu_muni',
-        'url': 'https://www.asuncion.gov.py/'
+        'data_folder': f'/tmp/policianacional/',
+        'data_set': 'policianacional',
+        'url': 'https://www.policianacional.gov.py/'
 
     }
 }
 dag = DAG(
-    'muni_main_page_downloader',
+    'poli_downloader',
     default_args=default_args,
-    description='ETL that downloads all links from www.asuncion.gov.py',
+    description='ETL that downloads all links from www.policianacional.gov.py',
     start_date=datetime(2020, 12, 12),
     schedule_interval=timedelta(weeks=1),
 )
@@ -93,7 +94,7 @@ with dag:
                                         python_callable=upload_files_to_ftp,
                                         provide_context=True,
                                         op_kwargs={
-                                            "prefix": "/data/municipalidad/{{ ds }}",
+                                            "prefix": "/data/policianacional/{{ ds }}",
                                         })
 
     fetch_links >> download_links_op >> upload_file_to_ftp

@@ -1,6 +1,8 @@
 import datetime
 import math
 import os
+from typing import List
+from urllib.parse import urlparse
 
 import pytz
 import requests
@@ -90,6 +92,26 @@ def download_file(
             target_file.write(data)
             downloaded = downloaded + batch_size
             print(f"Downloading file {url}. {downloaded} of {file_size}")
+
+
+def download_links(links: List[str], folder: str) -> List[str]:
+    """
+    Downloads all links to a folder and return the list of downloaded files
+    :param links: the links to download
+    :param folder:  the target folder
+    :return: the list of downloaded files
+    """
+
+    to_ret = []
+    for link in links:
+        a = urlparse(link)
+        file_name = os.path.basename(a.path)
+        full_name = os.path.join(folder, file_name)
+        to_ret.append(full_name)
+        if not os.path.exists(full_name):
+            download_file(link, full_name)
+
+    return to_ret
 
 
 class NetworkError(AirflowException):
