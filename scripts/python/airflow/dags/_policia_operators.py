@@ -1,3 +1,4 @@
+import urllib.parse
 from typing import List
 
 import requests
@@ -25,11 +26,18 @@ def _get_links(
     soup = BeautifulSoup(html, features="html.parser")
     to_ret = []
 
-    for link in soup.select(css_selector):
+    for link in soup.select(css_selector, href=True):
         href: str = link.get("href")
+
+        if not href.startswith("http"):
+            """It's a relative_path"""
+            final_path = urllib.parse.urljoin(base_link, href)
+            print(f"Found relative path {href}, changing to {final_path}")
+            href = final_path
+
         print("Link: " + href)
-        if link in to_ret:
-            print(f"Duplicated links found: {link}")
+        if href in to_ret:
+            print(f"Duplicated link found: {href}")
         else:
             to_ret.append(href)
 
