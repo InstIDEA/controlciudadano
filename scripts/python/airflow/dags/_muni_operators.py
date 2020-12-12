@@ -1,12 +1,11 @@
 import os
 from typing import List
-from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
 
 from ds_table_operations import calculate_hash_of_file
-from network_operators import download_file
+from network_operators import download_links
 
 
 def get_links() -> List[str]:
@@ -28,26 +27,6 @@ def get_links() -> List[str]:
         if href is not None and 'wp-content' in href:
             print("Link: " + href)
             to_ret.append(href)
-
-    return to_ret
-
-
-def download_links(links: List[str], folder: str) -> List[str]:
-    """
-    Downloads all links to a folder and return the list of downloaded files
-    :param links: the links to download
-    :param folder:  the target folder
-    :return: the list of downloaded files
-    """
-
-    to_ret = []
-    for link in links:
-        a = urlparse(link)
-        file_name = os.path.basename(a.path)
-        full_name = os.path.join(folder, file_name)
-        to_ret.append(full_name)
-        if not os.path.exists(full_name):
-            download_file(link, full_name)
 
     return to_ret
 

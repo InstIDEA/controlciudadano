@@ -1,6 +1,8 @@
 import datetime
 import math
 import os
+from typing import List
+from urllib.parse import urlparse
 
 import pytz
 import requests
@@ -28,6 +30,8 @@ def download_file_if_changed(
     if 'Content-Length' in head_info.headers:
         file_size = head_info.headers['Content-Length']
         batch_size = math.ceil(int(file_size) / 20) + 20
+        if file_size.isdigit():
+            file_size = f"{file_size} ({humansize(int(file_size))})"
     else:
         file_size = 'Unknown'
         batch_size = 16384
@@ -57,7 +61,7 @@ def download_file_if_changed(
             for data in req.iter_content(batch_size):
                 target_file.write(data)
                 downloaded = downloaded + batch_size
-                print(f"Downloading file {url}. {downloaded} of {file_size}")
+                print(f"Downloading file {url}. {downloaded} ({humansize(downloaded)}) of {file_size}")
 
 
 def download_file(
@@ -77,8 +81,10 @@ def download_file(
         req = requests.get(url, stream=True)
 
         if 'Content-Length' in req.headers:
-            file_size = req.headers['Content-Length']
+            file_size: str = req.headers['Content-Length']
             batch_size = math.ceil(int(file_size) / 20) + 20
+            if file_size.isdigit():
+                file_size = f"{file_size} ({humansize(int(file_size))})"
         else:
             file_size = 'Unknown'
             batch_size = 16384
@@ -89,7 +95,36 @@ def download_file(
         for data in req.iter_content(batch_size):
             target_file.write(data)
             downloaded = downloaded + batch_size
-            print(f"Downloading file {url}. {downloaded} of {file_size}")
+            print(f"Downloading file {url}. {downloaded} ({humansize(downloaded)}) of {file_size}")
+
+
+def download_links(links: List[str], folder: str) -> List[str]:
+    """
+    Downloads all links to a folder and return the list of downloaded files
+    :param links: the links to download
+    :param folder:  the target folder
+    :return: the list of downloaded files
+    """
+
+    to_ret = []
+    for link in links:
+        a = urlparse(link)
+        file_name = os.path.basename(a.path)
+        full_name = os.path.join(folder, file_name)
+        to_ret.append(full_name)
+        if not os.path.exists(full_name):
+            download_file(link, full_name)
+
+    return to_ret
+
+suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
+def humansize(nbytes: int) -> str:
+    i = 0
+    while nbytes >= 1024 and i < len(suffixes)-1:
+        nbytes /= 1024.
+        i += 1
+    f = ('%.2f' % nbytes).rstrip('0').rstrip('.')
+    return '%s %s' % (f, suffixes[i])
 
 
 class NetworkError(AirflowException):
