@@ -53,7 +53,7 @@ dag = DAG(
 
 def retrieve_links_and_download(target: str, **context):
     links = context['ti'].xcom_pull(task_ids="fetch_links")
-    return download_links(links, target)
+    return download_links(links, target, verify=False)
 
 
 def upload_files_to_ftp(prefix: str, **context):
