@@ -10,7 +10,8 @@ from network_operators import download_links
 
 def _get_links(
         base_link: str,
-        css_selector: str
+        css_selector: str,
+        verify=True
 ) -> List[str]:
     """
     Retrieve all 'href' links using a selector of a given url
@@ -19,7 +20,7 @@ def _get_links(
     :return: an array of links
     """
     url = base_link
-    req = requests.get(url)
+    req = requests.get(url, verify=verify)
     html = req.text
 
     print(html)
