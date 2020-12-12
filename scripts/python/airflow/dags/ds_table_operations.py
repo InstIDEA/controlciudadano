@@ -3,12 +3,12 @@ from __future__ import annotations
 import hashlib
 import os.path
 import zipfile
+from ftplib import FTP
 
 from airflow import AirflowException
 from airflow.contrib.hooks.ftp_hook import FTPHook
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import BaseOperator
-from airflow.operators.postgres_operator import PostgresOperator
 from airflow.utils.decorators import apply_defaults
 
 
@@ -64,23 +64,29 @@ class CalculateHash(BaseOperator):
         self.path = path
 
     def execute(self, context):
-        return self.__do_hash(self.path)
+        return calculate_hash_of_file(self.path)
 
-    def __do_hash(self, path: str) -> str:
-        BUF_SIZE = 65536  # lets read stuff in 64kb chunks!
 
-        md5 = hashlib.md5()
-        sha1 = hashlib.sha1()
+def calculate_hash_of_file(path: str) -> str:
+    """
+    Calculate the md5 hash of a file
 
-        with open(path, 'rb') as f:
-            while True:
-                data = f.read(BUF_SIZE)
-                if not data:
-                    break
-                md5.update(data)
-                sha1.update(data)
+    :param path: the local path of the file
+    :return: the hash
+    """
+    buf_size = 65536  # lets read stuff in 64kb chunks!
 
-        return md5.hexdigest()
+    md5 = hashlib.md5()
+    sha1 = hashlib.sha1()
+    with open(path, 'rb') as f:
+        while True:
+            data = f.read(buf_size)
+            if not data:
+                break
+            md5.update(data)
+            sha1.update(data)
+
+    return md5.hexdigest()
 
 
 def check_if_is_already_processed(pull_hash_from: str,
@@ -124,8 +130,30 @@ def upload_to_ftp(
         remote_path: str,
         local_path: str
 ):
+    print(f"Uploading file '{local_path}' to '{remote_path}' of '{con_id}'")
     hook = FTPHook(con_id)
-
     hook.store_file(remote_path, local_path)
 
 
+def create_dir_in_ftp(
+        con_id: str,
+        remote_path: str
+):
+    hook = FTPHook(con_id)
+    con = hook.get_conn()
+    print(f"Creating directory (if not exists) on ftp '{remote_path}' (con: {con_id})")
+    cd_tree(remote_path, con)
+
+
+def cd_tree(current_dir: str, ftp: FTP):
+    """
+    copied from https://stackoverflow.com/a/18342179/1126380
+    """
+    if current_dir != "":
+        try:
+            ftp.cwd(current_dir)
+        except Exception as e:
+            print(type(e))
+            cd_tree("/".join(current_dir.split("/")[:-1]), ftp)
+            ftp.mkd(current_dir)
+            ftp.cwd(current_dir)

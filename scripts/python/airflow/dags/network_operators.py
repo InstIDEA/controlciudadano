@@ -60,5 +60,37 @@ def download_file_if_changed(
                 print(f"Downloading file {url}. {downloaded} of {file_size}")
 
 
+def download_file(
+        url: str,
+        target: str
+):
+    """
+    Performs a get and downloads the file
+    :param url: the file path
+    :param target: the local folder to download the file
+    :return: None
+    """
+    print(f"Downloading file {url} to {target}")
+
+    with open(target, 'wb') as target_file:
+        downloaded = 0
+        req = requests.get(url, stream=True)
+
+        if 'Content-Length' in req.headers:
+            file_size = req.headers['Content-Length']
+            batch_size = math.ceil(int(file_size) / 20) + 20
+        else:
+            file_size = 'Unknown'
+            batch_size = 16384
+
+        if req.status_code != requests.codes.ok:
+            raise NetworkError(f"The url {url} returned {req.status_code}")
+
+        for data in req.iter_content(batch_size):
+            target_file.write(data)
+            downloaded = downloaded + batch_size
+            print(f"Downloading file {url}. {downloaded} of {file_size}")
+
+
 class NetworkError(AirflowException):
     pass
