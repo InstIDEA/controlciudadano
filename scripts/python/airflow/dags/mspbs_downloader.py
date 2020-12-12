@@ -94,7 +94,7 @@ with dag:
                                         python_callable=upload_files_to_ftp,
                                         provide_context=True,
                                         op_kwargs={
-                                            "prefix": "/data/csj/{{ ds }}",
+                                            "prefix": "/data/mspbs/{{ ds }}",
                                         })
 
     fetch_links >> download_links_op >> upload_file_to_ftp
