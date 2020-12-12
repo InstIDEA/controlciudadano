@@ -66,19 +66,21 @@ def download_file_if_changed(
 
 def download_file(
         url: str,
-        target: str
+        target: str,
+        verify=True
 ):
     """
     Performs a get and downloads the file
     :param url: the file path
     :param target: the local folder to download the file
+    :param verify: if the ssl connection should be valid
     :return: None
     """
     print(f"Downloading file {url} to {target}")
 
     with open(target, 'wb') as target_file:
         downloaded = 0
-        req = requests.get(url, stream=True)
+        req = requests.get(url, stream=True, verify=verify)
 
         if 'Content-Length' in req.headers:
             file_size: str = req.headers['Content-Length']
@@ -98,7 +100,7 @@ def download_file(
             print(f"Downloading file {url}. {downloaded} ({humansize(downloaded)}) of {file_size}")
 
 
-def download_links(links: List[str], folder: str) -> List[str]:
+def download_links(links: List[str], folder: str, verify: bool = True) -> List[str]:
     """
     Downloads all links to a folder and return the list of downloaded files
     :param links: the links to download
@@ -113,7 +115,7 @@ def download_links(links: List[str], folder: str) -> List[str]:
         full_name = os.path.join(folder, file_name)
         to_ret.append(full_name)
         if not os.path.exists(full_name):
-            download_file(link, full_name)
+            download_file(link, full_name, verify=verify)
 
     return to_ret
 
