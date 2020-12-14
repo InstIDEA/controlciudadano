@@ -8,7 +8,6 @@ import re
 import os
 
 
-
 class MalformedData(Exception):
     "Exeption for when Passed String is malformed"
 
@@ -47,8 +46,11 @@ def extract_data_from_name(file_name: str, date: datetime) -> dict:
         )
         .replace("PERDOMO2016_1", "PERDOMO_2016_1")
         .replace("SOSARIELLA_216", "SOSARIELLA_2016")
-        .replace("221.035", "221035").replace("991712_8", "991712#8")
-        .replace("_.pdf", "").replace("_pdf", "").replace(".pdf", "")
+        .replace("221.035", "221035")
+        .replace("991712_8", "991712#8")
+        .replace("_.pdf", "")
+        .replace("_pdf", "")
+        .replace(".pdf", "")
         .strip()
         .replace("\n", "")
         .replace("-", "_")
@@ -76,7 +78,7 @@ def extract_data_from_name(file_name: str, date: datetime) -> dict:
     if year == "216":
         year = "2016"
 
-    if not(len(version)):
+    if not (len(version)):
         version = "1"
 
     name = name.strip()
@@ -86,19 +88,20 @@ def extract_data_from_name(file_name: str, date: datetime) -> dict:
         raise MalformedData(year, message="invalid year")
     if not version.isdigit() or int(version) > 2000:
         raise MalformedData(version, message="invalid version")
-    
-    return({
+
+    return {
         "file_name": filename,
         "document": document,
         "name": name,
         "year": year,
         "version": version,
         "download_date": date,
-    })
+    }
+
 
 def extract_data_from_names(error_folder: str, ti, **kwargs) -> List[str]:
     output, error = list(), False
-    for archivo in ti.xcom_pull(task_ids='download_new_PDFs_from_list', key='new'):
+    for archivo in ti.xcom_pull(task_ids="download_new_PDFs_from_list", key="new"):
         try:
             output.append(extract_data_from_name(file_name=archivo[0], date=archivo[1]))
         except MalformedData as err_:
@@ -112,16 +115,13 @@ def extract_data_from_names(error_folder: str, ti, **kwargs) -> List[str]:
                 error_list = list()
             err_ = {
                 "file": archivo[0],
-                'date_now': str(archivo[1]),
-                "error": {
-                    "message": err_.message,
-                    "data": err_.data,
-                    }
-                }
+                "date_now": str(archivo[1]),
+                "error": {"message": err_.message, "data": err_.data,},
+            }
             print(err_)
             error_list.append(err_)
             pickle.dump(error_list, open(error_fname, "wb"))
             error = True
-    if(error):
-        ti.xcom_push(key='some_failure', value=error)
-    return(output)
+    if error:
+        ti.xcom_push(key="some_failure", value=error)
+    return output
