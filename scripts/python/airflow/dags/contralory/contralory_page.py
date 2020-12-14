@@ -3,10 +3,11 @@ import sys
 import re
 import os
 
-from typing import List
+from datetime import datetime as dt
 from bs4 import BeautifulSoup
-from pathlib import Path
 from fnmatch import fnmatch
+from pathlib import Path
+from typing import List
 import requests
 import pickle
 
@@ -100,7 +101,7 @@ def contraloria_download_pdfs(targetDir: str, error_folder: str, ti, **kwargs) -
                     outfile = os.path.join(targetDir, fname)
                     with open(outfile, 'wb') as targetFile:
                         targetFile.write(r.content)
-                    new.append(fname)
+                    new.append((fname, dt.now(),))
             except:
                 error = True
         else:
