@@ -24,7 +24,6 @@ except KeyError:
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
-    "start_date": days_ago(2),
     "email": ["arturovolpe@gmail.com"],
     "email_on_failure": False,
     "email_on_retry": False,
@@ -40,6 +39,7 @@ dag = DAG(
     dag_id="contralory_process_pdf",
     default_args=default_args,
     description="Downloads and process files from https://djbpublico.contraloria.gov.py/",
+    start_date=days_ago(2),
     schedule_interval=timedelta(weeks=1),
 )
 
