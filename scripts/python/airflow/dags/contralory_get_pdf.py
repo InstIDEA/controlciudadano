@@ -43,7 +43,7 @@ dag = DAG(
 )
 
 with dag:
-    lauch = DummyOperator(task_id='start')
+    launch = DummyOperator(task_id='start')
 
     # Get list from webpage
     get_pdf_list = PythonOperator(
@@ -89,7 +89,7 @@ with dag:
         python_callable=if_all_done,
     )
 
-    lauch >> get_pdf_list >> get_pdfs >> parse_pdf_names >> push_to_server >> all_done
+    launch >> get_pdf_list >> get_pdfs >> parse_pdf_names >> push_to_server >> all_done
 
 if __name__=='__main__':
     dag.clear(reset_dag_runs=True)
