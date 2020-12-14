@@ -11,6 +11,24 @@ from typing import List
 import requests
 import pickle
 
+def print_err_(r, ti, error_folder):
+    print(f'\tSomething ocoured while trying to get: {r.history[0].url}')
+    error_file = os.path.join(error_folder, 'downloads.pkl')
+    try:
+        error_list = pickle.load(open(error_file, 'rb'))
+    except FileNotFoundError:
+        error_list = list()
+    except EOFError:
+        error_list = list()
+    err_ = {
+        'status_code': r.status_code,
+        'url': r.history[0].url,
+        'headers': r.headers}
+    print(err_)
+    error_list.append(err_)
+    pickle.dump(error_list, open(error_file, 'wb'))
+    r.raise_for_status()
+
 def find(path: str, pattern: str = '*.pdf') -> List[str]:
     """
     busca todos los pdfs del directorio
@@ -22,12 +40,13 @@ def find(path: str, pattern: str = '*.pdf') -> List[str]:
                 result.append(os.path.join(name))
     return(result)
 
-def contraloria_get_urls(contraloria_url: str, ti, **kwargs) -> List[str]:
+def contraloria_get_urls(contraloria_url: str, error_folder: str, ti, **kwargs) -> List[str]:
     '''
     Dada la pagina web de la contraloria publica del paraguay:
     Obtener lista de URLs que apunta a los PDFs
     '''
     s = requests.Session()
+
     urlist = []
     
     print(f"Consiguiendo links de: {contraloria_url}")
@@ -41,7 +60,6 @@ def contraloria_get_urls(contraloria_url: str, ti, **kwargs) -> List[str]:
         magic_number = imput_list[0].get('name')
         post_data = {magic_number: '1', 'limit': '0'}
         r_url = s.post(contraloria_url, data=post_data)
-
         if(r_url.ok):
             URLs = BeautifulSoup(r_url.content, 'html.parser')
             for btn in (URLs.findAll('a', {'class': 'btn btn-success'})):
@@ -50,11 +68,9 @@ def contraloria_get_urls(contraloria_url: str, ti, **kwargs) -> List[str]:
             ti.xcom_push(key='some_failure', value=False)
             return(urlist)
         else:
-            ti.xcom_push(key='some_failure', value=True)
-            r_url.raise_for_status()
+            print_err_(r_url, ti, error_folder)
     else:
-        ti.xcom_push(key='some_failure', value=True)
-        r_url.raise_for_status()
+        print_err_(r, ti, error_folder)
 
 def contraloria_download_pdfs(targetDir: str, error_folder: str, ti, **kwargs) -> str:
     '''
@@ -115,10 +131,13 @@ def contraloria_download_pdfs(targetDir: str, error_folder: str, ti, **kwargs) -
                 error_list = list()
             except EOFError:
                 error_list = list()
-            error_list.append({'status_code': r.status_code,
-                               'headers': r.headers, 'url': paged})
+            err_ = {
+                'status_code': r.status_code,
+                'url': paged,
+                'headers': r.headers,}
+            print(err_)
+            error_list.append(err_)
             pickle.dump(error_list, open(error_file, 'wb'))
-            error = True
     
     ti.xcom_push(key='some_failure', value=error)
 

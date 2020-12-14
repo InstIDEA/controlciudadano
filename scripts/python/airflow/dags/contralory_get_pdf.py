@@ -9,7 +9,6 @@ import os
 from contralory.contralory_page import contraloria_get_urls, contraloria_download_pdfs
 from contralory.parse_pdf_name import extract_data_from_names
 from contralory.name_to_database import push_to_postgre
-from contralory import if_all_done
 
 try:
     target_dir = os.path.join(Variable.get('CGR_PDF_FOLDER'))
@@ -17,7 +16,7 @@ except KeyError:
     target_dir = os.path.join(os.sep, 'tmp', 'contralory', 'raw')
 
 try:
-    error__dir = os.path.join(Variable.get('CGR_PDF_FOLDER'))
+    error__dir = os.path.join(Variable.get('CGR_LOG_FOLDER'))
 except KeyError:
     error__dir = os.path.join(os.sep, 'tmp', 'contralory', 'errors')
 
@@ -51,6 +50,7 @@ with dag:
         provide_context=True,
         python_callable=contraloria_get_urls,
         op_kwargs={
+            'error_folder': f"{{{{ params.error__dir }}}}",
             'contraloria_url': f"{{{{ params.contraloria_py }}}}",
         },
     )
@@ -83,13 +83,7 @@ with dag:
         python_callable=push_to_postgre,
     )
 
-    all_done = PythonOperator(
-        task_id="all_done",
-        provide_context=True,
-        python_callable=if_all_done,
-    )
-
-    launch >> get_pdf_list >> get_pdfs >> parse_pdf_names >> push_to_server >> all_done
+    launch >> get_pdf_list >> get_pdfs >> parse_pdf_names >> push_to_server
 
 if __name__=='__main__':
     dag.clear(reset_dag_runs=True)

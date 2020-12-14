@@ -102,7 +102,7 @@ def extract_data_from_names(error_folder: str, ti, **kwargs) -> List[str]:
         try:
             output.append(extract_data_from_name(file_name=archivo[0], date=archivo[1]))
         except MalformedData as err_:
-            print(f"[error] Something ocoured while parsing: {archivo[0]}")
+            print(f"\tSomething ocoured while parsing: {archivo[0]}")
             error_fname = os.path.join(error_folder, "names.pkl")
             try:
                 error_list = pickle.load(open(error_fname, "rb"))
@@ -110,35 +110,18 @@ def extract_data_from_names(error_folder: str, ti, **kwargs) -> List[str]:
                 error_list = list()
             except EOFError:
                 error_list = list()
-            error_list.append({
-                "file": archivo[0], 'date_now': str(archivo[1]),
-                "error": {"message": err_.message, "data": err_.data,}})
+            err_ = {
+                "file": archivo[0],
+                'date_now': str(archivo[1]),
+                "error": {
+                    "message": err_.message,
+                    "data": err_.data,
+                    }
+                }
+            print(err_)
+            error_list.append(err_)
             pickle.dump(error_list, open(error_fname, "wb"))
             error = True
     if(error):
         ti.xcom_push(key='some_failure', value=error)
     return(output)
-
-# def unint_test(TESTFILEPATH: str):
-#    from pprint import pprint
-#    with open(TESTFILEPATH, 'r') as unit_test_file:
-#        errors = list()
-#        for name in unit_test_file.readlines():
-#            output = get_file_data(file_name=name)
-#            try:
-#                _ = (str(type(output['file_name'])) + '\t' + str(output['file_name']))
-#                _ = (str(type(output['document'])) + '\t' + str(int(output['document'])))
-#                _ = (str(type(output['name'])) + '\t' + str(output['name']))
-#                _ = (str(type(output['year'])) + '\t' + str(int(output['year'])))
-#                _ = (str(type(output['version'])) + '\t' + str(int(output['version'])))
-#            except Exception as err_:
-#                print(err_)
-#                output['err_'] = err_
-#                errors.append(output)
-#                print(output['file_name'])
-#                print(output['document'])
-#                print(output['name'])
-#                print(output['year'])
-#                print(output['version'])
-#    for x in errors:
-#        pprint(x)
