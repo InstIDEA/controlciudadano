@@ -8,7 +8,7 @@ SQL_QUERY_GEN_ROWS = str(
             i
             for i in (
                 "INSERT INTO analysis.declarations (document, name, year, link, version, origin, download_date) \
-    VALUES ( %s, %s, %s, %s, %s, %s, %s) \
+    VALUES ( %s, %s, %s, %s, %s, %s, NOW()) \
     ON CONFLICT ON CONSTRAINT uq_declarations_link \
     DO UPDATE SET \
         document = %s, name = %s, year = %s, version = %s;"
@@ -40,7 +40,6 @@ def push_to_postgre(ti, **kwargs) -> list:
                 query["name"],
                 query["year"],
                 query["version"],
-                query["download_date"],
             )
         )
     db_cursor.executemany(SQL_QUERY_GEN_ROWS, batch)

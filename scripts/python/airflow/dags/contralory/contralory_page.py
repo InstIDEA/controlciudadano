@@ -67,7 +67,6 @@ def contraloria_get_urls(
             for btn in URLs.findAll("a", {"class": "btn btn-success"}):
                 urlist.append(contraloria_url + btn.get("href")[1:])
             print(f"Obtenidos: {str(len(urlist))} Links")
-            ti.xcom_push(key="some_failure", value=False)
             return urlist
         else:
             print_err_(r_url, ti, error_folder)
@@ -122,7 +121,7 @@ def contraloria_download_pdfs(targetDir: str, error_folder: str, ti, **kwargs) -
                     outfile = os.path.join(targetDir, fname)
                     with open(outfile, "wb") as targetFile:
                         targetFile.write(r.content)
-                    new.append((fname, dt.now(),))
+                    new.append(fname)
             except:
                 error = True
         else:
@@ -145,9 +144,7 @@ def contraloria_download_pdfs(targetDir: str, error_folder: str, ti, **kwargs) -
             error_list.append(err_)
             pickle.dump(error_list, open(error_file, "wb"))
 
-    ti.xcom_push(key="some_failure", value=error)
     asdasd = os.path.join(".pdf")
     print(f"{str(i)} Archivos Descargados)")
     print(f"[{len(find(asdasd, targetDir))}] archivos en cache.")
-    ti.xcom_push(key="new", value=new)
-
+    return(new)

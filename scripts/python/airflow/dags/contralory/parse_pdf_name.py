@@ -34,9 +34,9 @@ def find(path: str, pattern: str = "*.pdf") -> List[str]:
     return result
 
 
-def extract_data_from_name(file_name: str, date: datetime) -> dict:
+def extract_data_from_name(file_name: str) -> dict:
     """
-    saca ci, nombre, año y version del link y nombre del archivo[0]
+    saca ci, nombre, año y version del link y nombre del archivo
     """
 
     cleaned = (
@@ -95,17 +95,16 @@ def extract_data_from_name(file_name: str, date: datetime) -> dict:
         "name": name,
         "year": year,
         "version": version,
-        "download_date": date,
     }
 
 
 def extract_data_from_names(error_folder: str, ti, **kwargs) -> List[str]:
-    output, error = list(), False
-    for archivo in ti.xcom_pull(task_ids="download_new_PDFs_from_list", key="new"):
+    output = list()
+    for archivo in ti.xcom_pull(task_ids="download_new_PDFs_from_list"):
         try:
-            output.append(extract_data_from_name(file_name=archivo[0], date=archivo[1]))
+            output.append(extract_data_from_name(file_name=archivo))
         except MalformedData as err_:
-            print(f"\tSomething ocoured while parsing: {archivo[0]}")
+            print(f"\tSomething ocoured while parsing: {archivo}")
             error_fname = os.path.join(error_folder, "names.pkl")
             try:
                 error_list = pickle.load(open(error_fname, "rb"))
@@ -114,14 +113,10 @@ def extract_data_from_names(error_folder: str, ti, **kwargs) -> List[str]:
             except EOFError:
                 error_list = list()
             err_ = {
-                "file": archivo[0],
-                "date_now": str(archivo[1]),
+                "file": archivo,
                 "error": {"message": err_.message, "data": err_.data,},
             }
             print(err_)
             error_list.append(err_)
             pickle.dump(error_list, open(error_fname, "wb"))
-            error = True
-    if error:
-        ti.xcom_push(key="some_failure", value=error)
-    return output
+    return(output)
