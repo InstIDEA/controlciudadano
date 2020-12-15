@@ -132,7 +132,7 @@ def extract_data_from_names(error_folder: str,
                             sourceDir: str = None,
                             **kwargs) -> List[str]:
     if manual:
-        lista = manual
+        lista = manual.split(',')
         lista = actually_extract_data_from_names(error_folder=error_folder,
                                                  ti=ti,
                                                  lista=lista)
