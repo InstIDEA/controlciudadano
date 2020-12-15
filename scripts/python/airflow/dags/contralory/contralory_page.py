@@ -3,7 +3,6 @@ import sys
 import re
 import os
 
-from urllib3.exceptions import ProtocolError
 from datetime import datetime as dt
 from bs4 import BeautifulSoup
 from fnmatch import fnmatch
@@ -74,7 +73,7 @@ def contraloria_get_urls(
         while not r:
             try:
                 r_url = s.post(contraloria_url, data=post_data)
-            except ProtocolError:
+            except Exception:
                 pass
 
         if r_url.ok:
