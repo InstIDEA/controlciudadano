@@ -6,8 +6,6 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 import os
 
-from contralory.contralory_page import contraloria_get_urls
-from contralory.contralory_page import contraloria_download_pdfs
 from contralory.parse_pdf_name import extract_data_from_names
 from contralory.name_to_database import push_to_postgre
 
@@ -21,6 +19,10 @@ try:
 except KeyError:
     error__dir = os.path.join(os.sep, "tmp", "contralory", "errors")
 
+try:
+    manually_added = Variable.get('CGR_MANUALLY_ADDED_PDF')
+except KeyError:
+    manually_added = False
 
 default_args = {
     "owner": "airflow",
@@ -32,49 +34,32 @@ default_args = {
     "params": {
         "target_dir": target_dir,
         "error__dir": error__dir,
+        "manually_added": manually_added,
         "contraloria_py": "https://djbpublico.contraloria.gov.py/",
     },
 }
 
 dag = DAG(
-    dag_id="contralory_process_pdf",
+    dag_id="contralory_manually_process_all_pdf_on_store",
     default_args=default_args,
     description="Process files from https://djbpublico.contraloria.gov.py/",
     start_date=days_ago(2),
-    schedule_interval=timedelta(weeks=1),
+    schedule_interval=None,
 )
 
 with dag:
     launch = DummyOperator(task_id="start")
-
-    # Get list from webpage
-    get_pdf_list = PythonOperator(
-        task_id="get_directory_listing_from_contralory_page",
-        provide_context=True,
-        python_callable=contraloria_get_urls,
-        op_kwargs={
-            "error_folder": f"{{{{ params.error__dir }}}}",
-            "contraloria_url": f"{{{{ params.contraloria_py }}}}",
-        },
-    )
-
-    # Download the pdfs
-    get_pdfs = PythonOperator(
-        task_id="download_new_PDFs_from_list",
-        provide_context=True,
-        python_callable=contraloria_download_pdfs,
-        op_kwargs={
-            "targetDir": f"{{{{ params.target_dir }}}}",
-            "error_folder": f"{{{{ params.error__dir }}}}",
-        },
-    )
 
     # Parse the names from the downloaded pdf
     parse_pdf_names = PythonOperator(
         task_id="extract_data_from_names",
         provide_context=True,
         python_callable=extract_data_from_names,
-        op_kwargs={"error_folder": f"{{{{ params.error__dir }}}}"},
+        op_kwargs={
+            "error_folder": f"{{{{ params.error__dir }}}}",
+            "sourceDir": f"{{{{ params.target_dir }}}}",
+            "manual": f"{{{{ params.manually_added }}}}",
+        },
     )
 
     # Push parsed information to postgresql
@@ -84,7 +69,7 @@ with dag:
         python_callable=push_to_postgre,
     )
 
-    launch >> get_pdf_list >> get_pdfs >> parse_pdf_names >> push_to_server
+    launch >> parse_pdf_names >> push_to_server
 
 if __name__ == "__main__":
     dag.clear(reset_dag_runs=True)

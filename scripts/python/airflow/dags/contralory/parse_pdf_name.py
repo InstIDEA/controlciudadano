@@ -1,10 +1,7 @@
 #!/usr/bin/python3
 from typing import List, Union
-from datetime import datetime
 from fnmatch import fnmatch
 import pickle
-import sys
-import re
 import os
 
 
@@ -98,9 +95,17 @@ def extract_data_from_name(file_name: str) -> dict:
     }
 
 
-def extract_data_from_names(error_folder: str, ti, **kwargs) -> List[str]:
+def actually_extract_data_from_names(error_folder: str,
+                                     ti,
+                                     lista: List[str]) -> List[str]:
     output = list()
-    for archivo in ti.xcom_pull(task_ids="download_new_PDFs_from_list"):
+    list_len = len(lista)
+    for i, archivo in enumerate(lista):
+        if list_len < 10:
+            print(f"Extracted {str(i)} of {str(list_len)}")
+        elif not (i % 10):
+            print(f"Extracted {str(i)} of {str(list_len)}")
+
         try:
             output.append(extract_data_from_name(file_name=archivo))
         except MalformedData as err_:
@@ -114,9 +119,27 @@ def extract_data_from_names(error_folder: str, ti, **kwargs) -> List[str]:
                 error_list = list()
             err_ = {
                 "file": archivo,
-                "error": {"message": err_.message, "data": err_.data,},
+                "error": {"message": err_.message, "data": err_.data},
             }
             print(err_)
             error_list.append(err_)
             pickle.dump(error_list, open(error_fname, "wb"))
     return(output)
+
+
+def extract_data_from_names(error_folder: str,
+                            ti, manual: Union[bool, str] = False,
+                            sourceDir: str = None,
+                            **kwargs) -> List[str]:
+    if manual:
+        lista = manual
+        lista = actually_extract_data_from_names(error_folder=error_folder,
+                                                 ti=ti,
+                                                 lista=lista)
+        return(lista)
+    else:
+        lista = ti.xcom_pull(task_ids="download_new_PDFs_from_list")
+        lista = actually_extract_data_from_names(error_folder=error_folder,
+                                                 ti=ti,
+                                                 lista=lista)
+        return(lista)
