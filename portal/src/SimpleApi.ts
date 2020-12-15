@@ -15,7 +15,7 @@ import {
     SimpleAPINotPaginatedResult
 } from './Model';
 
-const BASE_API = "https://api.controlciudadanopy.org/api";
+const BASE_API = "https://semillas.api.controlciudadanopy.org/api";
 
 //const BASE_API = "http://localhost:3001/api";
 
