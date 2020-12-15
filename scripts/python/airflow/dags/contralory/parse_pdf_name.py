@@ -128,18 +128,11 @@ def actually_extract_data_from_names(error_folder: str,
 
 
 def extract_data_from_names(error_folder: str,
-                            ti, manual: Union[bool, str] = False,
+                            ti,
                             sourceDir: str = None,
                             **kwargs) -> List[str]:
-    if manual:
-        lista = manual.split('\n')
-        lista = actually_extract_data_from_names(error_folder=error_folder,
-                                                 ti=ti,
-                                                 lista=lista)
-        return(lista)
-    else:
-        lista = ti.xcom_pull(task_ids="download_new_PDFs_from_list")
-        lista = actually_extract_data_from_names(error_folder=error_folder,
-                                                 ti=ti,
-                                                 lista=lista)
-        return(lista)
+    lista = ti.xcom_pull(task_ids="download_new_PDFs_from_list")
+    lista = actually_extract_data_from_names(error_folder=error_folder,
+                                             ti=ti,
+                                             lista=lista)
+    return(lista)

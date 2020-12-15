@@ -158,7 +158,7 @@ def contraloria_download_pdfs(targetDir: str,
             if r.ok:
                 try:
                     fname = re.findall("filename=(.+)",
-                                    r.headers["content-disposition"])
+                                       r.headers["content-disposition"])
                     fname = fname[0].replace('"', "").replace("'", "")
                     if not (fname in cache_list):
                         print(f"Downloading {fname}")
