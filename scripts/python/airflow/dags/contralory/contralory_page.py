@@ -3,6 +3,7 @@ import sys
 import re
 import os
 
+from urllib3.exceptions import ProtocolError
 from datetime import datetime as dt
 from bs4 import BeautifulSoup
 from fnmatch import fnmatch
@@ -53,7 +54,14 @@ def contraloria_get_urls(
 
     print(f"Consiguiendo links de: {contraloria_url}")
 
-    r = s.get(contraloria_url)
+    r, i = False, 0
+    while not r:
+        if i == 5:
+            raise(Exception(f'Network failure: Can\'t connect to: {contraloria_url}'))
+        try:
+            r = s.get(contraloria_url)
+        except Exception:
+            i += 1
 
     if r.ok:
         page_content = r.content
@@ -61,7 +69,14 @@ def contraloria_get_urls(
         imput_list = page_soup.findAll("input", {"type": "hidden", "value": "1"})
         magic_number = imput_list[0].get("name")
         post_data = {magic_number: "1", "limit": "0"}
-        r_url = s.post(contraloria_url, data=post_data)
+
+        r_url = False
+        while not r:
+            try:
+                r_url = s.post(contraloria_url, data=post_data)
+            except ProtocolError:
+                pass
+
         if r_url.ok:
             URLs = BeautifulSoup(r_url.content, "html.parser")
             for btn in URLs.findAll("a", {"class": "btn btn-success"}):
@@ -144,7 +159,6 @@ def contraloria_download_pdfs(targetDir: str, error_folder: str, ti, **kwargs) -
             error_list.append(err_)
             pickle.dump(error_list, open(error_file, "wb"))
 
-    asdasd = os.path.join(".pdf")
-    print(f"{str(i)} Archivos Descargados)")
-    print(f"[{len(find(asdasd, targetDir))}] archivos en cache.")
+    print(f"{str(len(new))} Archivos Descargados)")
+    print(f"[{len(find(path=targetDir))}] archivos en cache.")
     return(new)
