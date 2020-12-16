@@ -6,7 +6,8 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 import os
 
-from contralory.contralory_page import contraloria_get_urls, contraloria_download_pdfs
+from contralory.contralory_page import contraloria_get_urls
+from contralory.contralory_page import contraloria_download_pdfs
 from contralory.parse_pdf_name import extract_data_from_names
 from contralory.name_to_database import push_to_postgre
 
@@ -38,7 +39,7 @@ default_args = {
 dag = DAG(
     dag_id="contralory_process_pdf",
     default_args=default_args,
-    description="Downloads and process files from https://djbpublico.contraloria.gov.py/",
+    description="Process files from https://djbpublico.contraloria.gov.py/",
     start_date=days_ago(2),
     schedule_interval=timedelta(weeks=1),
 )
@@ -73,12 +74,14 @@ with dag:
         task_id="extract_data_from_names",
         provide_context=True,
         python_callable=extract_data_from_names,
-        op_kwargs={"error_folder": f"{{{{ params.error__dir }}}}",},
+        op_kwargs={"error_folder": f"{{{{ params.error__dir }}}}"},
     )
 
     # Push parsed information to postgresql
     push_to_server = PythonOperator(
-        task_id="push_to_db", provide_context=True, python_callable=push_to_postgre,
+        task_id="push_to_db",
+        provide_context=True,
+        python_callable=push_to_postgre,
     )
 
     launch >> get_pdf_list >> get_pdfs >> parse_pdf_names >> push_to_server
