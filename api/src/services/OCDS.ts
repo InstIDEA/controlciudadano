@@ -4,30 +4,29 @@ import {ApiError} from '../index';
 
 const QUERY_ITEMS = `
     SELECT ts.tender_title                               as llamado_nombre,
-           ts.tender_id                                  as llamado_slug,
-           ts.tender_procurementmethod                   as procurement_method,
-           ts.ocid                                       as llamado_numero,
-           ai.unit_amount                                as precio_unitario,
-           ai.quantity                                   as cantidad,
-           ai.item -> 'unit' ->> 'name'                  as unidad_medida,
-           ai.item -> 'attributes'                       as atributos,
-           ai.item ->> 'description'                     as item_adjudicado,
-           ai.item_classification                        as item_classification_nivel_5_id,
-           ai.item -> 'classification' ->> 'description' as item_classification_nivel_5_nombre,
-           ai.item_id                                    as item_id,
-           s.supplier ->> 'name'                         as supplier_name,
-           s.supplier ->> 'id'                           as supplier_ruc
-    FROM view_data_dncp_data.award_items_summary ai
-             join view_data_dncp_data.tender_summary_with_data ts on ts.data_id = ai.data_id
-             left join view_data_dncp_data.award_suppliers_summary s
-                       on s.award_index = ai.award_index and ts.data_id = s.data_id
-    WHERE ts.tender -> 'coveredBy' ? 'covid_19'
+            ts.tender_id                                 as llamado_slug,
+            ts.tender_procurementmethod                  as procurement_method,
+            ts.ocid                                      as llamado_numero,
+            ai.unit_price                                as precio_unitario,
+            ai.quantity                                  as cantidad,
+            ai.unit_name                                 as unidad_medida,
+            ai.attributes                                as atributos,
+            ai.description                               as item_adjudicado,
+            ai.classification_id                         as item_classification_nivel_5_id,
+            ai.classification_description                as item_classification_nivel_5_nombre,
+            ai.item_id                                   as item_id,
+            s.supplier_name                              as supplier_name,
+            s.supplier_id                                as supplier_ruc
+    FROM ocds.award_items ai
+            join ocds.award s on ai.ocid = s.ocid and ai.award_id = s.award_id
+            join ocds.procurement ts on ts.ocid = s.ocid
+    WHERE ts.characteristics ? 'covid_19'
     LIMIT $1 OFFSET $2
     ;
 `
 
 const QUERY_SUPPLIERS = `
-    select name,
+    SELECT name,
            ruc,
            telephone,
            contact_point,
@@ -35,120 +34,118 @@ const QUERY_SUPPLIERS = `
            departamento as department,
            ciudad       as city,
            direccion    as address
-    FROM view_data_dncp_data.unique_suppliers
+    FROM ocds.unique_suppliers
     LIMIT $1 OFFSET $2
     ;
 `
+
 const QUERY_SUPPLIER = `
-    select name,
-           ruc,
-           telephone,
-           contact_point,
-           pais         as country,
-           departamento as department,
-           ciudad       as city,
-           direccion    as address
-    FROM view_data_dncp_data.unique_suppliers
+    SELECT name,
+        ruc,
+        telephone,
+        contact_point,
+        pais         as country,
+        departamento as department,
+        ciudad       as city,
+        direccion    as address
+    FROM ocds.unique_suppliers
     WHERE ruc = $1
     ;
 `
 
 const QUERY_CONTRACTS_PER_SUPPLIER = `
-    select t.tender_id                as tender_slug,
-           t.tender_title             as tender_title,
-           c.ocid                      as contract_ocid,
-           c.contract_id               as contract_id,
-           c.award_id                  as contract_award_id,
-           s.supplier ->> 'name'       as name,
-           s.supplier ->> 'id'         as ruc,
-           c.contract_value_amount     as amount,
-           c.contract_value_currency   as currency,
-           c.datesigned                as sign_date,
-           t.tender_procurementmethod as procurement_method,
-           t.covid                    as is_covid
-    from view_data_dncp_data.award_suppliers_summary s
-             join view_data_dncp_data.awards_summary a on s.data_id = a.data_id and a.award_index = s.award_index
-             join view_data_dncp_data.contracts_summary_no_data c on c.data_id = s.data_id and c.award_id = a.award_id
-             join view_data_dncp_data.tender_summary t on t.data_id = s.data_id
-
-    where s.supplier ->> 'id' ilike $1
-    ORDER BY c.datesigned DESC
+    select t.tender_id                          as tender_slug,
+            t.tender_title                      as tender_title,
+            c.ocid                              as contract_ocid,
+            c.contract_id                       as contract_id,
+            c.award_id                          as contract_award_id,
+            s.supplier_name                     as name,
+            s.supplier_id                       as ruc,
+            c.amount                            as amount,
+            c.currency                          as currency,
+            c.date_signed                       as sign_date,
+            t.tender_procurementmethod          as procurement_method,
+            t.characteristics ? 'covid_19'      as is_covid
+    from ocds.award s
+            join ocds.contract c on c.ocid = s.ocid and c.award_id = s.award_id
+            join ocds.procurement t on t.ocid = s.ocid
+    where s.supplier_id ilike $1
+    ORDER BY c.date_signed DESC
     LIMIT $2 OFFSET $3
     ;
 `
 
 const QUERY_SINGLE_ITEM = `
-    select distinct sum(ai.unit_amount * ai.quantity)             as total_amount,
-                    sum(ai.quantity)                              as quantity,
-                    avg(ai.unit_amount)                           as avg_amount,
-                    max(ai.unit_amount)                           as max_amount,
-                    min(ai.unit_amount)                           as min_amount,
-                    count(ai.ocid)                                as count,
-                    sum(ts.tender_numberoftenderers)              as total_tenders,
-                    avg(ts.tender_numberoftenderers)              as avg_tenders,
-                    jsonb_agg(jsonb_build_object(
-                            'id', ts.ocid,
-                            'title', ts.tender_title,
-                            'slug', ts.tender_id,
-                            'method', ts.tender_procurementmethod,
-                            'method_description', ts.tender ->> 'procurementMethodDetails',
-                            'flags', ts.tender -> 'coveredBy',
-                            'date', ts.tender ->> 'datePublished',
-                            'local_name', ai.item ->> 'description',
-                            'tenders', ts.tender_numberoftenderers,
-                            'currency', ai.unit_currency,
-                            'total', ai.unit_amount * ai.quantity,
-                            'quantity', ai.quantity,
-                            'amount', ai.unit_amount,
-                            'status', ts.tender_status,
-                            'sign_date', a.fecha_firma_contrato,
-                            'process_duration',
-                            (CASE
-                                 WHEN a.fecha_firma_contrato IS NULL
-                                     THEN NULL
-                                 ELSE EXTRACT(EPOCH FROM
-                                              a.fecha_firma_contrato - (ts.tender ->> 'datePublished')::timestamp)
-                                END),
-                            'supplier', s.supplier
-                        ))                                        as tenders,
-                    ai.unit_currency                              as currency,
-                    ai.item -> 'unit' ->> 'name'                  as unit,
-                    ai.item -> 'attributes' -> 1 ->> 'value'      as presentation,
-                    ai.item_classification                        as id,
-                    ai.item -> 'classification' ->> 'description' as name
-    from view_data_dncp_data.award_items_summary ai
-             join view_data_dncp_data.awards_summary_no_data a on a.ocid = ai.ocid and a.award_index = ai.award_index
-             join view_data_dncp_data.tender_summary_with_data ts on ts.data_id = ai.data_id
-             left join view_data_dncp_data.award_suppliers_summary s
-                       on s.award_index = ai.award_index and ts.data_id = s.data_id
-
-    where a.award_status = 'active'
-      and ai.item_classification = $1
-
-    group by ai.item_classification, name, presentation, unit, currency
-    order by total_amount desc
+    select distinct sum(ai.unit_price * ai.quantity)            as total_amount,
+        sum(ai.quantity)                                        as quantity,
+        avg(ai.unit_price)                                      as avg_amount,
+        max(ai.unit_price)                                      as max_amount,
+        min(ai.unit_price)                                      as min_amount,
+        count(ai.ocid)                                          as count,
+        sum(ts.tender_numberoftenderers::int)                   as total_tenders,
+        avg(ts.tender_numberoftenderers::int)                   as avg_tenders,
+        jsonb_agg(jsonb_build_object(
+                'id', ts.ocid,
+                'title', ts.tender_title,
+                'slug', ts.tender_id,
+                'method', ts.tender_procurementmethod,
+                'method_description', ts.tender_procurementmethoddetails,
+                'flags', ts.characteristics,
+                'date', ts.tender_date_published,
+                'local_name', ai.description,
+                'tenders', ts.tender_numberoftenderers,
+                'currency', ai.unit_price_currency,
+                'total', ai.unit_price * ai.quantity,
+                'quantity', ai.quantity,
+                'amount', ai.unit_price,
+                'status', ts.tender_status,
+                'sign_date', c.date_signed,
+                'process_duration',
+                (CASE
+                    WHEN c.date_signed IS NULL
+                        THEN NULL
+                    ELSE EXTRACT(EPOCH FROM
+                                c.date_signed - (ts.tender_date_published)::timestamp)
+                    END),
+                'supplier', jsonb_build_object(
+        'name', a.supplier_name,
+        'id', a.supplier_id
+        )
+            ))                                                  as tenders,
+        ai.unit_price_currency                                  as currency,
+        ai.unit_name                                            as unit,
+        ai.attributes -> 1 ->> 'value'                          as presentation,
+        ai.classification_id                                    as id,
+        ai.classification_description                           as name
+    from ocds.award_items ai
+        join ocds.award a on a.ocid = ai.ocid and a.award_id = ai.award_id
+        join ocds.contract c on c.ocid = a.ocid and c.award_id = a.award_id
+        join ocds.procurement ts on ts.data_id = ai.data_id
+    where a.status = 'active'
+    and ai.classification_id = $1
+    group by ai.classification_id, name, presentation, unit, ai.unit_price_currency
+    order by total_amount desc;
 `
 
 const QUERY_ITEM_PRICE_EVOLUTION = `
-    select a.ocid                                        as ocid,
-           t.tender ->> 'datePublished'                  as date,
-           ai.item_classification                        as id,
-           ai.item -> 'classification' ->> 'description' as name,
+    select a.ocid                                   as ocid,
+           t.tender_date_published                  as date,
+           ai.classification_id                     as id,
+           ai.classification_description as name,
            adjusted_and_in_gs(
-                   ai.unit_amount,
-                   ai.unit_currency,
-                   (t.tender ->> 'datePublished')::timestamp
-               )                                         as price,
-           ai.quantity                                   as quantity,
-           t.tender -> 'coveredBy'                       as flags,
-           ai.item -> 'attributes'                       as atributos,
-           ai.item -> 'attributes' -> 1 ->> 'value'      as presentation,
-           ai.item -> 'unit' ->> 'name'                  as unit
-
-    from view_data_dncp_data.award_items_summary ai
-             join view_data_dncp_data.tender_summary_with_data t on ai.ocid = t.ocid
-             join view_data_dncp_data.awards_summary_no_data a on a.ocid = ai.ocid and a.award_index = ai.award_index
-    where ai.item_classification = $1
+                   ai.unit_price,
+                   ai.unit_price_currency,
+                   t.tender_date_published
+               )                                    as price,
+           ai.quantity                              as quantity,
+           t.characteristics                        as flags,
+           ai.attributes                            as atributos,
+           ai.attributes-> 1 ->> 'value'            as presentation,
+           ai.unit_name                             as unit
+    from ocds.award_items ai
+             join ocds.procurement t on ai.ocid = t.ocid
+             join ocds.award a on a.ocid = ai.ocid and a.award_id = ai.award_id
+    where ai.classification_id = $1
 `
 
 
@@ -156,52 +153,46 @@ const QUERY_ITEM_RELATED_PARTIES = `
     select DISTINCT ts.tender_id                  AS slug,
                     ts.tender_title               AS tender_title,
                     ts.tender_procurementmethod   AS tender_method,
-                    ts.tender -> 'coveredBy'      AS tender_flags,
-                    ts.tender ->> 'datePublished' AS tender_date_published,
+                    ts.characteristics            AS tender_flags,
+                    ts.tender_date_published      AS tender_date_published,
                     ps.roles                      AS roles,
-                    ps.party ->> 'id'             AS party_id,
-                    ps.party ->> 'name'           AS party_name
-    FROM view_data_dncp_data.award_items_summary ai
-             JOIN view_data_dncp_data.tender_summary_with_data ts ON ts.data_id = ai.data_id
-             JOIN view_data_dncp_data.parties_summary ps ON ps.ocid = ts.ocid
-    WHERE ai.item_classification = $1
+                    ps.party_id                   AS party_id,
+                    ps.name                       AS party_name
+    FROM ocds.award_items ai
+             JOIN ocds.procurement ts ON ts.ocid = ai.ocid
+             JOIN ocds.parties ps ON ps.ocid = ts.ocid
+    WHERE ai.classification_id = $1
 `
 
 const QUERY_SUPPLIERS_BY_BUYER = `
     SELECT DISTINCT b.ocid,
-                    a.supplier ->> 'id'        AS supplier_id,
-                    a.supplier ->> 'name'      AS supplier,
-
-                    t.tender_title             as tender_title,
-                    t.tender_id                as tender_slug,
-                    t.tender_procurementmethod as procurement_method,
-
-                    aa.award_value_currency    AS currency,
+                    aa.supplier_id                  AS supplier_id,
+                    aa.supplier_name                AS supplier,
+                    b.tender_title                  as tender_title,
+                    b.tender_id                     as tender_slug,
+                    b.tender_procurementmethod      as procurement_method,
+                    aa.currency                     AS currency,
 --                     adjusted_and_in_gs(aa.award_value_amount, aa.award_value_currency, aa.award_date) AS amount,
-
-                    aa.award_value_amount      as awarded,
-                    t.tender_value_amount      as referential,
+                    aa.amount                       as awarded,
+                    b.tender_amount                 as referential,
                     case
-                        when t.tender_value_amount > 0 then
-                            (aa.award_value_amount / t.tender_value_amount - 1) * 100
-                        else 0 end             as percentage,
-                    aa.award_date              AS date,
-                    t.covid                    AS is_covid
-    FROM view_data_dncp_data.buyer_summary b
-             JOIN view_data_dncp_data.awards_summary_no_data aa on aa.ocid = b.ocid
-             JOIN view_data_dncp_data.tender_summary t ON t.ocid = b.ocid
-             JOIN view_data_dncp_data.award_suppliers_summary a ON a.ocid = b.ocid
-        AND a.award_index = aa.award_index
-    WHERE b.buyer ->> 'id' = $1
-      AND aa.award_date IS NOT NULL
-    ORDER BY aa.award_date desc
+                        when b.tender_amount > 0 then
+                            (aa.amount / b.tender_amount - 1) * 100
+                        else 0 end                  as percentage,
+                    aa.date                         AS date,
+                    b.characteristics ? 'covid_19'  AS is_covid
+    FROM ocds.procurement b
+             JOIN ocds.award aa on aa.ocid = b.ocid
+    WHERE b.buyer_id = $1
+      AND aa.date IS NOT NULL
+    ORDER BY aa.date desc
 `
 
 const QUERY_GET_BUYER_INFO = `
-    SELECT b.buyer ->> 'id'   as id,
-           b.buyer ->> 'name' as name
-    FROM view_data_dncp_data.buyer_summary b
-    WHERE b.buyer ->> 'id' = $1
+    SELECT  b.buyer_id          as id,
+            b.buyer_name        as name
+        FROM ocds.procurement b
+        WHERE b.buyer_id = $1
     LIMIT 1
 `
 
