@@ -7,6 +7,7 @@ CREATE TABLE analysis.declarations
     version       int,
     link          text,
     origin        text,
+    download_date TIMESTAMP,
     link_sandwich text,
     type          text,
     active        NUMERIC(20, 2),
