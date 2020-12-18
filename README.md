@@ -2,15 +2,18 @@
 
 La plataforma de Control Ciudadano nace con el objetivo de poner a disposición
 de la ciudadanía un portal de datos abiertos para controlar los recursos
-públicos. Los datos que se encuentran disponibles en la actualidad son: las
-compras realizadas durante la pandemia de la COVID-19, las declaraciones
-juradas subidas a la fecha en la web de la Contraloría General de la República,
-datos sobre autoridades electas, relación con proveedores del Estado que
-cuenten con los mismos datos de contacto, las facturas de ANDE y ESSAP. La
-plataforma pretende contar con más datos que ayuden a ejercer el derecho de
+públicos. Los datos que se encuentran disponibles en la actualidad son: 
+
+* Las compras realizadas durante la pandemia de la COVID-19
+* Las declaraciones juradas subidas a la fecha en la web de la Contraloría General de la República
+* Datos sobre autoridades electas
+* Relación con proveedores del Estado que cuenten con los mismos datos de contacto
+* Las facturas de ANDE y ESSAP
+  
+La plataforma pretende contar con más datos que ayuden a ejercer el derecho de
 “contralores ciudadanos”, convirtiéndose en una herramienta colaborativa,
 apoyada por la comunidad de organizaciones y personas que deseen sumar sus
-esfuerzos a la sostenibilidad de un portal útil  – para promover el acceso a la
+esfuerzos a la sostenibilidad de un portal útil – para promover el acceso a la
 información pública y contribuir al desarrollo de un país transparente, libre
 de corrupción e impunidad.
 
@@ -35,14 +38,14 @@ repositorio central. En este repositorio se almacena la información de:
 * **API**: Servicios web utilizados para mostrar información dentro del portal
 * **ETL**: Conjunto de ETL (programas para extracción transformación y carga)
   que nutren la base de datos del portal
-* **infra**: Conjunto de archivos que describen la infraestructura requerida
+* **Infra**: Conjunto de archivos que describen la infraestructura requerida
   para el portal, incluyendo servidores de base de datos, de archivos, de
   aplicación, etc.
 
 # Apoyo
 
 La sección de análisis de compras covid con técnicas de Inteligencia Artificial
-fue posible gracias al apoyo de la Open Contracting Partnership.
+fue posible gracias al apoyo de la [Open Contracting Partnership](https://www.open-contracting.org/es/).
 
 # Términos y condiciones
 
@@ -89,3 +92,19 @@ condiciones de la página externa.
 El portal se encuentra abierto a contribuciones de toda la comunidad. Para colaborar
 primero se debe crear una [incidencia](https://github.com/InstIDEA/controlciudadano/issues/new),
 y en la misma describir la propuesta.
+
+
+# Cómo instalar?
+
+Clone el repositorio y accede al nuevo directorio:
+
+```sh
+git clone https://github.com/InstIDEA/controlciudadano
+cd controlciudadano
+```
+
+Para levantar localmente el portal web puede referirse al siguiente 
+[README](https://github.com/InstIDEA/controlciudadano/blob/master/portal/README.md).
+
+Para levantar localmente el api rest puede referirse al siguiente 
+[README](https://github.com/InstIDEA/controlciudadano/blob/master/api/README.md).
