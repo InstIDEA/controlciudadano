@@ -27,6 +27,7 @@ import {DisclaimerPage} from "./pages/DisclaimerPage";
 import {OCDSItem} from "./pages/OCDSItem";
 import {OCDSBuyerPage} from "./pages/OCDSBuyer";
 import {OCDSSupplier} from "./pages/OCDSSupplier";
+import {AuthoritiesWithDdjj} from "./pages/AuthoritiesWithDdjj";
 
 export default function App() {
     return <Routes/>
@@ -73,6 +74,7 @@ function Routes() {
                 <Route path="/person/:document" exact render={() => <PersonDetailPage/>}/>
 
                 <Route path="/sources" exact render={() => <DS/>}/>
+                <Route path="/ddjj" exact render={() => <AuthoritiesWithDdjj/>}/>
                 <Route path="/sources/:dataSetId" exact render={() => <DSDownload/>}/>
 
                 <Route path="/">

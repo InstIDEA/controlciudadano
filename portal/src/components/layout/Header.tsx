@@ -18,6 +18,9 @@ const menu = <Menu mode="horizontal" id="nav" key="nav">
     <Menu.Item key="conjunto">
         <Link className="menu-item" to="/sources">Fuente de datos</Link>
     </Menu.Item>
+    <Menu.Item key="ddjj">
+        <Link className="menu-item" to="/ddjj">Declaraciones</Link>
+    </Menu.Item>
     <Menu.Item key="docs">
         <Link className="menu-item" to="/about">Acerca de</Link>
     </Menu.Item>
