@@ -1,32 +1,10 @@
 import * as React from 'react';
 import {useMemo} from 'react';
-import {
-    Avatar,
-    Button,
-    Card,
-    Checkbox,
-    Col,
-    Collapse,
-    Comment,
-    Descriptions,
-    Layout,
-    Row,
-    Tag,
-    Typography,
-    Badge,
-    Divider
-} from 'antd';
+import {Avatar, Button, Card, Col, Collapse, Comment, Descriptions, Divider, Layout, Row, Tag, Typography} from 'antd';
 import {Header} from '../components/layout/Header';
 import './PersonSearchPage.css'
 import Footer from '../components/layout/Footer';
-import {
-    DataSearch,
-    MultiList,
-    ReactiveBase,
-    ReactiveList,
-    SelectedFilters,
-    SingleRange
-} from '@appbaseio/reactivesearch';
+import {MultiList, ReactiveBase, ReactiveList, SelectedFilters} from '@appbaseio/reactivesearch';
 import {useMediaQuery} from '@react-hook/media-query'
 import {formatMoney} from '../formatters';
 import {Link} from 'react-router-dom';
@@ -126,8 +104,9 @@ export function AuthoritiesWithDdjj() {
                     <Row>
                         <Card className="card-style info-ddjj" style={{width: '100%', height: '60px'}}>
                             <Typography.Text style={{color: "white", fontSize: '18px'}}>
-                                Podrían existir Declaraciones Juradas presentadas pero no así publicadas por la Contraloría General de la República
-                            </Typography.Text>        
+                                Podrían existir Declaraciones Juradas presentadas pero no así publicadas por la
+                                Contraloría General de la República
+                            </Typography.Text>
                         </Card>
                     </Row>
                     <ChartsComponent isSmall={isSmall}/>
@@ -142,126 +121,35 @@ export function AuthoritiesWithDdjj() {
 
 
 function Filter() {
-    const anhos = [{key: '2020', doc_count: 15},
-    {key: '2019', doc_count: 15}, 
-    {key: '2018', doc_count: 15},
-    {key: '2017', doc_count: 15},
-    {key: '2016', doc_count: 15},]
 
     return <Col xs={{span: 24}} style={{padding: 5}}>
-        <Card title="Fuente de datos" className="card-style">
+        <Card title="" className="card-style">
 
-            <MultiList componentId="Fuente"
-                       dataField="department.keyword"
+            <Typography.Title className="ant-card-head"
+                              style={{paddingLeft: 0, paddingTop: 10}}>Elecciones</Typography.Title>
+            <MultiList componentId="year_elected"
+                       dataField="year_elected"
                        queryFormat="and"
                        showCheckbox
                        URLParams
                        showSearch={false}
                        react={{
-                           and: ['query', 'Patrimonio', 'Salario', 'Fuente'],
-                       }}
-                       render={({loading, error, data, handleChange, value}) => {
-                           if (loading) {
-                               return <div>Cargando ...</div>;
-                           }
-                           if (error) {
-                               return <div>Error al cargar datos</div>;
-                           }
-                           return (<Row>
-                               {data.map((item: { key: string, doc_count: number }) => <React.Fragment key={item.key}>
-                                   <Col xs={{span: 18}}>
-                                       <Checkbox checked={value[item.key]}
-                                                 onChange={() => handleChange(item.key)}>
-                                           {SOURCE_NAME_MAP[item.key] || item.key}
-                                       </Checkbox>
-                                   </Col>
-                                   <Col xs={{span: 6}} style={{textAlign: 'right'}}>
-                                       <Badge count={formatMoney(item.doc_count)} style={{backgroundColor: 'gray'}}/>
-                                   </Col>
-                               </React.Fragment>)}
-                           </Row>);
+                           and: ['departament', 'year_elected'],
                        }}
             />
             <Divider orientation="left" plain/>
-            <Typography.Title className="ant-card-head" style={{paddingLeft: '0'}}>Año</Typography.Title>
-            <MultiList componentId="Fuente"
-                       dataField="sources.keyword"
+            <Typography.Title className="ant-card-head"
+                              style={{paddingLeft: 0, paddingTop: 10}}>Departamento</Typography.Title>
+            <MultiList componentId="departament"
+                       dataField="departament.keyword"
                        queryFormat="and"
                        showCheckbox
                        URLParams
                        showSearch={false}
                        react={{
-                           and: ['query', 'Patrimonio', 'Salario', 'Fuente'],
-                       }}
-                       render={({loading, error, data, handleChange, value}) => {
-                           if (loading) {
-                               return <div>Cargando ...</div>;
-                           }
-                           if (error) {
-                               return <div>Error al cargar datos</div>;
-                           }
-                           return (<Row>
-                               {anhos.map((item: { key: string, doc_count: number }) => <React.Fragment key={item.key}>
-                                   <Col xs={{span: 18}}>
-                                       <Checkbox checked={value[item.key]}
-                                                 onChange={() => handleChange(item.key)}>
-                                           {SOURCE_NAME_MAP[item.key] || item.key}
-                                       </Checkbox>
-                                   </Col>
-                                   <Col xs={{span: 6}} style={{textAlign: 'right'}}>
-                                        <Badge count={formatMoney(item.doc_count)} style={{backgroundColor: 'gray'}}/>
-                                   </Col>
-                               </React.Fragment>)}
-                           </Row>);
+                           and: ['departament', 'year_elected'],
                        }}
             />
-        </Card>
-
-        <Card title="Salario" className="card-style">
-            <DataSearch componentId="query"
-                URLParams
-                enableQuerySuggestions={false}
-                enablePopularSuggestions={false}
-                debounce={300}
-                autosuggest={false}
-                innerClass={{
-                    input: 'fts-search-input'
-                }}
-                placeholder="Búsqueda por departamentos"
-                dataField={['name', 'document.raw']}/>
-            <SingleRange componentId="Salario"
-                         dataField="salary"
-                         showRadio
-                         URLParams
-                         react={{
-                             and: ['query', 'Patrimonio', 'Fuente'],
-                         }}
-                         includeNullValues={true}
-                         data={[
-                             {start: 0, end: 2500000, label: 'Hasta sueldo mínimo'},
-                             {start: 2500001, end: 5000000, label: 'De sueldo mínimo a 5 millones'},
-                             {start: 5000001, end: 10000000, label: 'De 5 a 10 millones'},
-                             {start: 10000001, label: 'Mas de 10 millones'},
-                         ]}
-                         style={{}}/>
-        </Card>
-
-        <Card title="Patrimonio neto" className="card-style">
-            <SingleRange componentId="Patrimonio"
-                         dataField="net_worth"
-                         react={{
-                             and: ['query', 'Salario', 'Fuente'],
-                         }}
-                         showRadio
-                         URLParams
-                         includeNullValues={false}
-                         data={[
-                             {end: 100000000, label: 'Hasta 100M'},
-                             {start: 100000001, end: 500000000, label: 'De 100M a 500M'},
-                             {start: 500000001, end: 1000000000, label: 'De 500M a 1.000M'},
-                             {start: 1000000001, label: 'Mas de 1.000M'},
-                         ]}
-                         style={{}}/>
         </Card>
     </Col>
 }
@@ -298,6 +186,7 @@ function ResultComponent(props: {
         </Card>
     </Col>
 }
+
 function ChartsComponent(props: {
     isSmall: boolean
 }) {
@@ -306,7 +195,7 @@ function ChartsComponent(props: {
         <Col xl={24}>
             <Row gutter={[8, 0]}>
                 <Col xl={12} lg={12} sm={24} xs={24}>
-                    <Row gutter={[8,16]}>
+                    <Row gutter={[8, 16]}>
                         <Col xl={24} lg={24} sm={24} xs={24}>
                             <div style={{width: '100%', height: '200px', border: '1px solid black'}}></div>
                         </Col>
@@ -334,8 +223,9 @@ function ChartsComponent(props: {
         </Col>
 
     </Card>
-    
-}       
+
+}
+
 function ResultHeader() {
 
     return <Row gutter={[8, 8]} justify="start" align="middle">
@@ -373,7 +263,7 @@ function SingleResultCard(props: {
                      </Descriptions>
                          <Row justify="space-between" align="middle">
                              <Col>
-                                {data.year_elected}
+                                 {data.year_elected}
                              </Col>
                              <Col>
                                  <Link to={`/person/${data.document}`}>
@@ -482,7 +372,7 @@ function mapFullDataToFTS(item: ElasticDdjjDataResult): ElasticDdjjPeopleResult[
     const toRet: Array<ElasticDdjjPeopleResult> = [];
 
     toRet.push({
-        _id : item._id,
+        _id: item._id,
         name: item.first_name + ' ' + item.last_name,
         department: item.department,
         charge: item.charge,
