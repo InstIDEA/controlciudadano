@@ -1,6 +1,8 @@
 CREATE TABLE analysis.authorities_with_ddjj AS (
     SELECT autoridad.id,
            autoridad.cedula       AS document,
+           autoridad.apellido     AS last_name,
+           autoridad.nombre       AS first_name,
            autoridad.ano          AS year_elected,
            autoridad.dep_desc     AS departament,
            autoridad.cand_desc    AS charge,
@@ -9,7 +11,7 @@ CREATE TABLE analysis.authorities_with_ddjj AS (
            autoridad.sexo         AS sex,
            autoridad.nacionalidad AS nacionality,
            autoridad.edad         AS age,
-           (SELECT json_build_object(
+           (SELECT jsonb_build_object(
                            'id', start.id,
                            'link', start.link,
                            'link_sandwich', start.link_sandwich,
@@ -17,13 +19,12 @@ CREATE TABLE analysis.authorities_with_ddjj AS (
                            'active', start.active,
                            'passive', start.passive,
                            'net_worth', start.net_worth)
-    ​
             FROM analysis.declarations start
             WHERE start.document = autoridad.cedula
               AND start.year = autoridad.ano
             ORDER BY start.version desc
             LIMIT 1)              AS start,
-           (SELECT json_build_object(
+           (SELECT jsonb_build_object(
                            'id', "end".id,
                            'link', "end".link,
                            'link_sandwich', "end".link_sandwich,
