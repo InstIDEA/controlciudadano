@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useMemo} from 'react';
-import {Avatar, Button, Card, Col, Collapse, Comment, Descriptions, Divider, Layout, Row, Tag, Typography} from 'antd';
+import {Avatar, Button, Card, Col, Collapse, Comment, Descriptions, Divider, Layout, Row, Tag, Typography, Tooltip} from 'antd';
 import {Header} from '../components/layout/Header';
 import './PersonSearchPage.css'
 import Footer from '../components/layout/Footer';
@@ -145,9 +145,21 @@ function Filter() {
                        queryFormat="and"
                        showCheckbox
                        URLParams
-                       showSearch={false}
+                       showSearch={true}
                        react={{
                            and: ['departament', 'year_elected'],
+                       }}
+            /><Divider orientation="left" plain/>
+            <Typography.Title className="ant-card-head"
+                              style={{paddingLeft: 0, paddingTop: 10}}>Partido Político</Typography.Title>
+            <MultiList componentId="list"
+                       dataField="list.keyword"
+                       queryFormat="and"
+                       showCheckbox
+                       URLParams
+                       showSearch={true}
+                       react={{
+                           and: ['list', 'year_elected'],
                        }}
             />
         </Card>
@@ -250,24 +262,24 @@ function SingleResultCard(props: {
 
     if (props.isSmall) {
         return <Card className="card-style">
-            <Comment author={data.document}
-                     className="small-card"
-                     avatar={
-                         <Avatar
-                             style={{backgroundColor: getColorByIdx(props.id), verticalAlign: 'middle'}}
-                             alt={data.name}>{getInitials(data.name)}</Avatar>
-                     }
+            <Comment className="small-card"
                      content={<><Descriptions title={data.name}>
-                         {data.document &&
-                         <Descriptions.Item label="Salario">{data.document}</Descriptions.Item>}
                      </Descriptions>
                          <Row justify="space-between" align="middle">
-                             <Col>
-                                 {data.year_elected}
+                             <Col span={24} style={{textAlign: 'right'}}>
+                                <Tooltip title={data.start_declaration ? 'Presentó' : 'No presentó'} style={{marginLeft: 20}}>
+                                    <Typography.Text style={{fontSize: 20, color: data.end_declaration ? 'green' : 'red', textAlign: 'right'}}>
+                                        {data.year_elected}
+                                    </Typography.Text>
+                                </Tooltip>
+                                <Tooltip title={data.end_declaration ? 'Presentó' : 'No presentó'}  style={{marginLeft: 20}}>
+                                    <Typography.Text style={{marginLeft: 20, fontSize: 20, color: data.end_declaration ? 'green' : 'red', textAlign: 'right'}}>
+                                        {data.year_elected + 5}
+                                    </Typography.Text>
+                                </Tooltip>
                              </Col>
                              <Col>
                                  <Link to={`/person/${data.document}`}>
-                                     <Button className="mas-button">Ver más</Button>
                                  </Link>
                              </Col>
                          </Row>
@@ -288,8 +300,17 @@ function SingleResultCard(props: {
             <br/>
             <small>Cédula: <b>{formatMoney(data.document)}</b></small>
         </Col>
-        <Col span={8} offset={1} style={{textAlign: 'right'}}>
-            {data.year_elected}
+        <Col span={8} style={{textAlign: 'right'}}>
+            <Tooltip title={data.start_declaration ? 'Presentó' : 'No presentó'} style={{marginLeft: 20}}>
+                <Typography.Text style={{marginLeft: 20, fontSize: 20, fontWeight: 'bold', color: data.end_declaration ? 'green' : 'red'}}>
+                    {data.year_elected}
+                </Typography.Text>
+            </Tooltip>
+            <Tooltip title={data.end_declaration ? 'Presentó' : 'No presentó'}  style={{marginLeft: 20}}>
+                <Typography.Text style={{marginLeft: 20, fontSize: 20, fontWeight: 'bold', color: data.end_declaration ? 'green' : 'red'}}>
+                    {data.year_elected + 5}
+                </Typography.Text>
+            </Tooltip>
         </Col>
         <Col span={2} offset={1}>
             <Link to={`/person/${data.document}`}>
@@ -324,17 +345,23 @@ function getColorByIdx(_id: string) {
 function getData(data: Array<ElasticDdjjPeopleResult>) {
     const name: { val: string, confidence: number } = {val: "", confidence: 0};
     const document: { val?: string, confidence: number } = {val: "", confidence: 0};
-    const year_elected: { val?: number, confidence: number } = {val: 0, confidence: 0};
+    const year_elected: { val: number, confidence: number } = {val: 0, confidence: 0};
+    const start_declaration: { val?: boolean, confidence: number } = {val: false, confidence: 0};
+    const end_declaration: { val?: boolean, confidence: number } = {val: false, confidence: 0};
     for (const row of data) {
         name.val = row.name;
         document.val = row.document;
         year_elected.val = row.year_elected;
+        start_declaration.val = row.start !== null;
+        end_declaration.val = row.end !== null;
     }
 
     return {
         name: fixName(name.val),
         document: document.val,
         year_elected: year_elected.val,
+        start_declaration: start_declaration.val,
+        end_declaration: end_declaration.val
     }
 }
 
