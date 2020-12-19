@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {useMemo} from 'react';
-import {Avatar, Button, Card, Col, Collapse, Comment, Descriptions, Divider, Layout, Row, Tag, Typography, Tooltip} from 'antd';
+import {Avatar, Card, Col, Collapse, Comment, Divider, Layout, Row, Tag, Typography, Tooltip} from 'antd';
 import {Header} from '../components/layout/Header';
-import './PersonSearchPage.css'
+import './AuthoritiesWithDdjj.css'
 import Footer from '../components/layout/Footer';
 import {MultiList, ReactiveBase, ReactiveList, SelectedFilters} from '@appbaseio/reactivesearch';
 import {useMediaQuery} from '@react-hook/media-query'
@@ -102,7 +102,7 @@ export function AuthoritiesWithDdjj() {
                         </Col>
                     </Row>
                     <Row>
-                        <Card className="card-style info-ddjj" style={{width: '100%', height: '60px'}}>
+                        <Card className="card-style info-ddjj" style={{width: '100%'}}>
                             <Typography.Text style={{color: "white", fontSize: '18px'}}>
                                 Podrían existir Declaraciones Juradas presentadas pero no así publicadas por la
                                 Contraloría General de la República
@@ -126,7 +126,7 @@ function Filter() {
         <Card title="" className="card-style">
 
             <Typography.Title className="ant-card-head"
-                              style={{paddingLeft: 0, paddingTop: 10}}>Elecciones</Typography.Title>
+                              style={{paddingLeft: 0, paddingTop: 10}}>Año</Typography.Title>
             <MultiList componentId="year_elected"
                        dataField="year_elected"
                        queryFormat="and"
@@ -146,6 +146,7 @@ function Filter() {
                        showCheckbox
                        URLParams
                        showSearch={true}
+                       placeholder='Buscar'
                        react={{
                            and: ['departament', 'year_elected'],
                        }}
@@ -155,9 +156,15 @@ function Filter() {
             <MultiList componentId="list"
                        dataField="list.keyword"
                        queryFormat="and"
+                       className="multi-list"
+                       innerClass={{
+                            listSearch: 'list-search'
+                       }}
                        showCheckbox
                        URLParams
                        showSearch={true}
+                       placeholder='Buscar'
+                       style={{}}
                        react={{
                            and: ['list', 'year_elected'],
                        }}
@@ -246,7 +253,7 @@ function ResultHeader() {
         <Col span={14}>
             <b>Nombre</b>
         </Col>
-        <Col span={8} style={{textAlign: 'left', fontSize: '0.8em', paddingRight: 10}}>
+        <Col span={7} style={{textAlign: 'right', fontSize: '1em'}}>
             <b>Año</b>
         </Col>
     </Row>
@@ -263,8 +270,10 @@ function SingleResultCard(props: {
     if (props.isSmall) {
         return <Card className="card-style">
             <Comment className="small-card"
-                     content={<><Descriptions title={data.name}>
-                     </Descriptions>
+                     content={<>
+                        <Link className="name-result-link" to={`/person/${data.document}`}>
+                            {data.name}
+                        </Link>
                          <Row justify="space-between" align="middle">
                              <Col span={24} style={{textAlign: 'right'}}>
                                 <Tooltip title={data.start_declaration ? 'Presentó' : 'No presentó'} style={{marginLeft: 20}}>
@@ -277,10 +286,6 @@ function SingleResultCard(props: {
                                         {data.year_elected + 5}
                                     </Typography.Text>
                                 </Tooltip>
-                             </Col>
-                             <Col>
-                                 <Link to={`/person/${data.document}`}>
-                                 </Link>
                              </Col>
                          </Row>
                      </>
@@ -296,11 +301,13 @@ function SingleResultCard(props: {
                 alt={data.name}>{getInitials(data.name)}</Avatar>
         </Col>
         <Col span={10}>
-            {data.name}
+            <Link className="name-result-link" to={`/person/${data.document}`}>
+                {data.name}
+            </Link>
             <br/>
             <small>Cédula: <b>{formatMoney(data.document)}</b></small>
         </Col>
-        <Col span={8} style={{textAlign: 'right'}}>
+        <Col span={12} style={{textAlign: 'right'}}>
             <Tooltip title={data.start_declaration ? 'Presentó' : 'No presentó'} style={{marginLeft: 20}}>
                 <Typography.Text style={{marginLeft: 20, fontSize: 20, fontWeight: 'bold', color: data.end_declaration ? 'green' : 'red'}}>
                     {data.year_elected}
@@ -311,11 +318,6 @@ function SingleResultCard(props: {
                     {data.year_elected + 5}
                 </Typography.Text>
             </Tooltip>
-        </Col>
-        <Col span={2} offset={1}>
-            <Link to={`/person/${data.document}`}>
-                <Button className="mas-button">Ver más</Button>
-            </Link>
         </Col>
     </Row>
 }
