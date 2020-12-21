@@ -65,7 +65,7 @@ const QUERY_CONTRACTS_PER_SUPPLIER = `
             c.currency                          as currency,
             c.date_signed                       as sign_date,
             t.tender_procurementmethod          as procurement_method,
-            t.characteristics ? 'covid_19'      as is_covid
+            coalesce(t.characteristics ? 'covid_19',false)      as is_covid
     from ocds.award s
             join ocds.contract c on c.ocid = s.ocid and c.award_id = s.award_id
             join ocds.procurement t on t.ocid = s.ocid
@@ -180,7 +180,7 @@ const QUERY_SUPPLIERS_BY_BUYER = `
                             (aa.amount / b.tender_amount - 1) * 100
                         else 0 end                  as percentage,
                     aa.date                         AS date,
-                    b.characteristics ? 'covid_19'  AS is_covid
+                   coalesce(b.characteristics ? 'covid_19', false) as is_covid
     FROM ocds.procurement b
              JOIN ocds.award aa on aa.ocid = b.ocid
     WHERE b.buyer_id = $1
@@ -320,5 +320,3 @@ export class OCDSService {
     }
 
 }
-
-
