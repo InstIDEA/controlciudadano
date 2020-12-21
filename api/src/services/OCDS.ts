@@ -180,7 +180,7 @@ const QUERY_SUPPLIERS_BY_BUYER = `
                             (aa.amount / b.tender_amount - 1) * 100
                         else 0 end                  as percentage,
                     aa.date                         AS date,
-                    b.characteristics ? 'covid_19'  AS is_covid
+                   coalesce(b.characteristics ? 'covid_19', false) as is_covid
     FROM ocds.procurement b
              JOIN ocds.award aa on aa.ocid = b.ocid
     WHERE b.buyer_id = $1
@@ -320,4 +320,3 @@ export class OCDSService {
     }
 
 }
-
