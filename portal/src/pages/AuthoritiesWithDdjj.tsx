@@ -4,11 +4,12 @@ import {Avatar, Card, Col, Collapse, Comment, Divider, Layout, Row, Tag, Typogra
 import {Header} from '../components/layout/Header';
 import './AuthoritiesWithDdjj.css'
 import Footer from '../components/layout/Footer';
-import {MultiList, ReactiveBase, ReactiveList, SelectedFilters} from '@appbaseio/reactivesearch';
+import {MultiList, ReactiveBase, ReactiveList, SelectedFilters, ReactiveComponent} from '@appbaseio/reactivesearch';
 import {useMediaQuery} from '@react-hook/media-query'
 import {formatMoney} from '../formatters';
 import {Link} from 'react-router-dom';
 import {fixName} from '../nameUtils';
+import { ResponsiveBar } from '@nivo/bar'
 
 export const SOURCE_NAME_MAP: { [k: string]: string } = {
     'tsje_elected': 'Autoridades electas',
@@ -186,7 +187,7 @@ function ResultComponent(props: {
                     dataField="document.keyword"
                     componentId="SearchResult"
                     react={{
-                        and: ['query', 'Fuente', 'Salario', 'Patrimonio']
+                        and: ['list', 'year_elected', 'department']
                     }}
                     infiniteScroll={false}
                     renderNoResults={() => "Sin resultados que cumplan con tu búsqueda"}
@@ -219,7 +220,36 @@ function ChartsComponent(props: {
                             <div style={{width: '100%', height: '200px', border: '1px solid black'}}></div>
                         </Col>
                         <Col xl={12} lg={12} sm={24} xs={24}>
-                            <div style={{width: '100%', height: '200px', border: '1px solid black'}}></div>
+                            <div style={{width: '100%', height: '200px', border: '1px solid black'}}>
+                            <ReactiveComponent
+                                    componentId="DeclarationsSexChart"
+                                    defaultQuery={() => ({
+                                        aggs: {
+                                            "sex.keyword": {
+                                                terms: {
+                                                    field: 'sex.keyword',
+                                                    order: {_count: 'desc'}
+                                                },
+                                                aggs: {
+                                                    presented: {
+                                                        filter: {
+                                                            term: {
+                                                                presented: true
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    })}
+                                    render={(props) => (
+                                        <BySexChart {...props}/>
+                                    )}
+                                    react={{
+                                        and: ['list', 'year_elected', 'department'],
+                                    }}
+                                />
+                            </div>
                         </Col>
                         <Col xl={12} lg={12} sm={24} xs={24}>
                             <div style={{width: '100%', height: '200px', border: '1px solid black'}}></div>
@@ -243,6 +273,27 @@ function ChartsComponent(props: {
 
     </Card>
 
+}
+
+function BySexChart(props: any) {
+    console.log(props.aggregations)
+    if (props.loading || !props.aggregations || !props.aggregations["sex.keyword"]) return <>Cargando...</>
+    const data = props.aggregations["sex.keyword"].buckets;
+    const chart = {m: {presented: 0, notPresented: 0}, f: {presented: 0, notPresented: 0}};
+    data.forEach((element: { key: string; doc_count: number; presented: {doc_count: number;} }) => {
+        if(!element.presented) return;
+        if (element.key === 'M') {
+            chart.m.presented = element.presented.doc_count;
+            chart.m.notPresented = element.doc_count - element.presented.doc_count;
+        }
+        if (element.key === 'F') {
+            chart.f.presented = element.presented.doc_count;
+            chart.f.notPresented = element.doc_count - element.presented.doc_count;
+        }
+    });
+    return <>
+        <MyResponsiveBar m={chart.m} f={chart.f}/>
+    </>
 }
 
 function ResultHeader() {
@@ -321,7 +372,71 @@ function SingleResultCard(props: {
         </Col>
     </Row>
 }
+function MyResponsiveBar (props: {m: {presented: number, notPresented: number}, f: {presented: number, notPresented: number}}) {
 
+    const data = [{
+        key: 'M',
+        presented: props.m.presented,
+        notPresented: props.m.notPresented
+    }, {
+        key: 'F',
+        presented: props.f.presented,
+        notPresented: props.f.notPresented
+    }];
+    return <ResponsiveBar
+            data={data}
+            keys={[ 'presented', 'notPresented' ]}
+            indexBy="key"
+            margin={{ top: 20, right: 20, bottom: 50, left: 50 }}
+            padding={0.3}
+            colors={{ scheme: 'nivo' }}
+            defs={[
+                {
+                    id: 'dots',
+                    type: 'patternDots',
+                    background: 'inherit',
+                    color: '#38bcb2',
+                    size: 4,
+                    padding: 1,
+                    stagger: true
+                },
+                {
+                    id: 'lines',
+                    type: 'patternLines',
+                    background: 'inherit',
+                    color: '#eed312',
+                    rotation: -45,
+                    lineWidth: 6,
+                    spacing: 10
+                }
+            ]}
+            borderColor={{ from: 'color', modifiers: [ [ 'darker', 1.6 ] ] }}
+            axisTop={null}
+            axisRight={null}
+            axisBottom={{
+                tickSize: 5,
+                tickPadding: 5,
+                tickRotation: 0,
+                legend: 'Sexo',
+                legendPosition: 'middle',
+                legendOffset: 32
+            }}
+            axisLeft={{
+                tickSize: 5,
+                tickPadding: 5,
+                tickRotation: 0,
+                legend: 'Cantidad',
+                legendPosition: 'middle',
+                legendOffset: -40
+            }}
+            labelSkipWidth={12}
+            labelSkipHeight={12}
+            labelTextColor={{ from: 'color', modifiers: [ [ 'darker', 1.6 ] ] }}
+            animate={true}
+            motionStiffness={90}
+            motionDamping={15}
+        />
+}
 
 const ColorList = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae'];
 const FilterColors: Record<string, string> = {
