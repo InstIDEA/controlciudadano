@@ -65,7 +65,7 @@ const QUERY_CONTRACTS_PER_SUPPLIER = `
             c.currency                          as currency,
             c.date_signed                       as sign_date,
             t.tender_procurementmethod          as procurement_method,
-            t.characteristics ? 'covid_19'      as is_covid
+            coalesce(t.characteristics ? 'covid_19',false)      as is_covid
     from ocds.award s
             join ocds.contract c on c.ocid = s.ocid and c.award_id = s.award_id
             join ocds.procurement t on t.ocid = s.ocid
@@ -320,5 +320,4 @@ export class OCDSService {
     }
 
 }
-
 
