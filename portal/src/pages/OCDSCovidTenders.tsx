@@ -94,7 +94,7 @@ export function OCDSCovidTenders() {
                     title: 'Proveedor',
                     align: 'right',
                     render: (_, r) => <Space direction="vertical">
-                        {(r.supplier || []).map(s => <Link to={`/ocds/supplier/${s.id}?onlyCovid=1`} key={s.id}>
+                        {(r.supplier || []).map(s => <Link to={`/ocds/suppliers/${s.id}?onlyCovid=1`} key={s.id}>
                             {s.name}
                         </Link>)}
                     </Space>
@@ -143,7 +143,7 @@ export function OCDSCovidTenders() {
                             </Space>
                             <br />
                             Proveedor: <Space direction="vertical">
-                                {(r.supplier || []).map(s => <Link to={`/ocds/supplier/${s.id}?onlyCovid=1`} key={s.id}>
+                                {(r.supplier || []).map(s => <Link to={`/ocds/suppliers/${s.id}?onlyCovid=1`} key={s.id}>
                                     {s.name}
                                 </Link>)}
                             </Space>

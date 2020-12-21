@@ -43,7 +43,7 @@ export function OCDSPartyTable(props: {
             dataIndex: 'party_name',
             render: (_, row) => {
                 if (row.party_id.startsWith("PY-RUC")) {
-                    return <Link to={`ocds/supplier/${row.party_id}`} target="__blank" rel="noopener noreferrer">
+                    return <Link to={`/ocds/suppliers/${row.party_id}`} target="__blank" rel="noopener noreferrer">
                         {row.party_name}
                         <br/>
                         <small>{row.party_id}</small>
