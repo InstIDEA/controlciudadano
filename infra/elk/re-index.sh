@@ -12,7 +12,7 @@ docker-compose stop logstash
 
 rm -rvf "logstash_data/$FILE_NAME"
 
-docker-compose exec elasticsearch curl -XDELETE localhost:9200/$INDEX_NAME
+docker-compose exec -T elasticsearch curl -XDELETE localhost:9200/$INDEX_NAME
 
 echo "Index removed, restarting"
 
