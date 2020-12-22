@@ -48,5 +48,5 @@ ALTER TABLE analysis.authorities_with_ddjj
     ADD COLUMN presented boolean DEFAULT FALSE;
 
 UPDATE analysis.authorities_with_ddjj
-SET presented = start IS NOT NULL AND "end" IS NOT NULL
+SET presented = start IS NOT NULL AND ("end" IS NOT NULL OR year + 5 > date_part('year', CURRENT_DATE));
 ;
