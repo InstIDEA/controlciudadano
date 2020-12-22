@@ -4,7 +4,6 @@ from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.postgres_operator import PostgresOperator
 
-
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
@@ -27,16 +26,20 @@ dag = DAG(
 with dag:
     do_curl = BashOperator(
         task_id=f'call_webhook',
-        bash_command=f"""
-            curl {{ var.value.ELASTIC_IDX_FULL_DATA_HOOK }}
+        bash_command="""
+            curl "{{ var.value.ELASTIC_IDX_FULL_DATA_HOOK }}"
             """,
         retries=10
     )
 
+    clean_db = PostgresOperator(task_id='clean_table',
+                                sql="DROP TABLE analysis.full_data")
+
     do_query = PostgresOperator(task_id='do_query',
+
                                 sql="sql/elastic_index_full_data.sql")
 
-    do_query >> do_curl
+    clean_db >> do_query >> do_curl
 
 if __name__ == '__main__':
     dag.clear(reset_dag_runs=True)

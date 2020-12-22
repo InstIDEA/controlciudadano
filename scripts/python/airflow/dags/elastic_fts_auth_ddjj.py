@@ -26,8 +26,8 @@ dag = DAG(
 with dag:
     do_curl = BashOperator(
         task_id=f'call_webhook',
-        bash_command=f"""
-            curl {{ var.value.ELASTIC_IDX_AUTH_DDJJ }}
+        bash_command="""
+            curl "{{ var.value.ELASTIC_IDX_AUTH_DDJJ }}"
             """,
         retries=10
     )

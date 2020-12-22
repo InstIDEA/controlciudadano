@@ -1,4 +1,3 @@
-DROP TABLE analysis.full_data;
 CREATE TABLE analysis.full_data AS (
     WITH sfp_documents AS (
         select documento                       as document,
