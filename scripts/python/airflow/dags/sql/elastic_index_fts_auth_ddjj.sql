@@ -38,8 +38,10 @@ CREATE TABLE analysis.authorities_with_ddjj AS (
             WHERE "end".document = autoridad.cedula
               AND "end".year = autoridad.ano + 5
             ORDER BY "end".version desc
-            LIMIT 1)              AS "end"
+            LIMIT 1)              AS "end",
+           aqe.head_shot          as photo
     FROM analysis.tsje_elected autoridad
+             LEFT JOIN staging.a_quien_elegimos aqe ON aqe.identifier = autoridad.cedula
 );
 
 ALTER TABLE analysis.authorities_with_ddjj
