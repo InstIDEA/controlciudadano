@@ -29,8 +29,8 @@ export const page1 = [
     },
     {
         img: verificacionDDJJ,
-        title: 'Verificacion de DDJJ',
-        href: `/DDJJ`,
+        title: 'Verificación de DDJJ',
+        href: `/ddjj`,
         description: ''
     },
 ];
@@ -57,7 +57,7 @@ export function LandingPage() {
     }, [])
 
     const children = page1.map(card => (
-        <Col className="card-wrapper" key={card.title} md={8} xs={12}>
+        <Col className="card-wrapper" key={card.title} md={isSmall? 12: 8} xs={isSmall? 24: 12}>
             <Link className="card" to={card.href}>
                 <img src={card.img} alt="" className="card-img-top"/>
                 <div className="card-body">
@@ -107,8 +107,8 @@ export function LandingPage() {
                 <Col xxl={24} xl={24} lg={24} md={24} sm={24} xs={24} className="banner-title-col-wrapper">
                     <QueueAnim className="banner-title-wrapper">
                         <p className="banner-text" key="content">
-                            En este portal podés explorar <strong>Datos Abiertos</strong> y <strong>controlar los gastos
-                            del COVID-19</strong>
+                            Este es un portal en el que vas a poder explorar <strong>Datos Abiertos</strong> y realizar un <strong>control de los gastos
+                            del COVID-19</strong> 
                         </p>
                     </QueueAnim>
                 </Col>

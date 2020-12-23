@@ -34,9 +34,9 @@ a {
 
 .banner-text {
   color: rgba(0, 52, 91, 1);
-  font-size: 30px !important;
-  width: 90%;
-  margin-left: 160px;
+  font-size: 23px !important;
+  width: 84%;
+  margin-left: 125px;
 }
 
 svg g {
@@ -347,7 +347,7 @@ h6 {
 .card .description {
   color: rgba(0, 52, 91, 1) !important;
   font-size: 24px;
-  display: block;
+  display: grid;
   font-weight: bolder;
 }
 
@@ -425,13 +425,13 @@ h6 {
 .info-card {
   transition: transform 0.3s, box-shadow 0.3s;
   position: absolute;
-  top: 48px;
-  right: 134px;
+  top: 86px;
+  right: 68px;
   color: #868e96;
   display: flex;
-  width: 36%;
-  height: 105px;
-  padding: 0px;
+  width: 45%;
+  height: 131px;
+  padding: 15px;
   box-shadow: 5px 2px rgba(84, 48, 132, 0.06);
   word-wrap: break-word;
   background-color: #fff;
@@ -460,7 +460,7 @@ h6 {
 .info-banner {
   background-image: url('../assets/imgs/home.svg');
   background-repeat: no-repeat;
-  background-size: 40%;
+  background-size: 50%;
   background-position-x: center;
   background-position-y: top;
   padding-top: 100px;
