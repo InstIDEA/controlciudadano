@@ -511,7 +511,7 @@ export interface AuthoritiesWithoutDocument {
     first_name: string;
     last_name: string;
     document: string;
-    year_elected: string;
+    year_elected: number;
     departament: string;
     charge: string;
     list: string;
