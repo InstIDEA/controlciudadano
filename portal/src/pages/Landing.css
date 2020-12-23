@@ -36,6 +36,7 @@ a {
   color: rgba(0, 52, 91, 1);
   font-size: 30px !important;
   width: 90%;
+  margin-left: 160px;
 }
 
 svg g {
@@ -46,11 +47,12 @@ svg g {
 .banner-wrapper {
   width: 100%;
   position: relative;
-  padding-top: 75px;
+  padding-top: 35px;
   background-image: url('../assets/imgs/background.svg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position-y: center;
+  margin-left: 160;
 }
 
 .banner-wrapper .banner-title-wrapper {
@@ -320,6 +322,7 @@ h6 {
   max-width: 1200px;
   margin: auto;
   position: relative;
+  padding-top: 0px;
 }
 
 .page-wrapper .page h2 {
@@ -374,7 +377,7 @@ h6 {
 }
 
 .page1 {
-  padding-top: 10px;
+  padding-top: 0px;
   overflow: initial;
   min-height: 320px;
 }
@@ -422,13 +425,13 @@ h6 {
 .info-card {
   transition: transform 0.3s, box-shadow 0.3s;
   position: absolute;
-  top: 84px;
-  right: 66px;
+  top: 48px;
+  right: 134px;
   color: #868e96;
   display: flex;
-  width: 46%;
-  height: 132px;
-  padding: 25px;
+  width: 36%;
+  height: 105px;
+  padding: 0px;
   box-shadow: 5px 2px rgba(84, 48, 132, 0.06);
   word-wrap: break-word;
   background-color: #fff;
@@ -457,7 +460,7 @@ h6 {
 .info-banner {
   background-image: url('../assets/imgs/home.svg');
   background-repeat: no-repeat;
-  background-size: 50%;
+  background-size: 40%;
   background-position-x: center;
   background-position-y: top;
   padding-top: 100px;
