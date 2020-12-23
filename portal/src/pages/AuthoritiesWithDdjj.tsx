@@ -1,17 +1,18 @@
 import * as React from 'react';
-import {useMemo} from 'react';
-import {Avatar, Card, Col, Collapse, Comment, Divider, Layout, Row, Tag, Typography, Tooltip} from 'antd';
-import {Header} from '../components/layout/Header';
+import { useMemo, useState, useEffect } from 'react';
+import { Avatar, Card, Col, Collapse, Comment, Divider, Layout, Row, Tag, Typography, Tooltip, message } from 'antd';
+import { Header } from '../components/layout/Header';
 import './AuthoritiesWithDdjj.css'
 import Footer from '../components/layout/Footer';
-import {MultiList, ReactiveBase, ReactiveList, SelectedFilters, ReactiveComponent} from '@appbaseio/reactivesearch';
-import {useMediaQuery} from '@react-hook/media-query'
-import {formatMoney} from '../formatters';
-import {Link} from 'react-router-dom';
-import {fixName} from '../nameUtils';
+import { MultiList, ReactiveBase, ReactiveList, SelectedFilters, ReactiveComponent } from '@appbaseio/reactivesearch';
+import { useMediaQuery } from '@react-hook/media-query'
+import { formatMoney } from '../formatters';
+import { Link } from 'react-router-dom';
+import { fixName } from '../nameUtils';
 import { ResponsiveBar } from '@nivo/bar'
 import { ResponsivePie } from '@nivo/pie';
-
+import { ResponsiveChoropleth } from '@nivo/geo'
+import { SimpleApi } from '../SimpleApi';
 export const SOURCE_NAME_MAP: { [k: string]: string } = {
     'tsje_elected': 'Autoridades electas',
     'declarations': 'Declaraciones Juradas de Bienes y Rentas',
@@ -29,94 +30,94 @@ export function AuthoritiesWithDdjj() {
 
     const isSmall = useMediaQuery('only screen and (max-width: 768px)');
 
-    const filter = useMemo(() => <Filter/>, []);
+    const filter = useMemo(() => <Filter />, []);
 
     return <ReactiveBase url="https://data.controlciudadanopy.org/" app="fts_authorities_ddjj">
-        <Header tableMode={true}/>
+        <Header tableMode={true} />
 
         <Layout>
             {!isSmall && <Layout.Sider width="20vw">
-              <Typography.Title level={5} style={{textAlign: 'center', paddingTop: 20}}>
-                Filtros
+                <Typography.Title level={5} style={{ textAlign: 'center', paddingTop: 20 }}>
+                    Filtros
               </Typography.Title>
                 {filter}
             </Layout.Sider>}
             <Layout>
                 <Layout.Content className="content-padding">
                     {isSmall && <Row>
-                      <Col xs={{span: 24}}>
-                        <Collapse defaultActiveKey={['2']} bordered={false}>
-                          <Collapse.Panel header="Mas filtros" key="1">
-                              {filter}
-                          </Collapse.Panel>
-                        </Collapse>
-                      </Col>
+                        <Col xs={{ span: 24 }}>
+                            <Collapse defaultActiveKey={['2']} bordered={false}>
+                                <Collapse.Panel header="Mas filtros" key="1">
+                                    {filter}
+                                </Collapse.Panel>
+                            </Collapse>
+                        </Col>
                     </Row>}
                     <Row>
-                        <Col xs={{span: 24}}>
-                            <Card className="card-style" title="Filtros" style={{width: '100%'}}>
+                        <Col xs={{ span: 24 }}>
+                            <Card className="card-style" title="Filtros" style={{ width: '100%' }}>
                                 <SelectedFilters showClearAll={true}
-                                                 clearAllLabel="Limpiar"
-                                                 render={(props) => {
-                                                     const {selectedValues, setValue} = props;
-                                                     const clearFilter = (component: string) => {
-                                                         setValue(component, null);
-                                                     };
+                                    clearAllLabel="Limpiar"
+                                    render={(props) => {
+                                        const { selectedValues, setValue } = props;
+                                        const clearFilter = (component: string) => {
+                                            setValue(component, null);
+                                        };
 
-                                                     return <>
-                                                         {Object.keys(selectedValues).map(key => {
-                                                             const component = selectedValues[key];
+                                        return <>
+                                            {Object.keys(selectedValues).map(key => {
+                                                const component = selectedValues[key];
 
-                                                             if (!component.value) {
-                                                                 return <> </>
-                                                             }
+                                                if (!component.value) {
+                                                    return <> </>
+                                                }
 
-                                                             if (Array.isArray(component.value)) {
-                                                                 return component.value.map((val: unknown) => <Tag
-                                                                     color={FilterColors[key] || 'gray'}
-                                                                     closable
-                                                                     key={`${key}_${val}`}
-                                                                     onClose={() => setValue(key, component.value.filter((sb: unknown) => sb !== val))}
-                                                                 >
-                                                                     {getFilterKeyName(key)}: {getFilterValueName(val)}
-                                                                 </Tag>)
-                                                             }
+                                                if (Array.isArray(component.value)) {
+                                                    return component.value.map((val: unknown) => <Tag
+                                                        color={FilterColors[key] || 'gray'}
+                                                        closable
+                                                        key={`${key}_${val}`}
+                                                        onClose={() => setValue(key, component.value.filter((sb: unknown) => sb !== val))}
+                                                    >
+                                                        {getFilterKeyName(key)}: {getFilterValueName(val)}
+                                                    </Tag>)
+                                                }
 
-                                                             let label = JSON.stringify(component.value);
-                                                             if (typeof component.value === 'string') {
-                                                                 label = component.value;
-                                                             }
-                                                             if (typeof component.value === 'object' && 'label' in component.value) {
-                                                                 label = component.value.label;
-                                                             }
+                                                let label = JSON.stringify(component.value);
+                                                if (typeof component.value === 'string') {
+                                                    label = component.value;
+                                                }
+                                                if (typeof component.value === 'object' && 'label' in component.value) {
+                                                    label = component.value.label;
+                                                }
 
-                                                             return <Tag closable
-                                                                         color={FilterColors[key] || 'gray'}
-                                                                         onClose={() => clearFilter(key)}
-                                                                         key={key}>
-                                                                 {getFilterKeyName(key)}: {getFilterValueName(label)}
-                                                             </Tag>
-                                                         })}
-                                                     </>;
-                                                 }}
+                                                return <Tag closable
+                                                    color={FilterColors[key] || 'gray'}
+                                                    onClose={() => clearFilter(key)}
+                                                    key={key}>
+                                                    {getFilterKeyName(key)}: {getFilterValueName(label)}
+                                                </Tag>
+                                            })}
+                                        </>;
+                                    }}
                                 />
                             </Card>
                         </Col>
                     </Row>
                     <Row>
-                        <Card className="card-style info-ddjj" style={{width: '100%'}}>
-                            <Typography.Text style={{color: "white", fontSize: '18px'}}>
+                        <Card className="card-style info-ddjj" style={{ width: '100%' }}>
+                            <Typography.Text style={{ color: "white", fontSize: '18px' }}>
                                 Podrían existir Declaraciones Juradas presentadas pero no así publicadas por la
                                 Contraloría General de la República
                             </Typography.Text>
                         </Card>
                     </Row>
-                    <ChartsComponent isSmall={isSmall}/>
-                    <ResultComponent isSmall={isSmall}/>
+                    <ChartsComponent isSmall={isSmall} />
+                    <ResultComponent isSmall={isSmall} />
                 </Layout.Content>
             </Layout>
         </Layout>
-        <Footer tableMode={true}/>
+        <Footer tableMode={true} />
     </ReactiveBase>
 
 }
@@ -124,52 +125,52 @@ export function AuthoritiesWithDdjj() {
 
 function Filter() {
 
-    return <Col xs={{span: 24}} style={{padding: 5}}>
+    return <Col xs={{ span: 24 }} style={{ padding: 5 }}>
         <Card title="" className="card-style">
 
             <Typography.Title className="ant-card-head"
-                              style={{paddingLeft: 0, paddingTop: 10}}>Año</Typography.Title>
+                style={{ paddingLeft: 0, paddingTop: 10 }}>Año</Typography.Title>
             <MultiList componentId="year_elected"
-                       dataField="year_elected"
-                       queryFormat="and"
-                       showCheckbox
-                       URLParams
-                       showSearch={false}
-                       react={{
-                           and: ['departament', 'year_elected'],
-                       }}
+                dataField="year_elected"
+                queryFormat="and"
+                showCheckbox
+                URLParams
+                showSearch={false}
+                react={{
+                    and: ['departament', 'year_elected'],
+                }}
             />
-            <Divider orientation="left" plain/>
+            <Divider orientation="left" plain />
             <Typography.Title className="ant-card-head"
-                              style={{paddingLeft: 0, paddingTop: 10}}>Departamento</Typography.Title>
+                style={{ paddingLeft: 0, paddingTop: 10 }}>Departamento</Typography.Title>
             <MultiList componentId="departament"
-                       dataField="departament.keyword"
-                       queryFormat="and"
-                       showCheckbox
-                       URLParams
-                       showSearch={true}
-                       placeholder='Buscar'
-                       react={{
-                           and: ['departament', 'year_elected'],
-                       }}
-            /><Divider orientation="left" plain/>
+                dataField="departament.keyword"
+                queryFormat="and"
+                showCheckbox
+                URLParams
+                showSearch={true}
+                placeholder='Buscar'
+                react={{
+                    and: ['departament', 'year_elected'],
+                }}
+            /><Divider orientation="left" plain />
             <Typography.Title className="ant-card-head"
-                              style={{paddingLeft: 0, paddingTop: 10}}>Partido Político</Typography.Title>
+                style={{ paddingLeft: 0, paddingTop: 10 }}>Partido Político</Typography.Title>
             <MultiList componentId="list"
-                       dataField="list.keyword"
-                       queryFormat="and"
-                       className="multi-list"
-                       innerClass={{
-                            listSearch: 'list-search'
-                       }}
-                       showCheckbox
-                       URLParams
-                       showSearch={true}
-                       placeholder='Buscar'
-                       style={{}}
-                       react={{
-                           and: ['list', 'year_elected'],
-                       }}
+                dataField="list.keyword"
+                queryFormat="and"
+                className="multi-list"
+                innerClass={{
+                    listSearch: 'list-search'
+                }}
+                showCheckbox
+                URLParams
+                showSearch={true}
+                placeholder='Buscar'
+                style={{}}
+                react={{
+                    and: ['list', 'year_elected'],
+                }}
             />
         </Card>
     </Col>
@@ -180,10 +181,10 @@ function ResultComponent(props: {
     isSmall: boolean
 }) {
 
-    return <Col xs={{span: 24}}>
+    return <Col xs={{ span: 24 }}>
         <Card title="Autoridades Electas" className="card-style">
-            <Col xs={{span: 24}}>
-                {!props.isSmall && <ResultHeader/>}
+            <Col xs={{ span: 24 }}>
+                {!props.isSmall && <ResultHeader />}
                 <ReactiveList
                     dataField="document.keyword"
                     componentId="SearchResult"
@@ -218,166 +219,195 @@ function ChartsComponent(props: {
                 <Col xl={12} lg={12} sm={24} xs={24}>
                     <Row gutter={[8, 16]}>
                         <Col xl={24} lg={24} sm={24} xs={24}>
-                            <div style={{width: '100%', height: '200px', border: '1px solid black'}}>
+                            <div style={{ width: '100%', height: '200px', border: '1px solid black' }}>
                                 <Typography.Title level={4}>Presentados</Typography.Title>
                                 <ReactiveComponent
-                                        componentId="PresentedDeclarationsChart"
-                                        defaultQuery={() => ({
-                                            aggs: {
-                                                "presented.keyword": {
-                                                    terms: {
-                                                        field: 'presented',
-                                                        order: {_count: 'desc'}
-                                                    }
+                                    componentId="PresentedDeclarationsChart"
+                                    defaultQuery={() => ({
+                                        aggs: {
+                                            "presented.keyword": {
+                                                terms: {
+                                                    field: 'presented',
+                                                    order: { _count: 'desc' }
                                                 }
                                             }
-                                        })}
-                                        render={(props) => (
-                                            <PresentedChart {...props}/>
-                                        )}
-                                        react={{
-                                            and: ['list', 'year_elected', 'department'],
-                                        }}
-                                    />
+                                        }
+                                    })}
+                                    render={(props) => (
+                                        <PresentedChart {...props} />
+                                    )}
+                                    react={{
+                                        and: ['list', 'year_elected', 'department'],
+                                    }}
+                                />
                             </div>
                         </Col>
                         <Col xl={12} lg={12} sm={24} xs={24}>
-                            <div style={{width: '100%', height: '200px', border: '1px solid black'}}>
+                            <div style={{ width: '100%', height: '200px', border: '1px solid black' }}>
                                 <Typography.Title level={4}>Sexo</Typography.Title>
                                 <ReactiveComponent
-                                        componentId="DeclarationsSexChart"
-                                        defaultQuery={() => ({
-                                            aggs: {
-                                                "sex.keyword": {
-                                                    terms: {
-                                                        field: 'sex.keyword',
-                                                        order: {_count: 'desc'}
-                                                    },
-                                                    aggs: {
-                                                        presented: {
-                                                            filter: {
-                                                                term: {
-                                                                    presented: true
-                                                                }
+                                    componentId="DeclarationsSexChart"
+                                    defaultQuery={() => ({
+                                        aggs: {
+                                            "sex.keyword": {
+                                                terms: {
+                                                    field: 'sex.keyword',
+                                                    order: { _count: 'desc' }
+                                                },
+                                                aggs: {
+                                                    presented: {
+                                                        filter: {
+                                                            term: {
+                                                                presented: true
                                                             }
                                                         }
                                                     }
                                                 }
                                             }
-                                        })}
-                                        render={(props) => (
-                                            <BySexChart {...props}/>
-                                        )}
-                                        react={{
-                                            and: ['list', 'year_elected', 'department'],
-                                        }}
-                                    />
+                                        }
+                                    })}
+                                    render={(props) => (
+                                        <BySexChart {...props} />
+                                    )}
+                                    react={{
+                                        and: ['list', 'year_elected', 'department'],
+                                    }}
+                                />
                             </div>
                         </Col>
                         <Col xl={12} lg={12} sm={24} xs={24}>
-                            <div style={{width: '100%', height: '200px', border: '1px solid black'}}>
+                            <div style={{ width: '100%', height: '200px', border: '1px solid black' }}>
                                 <Typography.Title level={4}>Tipo Candidatura</Typography.Title>
                                 <ReactiveComponent
-                                        componentId="DeclarationsChargeChart"
-                                        defaultQuery={() => ({
-                                            aggs: {
-                                                "charge.keyword": {
-                                                    terms: {
-                                                        field: 'charge.keyword',
-                                                        order: {_count: 'desc'}
-                                                    },
-                                                    aggs: {
-                                                        presented: {
-                                                            filter: {
-                                                                term: {
-                                                                    presented: true
-                                                                }
+                                    componentId="DeclarationsChargeChart"
+                                    defaultQuery={() => ({
+                                        aggs: {
+                                            "charge.keyword": {
+                                                terms: {
+                                                    field: 'charge.keyword',
+                                                    order: { _count: 'desc' }
+                                                },
+                                                aggs: {
+                                                    presented: {
+                                                        filter: {
+                                                            term: {
+                                                                presented: true
                                                             }
                                                         }
                                                     }
                                                 }
                                             }
-                                        })}
-                                        render={(props) => (
-                                            <ByChargeChart {...props}/>
-                                        )}
-                                        react={{
-                                            and: ['list', 'year_elected', 'department'],
-                                        }}
-                                    />
+                                        }
+                                    })}
+                                    render={(props) => (
+                                        <ByChargeChart {...props} />
+                                    )}
+                                    react={{
+                                        and: ['list', 'year_elected', 'department'],
+                                    }}
+                                />
                             </div>
                         </Col>
                         <Col xl={12} lg={12} sm={24} xs={24}>
-                            <div style={{width: '100%', height: '200px', border: '1px solid black'}}>
+                            <div style={{ width: '100%', height: '200px', border: '1px solid black' }}>
                                 <Typography.Title level={4}>Partido</Typography.Title>
                                 <ReactiveComponent
-                                        componentId="DeclarationsListChart"
-                                        defaultQuery={() => ({
-                                            aggs: {
-                                                "list.keyword": {
-                                                    terms: {
-                                                        field: 'list.keyword',
-                                                        order: {_count: 'desc'}
-                                                    },
-                                                    aggs: {
-                                                        presented: {
-                                                            filter: {
-                                                                term: {
-                                                                    presented: true
-                                                                }
+                                    componentId="DeclarationsListChart"
+                                    defaultQuery={() => ({
+                                        aggs: {
+                                            "list.keyword": {
+                                                terms: {
+                                                    field: 'list.keyword',
+                                                    order: { _count: 'desc' }
+                                                },
+                                                aggs: {
+                                                    presented: {
+                                                        filter: {
+                                                            term: {
+                                                                presented: true
                                                             }
                                                         }
                                                     }
                                                 }
                                             }
-                                        })}
-                                        render={(props) => (
-                                            <ByListChart {...props}/>
-                                        )}
-                                        react={{
-                                            and: ['list', 'year_elected', 'department'],
-                                        }}
-                                    />
+                                        }
+                                    })}
+                                    render={(props) => (
+                                        <ByListChart {...props} />
+                                    )}
+                                    react={{
+                                        and: ['list', 'year_elected', 'department'],
+                                    }}
+                                />
                             </div>
                         </Col>
                         <Col xl={12} lg={12} sm={24} xs={24}>
-                            <div style={{width: '100%', height: '200px', border: '1px solid black'}}>
+                            <div style={{ width: '100%', height: '200px', border: '1px solid black' }}>
                                 <Typography.Title level={4}>Edad</Typography.Title>
                                 <ReactiveComponent
-                                        componentId="DeclarationsAgeChart"
-                                        defaultQuery={() => ({
-                                            aggs: {
-                                                "age": {
-                                                    terms: {
-                                                        field: 'age',
-                                                        order: {_count: 'desc'}
-                                                    },
-                                                    aggs: {
-                                                        presented: {
-                                                            filter: {
-                                                                term: {
-                                                                    presented: true
-                                                                }
+                                    componentId="DeclarationsAgeChart"
+                                    defaultQuery={() => ({
+                                        aggs: {
+                                            "age": {
+                                                terms: {
+                                                    field: 'age',
+                                                    order: { _count: 'desc' }
+                                                },
+                                                aggs: {
+                                                    presented: {
+                                                        filter: {
+                                                            term: {
+                                                                presented: true
                                                             }
                                                         }
                                                     }
                                                 }
                                             }
-                                        })}
-                                        render={(props) => (
-                                            <ByAgeChart {...props}/>
-                                        )}
-                                        react={{
-                                            and: ['list', 'year_elected', 'department'],
-                                        }}
-                                    />
+                                        }
+                                    })}
+                                    render={(props) => (
+                                        <ByAgeChart {...props} />
+                                    )}
+                                    react={{
+                                        and: ['list', 'year_elected', 'department'],
+                                    }}
+                                />
                             </div>
                         </Col>
                     </Row>
                 </Col>
                 <Col xl={12} lg={12} sm={24} xs={24}>
                     <Col xl={24} lg={24}>
-                        <div style={{width: '100%', height: '600px', border: '1px solid black'}}></div>
+                        <div style={{ width: '100%', height: '600px', border: '1px solid black' }}>
+                            <ReactiveComponent
+                                componentId="DeclarationsDepartmentChart"
+                                defaultQuery={() => ({
+                                    aggs: {
+                                        "departament.keyword": {
+                                            terms: {
+                                                field: 'departament.keyword',
+                                                order: { _count: 'desc' }
+                                            },
+                                            aggs: {
+                                                presented: {
+                                                    filter: {
+                                                        term: {
+                                                            presented: true
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                })}
+                                render={(props) => (
+                                    <ByDepartmentChart {...props} />
+                                )}
+                                react={{
+                                    and: ['list', 'year_elected', 'department'],
+                                }}
+                            />
+                        </div>
                     </Col>
                 </Col>
 
@@ -391,9 +421,9 @@ function ChartsComponent(props: {
 function BySexChart(props: any) {
     if (props.loading || !props.aggregations || !props.aggregations["sex.keyword"]) return <>Cargando...</>
     const data = props.aggregations["sex.keyword"].buckets;
-    const chart = {m: {presented: 0, notPresented: 0}, f: {presented: 0, notPresented: 0}};
-    data.forEach((element: { key: string; doc_count: number; presented: {doc_count: number;} }) => {
-        if(!element.presented) return;
+    const chart = { m: { presented: 0, notPresented: 0 }, f: { presented: 0, notPresented: 0 } };
+    data.forEach((element: { key: string; doc_count: number; presented: { doc_count: number; } }) => {
+        if (!element.presented) return;
         if (element.key === 'M') {
             chart.m.presented = element.presented.doc_count;
             chart.m.notPresented = element.doc_count - element.presented.doc_count;
@@ -404,58 +434,76 @@ function BySexChart(props: any) {
         }
     });
     return <>
-        <MyResponsiveBar m={chart.m} f={chart.f}/>
+        <MyResponsiveBar m={chart.m} f={chart.f} />
     </>
 }
 
-function PresentedChart(props: any,) {
+function PresentedChart(props: any, ) {
     if (props.loading || !props.aggregations || !props.aggregations["presented.keyword"]) return <>Cargando...</>
     const data = props.aggregations["presented.keyword"].buckets;
-    let d : {id: string, label: string, value: number}[] = [];
+    let d: { id: string, label: string, value: number }[] = [];
     data.forEach((element: { key: string; doc_count: number; }) => {
-        d.push({id: element.key, label: element.key, value: element.doc_count})
+        d.push({ id: element.key.toString(), label: element.key.toString(), value: element.doc_count })
     });
     return <>
-        <PieChart data={d}/>
+        <PieChart data={d} />
     </>
 }
 
-function ByListChart(props: any,) {
+function ByListChart(props: any, ) {
     if (props.loading || !props.aggregations || !props.aggregations["list.keyword"]) return <>Cargando...</>
     const data = props.aggregations["list.keyword"].buckets;
-    let d : {key: string, presented: number, notPresented: number}[] = [];
-    data.forEach((element: { key: string; doc_count: number; presented: {doc_count: number;} }) => {
-        if(!element.presented) return;
-        d.push({key: element.key, presented: element.presented.doc_count, notPresented: element.doc_count = element.presented.doc_count})
+    let d: { key: string, presented: number, notPresented: number }[] = [];
+    data.forEach((element: { key: string; doc_count: number; presented: { doc_count: number; } }) => {
+        if (!element.presented) return;
+        d.push({ key: element.key, presented: element.presented.doc_count, notPresented: element.doc_count = element.presented.doc_count })
     });
     return <>
-        <BarChart data={d}/>
+        <BarChart data={d} />
     </>
 }
 
 function ByAgeChart(props: any, key: string) {
     if (props.loading || !props.aggregations || !props.aggregations["age"]) return <>Cargando...</>
     const data = props.aggregations["age"].buckets;
-    let d : {key: string, presented: number, notPresented: number}[] = [];
-    data.forEach((element: { key: string; doc_count: number; presented: {doc_count: number;} }) => {
-        if(!element.presented) return;
-        d.push({key: element.key, presented: element.presented.doc_count, notPresented: element.doc_count = element.presented.doc_count})
+    let d: { key: string, presented: number, notPresented: number }[] = [];
+    data.forEach((element: { key: string; doc_count: number; presented: { doc_count: number; } }) => {
+        if (!element.presented) return;
+        d.push({ key: element.key.toString(), presented: element.presented.doc_count, notPresented: element.doc_count = element.presented.doc_count })
     });
     return <>
-        <BarChart data={d}/>
+        <BarChart data={d} />
     </>
 }
 
 function ByChargeChart(props: any) {
     if (props.loading || !props.aggregations || !props.aggregations["charge.keyword"]) return <>Cargando...</>
     const data = props.aggregations["charge.keyword"].buckets;
-    let d : {key: string, presented: number, notPresented: number}[] = [];
-    data.forEach((element: { key: string; doc_count: number; presented: {doc_count: number;} }) => {
-        if(!element.presented) return;
-        d.push({key: element.key, presented: element.presented.doc_count, notPresented: element.doc_count = element.presented.doc_count})
+    let d: { key: string, presented: number, notPresented: number }[] = [];
+    data.forEach((element: { key: string; doc_count: number; presented: { doc_count: number; } }) => {
+        if (!element.presented) return;
+        d.push({ key: element.key, presented: element.presented.doc_count, notPresented: element.doc_count = element.presented.doc_count })
     });
     return <>
-        <BarChart data={d}/>
+        <BarChart data={d} />
+    </>
+}
+
+function ByDepartmentChart(props: any) {
+    if (props.loading || !props.aggregations || !props.aggregations["departament.keyword"]) return <>Cargando...</>
+    const data = props.aggregations["departament.keyword"].buckets;
+    let d: { key: string, value: number, total: number, presented: number }[] = [];
+    data.forEach((element: { key: string; doc_count: number; presented: { doc_count: number; } }) => {
+        if (!element.presented) return;
+        d.push({
+            key: element.key,
+            value: +((element.presented.doc_count / element.doc_count) * 100).toFixed(2),
+            total: element.doc_count,
+            presented: element.presented.doc_count
+        })
+    });
+    return <>
+        <HeatMap data={d} />
     </>
 }
 
@@ -467,7 +515,7 @@ function ResultHeader() {
         <Col span={14}>
             <b>Nombre</b>
         </Col>
-        <Col span={7} style={{textAlign: 'right', fontSize: '1em'}}>
+        <Col span={7} style={{ textAlign: 'right', fontSize: '1em' }}>
             <b>Año</b>
         </Col>
     </Row>
@@ -484,26 +532,26 @@ function SingleResultCard(props: {
     if (props.isSmall) {
         return <Card className="card-style">
             <Comment className="small-card"
-                     content={<>
-                        <Link className="name-result-link" to={`/person/${data.document}`}>
-                            {data.name}
-                        </Link>
-                         <Row justify="space-between" align="middle">
-                             <Col span={24} style={{textAlign: 'right'}}>
-                                <Tooltip title={data.start_declaration ? 'Presentó' : 'No presentó'} style={{marginLeft: 20}}>
-                                    <Typography.Text style={{fontSize: 20, color: data.end_declaration ? 'green' : 'red', textAlign: 'right'}}>
-                                        {data.year_elected}
-                                    </Typography.Text>
-                                </Tooltip>
-                                <Tooltip title={data.end_declaration ? 'Presentó' : 'No presentó'}  style={{marginLeft: 20}}>
-                                    <Typography.Text style={{marginLeft: 20, fontSize: 20, color: data.end_declaration ? 'green' : 'red', textAlign: 'right'}}>
-                                        {data.year_elected + 5}
-                                    </Typography.Text>
-                                </Tooltip>
-                             </Col>
-                         </Row>
-                     </>
-                     }
+                content={<>
+                    <Link className="name-result-link" to={`/person/${data.document}`}>
+                        {data.name}
+                    </Link>
+                    <Row justify="space-between" align="middle">
+                        <Col span={24} style={{ textAlign: 'right' }}>
+                            <Tooltip title={data.start_declaration ? 'Presentó' : 'No presentó'} style={{ marginLeft: 20 }}>
+                                <Typography.Text style={{ fontSize: 20, color: data.end_declaration ? 'green' : 'red', textAlign: 'right' }}>
+                                    {data.year_elected}
+                                </Typography.Text>
+                            </Tooltip>
+                            <Tooltip title={data.end_declaration ? 'Presentó' : 'No presentó'} style={{ marginLeft: 20 }}>
+                                <Typography.Text style={{ marginLeft: 20, fontSize: 20, color: data.end_declaration ? 'green' : 'red', textAlign: 'right' }}>
+                                    {data.year_elected + 5}
+                                </Typography.Text>
+                            </Tooltip>
+                        </Col>
+                    </Row>
+                </>
+                }
             />
         </Card>
     }
@@ -511,31 +559,31 @@ function SingleResultCard(props: {
     return <Row gutter={[8, 8]} justify="start" align="middle">
         <Col span={1}>
             <Avatar
-                style={{backgroundColor: getColorByIdx(props.id), verticalAlign: 'middle'}}
+                style={{ backgroundColor: getColorByIdx(props.id), verticalAlign: 'middle' }}
                 alt={data.name}>{getInitials(data.name)}</Avatar>
         </Col>
         <Col span={10}>
             <Link className="name-result-link" to={`/person/${data.document}`}>
                 {data.name}
             </Link>
-            <br/>
+            <br />
             <small>Cédula: <b>{formatMoney(data.document)}</b></small>
         </Col>
-        <Col span={12} style={{textAlign: 'right'}}>
-            <Tooltip title={data.start_declaration ? 'Presentó' : 'No presentó'} style={{marginLeft: 20}}>
-                <Typography.Text style={{marginLeft: 20, fontSize: 20, fontWeight: 'bold', color: data.end_declaration ? 'green' : 'red'}}>
+        <Col span={12} style={{ textAlign: 'right' }}>
+            <Tooltip title={data.start_declaration ? 'Presentó' : 'No presentó'} style={{ marginLeft: 20 }}>
+                <Typography.Text style={{ marginLeft: 20, fontSize: 20, fontWeight: 'bold', color: data.end_declaration ? 'green' : 'red' }}>
                     {data.year_elected}
                 </Typography.Text>
             </Tooltip>
-            <Tooltip title={data.end_declaration ? 'Presentó' : 'No presentó'}  style={{marginLeft: 20}}>
-                <Typography.Text style={{marginLeft: 20, fontSize: 20, fontWeight: 'bold', color: data.end_declaration ? 'green' : 'red'}}>
+            <Tooltip title={data.end_declaration ? 'Presentó' : 'No presentó'} style={{ marginLeft: 20 }}>
+                <Typography.Text style={{ marginLeft: 20, fontSize: 20, fontWeight: 'bold', color: data.end_declaration ? 'green' : 'red' }}>
                     {data.year_elected + 5}
                 </Typography.Text>
             </Tooltip>
         </Col>
     </Row>
 }
-function MyResponsiveBar (props: {m: {presented: number, notPresented: number}, f: {presented: number, notPresented: number}}) {
+function MyResponsiveBar(props: { m: { presented: number, notPresented: number }, f: { presented: number, notPresented: number } }) {
 
     const data = [{
         key: 'M',
@@ -547,127 +595,127 @@ function MyResponsiveBar (props: {m: {presented: number, notPresented: number}, 
         notPresented: props.f.notPresented
     }];
     return <ResponsiveBar
-            data={data}
-            keys={[ 'presented', 'notPresented' ]}
-            indexBy="key"
-            margin={{ top: 20, right: 20, bottom: 50, left: 50 }}
-            padding={0.3}
-            colors={{ scheme: 'nivo' }}
-            defs={[
-                {
-                    id: 'dots',
-                    type: 'patternDots',
-                    background: 'inherit',
-                    color: '#38bcb2',
-                    size: 4,
-                    padding: 1,
-                    stagger: true
-                },
-                {
-                    id: 'lines',
-                    type: 'patternLines',
-                    background: 'inherit',
-                    color: '#eed312',
-                    rotation: -45,
-                    lineWidth: 6,
-                    spacing: 10
-                }
-            ]}
-            borderColor={{ from: 'color', modifiers: [ [ 'darker', 1.6 ] ] }}
-            axisTop={null}
-            axisRight={null}
-            axisBottom={{
-                tickSize: 5,
-                tickPadding: 5,
-                tickRotation: 0,
-                legend: 'Sexo',
-                legendPosition: 'middle',
-                legendOffset: 32
-            }}
-            axisLeft={{
-                tickSize: 5,
-                tickPadding: 5,
-                tickRotation: 0,
-                legend: 'Cantidad',
-                legendPosition: 'middle',
-                legendOffset: -40
-            }}
-            labelSkipWidth={12}
-            labelSkipHeight={12}
-            labelTextColor={{ from: 'color', modifiers: [ [ 'darker', 1.6 ] ] }}
-            animate={true}
-            motionStiffness={90}
-            motionDamping={15}
-        />
+        data={data}
+        keys={['presented', 'notPresented']}
+        indexBy="key"
+        margin={{ top: 20, right: 20, bottom: 50, left: 50 }}
+        padding={0.3}
+        colors={{ scheme: 'nivo' }}
+        defs={[
+            {
+                id: 'dots',
+                type: 'patternDots',
+                background: 'inherit',
+                color: '#38bcb2',
+                size: 4,
+                padding: 1,
+                stagger: true
+            },
+            {
+                id: 'lines',
+                type: 'patternLines',
+                background: 'inherit',
+                color: '#eed312',
+                rotation: -45,
+                lineWidth: 6,
+                spacing: 10
+            }
+        ]}
+        borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+        axisTop={null}
+        axisRight={null}
+        axisBottom={{
+            tickSize: 5,
+            tickPadding: 5,
+            tickRotation: 0,
+            legend: 'Sexo',
+            legendPosition: 'middle',
+            legendOffset: 32
+        }}
+        axisLeft={{
+            tickSize: 5,
+            tickPadding: 5,
+            tickRotation: 0,
+            legend: 'Cantidad',
+            legendPosition: 'middle',
+            legendOffset: -40
+        }}
+        labelSkipWidth={12}
+        labelSkipHeight={12}
+        labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+        animate={true}
+        motionStiffness={90}
+        motionDamping={15}
+    />
 }
 
-function BarChart (props: {data: {key: string, presented: number, notPresented: number}[]}) {
+function BarChart(props: { data: { key: string, presented: number, notPresented: number }[] }) {
 
     return <ResponsiveBar
-            data={props.data}
-            keys={[ 'presented', 'notPresented' ]}
-            indexBy="key"
-            margin={{ top: 20, right: 20, bottom: 50, left: 50 }}
-            padding={0.3}
-            colors={{ scheme: 'nivo' }}
-            defs={[
-                {
-                    id: 'dots',
-                    type: 'patternDots',
-                    background: 'inherit',
-                    color: '#38bcb2',
-                    size: 4,
-                    padding: 1,
-                    stagger: true
-                },
-                {
-                    id: 'lines',
-                    type: 'patternLines',
-                    background: 'inherit',
-                    color: '#eed312',
-                    rotation: -45,
-                    lineWidth: 6,
-                    spacing: 10
-                }
-            ]}
-            borderColor={{ from: 'color', modifiers: [ [ 'darker', 1.6 ] ] }}
-            axisTop={null}
-            axisRight={null}
-            axisBottom={{
-                tickSize: 5,
-                tickPadding: 5,
-                tickRotation: 0,
-                legend: 'Declaraciones',
-                legendPosition: 'middle',
-                legendOffset: 32
-            }}
-            axisLeft={{
-                tickSize: 5,
-                tickPadding: 5,
-                tickRotation: 0,
-                legend: 'Cantidad',
-                legendPosition: 'middle',
-                legendOffset: -40
-            }}
-            labelSkipWidth={12}
-            labelSkipHeight={12}
-            labelTextColor={{ from: 'color', modifiers: [ [ 'darker', 1.6 ] ] }}
-            animate={true}
-            motionStiffness={90}
-            motionDamping={15}
-        />
+        data={props.data}
+        keys={['presented', 'notPresented']}
+        indexBy="key"
+        margin={{ top: 20, right: 20, bottom: 50, left: 50 }}
+        padding={0.3}
+        colors={{ scheme: 'nivo' }}
+        defs={[
+            {
+                id: 'dots',
+                type: 'patternDots',
+                background: 'inherit',
+                color: '#38bcb2',
+                size: 4,
+                padding: 1,
+                stagger: true
+            },
+            {
+                id: 'lines',
+                type: 'patternLines',
+                background: 'inherit',
+                color: '#eed312',
+                rotation: -45,
+                lineWidth: 6,
+                spacing: 10
+            }
+        ]}
+        borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+        axisTop={null}
+        axisRight={null}
+        axisBottom={{
+            tickSize: 5,
+            tickPadding: 5,
+            tickRotation: 0,
+            legend: 'Declaraciones',
+            legendPosition: 'middle',
+            legendOffset: 32
+        }}
+        axisLeft={{
+            tickSize: 5,
+            tickPadding: 5,
+            tickRotation: 0,
+            legend: 'Cantidad',
+            legendPosition: 'middle',
+            legendOffset: -40
+        }}
+        labelSkipWidth={12}
+        labelSkipHeight={12}
+        labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+        animate={true}
+        motionStiffness={90}
+        motionDamping={15}
+    />
 }
 
-function PieChart (props: {data: {id: string, label: string, value: number}[]}) {
+function PieChart(props: { data: { id: string, label: string, value: number }[] }) {
     return <ResponsivePie
         data={props.data}
-        margin={{top: 40, right: 80, bottom: 80, left: 80}}
+        margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
         innerRadius={0.5}
         padAngle={0.7}
         cornerRadius={3}
-        colors={{scheme: 'nivo'}}
+        colors={{ scheme: 'nivo' }}
         borderWidth={1}
-        borderColor={{from: 'color', modifiers: [['darker', 0.2]]}}
+        borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
         radialLabelsSkipAngle={10}
         radialLabelsTextXOffset={6}
         radialLabelsTextColor="#333333"
@@ -675,7 +723,7 @@ function PieChart (props: {data: {id: string, label: string, value: number}[]}) 
         radialLabelsLinkDiagonalLength={16}
         radialLabelsLinkHorizontalLength={24}
         radialLabelsLinkStrokeWidth={1}
-        radialLabelsLinkColor={{from: 'color'}}
+        radialLabelsLinkColor={{ from: 'color' }}
         sliceLabel={r => formatMoney(r.value)}
         slicesLabelsSkipAngle={10}
         slicesLabelsTextColor="#333333"
@@ -724,6 +772,44 @@ function PieChart (props: {data: {id: string, label: string, value: number}[]}) 
     />
 }
 
+function HeatMap(props: { data: { key: string, value: number, total: number, presented: number }[] }) {
+
+    const [geojson, setGeoJson] = useState<any>();
+
+    useEffect(() => {
+        new SimpleApi().getGeoJson()
+            .then(d => setGeoJson(d))
+            .catch(e => message.warn("No se pudo obtener geojson"))
+            ;
+    }, []);
+    return <>
+        {geojson &&
+            <ResponsiveChoropleth
+                data={props.data}
+                domain={[0, 100]}
+                match={(feature, datum) => {
+                    return feature.properties.dpto_desc === datum.key;
+                }}
+                label={(datum) => {
+                    return datum.data.key + ' (' + datum.data.presented + '/' + datum.data.total + ')\n' +
+                        ' Porcentaje '
+                }}
+                valueFormat={(value) => { return value + '%' }}
+                features={geojson.features}
+                colors="greens"
+                margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+                projectionTranslation={[5.8, -1.95]}
+                projectionRotation={[0, 0, 0]}
+                projectionScale={3500}
+                unknownColor="#ffff"
+                borderWidth={0.5}
+                borderColor="#333333"
+                enableGraticule={false}
+                graticuleLineColor="#666666"
+            />}
+    </>
+
+}
 const ColorList = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae'];
 const FilterColors: Record<string, string> = {
     'Fuente': 'rgb(205 83 52)',
@@ -746,11 +832,11 @@ function getColorByIdx(_id: string) {
 }
 
 function getData(data: Array<ElasticDdjjPeopleResult>) {
-    const name: { val: string, confidence: number } = {val: "", confidence: 0};
-    const document: { val?: string, confidence: number } = {val: "", confidence: 0};
-    const year_elected: { val: number, confidence: number } = {val: 0, confidence: 0};
-    const start_declaration: { val?: boolean, confidence: number } = {val: false, confidence: 0};
-    const end_declaration: { val?: boolean, confidence: number } = {val: false, confidence: 0};
+    const name: { val: string, confidence: number } = { val: "", confidence: 0 };
+    const document: { val?: string, confidence: number } = { val: "", confidence: 0 };
+    const year_elected: { val: number, confidence: number } = { val: 0, confidence: 0 };
+    const start_declaration: { val?: boolean, confidence: number } = { val: false, confidence: 0 };
+    const end_declaration: { val?: boolean, confidence: number } = { val: false, confidence: 0 };
     for (const row of data) {
         name.val = row.name;
         document.val = row.document;
