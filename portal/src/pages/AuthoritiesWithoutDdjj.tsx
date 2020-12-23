@@ -47,7 +47,7 @@ export function AuthoritiesWithoutDdjj() {
 
 
             <Typography.Paragraph>
-                Control de todas las autoridades electas (por periodo), que presentaron o no declaraciones juradas.
+                Listado de todas las autoridades electas por periodo, que presentaron o no declaraciones juradas.
             </Typography.Paragraph>
 
             <Table<AuthoritiesWithoutDocument> dataSource={filtered}
