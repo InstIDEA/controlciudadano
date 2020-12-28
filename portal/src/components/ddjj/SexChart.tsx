@@ -1,6 +1,8 @@
 import * as React from 'react';
 import {ResponsiveBar} from '@nivo/bar';
 import {formatMoney} from '../../formatters';
+import {useEffect, useState} from 'react';
+import {LoadingGraphComponent} from './LoadingGraph';
 
 const NAMES: Record<string, string> = {
     'm': 'Masculino',
@@ -28,7 +30,7 @@ export function SexChart(props: {
         keys={['presented', 'notPresented']}
         indexBy="key"
         margin={{top: 10, right: 10, bottom: 20, left: 10}}
-        padding={0.2}
+        padding={0}
         colors={{scheme: 'nivo'}}
         enableGridX={false}
         enableGridY={false}
@@ -83,4 +85,45 @@ export function SexChart(props: {
         motionStiffness={90}
         motionDamping={15}
     />
+}
+
+interface BySexAggregation {
+    buckets: { key: string; doc_count: number; presented: { doc_count: number; } }[]
+}
+
+export function BySexChart(props: {
+    loading: boolean,
+    aggregations: { "sex.keyword"?: BySexAggregation }
+}) {
+
+    const data = props.aggregations?.["sex.keyword"];
+    const [lastShowedData, setLastShowedData] = useState<BySexAggregation>();
+
+    useEffect(() => {
+        if (data) setLastShowedData(data);
+    }, [data])
+
+
+    if (!data && !lastShowedData) return <LoadingGraphComponent/>;
+
+    const chart = {m: {presented: 0, notPresented: 0}, f: {presented: 0, notPresented: 0}};
+    (data || lastShowedData || emptyAgg).buckets.forEach(element => {
+        if (!element.presented) return;
+        if (element.key === 'M') {
+            chart.m.presented = element.presented.doc_count;
+            chart.m.notPresented = element.doc_count - element.presented.doc_count;
+        }
+        if (element.key === 'F') {
+            chart.f.presented = element.presented.doc_count;
+            chart.f.notPresented = element.doc_count - element.presented.doc_count;
+        }
+    });
+    return <SexChart m={chart.m} f={chart.f}/>
+}
+const emptyAgg: BySexAggregation = {
+    buckets: [{
+        key: 'M',
+        doc_count: 0,
+        presented: {doc_count: 0}
+    }]
 }

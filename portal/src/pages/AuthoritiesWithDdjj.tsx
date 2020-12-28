@@ -12,11 +12,11 @@ import {fixName} from '../nameUtils';
 import {ResponsiveChoropleth} from '@nivo/geo'
 import {SimpleApi} from '../SimpleApi';
 import {LoadingGraphComponent} from '../components/ddjj/LoadingGraph';
-import {SexChart} from '../components/ddjj/SexChart';
+import {BySexChart} from '../components/ddjj/SexChart';
 import {ChargeChart} from '../components/ddjj/ChargeChart';
-import { ListChart } from '../components/ddjj/ListChart';
-import { AgeChart } from '../components/ddjj/AgeChart';
-import { PresentedChart } from '../components/ddjj/PresentedChart';
+import {ListChart} from '../components/ddjj/ListChart';
+import {AgeChart} from '../components/ddjj/AgeChart';
+import {PresentedDeclarationChart} from '../components/ddjj/PresentedChart';
 
 
 export function AuthoritiesWithDdjj() {
@@ -254,9 +254,7 @@ function ChartsComponent() {
                                             }
                                         }
                                     })}
-                                    render={props => (
-                                        <BySexChart {...props} />
-                                    )}
+                                    render={props => <BySexChart {...props} />}
                                     react={{
                                         and: ['list', 'year_elected', 'departament'],
                                     }}
@@ -403,36 +401,6 @@ function ChartsComponent() {
 
 }
 
-function BySexChart(props: {
-    loading: boolean,
-    aggregations: Record<string, { buckets: { key: string; doc_count: number; presented: { doc_count: number; } }[] }>
-}) {
-    if (props.loading || !props.aggregations || !props.aggregations["sex.keyword"]) return <LoadingGraphComponent/>;
-    const data = props.aggregations["sex.keyword"].buckets;
-    const chart = {m: {presented: 0, notPresented: 0}, f: {presented: 0, notPresented: 0}};
-    data.forEach(element => {
-        if (!element.presented) return;
-        if (element.key === 'M') {
-            chart.m.presented = element.presented.doc_count;
-            chart.m.notPresented = element.doc_count - element.presented.doc_count;
-        }
-        if (element.key === 'F') {
-            chart.f.presented = element.presented.doc_count;
-            chart.f.notPresented = element.doc_count - element.presented.doc_count;
-        }
-    });
-    return <SexChart m={chart.m} f={chart.f}/>
-}
-
-function PresentedDeclarationChart(props: any,) {
-    if (props.loading || !props.aggregations || !props.aggregations["presented.keyword"]) return <LoadingGraphComponent/>
-    const data = props.aggregations["presented.keyword"].buckets;
-    let d: { id: string, label: string, value: number }[] = [];
-    data.forEach((element: { key_as_string: string; doc_count: number; }) => {
-        d.push({id: element.key_as_string.toString(), label: element.key_as_string === 'true' ? 'Presentados' : 'No Presentados', value: element.doc_count})
-    });
-    return <PresentedChart data={d}/>
-}
 
 function ByListChart(props: any) {
     if (props.loading || !props.aggregations || !props.aggregations["list.keyword"]) return <LoadingGraphComponent/>
@@ -656,7 +624,10 @@ function GraphWrapper(
     const finalHeight = props.height || 200;
     const graphHeight = props.title ? finalHeight - 50 : finalHeight;
     return <div style={{width: '100%', height: finalHeight, border: '1px solid #002E4D', borderRadius: 5}}>
-        {props.title && <Typography.Title level={5} style={{textAlign: 'center', color: 'rgba(0, 52, 91, 1)' }}>{props.title}</Typography.Title>}
+        {props.title && <Typography.Title level={5} style={{
+            textAlign: 'center',
+            color: 'rgba(0, 52, 91, 1)'
+        }}>{props.title}</Typography.Title>}
 
         <div style={{height: graphHeight, width: '100%'}}>
             {props.children}

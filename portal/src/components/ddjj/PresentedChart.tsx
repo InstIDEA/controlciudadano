@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { formatMoney } from '../../formatters';
-import { ResponsivePie } from '@nivo/pie';
+import {useEffect, useState} from 'react';
+import {formatMoney} from '../../formatters';
+import {ResponsivePie} from '@nivo/pie';
+import {LoadingGraphComponent} from './LoadingGraph';
 
 const NAMES: Record<string, string> = {
     'true': 'Presentados',
@@ -15,13 +17,13 @@ export function PresentedChart(props: {
 
     return <ResponsivePie
         data={props.data}
-        margin={{ top: 15, right: 10, bottom: 15, left: 10 }}
+        margin={{top: 15, right: 10, bottom: 15, left: 10}}
         innerRadius={0.5}
         padAngle={0.7}
         cornerRadius={3}
-        colors={{ scheme: 'nivo' }}
+        colors={{scheme: 'nivo'}}
         borderWidth={1}
-        borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
+        borderColor={{from: 'color', modifiers: [['darker', 0.2]]}}
         radialLabelsSkipAngle={10}
         radialLabelsTextXOffset={10}
         radialLabelsTextColor="#333333"
@@ -29,7 +31,7 @@ export function PresentedChart(props: {
         radialLabelsLinkDiagonalLength={0}
         radialLabelsLinkHorizontalLength={24}
         radialLabelsLinkStrokeWidth={1}
-        radialLabelsLinkColor={{ from: 'color' }}
+        radialLabelsLinkColor={{from: 'color'}}
         sliceLabel={r => formatMoney(r.value)}
         slicesLabelsSkipAngle={10}
         slicesLabelsTextColor="#333333"
@@ -77,4 +79,42 @@ export function PresentedChart(props: {
         }
         ]}
     />
+}
+
+interface PresentedAggregation {
+    buckets: { key: string; doc_count: number, key_as_string: string }[]
+}
+
+export function PresentedDeclarationChart(props: {
+                                              loading: boolean,
+                                              aggregations: { "presented.keyword"?: PresentedAggregation }
+                                          }
+) {
+
+    const data = props.aggregations?.["presented.keyword"];
+    const [lastShowedData, setLastShowedData] = useState<PresentedAggregation>();
+
+    useEffect(() => {
+        if (data) setLastShowedData(data);
+    }, [data])
+
+    if (!data && !lastShowedData)
+        return <LoadingGraphComponent/>
+
+    const finalData = (data || lastShowedData || emptyAgg).buckets.map((element) => {
+        return {
+            id: element.key_as_string.toString(),
+            label: element.key_as_string === 'true' ? 'Presentados' : 'No Presentados',
+            value: element.doc_count
+        }
+    });
+    return <PresentedChart data={finalData}/>
+}
+
+const emptyAgg: PresentedAggregation = {
+    buckets: [{
+        key: '0',
+        key_as_string: 'Presentados',
+        doc_count: 0,
+    }]
 }
