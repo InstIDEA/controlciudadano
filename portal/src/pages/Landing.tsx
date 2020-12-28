@@ -4,6 +4,7 @@ import {Col, Input, Row, Tooltip} from 'antd';
 import './Landing.css';
 import explorarDatos from '../assets/imgs/explorar_datos.svg';
 import comprasCovid from '../assets/imgs/compras_covid.svg';
+import verificacionDDJJ from '../assets/imgs/verificacion_DDJJ.svg';
 import {Header} from '../components/layout/Header'
 import Footer from '../components/layout/Footer';
 import {Async, AsyncHelper, GlobalStatistics} from '../Model';
@@ -24,6 +25,12 @@ export const page1 = [
         img: comprasCovid,
         title: 'Compras COVID',
         href: `/action`,
+        description: ''
+    },
+    {
+        img: verificacionDDJJ,
+        title: 'Verificación de DDJJ',
+        href: `/ddjj`,
         description: ''
     },
 ];
@@ -50,7 +57,7 @@ export function LandingPage() {
     }, [])
 
     const children = page1.map(card => (
-        <Col className="card-wrapper" key={card.title} md={12} xs={24}>
+        <Col className="card-wrapper" key={card.title} md={isSmall? 12: 8} xs={isSmall? 24: 12}>
             <Link className="card" to={card.href}>
                 <img src={card.img} alt="" className="card-img-top"/>
                 <div className="card-body">
@@ -65,7 +72,7 @@ export function LandingPage() {
 
     return (<>
             <Header tableMode={false}/>
-            <Row className="banner-wrapper" gutter={isSmall? 8: [16, 48]}>
+            <Row className="banner-wrapper" gutter={isSmall? 8: [8, 24]}>
                 <Col md={{offset: 0, span: 7}}
                      sm={{offset: 1, span: 1}}
                      xs={{offset: 1, span: 1}}
@@ -100,8 +107,8 @@ export function LandingPage() {
                 <Col xxl={24} xl={24} lg={24} md={24} sm={24} xs={24} className="banner-title-col-wrapper">
                     <QueueAnim className="banner-title-wrapper">
                         <p className="banner-text" key="content">
-                            En este portal podés explorar <strong>Datos Abiertos</strong> y <strong>controlar los gastos
-                            del COVID-19</strong>
+                            Este es un portal en el que vas a poder explorar <strong>Datos Abiertos</strong> y realizar un <strong>control de los gastos
+                            del COVID-19</strong> 
                         </p>
                     </QueueAnim>
                 </Col>
