@@ -30,7 +30,7 @@ export function SexChart(props: {
         keys={['presented', 'notPresented']}
         indexBy="key"
         margin={{top: 10, right: 10, bottom: 20, left: 10}}
-        padding={0}
+        padding={0.2}
         colors={{scheme: 'nivo'}}
         enableGridX={false}
         enableGridY={false}

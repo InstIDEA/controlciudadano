@@ -19,7 +19,7 @@ export function PresentedChart(props: {
         data={props.data}
         margin={{top: 15, right: 10, bottom: 15, left: 10}}
         innerRadius={0.5}
-        padAngle={0.7}
+        padAngle={0.0}
         cornerRadius={3}
         colors={{scheme: 'nivo'}}
         borderWidth={1}
@@ -47,7 +47,7 @@ export function PresentedChart(props: {
                 background: 'inherit',
                 color: 'rgba(255, 255, 255, 0.3)',
                 size: 4,
-                padding: 1,
+                padding: 0,
                 stagger: true
             },
             {
