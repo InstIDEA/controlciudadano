@@ -24,7 +24,6 @@ export function AuthoritiesWithoutDdjj() {
             ;
     }, []);
 
-
     const filtered = useMemo(() => filterRedashList(data || [], query, [
         'first_name',
         'last_name',
