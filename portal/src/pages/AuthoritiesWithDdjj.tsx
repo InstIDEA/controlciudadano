@@ -9,12 +9,14 @@ import {useMediaQuery} from '@react-hook/media-query'
 import {formatMoney} from '../formatters';
 import {Link} from 'react-router-dom';
 import {fixName} from '../nameUtils';
-import {ResponsiveBar} from '@nivo/bar'
-import {ResponsivePie} from '@nivo/pie';
 import {ResponsiveChoropleth} from '@nivo/geo'
 import {SimpleApi} from '../SimpleApi';
 import {LoadingGraphComponent} from '../components/ddjj/LoadingGraph';
 import {SexChart} from '../components/ddjj/SexChart';
+import {ChargeChart} from '../components/ddjj/ChargeChart';
+import { ListChart } from '../components/ddjj/ListChart';
+import { AgeChart } from '../components/ddjj/AgeChart';
+import { PresentedChart } from '../components/ddjj/PresentedChart';
 
 
 export function AuthoritiesWithDdjj() {
@@ -222,7 +224,7 @@ function ChartsComponent() {
                                             }
                                         }
                                     })}
-                                    render={props => <PresentedChart {...props} />}
+                                    render={props => <PresentedDeclarationChart {...props} />}
                                     react={{
                                         and: ['list', 'year_elected', 'departament'],
                                     }}
@@ -422,21 +424,20 @@ function BySexChart(props: {
     return <SexChart m={chart.m} f={chart.f}/>
 }
 
-function PresentedChart(props: any,) {
+function PresentedDeclarationChart(props: any,) {
     if (props.loading || !props.aggregations || !props.aggregations["presented.keyword"]) return <LoadingGraphComponent/>
     const data = props.aggregations["presented.keyword"].buckets;
     let d: { id: string, label: string, value: number }[] = [];
-    data.forEach((element: { key: string; doc_count: number; }) => {
-        d.push({id: element.key.toString(), label: element.key.toString(), value: element.doc_count})
+    data.forEach((element: { key_as_string: string; doc_count: number; }) => {
+        d.push({id: element.key_as_string.toString(), label: element.key_as_string === 'true' ? 'Presentados' : 'No Presentados', value: element.doc_count})
     });
-    return <PieChart data={d}/>
+    return <PresentedChart data={d}/>
 }
 
 function ByListChart(props: any) {
     if (props.loading || !props.aggregations || !props.aggregations["list.keyword"]) return <LoadingGraphComponent/>
     const data = props.aggregations["list.keyword"].buckets;
 
-    console.log('ByListChart', data);
 
     let d: { key: string, presented: number, notPresented: number }[] = [];
     data.forEach((element: { key: string; doc_count: number; presented: { doc_count: number; } }) => {
@@ -448,7 +449,7 @@ function ByListChart(props: any) {
         })
     });
     return <>
-        <BarChart data={d}/>
+        <ListChart data={d}/>
     </>
 }
 
@@ -465,7 +466,7 @@ function ByAgeChart(props: any, key: string) {
         })
     });
     return <>
-        <BarChart data={d}/>
+        <AgeChart data={d}/>
     </>
 }
 
@@ -483,7 +484,7 @@ function ByChargeChart(props: any) {
         })
     });
     return <>
-        <BarChart data={d}/>
+        <ChargeChart data={d}/>
     </>
 }
 
@@ -603,130 +604,6 @@ function SingleResultCard(props: {
     </Row>
 }
 
-
-function BarChart(props: { data: { key: string, presented: number, notPresented: number }[] }) {
-
-    return <ResponsiveBar
-        data={props.data}
-        keys={['presented', 'notPresented']}
-        indexBy="key"
-        margin={{top: 20, right: 20, bottom: 50, left: 50}}
-        padding={0.3}
-        colors={{scheme: 'nivo'}}
-        defs={[
-            {
-                id: 'dots',
-                type: 'patternDots',
-                background: 'inherit',
-                color: '#38bcb2',
-                size: 4,
-                padding: 1,
-                stagger: true
-            },
-            {
-                id: 'lines',
-                type: 'patternLines',
-                background: 'inherit',
-                color: '#eed312',
-                rotation: -45,
-                lineWidth: 6,
-                spacing: 10
-            }
-        ]}
-        borderColor={{from: 'color', modifiers: [['darker', 1.6]]}}
-        axisTop={null}
-        axisRight={null}
-        axisBottom={{
-            tickSize: 5,
-            tickPadding: 5,
-            tickRotation: 0,
-            legend: 'Declaraciones',
-            legendPosition: 'middle',
-            legendOffset: 32
-        }}
-        axisLeft={{
-            tickSize: 5,
-            tickPadding: 5,
-            tickRotation: 0,
-            legend: 'Cantidad',
-            legendPosition: 'middle',
-            legendOffset: -40
-        }}
-        labelSkipWidth={12}
-        labelSkipHeight={12}
-        labelTextColor={{from: 'color', modifiers: [['darker', 1.6]]}}
-        animate={true}
-        motionStiffness={90}
-        motionDamping={15}
-    />
-}
-
-function PieChart(props: { data: { id: string, label: string, value: number }[] }) {
-    return <ResponsivePie
-        data={props.data}
-        margin={{top: 40, right: 80, bottom: 80, left: 80}}
-        innerRadius={0.5}
-        padAngle={0.7}
-        cornerRadius={3}
-        colors={{scheme: 'nivo'}}
-        borderWidth={1}
-        borderColor={{from: 'color', modifiers: [['darker', 0.2]]}}
-        radialLabelsSkipAngle={10}
-        radialLabelsTextXOffset={6}
-        radialLabelsTextColor="#333333"
-        radialLabelsLinkOffset={0}
-        radialLabelsLinkDiagonalLength={16}
-        radialLabelsLinkHorizontalLength={24}
-        radialLabelsLinkStrokeWidth={1}
-        radialLabelsLinkColor={{from: 'color'}}
-        sliceLabel={r => formatMoney(r.value)}
-        slicesLabelsSkipAngle={10}
-        slicesLabelsTextColor="#333333"
-        animate={true}
-        tooltipFormat={v => formatMoney(v)}
-        motionStiffness={90}
-        motionDamping={15}
-        defs={[
-            {
-                id: 'dots',
-                type: 'patternDots',
-                background: 'inherit',
-                color: 'rgba(255, 255, 255, 0.3)',
-                size: 4,
-                padding: 1,
-                stagger: true
-            },
-            {
-                id: 'lines',
-                type: 'patternLines',
-                background: 'inherit',
-                color: 'rgba(255, 255, 255, 0.3)',
-                rotation: -45,
-                lineWidth: 6,
-                spacing: 10
-            }
-        ]}
-        legends={[{
-            anchor: 'right',
-            direction: 'column',
-            translateY: 56,
-            itemWidth: 100,
-            itemHeight: 18,
-            itemTextColor: '#999',
-            symbolSize: 18,
-            symbolShape: 'circle',
-            effects: [{
-                on: 'hover',
-                style: {
-                    itemTextColor: '#000'
-                }
-            }
-            ]
-        }
-        ]}
-    />
-}
-
 function HeatMap(props: { data: { key: string, value: number, total: number, presented: number }[] }) {
 
     const [geojson, setGeoJson] = useState<any>();
@@ -779,7 +656,7 @@ function GraphWrapper(
     const finalHeight = props.height || 200;
     const graphHeight = props.title ? finalHeight - 50 : finalHeight;
     return <div style={{width: '100%', height: finalHeight, border: '1px solid #002E4D', borderRadius: 5}}>
-        {props.title && <Typography.Title level={4} style={{textAlign: 'center'}}>{props.title}</Typography.Title>}
+        {props.title && <Typography.Title level={5} style={{textAlign: 'center', color: 'rgba(0, 52, 91, 1)' }}>{props.title}</Typography.Title>}
 
         <div style={{height: graphHeight, width: '100%'}}>
             {props.children}

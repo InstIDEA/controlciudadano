@@ -14,9 +14,6 @@ export function SexChart(props: {
     f: { presented: number, notPresented: number }
 }) {
 
-    const min = Math.min(props.m.presented + props.m.notPresented, props.f.presented, props.f.notPresented);
-    const max = Math.max(props.m.presented + props.m.notPresented, props.f.presented, props.f.notPresented);
-
     const data = [{
         key: 'm',
         presented: props.m.presented,
@@ -30,11 +27,11 @@ export function SexChart(props: {
         data={data}
         keys={['presented', 'notPresented']}
         indexBy="key"
-        margin={{top: 20, right: 20, bottom: 50, left: 50}}
-        padding={0.3}
+        margin={{top: 10, right: 10, bottom: 20, left: 10}}
+        padding={0.2}
         colors={{scheme: 'nivo'}}
         enableGridX={false}
-        enableGridY={true}
+        enableGridY={false}
         defs={[{
             id: 'dots',
             type: 'patternDots',
@@ -61,15 +58,15 @@ export function SexChart(props: {
             tickPadding: 5,
             tickRotation: 0,
             format: t => NAMES[`${t}`],
-            legend: null
+            legend: null,
         }}
         axisLeft={{
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            tickValues: 7,
-            format: t => `${formatMoney(t)}`,
-            legend: null,
+            tickValues: 0,
+            legend: 'Cantidad',
+            legendPosition: 'middle'
         }}
 
         labelFormat={t => formatMoney(t)}
