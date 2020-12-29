@@ -97,10 +97,10 @@ export function AuthoritiesWithoutDdjj() {
                     dataIndex: 'list',
                     sorter: (a, b) => (a.title || '').localeCompare(b.title || ''),
                 }, {
-                    title: '¿Presentó DDJJ?',
+                    title: '¿Presentó?',
                     align: 'right',
                     dataIndex: 'presented',
-                    render: (_, r) => (r.presented ? 'Si' : 'No'),
+                    render: (_, r) => (r.presented ? <a href={r.start?.link} target="_blank" rel="noopener noreferrer" title="Ver"> Si </a> : 'No'),
                     sorter: (a, _) => (a.presented ? 1 : -1),
                 }]} />
         </PageHeader>

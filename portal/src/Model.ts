@@ -516,7 +516,12 @@ export interface AuthoritiesWithoutDocument {
     charge: string;
     list: string;
     title: string;
-    presented: boolean
+    presented: boolean;
+    start: null | {
+        link: string;
+        origin: string;
+        active: null | number;
+    }
 }
 /**
  * Represents a networks resource.
