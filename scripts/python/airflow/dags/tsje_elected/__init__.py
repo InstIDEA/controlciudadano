@@ -1,3 +1,13 @@
+from airflow.hooks.postgres_hook import PostgresHook
+
+def execute(query) -> None:
+    db_hook = PostgresHook(postgres_conn_id="postgres_default")
+    db_conn = db_hook.get_conn()
+    db_cursor = db_conn.cursor()
+    db_cursor.execute(query)
+    db_conn.commit()
+
+SQL_QUERY_CREATE_VIEW_BASE = """
 DROP MATERIALIZED VIEW IF EXISTS analysis.tsje_elected;
 CREATE MATERIALIZED VIEW analysis.tsje_elected AS (
     WITH authorities AS (
@@ -88,5 +98,12 @@ CREATE MATERIALIZED VIEW analysis.tsje_elected AS (
         elected.*
     FROM final a
         LEFT JOIN staging.tsje_elected elected ON elected.nombre = a.nombre
-        AND elected.apellido = a.apellido
-);
+        AND elected.apellido = a.apellido"""
+
+def SQL_QUERY_CREATE_VIEW_NOT_NULL():
+    query = SQL_QUERY_CREATE_VIEW_BASE + """WHERE "cedula" IS NOT NULL);"""
+    execute(query)
+
+def SQL_QUERT_CREATE_VIEW_NULL():
+    query = SQL_QUERY_CREATE_VIEW_BASE + """ WHERE "cedula" IS NULL );"""
+    execute(query)

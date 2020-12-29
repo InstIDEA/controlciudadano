@@ -33,6 +33,7 @@ default_args = {
         "target_dir": target_dir,
         "error__dir": error__dir,
         "contraloria_py": "https://djbpublico.contraloria.gov.py/",
+        "max_active_runs": 1,
     },
 }
 
@@ -42,6 +43,7 @@ dag = DAG(
     description="Process files from https://djbpublico.contraloria.gov.py/",
     start_date=days_ago(2),
     schedule_interval=timedelta(weeks=1),
+
 )
 
 with dag:
