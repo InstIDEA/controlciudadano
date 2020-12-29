@@ -13,7 +13,8 @@ import {
     OCDSSupplierWithSanction,
     SourceData,
     Supplier,
-    DataSet
+    DataSet,
+    AuthoritiesWithoutDocument
 } from './Model';
 
 const BASE_API = "https://redash.controlciudadanopy.org/api";
@@ -31,7 +32,8 @@ const API_KEYS: Record<number, string> = {
     37: "N0DHcr72NbiWC5n3IBEVmkSoViBxud8GTxKNLi3z",
     39: "g74o1ujam75shxjB8BVJ1nOQkInbsrgpTax9sukM",
     40: "3m3QeB4LHIuIbuCJeZjDgPmOECfgAlt9irtH0REV",
-    41: "5jHLPnSfUSwE4FRogLc1gs8cZsmfaNsWiid0EwJm"
+    41: "5jHLPnSfUSwE4FRogLc1gs8cZsmfaNsWiid0EwJm",
+    45: "xZ3uB2YvepgaPxHGB8g8ahTAukBl5VIIDT9jShmP"
 }
 
 
@@ -109,6 +111,10 @@ export class RedashAPI {
 
     getDataSets(): Promise<BaseRedashResponse<DataSet>> {
         return this.fetchQuery(41)
+    }
+
+    getAuthoritiesWithoutDocument(): Promise<BaseRedashResponse<AuthoritiesWithoutDocument>> {
+        return this.fetchQuery(45);
     }
 }
 

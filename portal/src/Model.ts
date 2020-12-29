@@ -506,6 +506,23 @@ export interface Hacienda {
     descripcionunidadresponsable: string,
     nivelabr: string
 }
+
+export interface AuthoritiesWithoutDocument {
+    first_name: string;
+    last_name: string;
+    document: string;
+    year_elected: number;
+    departament: string;
+    charge: string;
+    list: string;
+    title: string;
+    presented: boolean;
+    start: null | {
+        link: string;
+        origin: string;
+        active: null | number;
+    }
+}
 /**
  * Represents a networks resource.
  *
