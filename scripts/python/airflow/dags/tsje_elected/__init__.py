@@ -1,6 +1,6 @@
 from airflow.hooks.postgres_hook import PostgresHook
 
-def execute(query) -> None:
+def execute(query: str) -> None:
     db_hook = PostgresHook(postgres_conn_id="postgres_default")
     db_conn = db_hook.get_conn()
     db_cursor = db_conn.cursor()
