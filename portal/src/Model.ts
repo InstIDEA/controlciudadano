@@ -506,6 +506,12 @@ export interface Hacienda {
     descripcionunidadresponsable: string,
     nivelabr: string
 }
+export interface VideoTutorialesSemillas {
+    titulo: string;
+    description: string;
+    link: string;
+    type: string;
+}
 /**
  * Represents a networks resource.
  *
