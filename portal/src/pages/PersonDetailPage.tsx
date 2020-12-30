@@ -53,6 +53,7 @@ export function PersonDetailPage() {
         new SimpleApi()
             .findPeopleInAnalysis(document)
             .then(d => {
+                if (!d || !d.analysis) return;
                 setAnalysis(d);
                 setAffidavit(d.analysis.declarations)
                 setTsje(d.analysis.tsje_elected);
@@ -278,7 +279,7 @@ function tryToGuestHeader(baseDoc: string,
     if (analysis && analysis.analysis) {
         const election = analysis.analysis.tsje_elected;
         if (election && election.length > 0) {
-            name = name || `${election[0].nombre} ${election[0].apellido}`;
+            name = name || `${election[0].full_name}`;
         }
     }
     if (local && local.staging) {

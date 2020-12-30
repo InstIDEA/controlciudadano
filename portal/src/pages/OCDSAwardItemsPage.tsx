@@ -47,7 +47,7 @@ export function OCDSAwardItemsPage() {
                     style={{border: '1 px solid rgb(235, 237, 240)'}}
                     onBack={() => history.push('/')}
                     backIcon={null}
-                    title="¿Qué se compró?">
+                    title="¿Se compró más caro?">
 
             <Typography.Paragraph>
                 Ránking de items con posibles sobrecostos, comparados con sus precios antes de la pandemia.
