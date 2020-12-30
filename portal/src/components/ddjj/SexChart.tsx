@@ -1,7 +1,7 @@
 import * as React from 'react';
+import {useEffect, useState} from 'react';
 import {ResponsiveBar} from '@nivo/bar';
 import {formatMoney} from '../../formatters';
-import {useEffect, useState} from 'react';
 import {LoadingGraphComponent} from './LoadingGraph';
 
 const NAMES: Record<string, string> = {
@@ -120,6 +120,7 @@ export function BySexChart(props: {
     });
     return <SexChart m={chart.m} f={chart.f}/>
 }
+
 const emptyAgg: BySexAggregation = {
     buckets: [{
         key: 'M',

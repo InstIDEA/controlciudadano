@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {useEffect, useMemo, useState} from 'react';
-import {Avatar, Card, Col, Collapse, Comment, Divider, Layout, message, Row, Tag, Tooltip, Typography} from 'antd';
+import {useMemo} from 'react';
+import {Avatar, Card, Col, Collapse, Comment, Divider, Layout, Row, Tag, Tooltip, Typography} from 'antd';
 import {Header} from '../components/layout/Header';
 import './AuthoritiesWithDdjj.css'
 import Footer from '../components/layout/Footer';
@@ -9,14 +9,12 @@ import {useMediaQuery} from '@react-hook/media-query'
 import {formatMoney} from '../formatters';
 import {Link} from 'react-router-dom';
 import {fixName} from '../nameUtils';
-import {ResponsiveChoropleth} from '@nivo/geo'
-import {SimpleApi} from '../SimpleApi';
-import {LoadingGraphComponent} from '../components/ddjj/LoadingGraph';
 import {BySexChart} from '../components/ddjj/SexChart';
-import {ChargeChart} from '../components/ddjj/ChargeChart';
-import {ListChart} from '../components/ddjj/ListChart';
-import {AgeChart} from '../components/ddjj/AgeChart';
+import {ByChargeChart} from '../components/ddjj/ChargeChart';
+import {ByAgeChart} from '../components/ddjj/AgeChart';
 import {PresentedDeclarationChart} from '../components/ddjj/PresentedChart';
+import {ByListChart} from '../components/ddjj/ListChart';
+import {ByDepartamentHeatMap} from '../components/ddjj/HeatMap';
 
 
 export function AuthoritiesWithDdjj() {
@@ -284,9 +282,7 @@ function ChartsComponent() {
                                             }
                                         }
                                     })}
-                                    render={props => (
-                                        <ByChargeChart {...props} />
-                                    )}
+                                    render={props => <ByChargeChart {...props} />}
                                     react={{
                                         and: ['list', 'year_elected', 'departament'],
                                     }}
@@ -316,9 +312,7 @@ function ChartsComponent() {
                                             }
                                         }
                                     })}
-                                    render={props => (
-                                        <ByListChart {...props} />
-                                    )}
+                                    render={props => <ByListChart {...props} />}
                                     react={{
                                         and: ['list', 'year_elected', 'departament'],
                                     }}
@@ -369,7 +363,8 @@ function ChartsComponent() {
                                         "departament.keyword": {
                                             terms: {
                                                 field: 'departament.keyword',
-                                                order: {_count: 'desc'}
+                                                order: {_count: 'desc'},
+                                                size: 40,
                                             },
                                             aggs: {
                                                 presented: {
@@ -383,9 +378,7 @@ function ChartsComponent() {
                                         }
                                     }
                                 })}
-                                render={(props) => (
-                                    <ByDepartmentChart {...props} />
-                                )}
+                                render={(props) => <ByDepartamentHeatMap {...props} />}
                                 react={{
                                     and: ['list', 'year_elected', 'departament'],
                                 }}
@@ -401,78 +394,6 @@ function ChartsComponent() {
 
 }
 
-
-function ByListChart(props: any) {
-    if (props.loading || !props.aggregations || !props.aggregations["list.keyword"]) return <LoadingGraphComponent/>
-    const data = props.aggregations["list.keyword"].buckets;
-
-
-    let d: { key: string, presented: number, notPresented: number }[] = [];
-    data.forEach((element: { key: string; doc_count: number; presented: { doc_count: number; } }) => {
-        if (!element.presented) return;
-        d.push({
-            key: element.key,
-            presented: element.presented.doc_count,
-            notPresented: element.doc_count - element.presented.doc_count
-        })
-    });
-    return <>
-        <ListChart data={d}/>
-    </>
-}
-
-function ByAgeChart(props: any, key: string) {
-    if (props.loading || !props.aggregations || !props.aggregations["age"]) return <LoadingGraphComponent/>
-    const data = props.aggregations["age"].buckets;
-    let d: { key: string, presented: number, notPresented: number }[] = [];
-    data.forEach((element: { key: string; doc_count: number; presented: { doc_count: number; } }) => {
-        if (!element.presented) return;
-        d.push({
-            key: element.key.toString(),
-            presented: element.presented.doc_count,
-            notPresented: element.doc_count - element.presented.doc_count
-        })
-    });
-    return <>
-        <AgeChart data={d}/>
-    </>
-}
-
-function ByChargeChart(props: any) {
-    if (props.loading || !props.aggregations || !props.aggregations["charge.keyword"]) return <LoadingGraphComponent/>
-    const data = props.aggregations["charge.keyword"].buckets;
-    let d: { key: string, presented: number, notPresented: number }[] = [];
-    console.log('ByChargeChart', data);
-    data.forEach((element: { key: string; doc_count: number; presented: { doc_count: number; } }) => {
-        if (!element.presented) return;
-        d.push({
-            key: element.key,
-            presented: element.presented.doc_count,
-            notPresented: element.doc_count - element.presented.doc_count
-        })
-    });
-    return <>
-        <ChargeChart data={d}/>
-    </>
-}
-
-function ByDepartmentChart(props: any) {
-    if (props.loading || !props.aggregations || !props.aggregations["departament.keyword"]) return <LoadingGraphComponent/>
-    const data = props.aggregations["departament.keyword"].buckets;
-    let d: { key: string, value: number, total: number, presented: number }[] = [];
-    data.forEach((element: { key: string; doc_count: number; presented: { doc_count: number; } }) => {
-        if (!element.presented) return;
-        d.push({
-            key: element.key,
-            value: +((element.presented.doc_count / element.doc_count) * 100).toFixed(2),
-            total: element.doc_count,
-            presented: element.presented.doc_count
-        })
-    });
-    return <>
-        <HeatMap data={d}/>
-    </>
-}
 
 function ResultHeader() {
 
@@ -572,46 +493,6 @@ function SingleResultCard(props: {
     </Row>
 }
 
-function HeatMap(props: { data: { key: string, value: number, total: number, presented: number }[] }) {
-
-    const [geojson, setGeoJson] = useState<any>();
-
-    useEffect(() => {
-        new SimpleApi().getGeoJson()
-            .then(d => setGeoJson(d))
-            .catch(e => message.warn("No se pudo obtener geojson"))
-        ;
-    }, []);
-    return <>
-        {geojson &&
-        <ResponsiveChoropleth
-          data={props.data}
-          domain={[0, 100]}
-          match={(feature, datum) => {
-              return feature.properties.dpto_desc === datum.key;
-          }}
-          label={(datum) => {
-              return datum.data.key + ' (' + datum.data.presented + '/' + datum.data.total + ')\n' +
-                  ' Porcentaje '
-          }}
-          valueFormat={(value) => {
-              return value + '%'
-          }}
-          features={geojson.features}
-          colors="greens"
-          margin={{top: 0, right: 0, bottom: 0, left: 0}}
-          projectionTranslation={[5.8, -1.95]}
-          projectionRotation={[0, 0, 0]}
-          projectionScale={3500}
-          unknownColor="#ffff"
-          borderWidth={0.5}
-          borderColor="#333333"
-          enableGraticule={false}
-          graticuleLineColor="#666666"
-        />}
-    </>
-
-}
 
 function GraphWrapper(
     props: {
