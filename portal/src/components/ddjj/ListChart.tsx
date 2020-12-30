@@ -38,7 +38,6 @@ export function ListChart(props: {
         parentLabelTextColor={{from: 'color', modifiers: [['darker', 2]]}}
         parentLabel={((l: { id: string, isLeaf: boolean, width: number }) => {
             if (!l.id || l.isLeaf) return null
-            console.log(l);
             const maxChars = l.width / 8;
             if (l.id.length <= maxChars) return l.id;
             return l.id.substr(0, maxChars) + "..."
