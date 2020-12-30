@@ -3,23 +3,21 @@ import {useEffect, useState} from 'react';
 import {ResponsiveBar} from '@nivo/bar';
 import {formatMoney} from '../../formatters';
 import {LoadingGraphComponent} from './LoadingGraph';
+import {CHART_COLORS} from './PresentedChart';
 
-const NAMES: Record<string, string> = {
-    'presented': 'Presentados',
-    'notPresented': 'No presentados'
-}
+const NAMES: Record<string, string> = {}
 
 export function ListChart(props: {
-    data: { key: string, presented: number, notPresented: number }[]
+    data: { key: string, "Presentados": number, 'No presentados': number }[]
 }) {
 
     return <ResponsiveBar
         data={props.data}
-        keys={['presented', 'notPresented']}
+        keys={['Presentados', 'No presentados']}
+        colors={[CHART_COLORS.presented, CHART_COLORS.no_presented]}
         indexBy="key"
         margin={{top: 10, right: 10, bottom: 20, left: 10}}
         padding={0.2}
-        colors={{scheme: 'nivo'}}
         enableGridX={false}
         enableGridY={false}
         defs={[{
@@ -95,11 +93,10 @@ export function ByListChart(props: {
 
     const d = (data || lastShowedData || emptyAgg)
         .buckets.map(element => {
-            if (!element.presented) return {key: element.key, presented: 0, notPresented: 0};
             return {
                 key: element.key,
-                presented: element.presented.doc_count,
-                notPresented: element.doc_count - element.presented.doc_count
+                "Presentados": element.presented.doc_count,
+                "No presentados": element.doc_count - element.presented.doc_count
             }
         });
     return <ListChart data={d}/>

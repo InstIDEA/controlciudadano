@@ -3,23 +3,20 @@ import {useEffect, useState} from 'react';
 import {ResponsiveBar} from '@nivo/bar';
 import {formatMoney} from '../../formatters';
 import {LoadingGraphComponent} from './LoadingGraph';
+import {CHART_COLORS} from './PresentedChart';
 
-const NAMES: Record<string, string> = {
-    'presented': 'Presentados',
-    'notPresented': 'No presentados'
-}
 
 export function ChargeChart(props: {
-    data: { key: string, presented: number, notPresented: number }[]
+    data: { key: string, "Presentados": number, 'No presentados': number }[]
 }) {
 
     return <ResponsiveBar
         data={props.data}
-        keys={['presented', 'notPresented']}
+        keys={['Presentados', 'No presentados']}
+        colors={[CHART_COLORS.presented, CHART_COLORS.no_presented]}
         indexBy="key"
         margin={{top: 10, right: 10, bottom: 20, left: 10}}
         padding={0.2}
-        colors={{scheme: 'nivo'}}
         enableGridX={false}
         enableGridY={false}
         defs={[{
@@ -44,8 +41,9 @@ export function ChargeChart(props: {
         axisTop={null}
         axisRight={null}
         axisBottom={{
-            tickSize: 4,
-            tickPadding: 5,
+            tickSize: 1,
+            tickPadding: 2,
+            legendPosition: 'start',
             tickRotation: -45,
             legend: null,
         }}
@@ -58,16 +56,11 @@ export function ChargeChart(props: {
             legendPosition: 'middle'
         }}
 
-        labelFormat={t => formatMoney(t)}
+        labelFormat={formatMoney}
         labelSkipWidth={12}
         labelSkipHeight={12}
         labelTextColor={{from: 'color', modifiers: [['darker', 1.6]]}}
-
-        tooltip={props => <span>
-            {NAMES[props.id]}: <b>{formatMoney(props.value)}</b>
-        </span>}
-
-        tooltipFormat={t => `${formatMoney(t)}`}
+        tooltipFormat={formatMoney}
         animate={true}
         motionStiffness={90}
         motionDamping={15}
@@ -95,11 +88,10 @@ export function ByChargeChart(props: {
 
     const d = (data || lastShowedData || emptyAgg)
         .buckets.map(element => {
-            if (!element.presented) return {key: element.key, presented: 0, notPresented: 0};
             return {
                 key: element.key,
-                presented: element.presented.doc_count,
-                notPresented: element.doc_count - element.presented.doc_count
+                "Presentados": element.presented.doc_count,
+                "No presentados": element.doc_count - element.presented.doc_count
             }
         });
     return <ChargeChart data={d}/>

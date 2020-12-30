@@ -6,6 +6,8 @@ import {ResponsiveChoropleth} from '@nivo/geo';
 
 const DEP_ALIAS: Record<string, string> = {
     'PDTE. HAYES': 'PRESIDENTE HAYES',
+    'ASUNCION': 'NACIONAL',
+    'NACIONAL': 'ASUNCION',
 }
 
 interface ByDepartamentAggregation {
@@ -50,6 +52,30 @@ function HeatMap(props: { data: { key: string, value: number, total: number, pre
             .catch(e => message.warn("No se pudo obtener geojson"))
         ;
     }, []);
+
+    const extra: any = {
+        legends: [{
+            anchor: 'bottom-right',
+            direction: 'column',
+            justify: false,
+            translateX: -5,
+            translateY: -5,
+            itemsSpacing: 0,
+            itemWidth: 94,
+            itemHeight: 18,
+            itemDirection: 'right-to-left',
+            itemTextColor: '#444444',
+            itemOpacity: 0.85,
+            symbolSize: 18,
+            effects: [{
+                on: 'hover',
+                style: {
+                    itemTextColor: '#000000',
+                    itemOpacity: 1
+                }
+            }]
+        }]
+    }
     return <>
         {geojson &&
         <ResponsiveChoropleth
@@ -63,7 +89,7 @@ function HeatMap(props: { data: { key: string, value: number, total: number, pre
                   ' Porcentaje '
           }}
           valueFormat={(value) => {
-              return value + '%'
+              return Math.round(value + 0.5) + '%'
           }}
           features={geojson.features}
           colors="greens"
@@ -76,6 +102,7 @@ function HeatMap(props: { data: { key: string, value: number, total: number, pre
           borderColor="#333333"
           enableGraticule={false}
           graticuleLineColor="#666666"
+          {...extra}
         />}
     </>
 

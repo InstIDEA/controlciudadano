@@ -3,6 +3,7 @@ import {useEffect, useState} from 'react';
 import {ResponsiveBar} from '@nivo/bar';
 import {formatMoney} from '../../formatters';
 import {LoadingGraphComponent} from './LoadingGraph';
+import {CHART_COLORS} from './PresentedChart';
 
 const NAMES: Record<string, string> = {
     'presented': 'Presentados',
@@ -10,16 +11,16 @@ const NAMES: Record<string, string> = {
 }
 
 export function AgeChart(props: {
-    data: { key: string, presented: number, notPresented: number }[]
+    data: { key: string, "Presentados": number, 'No presentados': number }[]
 }) {
 
     return <ResponsiveBar
         data={props.data}
-        keys={['presented', 'notPresented']}
+        keys={['Presentados', 'No presentados']}
+        colors={[CHART_COLORS.presented, CHART_COLORS.no_presented]}
         indexBy="key"
         margin={{top: 10, right: 10, bottom: 20, left: 10}}
         padding={0.2}
-        colors={{scheme: 'nivo'}}
         enableGridX={false}
         enableGridY={false}
         defs={[{
@@ -46,8 +47,8 @@ export function AgeChart(props: {
         axisBottom={{
             tickSize: 4,
             tickPadding: 5,
-            tickRotation: -45,
-            legend: null,
+            tickRotation: 0,
+            legend: null
         }}
         axisLeft={{
             tickSize: 5,
@@ -58,16 +59,12 @@ export function AgeChart(props: {
             legendPosition: 'middle'
         }}
 
-        labelFormat={t => formatMoney(t)}
+        labelFormat={formatMoney}
         labelSkipWidth={12}
         labelSkipHeight={12}
         labelTextColor={{from: 'color', modifiers: [['darker', 1.6]]}}
 
-        tooltip={props => <span>
-        {NAMES[props.id]}: <b>{formatMoney(props.value)}</b>
-    </span>}
-
-        tooltipFormat={t => `${formatMoney(t)}`}
+        tooltipFormat={formatMoney}
         animate={true}
         motionStiffness={90}
         motionDamping={15}
@@ -93,13 +90,23 @@ export function ByAgeChart(props: {
     if (!data && !lastShowedData) return <LoadingGraphComponent/>;
 
     const d = (data || lastShowedData || emptyAgg)
-        .buckets.map(element => {
+        .buckets
+        .sort((v1, v2) => v1.key.localeCompare(v2.key))
+        .map(element => {
+            let finalKey = element.key.toString().replaceAll(".0", "");
+            if (finalKey.startsWith("*")) {
+                finalKey = "< 29";
+            }
+            if (finalKey.endsWith("*") || finalKey.endsWith("190")) {
+                finalKey = "> 70";
+            }
             return {
-                key: element.key.toString(),
-                presented: element.presented.doc_count,
-                notPresented: element.doc_count - element.presented.doc_count
+                key: finalKey,
+                "Presentados": element.presented.doc_count,
+                "No presentados": element.doc_count - element.presented.doc_count
             };
-        });
+        })
+    ;
 
     return <AgeChart data={d}/>;
 }

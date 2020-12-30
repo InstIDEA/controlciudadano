@@ -327,9 +327,16 @@ function ChartsComponent() {
                                     defaultQuery={() => ({
                                         aggs: {
                                             "age": {
-                                                terms: {
+                                                range: {
                                                     field: 'age',
-                                                    order: {_count: 'desc'}
+                                                    "ranges": [
+                                                        {"to": 29},
+                                                        {"from": 30, "to": 39},
+                                                        {"from": 40, "to": 49},
+                                                        {"from": 50, "to": 59},
+                                                        {"from": 60, "to": 69},
+                                                        {"from": 70, "to": 190},
+                                                    ]
                                                 },
                                                 aggs: {
                                                     presented: {
