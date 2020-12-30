@@ -5,11 +5,6 @@ import {formatMoney} from '../../formatters';
 import {LoadingGraphComponent} from './LoadingGraph';
 import {CHART_COLORS} from './PresentedChart';
 
-const NAMES: Record<string, string> = {
-    'presented': 'Presentados',
-    'notPresented': 'No presentados'
-}
-
 export function AgeChart(props: {
     data: { key: string, "Presentados": number, 'No presentados': number }[]
 }) {
