@@ -88,7 +88,7 @@ export function ByAgeChart(props: {
         .buckets
         .sort((v1, v2) => v1.key.localeCompare(v2.key))
         .map(element => {
-            let finalKey = element.key.toString().replaceAll(".0", "");
+            let finalKey = element.key.toString().replace(/\.0/g, '');
             if (finalKey.startsWith("*")) {
                 finalKey = "< 29";
             }

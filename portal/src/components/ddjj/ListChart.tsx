@@ -1,53 +1,28 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
 import {LoadingGraphComponent} from './LoadingGraph';
-import {ResponsiveTreeMap} from '@nivo/treemap'
-import {CHART_COLORS} from './PresentedChart';
-import {formatMoney} from '../../formatters';
+import { ResponsiveSunburst } from '@nivo/sunburst';
 
 export function ListChart(props: {
-    data: { key: string, "Presentados": number, 'No presentados': number }[]
+    data: SunburstData
 }) {
 
 
-    const data = props.data.map(datum => ({
-        name: `${datum.key} - Total`,
-        children: [{
-            name: `${datum.key} - Presentados`,
-            color: CHART_COLORS.presented,
-            loc: datum.Presentados
-        }, {
-            name: `${datum.key} - No Presentados`,
-            color: CHART_COLORS.no_presented,
-            loc: datum["No presentados"]
-        }]
-    })).slice(0, 10)
+    return <ResponsiveSunburst
+    data={props.data}
+       margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
+       id="name"
+       value="value"
+       cornerRadius={2}
+       borderWidth={1}
+       borderColor="white"
+       colors={{ scheme: 'pastel1' }}
+       childColor={{ from: 'color' }}
+       animate={false}
+       motionConfig="gentle"
+       isInteractive={true}
 
-    return <ResponsiveTreeMap
-        data={{
-            name: "Partido político",
-            color: "white",
-            children: data
-        }}
-        identity="name"
-        value="loc"
-        valueFormat={formatMoney as any}
-        margin={{top: 0, right: 0, bottom: 0, left: 0}}
-
-        enableParentLabel={true}
-        parentLabelTextColor={{from: 'color', modifiers: [['darker', 2]]}}
-        parentLabel={((l: { id: string, isLeaf: boolean, width: number }) => {
-            if (!l.id || l.isLeaf) return null
-            const maxChars = l.width / 8;
-            if (l.id.length <= maxChars) return l.id;
-            return l.id.substr(0, maxChars) + "..."
-        }) as any}
-
-        labelTextColor={{from: 'color', modifiers: [['darker', 1.2]]}}
-        labelSkipSize={12}
-
-        borderColor={{from: 'color', modifiers: [['darker', 0.1]]}}
-    />
+   />
 }
 
 interface ByListAggregation {
@@ -72,14 +47,33 @@ export function ByListChart(props: {
     const d = (data || lastShowedData || emptyAgg)
         .buckets.map(element => {
             return {
-                key: element.key,
-                "Presentados": element.presented.doc_count,
-                "No presentados": element.doc_count - element.presented.doc_count
+                name: element.key + " No presentado",
+                value: element.doc_count - element.presented.doc_count,
+                children: [
+                    {
+                        name: element.key + " Presentado",
+                        value: element.presented.doc_count,
+                    }
+                ]
             }
         });
-    return <ListChart data={d}/>
+        const finalData: SunburstData = {
+            name : "list",
+            children: d
+        }
+    return <ListChart data={finalData}/>
 }
-
+interface SunburstData {
+    name: string;
+    children: {
+        name: string;
+        value: number;
+        children: {
+            name: string;
+            value: number;
+        }[];
+    }[];
+}
 const emptyAgg: ByListAggregation = {
     buckets: [{
         key: '',

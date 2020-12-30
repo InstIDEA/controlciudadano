@@ -122,7 +122,7 @@ const CenteredMetric = ({dataWithArc, centerX, centerY}: any) => {
                 fontWeight: 600,
             }}
         >
-            {Math.round(percentage)}%
+            {percentage.toPrecision(2)}%
         </text>
     )
 }

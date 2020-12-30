@@ -14,6 +14,7 @@
     "@nivo/pie": "^0.67.0",
     "@nivo/scatterplot": "^0.67.0",
     "@nivo/treemap": "^0.67.0",
+    "@nivo/sunburst": "^0.67.0",
     "@react-hook/media-query": "^1.1.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
