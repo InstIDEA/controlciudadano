@@ -208,12 +208,15 @@ function ResultComponent(props: {
                     dataField="document.keyword"
                     componentId="SearchResult"
                     react={{
-                        and: ['list', 'year_elected', 'department']
+                        and: ['list', 'year_elected', 'department', 'district', 'election']
                     }}
                     infiniteScroll={false}
                     renderNoResults={() => "Sin resultados que cumplan con tu búsqueda"}
                     size={10}
-                    sortOptions={[{label: 'Presentado', sortBy: 'desc', dataField: "presented"}]}
+                    sortOptions={[
+                        {label: 'Presentado', sortBy: 'desc', dataField: "presented"},
+                        {label: 'Nombre', sortBy: 'asc', dataField: "full_name.keyword"},
+                    ]}
                     pagination
                     paginationAt="bottom"
                     renderResultStats={() => <></>}
@@ -319,7 +322,7 @@ function ChartsComponent() {
                             </GraphWrapper>
                         </Col>
                         <Col xl={12} lg={12} sm={24} xs={24}>
-                            <GraphWrapper title="" height={200}>
+                            <GraphWrapper title="Partido" height={200}>
                                 <ReactiveComponent
                                     componentId="DeclarationsListChart"
                                     defaultQuery={() => ({
