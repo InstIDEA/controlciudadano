@@ -213,6 +213,7 @@ function ResultComponent(props: {
                     infiniteScroll={false}
                     renderNoResults={() => "Sin resultados que cumplan con tu búsqueda"}
                     size={10}
+                    sortOptions={[{label: 'Presentado', sortBy: 'desc', dataField: "presented"}]}
                     pagination
                     paginationAt="bottom"
                     renderResultStats={() => <></>}
@@ -296,7 +297,7 @@ function ChartsComponent() {
                                                 terms: {
                                                     field: 'charge.keyword',
                                                     order: {_count: 'desc'},
-                                                    size: 15
+                                                    size: 5
                                                 },
                                                 aggs: {
                                                     presented: {
@@ -472,7 +473,7 @@ function SingleResultCard(props: {
                                           style={{marginLeft: 20}}>
                                      <Typography.Text style={{
                                          fontSize: 20,
-                                         color: data.end_declaration ? 'green' : 'red',
+                                         color: data.start_declaration ? 'green' : 'red',
                                          textAlign: 'right'
                                      }}>
                                          {data.year_elected}
@@ -523,7 +524,7 @@ function SingleResultCard(props: {
                     marginLeft: 20,
                     fontSize: 20,
                     fontWeight: 'bold',
-                    color: data.end_declaration ? 'green' : 'red'
+                    color: data.start_declaration ? 'green' : 'red'
                 }}>
                     {data.year_elected}
                 </Typography.Text>
@@ -571,7 +572,8 @@ const FilterColors: Record<string, string> = {
     'list': 'rgb(205 83 52)',
     'departament': '#f50',
     'year_elected': '#108ee9',
-    'Patrimonio': '#00a2ae'
+    'election' : 'rgb(205 83 52)',
+    'district' :  '#108ee9'
 }
 
 function getInitials(name: string = ""): string {
@@ -670,7 +672,9 @@ function getFilterKeyName(val: string): string {
     const keys: Record<string, string> = {
         "list": "Partido",
         "departament": "Departamento",
-        "year_elected": "Año"
+        "year_elected": "Año",
+        "district" : "Distrito",
+        "election" : "Elecciones"
     };
 
     return keys[val] || val;
