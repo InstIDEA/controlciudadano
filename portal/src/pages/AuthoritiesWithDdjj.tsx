@@ -203,7 +203,7 @@ function ResultComponent(props: {
 
 function ChartsComponent() {
 
-    return <Card className="card-style">
+    return <Card className="card-style" style={{paddingTop: 24}}>
         <Col xl={24}>
             <Row gutter={[8, 0]}>
                 <Col xl={12} lg={12} sm={24} xs={24}>
