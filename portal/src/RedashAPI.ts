@@ -14,7 +14,8 @@ import {
     SourceData,
     Supplier,
     DataSet,
-    VideoTutorialesSemillas
+    VideoTutorialesSemillas,
+    AuthoritiesWithoutDocument
 } from './Model';
 
 const BASE_API = "https://redash.controlciudadanopy.org/api";
@@ -33,7 +34,8 @@ const API_KEYS: Record<number, string> = {
     39: "g74o1ujam75shxjB8BVJ1nOQkInbsrgpTax9sukM",
     40: "3m3QeB4LHIuIbuCJeZjDgPmOECfgAlt9irtH0REV",
     41: "5jHLPnSfUSwE4FRogLc1gs8cZsmfaNsWiid0EwJm",
-    48: "8EXmkQOJPuZ1UbiXDkF3yWuEhRbGZh054lwgjl1K"
+    45: "xZ3uB2YvepgaPxHGB8g8ahTAukBl5VIIDT9jShmP",
+    48: "8EXmkQOJPuZ1UbiXDkF3yWuEhRbGZh054lwgjl1K"    
 }
 
 
@@ -115,6 +117,9 @@ export class RedashAPI {
 
     getVideoTutorialesSemillas(): Promise<BaseRedashResponse<VideoTutorialesSemillas>> {
         return this.fetchQuery(48)
+    }
+    getAuthoritiesWithoutDocument(): Promise<BaseRedashResponse<AuthoritiesWithoutDocument>> {
+        return this.fetchQuery(45);
     }
 }
 

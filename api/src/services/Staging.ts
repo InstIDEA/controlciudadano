@@ -17,7 +17,7 @@ const staging = [
 ];
 
 const analysis = [
-    {table: 'tsje_elected', column: 'cedula'},
+    {table: 'tsje_elected', column: 'document'},
     {table: 'declarations', column: 'document'},
 ]
 

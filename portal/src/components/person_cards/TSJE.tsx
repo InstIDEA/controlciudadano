@@ -22,15 +22,15 @@ export function TSJECard(props: {
                     <Typography.Text><strong>Lista</strong></Typography.Text>
                 </Col>
             </Row>
-            {tsje.map(election => <Row gutter={[8, 8]} key={election.ano}>
+            {tsje.map(election => <Row gutter={[8, 8]} key={election.year_elected}>
                     <Col span={3}>
-                        {election.ano}
+                        {election.year_elected}
                     </Col>
                     <Col span={11}>
-                        {election.cand_desc}
+                        {election.charge}
                     </Col>
                     <Col span={10}>
-                        {election.nombre_lista} ({election.siglas_lista})
+                        {election.list}
                     </Col>
                 </Row>
             )}
