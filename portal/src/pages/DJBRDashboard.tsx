@@ -14,6 +14,7 @@ import {ByAgeChart} from '../components/ddjj/AgeChart';
 import {PresentedDeclarationChart} from '../components/ddjj/PresentedChart';
 import {ByListChart} from '../components/ddjj/ListChart';
 import {ByDepartamentHeatMap} from '../components/ddjj/HeatMap';
+import useMetaTags from 'react-metatags-hook';
 
 
 export function DJBRDashboard() {
@@ -21,6 +22,22 @@ export function DJBRDashboard() {
     const isSmall = useMediaQuery('only screen and (max-width: 768px)');
 
     const filter = useMemo(() => <Filter/>, []);
+
+    useMetaTags({
+        title: `Declaraciones juradas de bienes y rentas`,
+        description: `Portal para ver el progreso de carga de las declaraciones juradas de bienes y rentas.`,
+        charset: 'utf8',
+        lang: 'en',
+        openGraph: {
+            title: 'Declaraciones juradas de bienes y rentas',
+            site_name: 'controlciudadanopy.org'
+        },
+        twitter: {
+            card: 'summary',
+            creator: '@InstIDEA',
+            title: 'Dashboard de declaraciones juradas de bienes y rentas',
+        }
+    }, [])
 
     return <ReactiveBase url="https://data.controlciudadanopy.org/" app="fts_authorities_ddjj">
         <Header tableMode={true}/>

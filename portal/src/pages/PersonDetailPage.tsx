@@ -16,7 +16,6 @@ import Icon from '@ant-design/icons';
 import {SimpleApi} from '../SimpleApi';
 import {useParams} from 'react-router-dom';
 import {Affidavit, AnalysisSearchResult, Authorities, Hacienda, LocalSearchResult} from '../Model';
-import {SFPRow} from '../SFPHelper';
 import {formatMoney, getInitials} from '../formatters';
 import {AQECard} from '../components/person_cards/AQE';
 import {TSJECard} from '../components/person_cards/TSJE';
@@ -28,6 +27,7 @@ import {COLOR_GREY, COLOR_ORANGE} from "../Constants";
 import {useMediaQuery} from '@react-hook/media-query';
 import {SOURCE_NAME_MAP} from "./PersonSearchPage";
 import {fixName} from '../nameUtils';
+import useMetaTags from 'react-metatags-hook';
 
 export function PersonDetailPage() {
 
@@ -69,6 +69,21 @@ export function PersonDetailPage() {
         () => tryToGuestHeader(document, affidavit, analysis, local),
         [document, affidavit, analysis, local]
     );
+
+    useMetaTags({
+        title: `Datos de ${header.name || header.document}`,
+        description: `Datos públicos sobre ${header.name || header.document}.`,
+        charset: 'utf8',
+        lang: 'en',
+        openGraph: {
+            title: `Datos de ${header.name || header.document}`,
+        },
+        twitter: {
+            card: 'summary',
+            creator: '@InstIDEA',
+            title: `Datos de ${header.name || header.document}`
+        }
+    }, [header.name, header.document]);
 
     return <>
         <Header tableMode={true}/>
@@ -215,10 +230,6 @@ export function PersonDetailPage() {
 
 }
 
-export type SFPLocalData = {
-    [k: string]: SFPRow[]
-}
-
 function tryToGuestHeader(baseDoc: string,
                           affidavit: Affidavit[] | undefined,
                           analysis?: AnalysisSearchResult,
@@ -237,7 +248,12 @@ function tryToGuestHeader(baseDoc: string,
             name = affidavit[0].name;
             affidavit.forEach(a => {
                 if (a.charge) {
-                    charge.push({charge: a.charge, year: a.year, source: Ddjj, sourceName: SOURCE_NAME_MAP['declarations']});
+                    charge.push({
+                        charge: a.charge,
+                        year: a.year,
+                        source: Ddjj,
+                        sourceName: SOURCE_NAME_MAP['declarations']
+                    });
                 }
             });
         }
