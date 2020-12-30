@@ -1,8 +1,12 @@
 import * as React from 'react';
-import {useEffect, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {SimpleApi} from '../../SimpleApi';
 import {message} from 'antd';
-import {ResponsiveChoropleth} from '@nivo/geo';
+import {Choropleth} from '@nivo/geo';
+
+import {ExtendedFeatureCollection, geoMercator, geoPath,} from 'd3-geo'
+import {LoadingGraphComponent} from './LoadingGraph';
+import {ResponsiveWrapper} from '@nivo/core';
 
 const DEP_ALIAS: Record<string, string> = {
     'PDTE. HAYES': 'PRESIDENTE HAYES',
@@ -39,19 +43,36 @@ export function ByDepartamentHeatMap(
                 presented: element.presented.doc_count
             }
         });
-    return <HeatMap data={d}/>
+    return <ResponsiveWrapper>
+        {({width, height}) => <HeatMap data={d} width={width} height={height}/>}
+    </ResponsiveWrapper>
 }
 
-function HeatMap(props: { data: { key: string, value: number, total: number, presented: number }[] }) {
+function HeatMap(props: {
+    data: { key: string, value: number, total: number, presented: number }[],
+    width: number,
+    height: number
+}) {
 
-    const [geojson, setGeoJson] = useState<any>();
+    const [geojson, setGeoJson] = useState<ExtendedFeatureCollection>();
 
     useEffect(() => {
         new SimpleApi().getGeoJson()
             .then(d => setGeoJson(d))
-            .catch(e => message.warn("No se pudo obtener geojson"))
+            .catch(_ => message.warn("No se pudo obtener geojson"))
         ;
     }, []);
+
+    const scaleAndProjection: ScaleAndProjection | null = useMemo(() => {
+        if (!geojson) return null;
+        return getScaleAndProjection(geojson, props.width, props.height)
+
+    }, [geojson, props.width, props.height])
+
+    if (!geojson || !scaleAndProjection) {
+        return <LoadingGraphComponent/>
+    }
+
 
     const extra: any = {
         legends: [{
@@ -76,35 +97,34 @@ function HeatMap(props: { data: { key: string, value: number, total: number, pre
             }]
         }]
     }
-    return <>
-        {geojson &&
-        <ResponsiveChoropleth
-          data={props.data}
-          domain={[0, 100]}
-          match={(feature, datum) => {
-              return feature.properties.dpto_desc === datum.key;
-          }}
-          label={(datum) => {
-              return datum.data.key + ' (' + datum.data.presented + '/' + datum.data.total + ')\n' +
-                  ' Porcentaje '
-          }}
-          valueFormat={(value) => {
-              return Math.round(value + 0.5) + '%'
-          }}
-          features={geojson.features}
-          colors="greens"
-          margin={{top: 0, right: 0, bottom: 0, left: 0}}
-          projectionTranslation={[5.8, -1.95]}
-          projectionRotation={[0, 0, 0]}
-          projectionScale={3500}
-          unknownColor="#ffff"
-          borderWidth={0.5}
-          borderColor="#333333"
-          enableGraticule={false}
-          graticuleLineColor="#666666"
-          {...extra}
-        />}
-    </>
+    return <Choropleth
+        width={props.width}
+        height={props.height}
+        data={props.data}
+        domain={[0, 100]}
+        match={(feature, datum) => {
+            return feature.properties.dpto_desc === datum.key;
+        }}
+        label={(datum) => {
+            return datum.data.key + ' (' + datum.data.presented + '/' + datum.data.total + ')\n' +
+                ' Porcentaje '
+        }}
+        valueFormat={(value) => {
+            return Math.round(value + 0.5) + '%'
+        }}
+        features={geojson.features}
+        colors="greens"
+        margin={{top: 0, right: 0, bottom: 0, left: 0}}
+        projectionTranslation={scaleAndProjection.translate}
+        projectionRotation={[0, 0, 0]}
+        projectionScale={scaleAndProjection.scale}
+        unknownColor="#ffff"
+        borderWidth={0.5}
+        borderColor="#333333"
+        enableGraticule={false}
+        graticuleLineColor="#666666"
+        {...extra}
+    />
 
 }
 
@@ -120,4 +140,34 @@ function fixName(deptName: string) {
     return deptName.includes('EEMBUCU')
         ? 'ÑEEMBUCU'
         : DEP_ALIAS[deptName] || deptName;
+}
+
+
+interface ScaleAndProjection {
+    scale: number,
+    translate: [number, number]
+}
+
+function getScaleAndProjection(
+    features: ExtendedFeatureCollection,
+    width: number,
+    height: number
+): ScaleAndProjection {
+    // Create a unit projection.
+    const projection = geoMercator()
+        .scale(1)
+        .translate([0, 0]);
+// Create a path generator.
+    const path = geoPath()
+        .projection(projection);
+// Compute the bounds of a feature of interest, then derive scale & translate.
+    const b = path.bounds(features);
+    const scale = .95 / Math.max((b[1][0] - b[0][0]) / width, (b[1][1] - b[0][1]) / height)
+    const translate: [number, number] = [
+        (width - scale * (b[1][0] + b[0][0])) / 2 / width,
+        (height - scale * (b[1][1] + b[0][1])) / 2 / height
+    ];
+
+// Update the projection to use computed scale & translate.
+    return {scale, translate}
 }
