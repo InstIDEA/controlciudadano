@@ -28,6 +28,7 @@ import {OCDSItem} from "./pages/OCDSItem";
 import {OCDSBuyerPage} from "./pages/OCDSBuyer";
 import {OCDSSupplier} from "./pages/OCDSSupplier";
 import {AuthoritiesWithDdjj} from "./pages/AuthoritiesWithDdjj";
+import {VideoTutoriales} from "./pages/VideoTutoriales";
 import {AuthoritiesWithoutDdjj} from "./pages/AuthoritiesWithoutDdjj";
 
 export default function App() {
@@ -76,6 +77,7 @@ function Routes() {
 
                 <Route path="/sources" exact render={() => <DS/>}/>
                 <Route path="/ddjj" exact render={() => <AuthoritiesWithDdjj/>}/>
+                <Route path="/ddjj/tutorial" exact render={() => <VideoTutoriales/>}/>
                 <Route path="/ddjj/list" exact render={() => <AuthoritiesWithoutDdjj/>}/>
                 <Route path="/sources/:dataSetId" exact render={() => <DSDownload/>}/>
 
