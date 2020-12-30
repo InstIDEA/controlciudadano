@@ -66,7 +66,7 @@ export function ItemPriceEvolutionGraph(props: {
             : {type: 'linear', stacked: false}
         }
         yFormat={x => formatMoney((x as number) / divideBy)}
-        nodeSize={x => lerpMax(9, 19, (x as any).quantity, maxQuantity)}
+        nodeSize={(x: any) => lerpMax(9, 19, (x as any).quantity, maxQuantity)}
         tooltip={({node}: any) => {
             return <div style={{
                 backgroundColor: 'white',
