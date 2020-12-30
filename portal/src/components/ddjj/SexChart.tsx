@@ -3,13 +3,8 @@ import {useEffect, useState} from 'react';
 import {ResponsiveBar} from '@nivo/bar';
 import {formatMoney} from '../../formatters';
 import {LoadingGraphComponent} from './LoadingGraph';
+import {CHART_COLORS} from './PresentedChart';
 
-const NAMES: Record<string, string> = {
-    'm': 'Masculino',
-    'f': 'Femenino',
-    'presented': 'Presentados',
-    'notPresented': 'No presentados'
-}
 
 export function SexChart(props: {
     m: { presented: number, notPresented: number },
@@ -17,41 +12,25 @@ export function SexChart(props: {
 }) {
 
     const data = [{
-        key: 'm',
-        presented: props.m.presented,
-        notPresented: props.m.notPresented
+        key: 'Masculino',
+        "Presentados": props.m.presented,
+        "No presentados": props.m.notPresented,
     }, {
-        key: 'f',
-        presented: props.f.presented,
-        notPresented: props.f.notPresented
+        key: 'Femenino',
+        "Presentados": props.f.presented,
+        "No presentados": props.f.notPresented
     }];
     return <ResponsiveBar
         data={data}
-        keys={['presented', 'notPresented']}
+        keys={['Presentados', 'No presentados']}
         indexBy="key"
         margin={{top: 10, right: 10, bottom: 20, left: 10}}
-        padding={0.2}
-        colors={{scheme: 'nivo'}}
+        padding={0.6}
+        colors={[CHART_COLORS.presented, CHART_COLORS.no_presented]}
+
         enableGridX={false}
         enableGridY={false}
-        defs={[{
-            id: 'dots',
-            type: 'patternDots',
-            background: 'inherit',
-            color: '#38bcb2',
-            size: 4,
-            padding: 1,
-            stagger: true
-        }, {
-            id: 'lines',
-            type: 'patternLines',
-            background: 'inherit',
-            color: '#eed312',
-            rotation: -45,
-            lineWidth: 6,
-            spacing: 10
-        }
-        ]}
+
         borderColor={{from: 'color', modifiers: [['darker', 1.6]]}}
         axisTop={null}
         axisRight={null}
@@ -59,7 +38,6 @@ export function SexChart(props: {
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            format: t => NAMES[`${t}`],
             legend: null,
         }}
         axisLeft={{
@@ -76,11 +54,9 @@ export function SexChart(props: {
         labelSkipHeight={12}
         labelTextColor={{from: 'color', modifiers: [['darker', 1.6]]}}
 
-        tooltip={(props) => <span>
-            {NAMES[props.id]}: <b>{formatMoney(props.value)}</b>
-        </span>}
 
-        tooltipFormat={t => `${formatMoney(t)}`}
+        tooltipFormat={formatMoney}
+
         animate={true}
         motionStiffness={90}
         motionDamping={15}

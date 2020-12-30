@@ -4,6 +4,10 @@ import {SimpleApi} from '../../SimpleApi';
 import {message} from 'antd';
 import {ResponsiveChoropleth} from '@nivo/geo';
 
+const DEP_ALIAS: Record<string, string> = {
+    'PDTE. HAYES': 'PRESIDENTE HAYES',
+}
+
 interface ByDepartamentAggregation {
     buckets: { key: string; doc_count: number; presented: { doc_count: number; } }[]
 }
@@ -25,9 +29,9 @@ export function ByDepartamentHeatMap(
 
     const d = (data || lastShowedData || emptyAgg)
         .buckets
-        .map((element: { key: string; doc_count: number; presented: { doc_count: number; } }) => {
+        .map(element => {
             return {
-                key: element.key,
+                key: fixName(element.key),
                 value: +((element.presented.doc_count / element.doc_count) * 100).toFixed(2),
                 total: element.doc_count,
                 presented: element.presented.doc_count
@@ -83,4 +87,10 @@ const emptyAgg: ByDepartamentAggregation = {
         doc_count: 0,
         presented: {doc_count: 0}
     }]
+}
+
+function fixName(deptName: string) {
+    return deptName.includes('EEMBUCU')
+        ? 'ÑEEMBUCU'
+        : DEP_ALIAS[deptName] || deptName;
 }

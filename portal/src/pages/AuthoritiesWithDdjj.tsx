@@ -145,7 +145,7 @@ function CurrentFilters() {
                                                 key={`${key}_${val}`}
                                                 onClose={() => setValue(key, component.value.filter((sb: unknown) => sb !== val))}
                                             >
-                                                {getFilterKeyName(key)}: {val}
+                                                {getFilterKeyName(key)}: {getMappedValName(val)}
                                             </Tag>)
                                         }
 
@@ -161,7 +161,7 @@ function CurrentFilters() {
                                                     color={FilterColors[key] || 'gray'}
                                                     onClose={() => clearFilter(key)}
                                                     key={key}>
-                                            {getFilterKeyName(key)}: {label}
+                                            {getFilterKeyName(key)}: {getMappedValName(label)}
                                         </Tag>
                                     })}
                                 </>;
@@ -268,7 +268,8 @@ function ChartsComponent() {
                                             "charge.keyword": {
                                                 terms: {
                                                     field: 'charge.keyword',
-                                                    order: {_count: 'desc'}
+                                                    order: {_count: 'desc'},
+                                                    size: 15
                                                 },
                                                 aggs: {
                                                     presented: {
@@ -620,4 +621,10 @@ function getFilterKeyName(val: string): string {
     };
 
     return keys[val] || val;
+}
+
+function getMappedValName(val: unknown): string {
+
+    if (val && `${val}`.endsWith('EEMBUCU')) return 'ÑEEMBUCU';
+    return `${val}`;
 }

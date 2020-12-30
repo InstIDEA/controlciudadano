@@ -9,13 +9,6 @@ export const CHART_COLORS = {
     'no_presented': 'rgb(232, 193, 160)'
 }
 
-const NAMES: Record<string, string> = {
-    'true': 'Presentados',
-    'false': 'No Presentados',
-    'presented': 'Presentados',
-    'notPresented': 'No presentados'
-}
-
 export function PresentedChart(props: {
     data: { id: string, label: string, value: number, color: string }[]
 }) {
@@ -117,11 +110,6 @@ const CenteredMetric = ({dataWithArc, centerX, centerY}: any) => {
     })
 
     const percentage = presented === 0 ? 0 : presented / (presented + notPresented) * 100;
-    console.log({
-        presented,
-        notPresented,
-        percentage
-    })
 
     return (
         <text
