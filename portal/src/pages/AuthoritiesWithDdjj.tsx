@@ -456,9 +456,16 @@ function SingleResultCard(props: {
         return <Card className="card-style">
             <Comment className="small-card"
                      content={<>
-                         <Link className="name-result-link" to={`/person/${data.document}`}>
-                             {data.name}
-                         </Link>
+                         {data.document &&
+                            <Link className="name-result-link" to={`/person/${data.document}`}>
+                                {data.name}
+                            </Link>
+                         }
+                         {!data.document &&
+                            <Typography.Text className="name-result-link">
+                                {data.name}
+                            </Typography.Text>
+                         }
                          <Row justify="space-between" align="middle">
                              <Col span={24} style={{textAlign: 'right'}}>
                                  <Tooltip title={data.start_declaration ? 'Presentó' : 'No presentó'}
@@ -497,9 +504,16 @@ function SingleResultCard(props: {
                 alt={data.name}>{getInitials(data.name)}</Avatar>
         </Col>
         <Col span={10}>
-            <Link className="name-result-link" to={`/person/${data.document}`}>
-                {data.name}
-            </Link>
+            {data.document &&
+                <Link className="name-result-link" to={`/person/${data.document}`}>
+                    {data.name}
+                </Link>
+            }
+            {!data.document &&
+                <Typography.Text className="name-result-link">
+                    {data.name}
+                </Typography.Text>
+            }
             <br/>
             <small>Cédula: <b>{formatMoney(data.document)}</b></small>
         </Col>
