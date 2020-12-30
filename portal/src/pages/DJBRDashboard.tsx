@@ -6,9 +6,8 @@ import './AuthoritiesWithDdjj.css'
 import Footer from '../components/layout/Footer';
 import {MultiList, ReactiveBase, ReactiveComponent, ReactiveList, SelectedFilters} from '@appbaseio/reactivesearch';
 import {useMediaQuery} from '@react-hook/media-query'
-import {formatMoney} from '../formatters';
+import {formatMoney, getInitials} from '../formatters';
 import {Link} from 'react-router-dom';
-import {fixName} from '../nameUtils';
 import {BySexChart} from '../components/ddjj/SexChart';
 import {ByChargeChart} from '../components/ddjj/ChargeChart';
 import {ByAgeChart} from '../components/ddjj/AgeChart';
@@ -17,7 +16,7 @@ import {ByListChart} from '../components/ddjj/ListChart';
 import {ByDepartamentHeatMap} from '../components/ddjj/HeatMap';
 
 
-export function AuthoritiesWithDdjj() {
+export function DJBRDashboard() {
 
     const isSmall = useMediaQuery('only screen and (max-width: 768px)');
 
@@ -115,7 +114,7 @@ function Filter() {
             /><Divider orientation="left" plain/>
             <Typography.Title className="ant-card-head"
                               style={{paddingLeft: 0, paddingTop: 10}}>Distrito</Typography.Title>
-             <MultiList componentId="district"
+            <MultiList componentId="district"
                        dataField="district.keyword"
                        queryFormat="and"
                        showCheckbox
@@ -212,16 +211,17 @@ function ResultComponent(props: {
                     }}
                     infiniteScroll={false}
                     renderNoResults={() => "Sin resultados que cumplan con tu búsqueda"}
+                    scrollOnChange={false}
                     size={10}
                     sortOptions={[
-                        {label: 'Presentado', sortBy: 'desc', dataField: "presented"},
-                        {label: 'Nombre', sortBy: 'asc', dataField: "full_name.keyword"},
+                        {label: 'Ordenar por presentados', sortBy: 'desc', dataField: "presented"},
+                        {label: 'Ordenar por nombre', sortBy: 'asc', dataField: "full_name.keyword"},
                     ]}
                     pagination
                     paginationAt="bottom"
                     renderResultStats={() => <></>}
                     renderItem={(item: ElasticDdjjDataResult) => <SingleResultCard
-                        data={mapFullDataToFTS(item)}
+                        data={item}
                         isSmall={props.isSmall}
                         id={item._id}
                         key={item._id}
@@ -449,50 +449,31 @@ function ResultHeader() {
 }
 
 function SingleResultCard(props: {
-    data: ElasticDdjjPeopleResult[],
+    data: ElasticDdjjDataResult,
     id: string,
     isSmall: boolean
 }) {
 
-    const data = getData(props.data);
+    const data = props.data;
 
     if (props.isSmall) {
         return <Card className="card-style">
             <Comment className="small-card"
                      content={<>
                          {data.document &&
-                            <Link className="name-result-link" to={`/person/${data.document}`}>
-                                {data.name}
-                            </Link>
+                         <Link className="name-result-link" to={`/person/${data.document}`}>
+                             {data.full_name}
+                         </Link>
                          }
                          {!data.document &&
-                            <Typography.Text className="name-result-link">
-                                {data.name}
-                            </Typography.Text>
+                         <Typography.Text className="name-result-link">
+                             {data.full_name}
+                         </Typography.Text>
                          }
                          <Row justify="space-between" align="middle">
                              <Col span={24} style={{textAlign: 'right'}}>
-                                 <Tooltip title={data.start_declaration ? 'Presentó' : 'No presentó'}
-                                          style={{marginLeft: 20}}>
-                                     <Typography.Text style={{
-                                         fontSize: 20,
-                                         color: data.start_declaration ? 'green' : 'red',
-                                         textAlign: 'right'
-                                     }}>
-                                         {data.year_elected}
-                                     </Typography.Text>
-                                 </Tooltip>
-                                 <Tooltip title={data.end_declaration ? 'Presentó' : 'No presentó'}
-                                          style={{marginLeft: 20}}>
-                                     <Typography.Text style={{
-                                         marginLeft: 20,
-                                         fontSize: 20,
-                                         color: data.end_declaration ? 'green' : 'red',
-                                         textAlign: 'right'
-                                     }}>
-                                         {data.year_elected + 5}
-                                     </Typography.Text>
-                                 </Tooltip>
+                                 <LinkToDeclaration year={data.year_elected} data={data.start}/>
+                                 <LinkToDeclaration year={data.year_elected + 5} data={data.end}/>
                              </Col>
                          </Row>
                      </>
@@ -505,45 +486,77 @@ function SingleResultCard(props: {
         <Col span={1}>
             <Avatar
                 style={{backgroundColor: getColorByIdx(props.id), verticalAlign: 'middle'}}
-                alt={data.name}>{getInitials(data.name)}</Avatar>
+                alt={data.full_name}>{getInitials(data.full_name)}</Avatar>
         </Col>
         <Col span={10}>
             {data.document &&
-                <Link className="name-result-link" to={`/person/${data.document}`}>
-                    {data.name}
-                </Link>
+            <Link className="name-result-link" to={`/person/${data.document}`}>
+                {data.full_name}
+            </Link>
             }
             {!data.document &&
-                <Typography.Text className="name-result-link">
-                    {data.name}
-                </Typography.Text>
+            <Typography.Text className="name-result-link">
+                {data.full_name}
+            </Typography.Text>
             }
             <br/>
             <small>Cédula: <b>{formatMoney(data.document)}</b></small>
         </Col>
         <Col span={12} style={{textAlign: 'right'}}>
-            <Tooltip title={data.start_declaration ? 'Presentó' : 'No presentó'} style={{marginLeft: 20}}>
-                <Typography.Text style={{
-                    marginLeft: 20,
-                    fontSize: 20,
-                    fontWeight: 'bold',
-                    color: data.start_declaration ? 'green' : 'red'
-                }}>
-                    {data.year_elected}
-                </Typography.Text>
-            </Tooltip>
-            <Tooltip title={data.end_declaration ? 'Presentó' : 'No presentó'} style={{marginLeft: 20}}>
-                <Typography.Text style={{
-                    marginLeft: 20,
-                    fontSize: 20,
-                    fontWeight: 'bold',
-                    color: data.end_declaration ? 'green' : 'red'
-                }}>
-                    {data.year_elected + 5}
-                </Typography.Text>
-            </Tooltip>
+            <LinkToDeclaration year={data.year_elected} data={data.start}/>
+            <LinkToDeclaration year={data.year_elected + 5} data={data.end}/>
         </Col>
     </Row>
+}
+
+function LinkToDeclaration(props: {
+    year: number,
+    data: null | {
+        link: string
+    }
+}) {
+
+    const {year, data} = props;
+    const currentYear = new Date().getFullYear();
+    if (year > currentYear) {
+        return <Typography.Text style={{
+            marginLeft: 20,
+            fontSize: 20,
+            color: 'darkgray',
+            textAlign: 'right'
+        }}>
+            {year}
+        </Typography.Text>;
+    }
+
+    if (data) {
+        return <Tooltip title='Presentó'
+                        style={{marginLeft: 20}}>
+            <a href={data.link} target="_blank" rel="noreferrer noopener">
+                <Typography.Text style={{
+                    marginLeft: 20,
+                    fontSize: 20,
+                    color: 'green',
+                    textAlign: 'right'
+                }}>
+                    {year}
+                </Typography.Text>
+            </a>
+        </Tooltip>
+    }
+
+    return <Tooltip title='No presentó'
+                    style={{marginLeft: 20}}>
+        <Typography.Text style={{
+            marginLeft: 20,
+            fontSize: 20,
+            color: 'red',
+            textAlign: 'right'
+        }}>
+            {year}
+        </Typography.Text>
+    </Tooltip>
+
 }
 
 
@@ -575,61 +588,14 @@ const FilterColors: Record<string, string> = {
     'list': 'rgb(205 83 52)',
     'departament': '#f50',
     'year_elected': '#108ee9',
-    'election' : 'rgb(205 83 52)',
-    'district' :  '#108ee9'
-}
-
-function getInitials(name: string = ""): string {
-    return (name || "").split(/\s+/)
-        .map((n) => n[0])
-        .join(".")
-        .toUpperCase();
+    'election': 'rgb(205 83 52)',
+    'district': '#108ee9'
 }
 
 function getColorByIdx(_id: string) {
     let asNumber = parseInt(_id);
     if (isNaN(asNumber)) asNumber = _id.length;
     return ColorList[asNumber % ColorList.length];
-}
-
-function getData(data: Array<ElasticDdjjPeopleResult>) {
-    const name: { val: string, confidence: number } = {val: "", confidence: 0};
-    const document: { val?: string, confidence: number } = {val: "", confidence: 0};
-    const year_elected: { val: number, confidence: number } = {val: 0, confidence: 0};
-    const start_declaration: { val?: boolean, confidence: number } = {val: false, confidence: 0};
-    const end_declaration: { val?: boolean, confidence: number } = {val: false, confidence: 0};
-    for (const row of data) {
-        name.val = row.name;
-        document.val = row.document;
-        year_elected.val = row.year_elected;
-        start_declaration.val = row.start !== null;
-        end_declaration.val = row.end !== null;
-    }
-
-    return {
-        name: fixName(name.val),
-        document: document.val,
-        year_elected: year_elected.val,
-        start_declaration: start_declaration.val,
-        end_declaration: end_declaration.val
-    }
-}
-
-
-interface ElasticDdjjPeopleResult {
-    _id: string;
-    name: string;
-    department: string;
-    district: string;
-    document: string;
-    start: string;
-    end: string;
-    nacionality: string;
-    sex: string;
-    year_elected: number;
-    charge: string;
-    list: string;
-    election: string;
 }
 
 interface ElasticDdjjDataResult {
@@ -639,35 +605,17 @@ interface ElasticDdjjDataResult {
     district: string;
     election: string;
     document: string;
-    start: string;
-    end: string;
+    start: {
+        link: string
+    } | null;
+    end: {
+        link: string
+    } | null;
     nacionality: string;
     sex: string;
     year_elected: number;
     charge: string;
     list: string;
-}
-
-function mapFullDataToFTS(item: ElasticDdjjDataResult): ElasticDdjjPeopleResult[] {
-    const toRet: Array<ElasticDdjjPeopleResult> = [];
-
-    toRet.push({
-        _id: item._id,
-        name: item.full_name,
-        department: item.department,
-        district: item.district,
-        charge: item.charge,
-        election: item.election,
-        document: item.document,
-        list: item.list,
-        year_elected: item.year_elected,
-        nacionality: item.nacionality,
-        sex: item.sex,
-        end: item.end,
-        start: item.start,
-    })
-
-    return toRet;
 }
 
 function getFilterKeyName(val: string): string {
@@ -676,8 +624,8 @@ function getFilterKeyName(val: string): string {
         "list": "Partido",
         "departament": "Departamento",
         "year_elected": "Año",
-        "district" : "Distrito",
-        "election" : "Elecciones"
+        "district": "Distrito",
+        "election": "Elecciones"
     };
 
     return keys[val] || val;

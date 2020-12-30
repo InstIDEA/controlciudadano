@@ -19,9 +19,6 @@ function Footer(props: {
     return (
         <footer id="footer">
             <Row className={props.tableMode ? "footer-background-secondary" : ""}>
-                <Col xs={24}>
-                    VERSION DE DESARROLLO SEMILLAS
-                </Col>
                 <Col offset={props.aboutFooter ? 6 : 0}
                      xxl={props.aboutFooter ? 12 : 8} xl={props.aboutFooter ? 12 : 8}
                      lg={props.aboutFooter ? 12 : 8} md={props.aboutFooter ? 12 : 8} sm={24}>
@@ -50,7 +47,7 @@ function Footer(props: {
                                 <img src={semilla} className="footer-logo-impulsor" alt="logo"/>
                             </Col>
                         </Row>
-                    </div>                            
+                    </div>
                 </Col>
                 <Col offset={props.aboutFooter ? 6 : 0}
                      xxl={props.aboutFooter ? 12 : 8} xl={props.aboutFooter ? 12 : 8}

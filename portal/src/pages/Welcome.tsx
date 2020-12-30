@@ -59,11 +59,6 @@ const data = [{
     title: 'ESSAP: exoneraciones',
     description: 'Listado de exonerados por la ESSAP',
     icon: exoneradasEssap
-}, {
-    link: '/sources',
-    title: 'Fuentes',
-    description: 'Todas las fuentes utilizadas para armar este portal, incluido el link de origen y opciones para su descarga',
-    icon: exoneradasEssap
 }];
 
 export function Welcome() {

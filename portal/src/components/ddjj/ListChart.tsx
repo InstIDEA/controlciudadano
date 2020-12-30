@@ -1,28 +1,29 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
 import {LoadingGraphComponent} from './LoadingGraph';
-import { ResponsiveSunburst } from '@nivo/sunburst';
+import {ResponsiveSunburst} from '@nivo/sunburst';
+import {formatMoney} from '../../formatters';
 
 export function ListChart(props: {
     data: SunburstData
 }) {
 
-
     return <ResponsiveSunburst
-    data={props.data}
-       margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
-       id="name"
-       value="value"
-       cornerRadius={2}
-       borderWidth={1}
-       borderColor="white"
-       colors={{ scheme: 'pastel1' }}
-       childColor={{ from: 'color' }}
-       animate={false}
-       motionConfig="gentle"
-       isInteractive={true}
+        data={props.data}
+        margin={{top: 10, right: 10, bottom: 10, left: 10}}
+        id="name"
+        value="value"
+        cornerRadius={2}
+        borderWidth={1}
+        valueFormat={formatMoney}
+        borderColor="white"
+        colors={{scheme: 'pastel1'}}
+        childColor={{from: 'color'}}
+        animate={true}
+        motionConfig="gentle"
+        isInteractive={true}
 
-   />
+    />
 }
 
 interface ByListAggregation {
@@ -57,12 +58,13 @@ export function ByListChart(props: {
                 ]
             }
         });
-        const finalData: SunburstData = {
-            name : "list",
-            children: d
-        }
+    const finalData: SunburstData = {
+        name: "list",
+        children: d
+    }
     return <ListChart data={finalData}/>
 }
+
 interface SunburstData {
     name: string;
     children: {
@@ -74,6 +76,7 @@ interface SunburstData {
         }[];
     }[];
 }
+
 const emptyAgg: ByListAggregation = {
     buckets: [{
         key: '',

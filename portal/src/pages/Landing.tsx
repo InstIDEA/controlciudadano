@@ -30,7 +30,7 @@ export const page1 = [
     {
         img: verificacionDDJJ,
         title: 'Verificación de DDJJ',
-        href: `/ddjj`,
+        href: `/djbr/portal`,
         description: ''
     },
 ];

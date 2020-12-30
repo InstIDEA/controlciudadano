@@ -1769,6 +1769,18 @@
     lodash "^4.17.11"
     react-motion "^0.5.2"
 
+"@nivo/sunburst@^0.67.0":
+  version "0.67.0"
+  resolved "https://registry.yarnpkg.com/@nivo/sunburst/-/sunburst-0.67.0.tgz#1b5e9ea5bc61aae0968f50bb7db48cec7348c3bf"
+  integrity sha512-ilODExtNnEEfaXLuti/mu+xm6ve1LEbrtPev+HDr1FZkVQL3CIMIv7wKtzjyPxlf+ROK7Dsii2Y8e1xoOXjGeA==
+  dependencies:
+    "@nivo/colors" "0.67.0"
+    "@nivo/tooltip" "0.67.0"
+    d3-hierarchy "^1.1.8"
+    d3-shape "^1.3.5"
+    lodash "^4.17.11"
+    react-spring "9.0.0-rc.3"
+
 "@nivo/tooltip@0.67.0":
   version "0.67.0"
   resolved "https://registry.yarnpkg.com/@nivo/tooltip/-/tooltip-0.67.0.tgz#c849ab7a3ee82d88ff6376894a2de5ef266c8e8d"
