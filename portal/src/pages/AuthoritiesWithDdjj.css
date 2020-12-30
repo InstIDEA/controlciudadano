@@ -108,3 +108,21 @@
     border-width: 2px;
 }
 
+.info-ddjj {
+    padding: 10px;
+    border-style: solid;
+    border-radius: 10px;
+    border-color: #002E4D;
+    border-width: 2px;
+    background-color: #002E4D;
+    color: #ffffff !important;
+}
+
+.multi-search .list-search {
+    background-color: black;
+}
+
+.name-result-link {
+    color: rgba(0, 52, 91, 1) !important;
+    font-weight: 500;
+}

@@ -27,6 +27,9 @@ import {DisclaimerPage} from "./pages/DisclaimerPage";
 import {OCDSItem} from "./pages/OCDSItem";
 import {OCDSBuyerPage} from "./pages/OCDSBuyer";
 import {OCDSSupplier} from "./pages/OCDSSupplier";
+import {DJBRDashboard} from "./pages/DJBRDashboard";
+import {TutorialsPage} from "./pages/TutorialsPage";
+import {DJBRListPage} from "./pages/DJBRListPage";
 
 export default function App() {
     return <Routes/>
@@ -73,6 +76,11 @@ function Routes() {
                 <Route path="/person/:document" exact render={() => <PersonDetailPage/>}/>
 
                 <Route path="/sources" exact render={() => <DS/>}/>
+                <Route path="/djbr/" exact render={() => <DJBRDashboard/>}/>
+                <Route path="/djbr/portal" exact render={() => <DJBRDashboard/>}/>
+                <Route path="/djbr/tutorial" exact render={() => <TutorialsPage/>}/>
+                <Route path="/djbr/list" exact render={() => <DJBRListPage/>}/>
+
                 <Route path="/sources/:dataSetId" exact render={() => <DSDownload/>}/>
 
                 <Route path="/">

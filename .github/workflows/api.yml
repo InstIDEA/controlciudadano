@@ -46,7 +46,7 @@ jobs:
       run: docker build . --file Dockerfile --tag $IMAGE_NAME
 
     - name: Tag and push image
-      if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master'
+      if: github.event.pull_request.merged == true
       run: |
         echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
@@ -60,11 +60,13 @@ jobs:
         [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
         # Use Docker `latest` tag convention
         [ "$VERSION" == "master" ] && VERSION=latest
+        [ "$VERSION" == "semillas" ] && VERSION=semillas
         echo IMAGE_ID=$IMAGE_ID
         echo VERSION=$VERSION
         docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
         docker push $IMAGE_ID:$VERSION
 
         [ "$VERSION" == "latest" ] && curl "${{ secrets.HOOK_API }}"
+        [ "$VERSION" == "semillas" ] && curl "${{ secrets.HOOK_API_SEMILLAS }}"
         echo "Succeed"
 

@@ -15,8 +15,8 @@ import {
     SimpleAPINotPaginatedResult
 } from './Model';
 
-const BASE_API = "https://api.controlciudadanopy.org/api";
-
+const BASE_API = "https://semillas.api.controlciudadanopy.org/api";
+const CDN_API = "https://data.controlciudadanopy.org/cdn/";
 //const BASE_API = "http://localhost:3001/api";
 
 export class SimpleApi {
@@ -85,6 +85,11 @@ export class SimpleApi {
 
     async getSuppliersByBuyer(buyerId: string): Promise<SimpleAPINotPaginatedResult<OCDSBuyerWithSuppliers>> {
         const d = await fetch(`${BASE_API}/ocds/buyer/${buyerId}/suppliers`);
+        return await d.json();
+    }
+
+    async getGeoJson() {
+        const d = await fetch(`${CDN_API}/paraguay.json`);
         return await d.json();
     }
 

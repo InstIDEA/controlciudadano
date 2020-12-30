@@ -21,12 +21,14 @@ export const NivoBuyerSuppliersPie = ({data /* see data tab */}: { data: any }) 
         radialLabelsLinkStrokeWidth={1}
         radialLabelsLinkColor={{from: 'color'}}
         sliceLabel={r => formatMoney(r.value)}
-        slicesLabelsSkipAngle={10}
-        slicesLabelsTextColor="#333333"
-        animate={true}
-        tooltipFormat={v => formatMoney(v, 'PYG')}
-        motionStiffness={90}
-        motionDamping={15}
+        sliceLabelsSkipAngle={10}
+        sliceLabelsTextColor="#333333"
+        valueFormat={v => formatMoney(v, 'PYG')}
+        // animate={true}
+        // tooltip={v => <>{formatMoney(v.datum.value, 'PYG')}</>}
+        // tooltip={v => <PieTooltip />}
+        // motionStiffness={90}
+        // motionDamping={15}
         defs={[
             {
                 id: 'dots',
