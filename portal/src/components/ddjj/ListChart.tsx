@@ -1,74 +1,53 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {ResponsiveBar} from '@nivo/bar';
-import {formatMoney} from '../../formatters';
 import {LoadingGraphComponent} from './LoadingGraph';
+import {ResponsiveTreeMap} from '@nivo/treemap'
 import {CHART_COLORS} from './PresentedChart';
-
-const NAMES: Record<string, string> = {}
+import {formatMoney} from '../../formatters';
 
 export function ListChart(props: {
     data: { key: string, "Presentados": number, 'No presentados': number }[]
 }) {
 
-    return <ResponsiveBar
-        data={props.data}
-        keys={['Presentados', 'No presentados']}
-        colors={[CHART_COLORS.presented, CHART_COLORS.no_presented]}
-        indexBy="key"
-        margin={{top: 10, right: 10, bottom: 20, left: 10}}
-        padding={0.2}
-        enableGridX={false}
-        enableGridY={false}
-        defs={[{
-            id: 'dots',
-            type: 'patternDots',
-            background: 'inherit',
-            color: '#38bcb2',
-            size: 4,
-            padding: 1,
-            stagger: true
+
+    const data = props.data.map(datum => ({
+        name: `${datum.key} - Total`,
+        children: [{
+            name: `${datum.key} - Presentados`,
+            color: CHART_COLORS.presented,
+            loc: datum.Presentados
         }, {
-            id: 'lines',
-            type: 'patternLines',
-            background: 'inherit',
-            color: '#eed312',
-            rotation: -45,
-            lineWidth: 6,
-            spacing: 10
-        }
-        ]}
-        borderColor={{from: 'color', modifiers: [['darker', 1.6]]}}
-        axisTop={null}
-        axisRight={null}
-        axisBottom={{
-            tickSize: 4,
-            tickPadding: 5,
-            tickRotation: -45,
-            legend: null,
+            name: `${datum.key} - No Presentados`,
+            color: CHART_COLORS.no_presented,
+            loc: datum["No presentados"]
+        }]
+    })).slice(0, 10)
+
+    return <ResponsiveTreeMap
+        data={{
+            name: "Partido político",
+            color: "white",
+            children: data
         }}
-        axisLeft={{
-            tickSize: 5,
-            tickPadding: 5,
-            tickRotation: 0,
-            tickValues: 0,
-            legend: 'Cantidad',
-            legendPosition: 'middle'
-        }}
+        identity="name"
+        value="loc"
+        valueFormat={formatMoney as any}
+        margin={{top: 0, right: 0, bottom: 0, left: 0}}
 
-        labelFormat={t => formatMoney(t)}
-        labelSkipWidth={12}
-        labelSkipHeight={12}
-        labelTextColor={{from: 'color', modifiers: [['darker', 1.6]]}}
+        enableParentLabel={true}
+        parentLabelTextColor={{from: 'color', modifiers: [['darker', 2]]}}
+        parentLabel={((l: { id: string, isLeaf: boolean, width: number }) => {
+            if (!l.id || l.isLeaf) return null
+            console.log(l);
+            const maxChars = l.width / 8;
+            if (l.id.length <= maxChars) return l.id;
+            return l.id.substr(0, maxChars) + "..."
+        }) as any}
 
-        tooltip={(props) => <span>
-        {NAMES[props.id]}: <b>{formatMoney(props.value)}</b>
-    </span>}
+        labelTextColor={{from: 'color', modifiers: [['darker', 1.2]]}}
+        labelSkipSize={12}
 
-        tooltipFormat={t => `${formatMoney(t)}`}
-        animate={true}
-        motionStiffness={90}
-        motionDamping={15}
+        borderColor={{from: 'color', modifiers: [['darker', 0.1]]}}
     />
 }
 

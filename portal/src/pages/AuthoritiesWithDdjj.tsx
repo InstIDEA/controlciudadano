@@ -30,7 +30,9 @@ export function AuthoritiesWithDdjj() {
             {!isSmall && <Layout.Sider width="20vw">
                 {filter}
             </Layout.Sider>}
-            <Layout>
+            <Layout style={{
+                overflowX: 'visible'
+            }}>
                 <Layout.Content className="content-padding">
                     {isSmall && <Row>
                       <Col xs={{span: 24}}>
@@ -291,7 +293,7 @@ function ChartsComponent() {
                             </GraphWrapper>
                         </Col>
                         <Col xl={12} lg={12} sm={24} xs={24}>
-                            <GraphWrapper title="Partido">
+                            <GraphWrapper title="" height={200}>
                                 <ReactiveComponent
                                     componentId="DeclarationsListChart"
                                     defaultQuery={() => ({

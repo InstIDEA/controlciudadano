@@ -1776,6 +1776,17 @@
   dependencies:
     react-spring "9.0.0-rc.3"
 
+"@nivo/treemap@^0.67.0":
+  version "0.67.0"
+  resolved "https://registry.yarnpkg.com/@nivo/treemap/-/treemap-0.67.0.tgz#b8f9e2ae557e708d3b15ce9ea65e7af79108bd20"
+  integrity sha512-Lexkpd0O40WbCDNCL8hozF0h5Fd7W6S7mceiSQfbHfo++NhbZWwWnWwiu06ZQtzOjVolBBE0vYrQt3rv3/7zgw==
+  dependencies:
+    "@nivo/colors" "0.67.0"
+    "@nivo/tooltip" "0.67.0"
+    d3-hierarchy "^1.1.8"
+    lodash "^4.17.11"
+    react-spring "9.0.0-rc.3"
+
 "@nivo/voronoi@0.67.0":
   version "0.67.0"
   resolved "https://registry.yarnpkg.com/@nivo/voronoi/-/voronoi-0.67.0.tgz#07ec873846ec12aa62d1c1884e274ea114b4341b"

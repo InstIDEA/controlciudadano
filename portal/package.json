@@ -12,6 +12,7 @@
     "@nivo/line": "^0.67.0",
     "@nivo/network": "^0.67.0",
     "@nivo/pie": "^0.67.0",
+    "@nivo/treemap": "^0.67.0",
     "@nivo/scatterplot": "^0.67.0",
     "@react-hook/media-query": "^1.1.1",
     "@testing-library/jest-dom": "^4.2.4",
