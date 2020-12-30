@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
-import { filterRedashList, RedashAPI } from '../RedashAPI';
-import { Authorities } from '../Model';
-import { Link, useHistory } from 'react-router-dom';
-import { PageHeader, Table, Typography, List, Card } from 'antd';
-import { BaseDatosPage } from '../components/BaseDatosPage';
-import { SearchBar } from '../components/SearchBar';
-import { formatMoney } from '../formatters';
+import {useEffect, useMemo, useState} from 'react';
+import {filterRedashList, RedashAPI} from '../RedashAPI';
+import {Authorities} from '../Model';
+import {Link, useHistory} from 'react-router-dom';
+import {Card, List, PageHeader, Table, Typography} from 'antd';
+import {BaseDatosPage} from '../components/BaseDatosPage';
+import {SearchBar} from '../components/SearchBar';
+import {formatMoney} from '../formatters';
 
 export function ElectedAuthoritiesPage() {
 
@@ -24,14 +24,12 @@ export function ElectedAuthoritiesPage() {
     }, []);
 
     const filtered = useMemo(() => filterRedashList(data || [], query, [
-        'nombre',
-        'apellido',
-        'ano',
-        'cand_desc',
-        'cedula',
-        'desc_tit_sup',
-        'nombre_lista',
-        'siglas_lista',
+        'full_name',
+        'year_elected',
+        'charge',
+        'document',
+        'title',
+        'list'
     ]), [data, query]);
 
     return <>
@@ -39,19 +37,19 @@ export function ElectedAuthoritiesPage() {
             <SearchBar defaultValue={query || ''} onSearch={setQuery}/>
         }>
             <PageHeader ghost={false}
-                style={{ border: '1px solid rgb(235, 237, 240)' }}
-                onBack={() => history.push('/')}
-                backIcon={null}
-                title="Autoridades electas"
-                extra={[
-                    <Link to="/sources?query=tsje_elected" key="link">
-                        Fuente
-                           </Link>
-                ]}>
+                        style={{border: '1px solid rgb(235, 237, 240)'}}
+                        onBack={() => history.push('/')}
+                        backIcon={null}
+                        title="Autoridades electas"
+                        extra={[
+                            <Link to="/sources?query=tsje_elected" key="link">
+                                Fuente
+                            </Link>
+                        ]}>
 
                 <Typography.Paragraph>
                     Todas las autoridades que han sido electas en elecciones generales.
-        </Typography.Paragraph>
+                </Typography.Paragraph>
 
                 <Table<Authorities>
                     className="hide-responsive"
@@ -64,43 +62,43 @@ export function ElectedAuthoritiesPage() {
                         defaultCurrent: 1
                     }}
                     columns={[{
-                        dataIndex: 'cedula',
+                        dataIndex: 'document',
                         title: 'Nombre',
                         render: (_, r) => {
-                            if (!r.cedula) return <>
-                                {r.nombre} {r.apellido} <br />
+                            if (!r.document) return <>
+                                {r.full_name} <br/>
                                 Ayudanos a completar!
-                    </>
+                            </>
                             return <>
-                                <Link to={`/person/${r.cedula}`}>
-                                    {r.nombre} {r.apellido} <br />
-                                    {formatMoney(r.cedula)}
+                                <Link to={`/person/${r.document}`}>
+                                    {r.full_name} <br/>
+                                    {formatMoney(r.document)}
                                 </Link>
                             </>
                         },
-                        sorter: (a, b) => (a.cedula || '').localeCompare(b.cedula || ''),
+                        sorter: (a, b) => (a.document || '').localeCompare(b.document || ''),
                     }, {
-                        dataIndex: 'ano',
+                        dataIndex: 'year_elected',
                         title: 'Año',
-                        sorter: (a, b) => parseInt(a.ano) - parseInt(b.ano),
+                        sorter: (a, b) => parseInt(a.year_elected) - parseInt(b.year_elected),
                     }, {
                         title: 'Lista',
-                        dataIndex: 'lista',
+                        dataIndex: 'list',
 
                         render: (_, r) => <>
-                            {r.siglas_lista} <br />
-                            <small>{r.nombre_lista} - {r.lista}</small>
+                            {r.list} <br/>
+                            <small>{r.list}</small>
                         </>,
-                        sorter: (a, b) => parseInt(a.lista) - parseInt(b.lista),
+                        sorter: (a, b) => parseInt(a.list) - parseInt(b.list),
                     }, {
                         title: 'Candidatura',
-                        dataIndex: 'dep_desc',
+                        dataIndex: 'charge',
                         align: 'right',
                         render: (_, r) => <>
-                            {r.cand_desc} <br />
-                            <small>{r.dep_desc} - {r.desc_tit_sup}</small>
+                            {r.charge} <br/>
+                            <small>{r.charge}</small>
                         </>,
-                    }]} />
+                    }]}/>
                 <List
                     className="show-responsive"
                     grid={{
@@ -121,23 +119,22 @@ export function ElectedAuthoritiesPage() {
                     renderItem={(r: Authorities) =>
                         <List.Item className="list-item">
                             <Card bordered={false}>
-                                Nombre: {!r.cedula ? <> {r.nombre} {r.apellido} <br />
+                                Nombre: {!r.document ? <> {r.full_name} <br/>
                                     Ayudanos a completar! </> :
-                                    <>  <Link to={`/person/${r.cedula}`}>
-                                        {r.nombre} {r.apellido} <br />
-                                        {r.cedula}
-                                    </Link> </>
-                                }
+                                <>  <Link to={`/person/${r.document}`}>
+                                    {r.full_name} <br/>
+                                    {r.document}
+                                </Link> </>
+                            }
 
-                                <br />
-                                Año: {r.ano}
-                                <br />
-                                Lista: {r.siglas_lista} <br />
-                                <small>{r.nombre_lista} - {r.lista}</small>
-                                <br />
-                                Candidatura:  {r.cand_desc} <br />
-                                <small>{r.dep_desc} - {r.desc_tit_sup}</small>
-                                <br />
+                                <br/>
+                                Año: {r.year_elected}
+                                <br/>
+                                Lista: {r.list} <br/>
+                                <br/>
+                                Candidatura: {r.charge} <br/>
+                                <small>{r.title}</small>
+                                <br/>
                             </Card>
                         </List.Item>
                     }

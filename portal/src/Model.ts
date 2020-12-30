@@ -343,17 +343,14 @@ export interface SourceData {
 }
 
 export interface Authorities {
-    cedula?: string;
-    apellido: string;
-    nombre: string;
-    ano: string;
-    lista: string;
-    siglas_lista: string;
-    nombre_lista: string;
+    document?: string;
+    full_name: string;
+    year_elected: string;
+    list: string;
 
-    dep_desc: string;
-    cand_desc: string;
-    desc_tit_sup: string;
+    department: string;
+    charge: string;
+    title: string;
 }
 
 

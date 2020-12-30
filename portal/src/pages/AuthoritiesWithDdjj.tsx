@@ -75,6 +75,19 @@ function Filter() {
         <Card title="" className="card-style">
 
             <Typography.Title className="ant-card-head"
+                              style={{paddingLeft: 0, paddingTop: 10}}>Elecciones</Typography.Title>
+            <MultiList componentId="election"
+                       dataField="election.keyword"
+                       queryFormat="and"
+                       showCheckbox
+                       URLParams
+                       showSearch={false}
+                       react={{
+                           and: ['departament', 'list', 'year_elected', 'district', 'election'],
+                       }}
+            />
+            <Divider orientation="left" plain/>
+            <Typography.Title className="ant-card-head"
                               style={{paddingLeft: 0, paddingTop: 10}}>Año</Typography.Title>
             <MultiList componentId="year_elected"
                        dataField="year_elected"
@@ -83,7 +96,7 @@ function Filter() {
                        URLParams
                        showSearch={false}
                        react={{
-                           and: ['departament', 'list', 'year_elected'],
+                           and: ['departament', 'list', 'year_elected', 'district', 'election'],
                        }}
             />
             <Divider orientation="left" plain/>
@@ -97,9 +110,21 @@ function Filter() {
                        showSearch={true}
                        placeholder='Buscar'
                        react={{
-                           and: ['year_elected', 'list', 'departament'],
+                           and: ['year_elected', 'list', 'departament', 'district', 'election'],
                        }}
             /><Divider orientation="left" plain/>
+            <Typography.Title className="ant-card-head"
+                              style={{paddingLeft: 0, paddingTop: 10}}>Distrito</Typography.Title>
+             <MultiList componentId="district"
+                       dataField="district.keyword"
+                       queryFormat="and"
+                       showCheckbox
+                       URLParams
+                       showSearch={true}
+                       placeholder='Buscar'
+                       react={{
+                           and: ['year_elected', 'list', 'departament', 'district', 'election'],
+                       }}/>
             <Typography.Title className="ant-card-head"
                               style={{paddingLeft: 0, paddingTop: 10}}>Partido Político</Typography.Title>
             <MultiList componentId="list"
@@ -115,7 +140,7 @@ function Filter() {
                        placeholder='Buscar'
                        style={{}}
                        react={{
-                           and: ['year_elected', 'departament', 'list'],
+                           and: ['year_elected', 'departament', 'list', 'district', 'election'],
                        }}
             />
         </Card>
@@ -226,7 +251,7 @@ function ChartsComponent() {
                                     })}
                                     render={props => <PresentedDeclarationChart {...props} />}
                                     react={{
-                                        and: ['list', 'year_elected', 'departament'],
+                                        and: ['list', 'year_elected', 'departament', 'district', 'election'],
                                     }}
                                 />
                             </GraphWrapper>
@@ -256,7 +281,7 @@ function ChartsComponent() {
                                     })}
                                     render={props => <BySexChart {...props} />}
                                     react={{
-                                        and: ['list', 'year_elected', 'departament'],
+                                        and: ['list', 'year_elected', 'departament', 'district', 'election'],
                                     }}
                                 />
                             </GraphWrapper>
@@ -287,7 +312,7 @@ function ChartsComponent() {
                                     })}
                                     render={props => <ByChargeChart {...props} />}
                                     react={{
-                                        and: ['list', 'year_elected', 'departament'],
+                                        and: ['list', 'year_elected', 'departament', 'district', 'election'],
                                     }}
                                 />
                             </GraphWrapper>
@@ -317,7 +342,7 @@ function ChartsComponent() {
                                     })}
                                     render={props => <ByListChart {...props} />}
                                     react={{
-                                        and: ['list', 'year_elected', 'departament'],
+                                        and: ['list', 'year_elected', 'departament', 'district', 'election'],
                                     }}
                                 />
                             </GraphWrapper>
@@ -356,7 +381,7 @@ function ChartsComponent() {
                                         <ByAgeChart {...props} />
                                     )}
                                     react={{
-                                        and: ['list', 'year_elected', 'departament'],
+                                        and: ['list', 'year_elected', 'departament', 'district', 'election'],
                                     }}
                                 />
                             </GraphWrapper>
@@ -390,7 +415,7 @@ function ChartsComponent() {
                                 })}
                                 render={(props) => <ByDepartamentHeatMap {...props} />}
                                 react={{
-                                    and: ['list', 'year_elected', 'departament'],
+                                    and: ['list', 'year_elected', 'departament', 'district', 'election'],
                                 }}
                             />
                         </GraphWrapper>
@@ -431,9 +456,16 @@ function SingleResultCard(props: {
         return <Card className="card-style">
             <Comment className="small-card"
                      content={<>
-                         <Link className="name-result-link" to={`/person/${data.document}`}>
-                             {data.name}
-                         </Link>
+                         {data.document &&
+                            <Link className="name-result-link" to={`/person/${data.document}`}>
+                                {data.name}
+                            </Link>
+                         }
+                         {!data.document &&
+                            <Typography.Text className="name-result-link">
+                                {data.name}
+                            </Typography.Text>
+                         }
                          <Row justify="space-between" align="middle">
                              <Col span={24} style={{textAlign: 'right'}}>
                                  <Tooltip title={data.start_declaration ? 'Presentó' : 'No presentó'}
@@ -472,9 +504,16 @@ function SingleResultCard(props: {
                 alt={data.name}>{getInitials(data.name)}</Avatar>
         </Col>
         <Col span={10}>
-            <Link className="name-result-link" to={`/person/${data.document}`}>
-                {data.name}
-            </Link>
+            {data.document &&
+                <Link className="name-result-link" to={`/person/${data.document}`}>
+                    {data.name}
+                </Link>
+            }
+            {!data.document &&
+                <Typography.Text className="name-result-link">
+                    {data.name}
+                </Typography.Text>
+            }
             <br/>
             <small>Cédula: <b>{formatMoney(data.document)}</b></small>
         </Col>
@@ -576,6 +615,7 @@ interface ElasticDdjjPeopleResult {
     _id: string;
     name: string;
     department: string;
+    district: string;
     document: string;
     start: string;
     end: string;
@@ -584,13 +624,15 @@ interface ElasticDdjjPeopleResult {
     year_elected: number;
     charge: string;
     list: string;
+    election: string;
 }
 
 interface ElasticDdjjDataResult {
     _id: string;
-    first_name: string;
-    last_name: string;
+    full_name: string;
     department: string;
+    district: string;
+    election: string;
     document: string;
     start: string;
     end: string;
@@ -606,9 +648,11 @@ function mapFullDataToFTS(item: ElasticDdjjDataResult): ElasticDdjjPeopleResult[
 
     toRet.push({
         _id: item._id,
-        name: item.first_name + ' ' + item.last_name,
+        name: item.full_name,
         department: item.department,
+        district: item.district,
         charge: item.charge,
+        election: item.election,
         document: item.document,
         list: item.list,
         year_elected: item.year_elected,
