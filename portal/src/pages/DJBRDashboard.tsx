@@ -109,6 +109,7 @@ function Filter() {
                        dataField="year_elected"
                        queryFormat="and"
                        showCheckbox
+                       sortBy="desc"
                        URLParams
                        showSearch={false}
                        react={{
@@ -232,6 +233,7 @@ function ResultComponent(props: {
                     size={10}
                     sortOptions={[
                         {label: 'Ordenar por presentados', sortBy: 'desc', dataField: "presented"},
+                        {label: 'Ordenar por no presentados', sortBy: 'asc', dataField: "presented"},
                         {label: 'Ordenar por nombre', sortBy: 'asc', dataField: "full_name.keyword"},
                     ]}
                     pagination
@@ -257,7 +259,7 @@ function ChartsComponent() {
                 <Col xl={12} lg={12} sm={24} xs={24}>
                     <Row gutter={[8, 8]}>
                         <Col xl={24} lg={24} sm={24} xs={24}>
-                            <GraphWrapper title="Presentados">
+                            <GraphWrapper title="Cantidad de declaraciones juradas presentadas">
                                 <ReactiveComponent
                                     componentId="PresentedDeclarationsChart"
                                     defaultQuery={() => ({
