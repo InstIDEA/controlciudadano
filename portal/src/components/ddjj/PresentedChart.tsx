@@ -5,8 +5,8 @@ import {ResponsivePie} from '@nivo/pie';
 import {LoadingGraphComponent} from './LoadingGraph';
 
 export const CHART_COLORS = {
-    'presented': 'rgb(244, 117, 96)',
-    'no_presented': 'rgb(232, 193, 160)'
+    'presented': '#ccebc5',
+    'no_presented': '#fbb4ae'
 }
 
 export function PresentedChart(props: {
@@ -15,49 +15,45 @@ export function PresentedChart(props: {
 
     return <ResponsivePie
         data={props.data}
-        margin={{top: 15, right: 10, bottom: 15, left: 10}}
-        innerRadius={0.4}
-        padAngle={0.3}
+        margin={{top: 0, right: 0, bottom: 0, left: 0}}
+        innerRadius={0.20}
+        padAngle={0.0}
         fit={true}
         cornerRadius={5}
-        startAngle={95}
-        endAngle={455}
+        startAngle={97}
+        endAngle={457}
         colors={t => t.data.color}
         borderWidth={2}
         borderColor="white"
-        radialLabelsSkipAngle={10}
-        radialLabelsTextXOffset={10}
-        radialLabelsTextColor="#333333"
-        radialLabelsLinkOffset={-10}
-        radialLabelsLinkDiagonalLength={0}
-        radialLabelsLinkHorizontalLength={24}
-        radialLabelsLinkStrokeWidth={1}
-        radialLabelsLinkColor={{from: 'color'}}
-        sliceLabel={r => formatMoney(r.value)}
-        sliceLabelsSkipAngle={10}
-        sliceLabelsTextColor="#333333"
+        enableRadialLabels={false}
+        enableSliceLabels={false}
+
         valueFormat={v => formatMoney(v)}
         // motionStiffness={90}
         // motionDamping={15}
-        defs={[{
-            id: 'dots',
-            type: 'patternDots',
-            background: 'inherit',
-            color: 'rgba(255, 255, 255, 0.3)',
-            size: 4,
-            padding: 0,
-            stagger: true
-        }, {
-            id: 'lines',
-            type: 'patternLines',
-            background: 'inherit',
-            color: 'rgba(255, 255, 255, 0.3)',
-            rotation: -45,
-            lineWidth: 6,
-            spacing: 10
+        legends={[{
+            anchor: 'right',
+            direction: 'column',
+            justify: false,
+            translateX: -20,
+            translateY: 0,
+            itemsSpacing: 0,
+            itemWidth: 120,
+            itemHeight: 20,
+            itemTextColor: '#999',
+            itemDirection: 'right-to-left',
+            itemOpacity: 1,
+            symbolSize: 18,
+            symbolShape: 'circle',
+            effects: [
+                {
+                    on: 'hover',
+                    style: {
+                        itemTextColor: '#000'
+                    }
+                }
+            ]
         }]}
-        legends={[]}
-        layers={['slices', 'sliceLabels', 'radialLabels', 'legends', CenteredMetric]}
     />
 }
 
@@ -83,9 +79,10 @@ export function PresentedDeclarationChart(props: {
 
     const finalData = (data || lastShowedData || emptyAgg).buckets
         .map((element) => {
+            const label = element.key_as_string === 'true' ? 'Presentados' : 'No Presentados';
             return {
-                id: element.key_as_string === 'true' ? 'Presentados' : 'No Presentados',
-                label: element.key_as_string === 'true' ? 'Presentados' : 'No Presentados',
+                id: label,
+                label: `${label}: ${formatMoney(element.doc_count)}`,
                 color: element.key_as_string === 'true' ? CHART_COLORS.presented : CHART_COLORS.no_presented,
                 value: element.doc_count,
             }
