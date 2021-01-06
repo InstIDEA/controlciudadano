@@ -2,7 +2,6 @@ import * as React from 'react';
 import {useEffect, useMemo, useState} from 'react';
 import {Avatar, Card, Col, Collapse, Comment, Divider, Layout, Row, Tooltip, Typography} from 'antd';
 import {Header} from '../components/layout/Header';
-import './AuthoritiesWithDdjj.css'
 import Footer from '../components/layout/Footer';
 import {MultiList, ReactiveBase, ReactiveComponent, ReactiveList} from '@appbaseio/reactivesearch';
 import {useMediaQuery} from '@react-hook/media-query'
@@ -20,6 +19,7 @@ import {Async, AsyncHelper, StatisticsDJBR} from '../Model';
 import {RedashAPI} from '../RedashAPI';
 import {CurrentFilters} from '../components/ddjj/CurrentFilters';
 
+import './DJBRDashboard.css';
 
 export function DJBRDashboard() {
 
@@ -81,7 +81,7 @@ export function DJBRDashboard() {
                     </Row>
                     <Row>
                         <DisclaimerComponent full card>
-                            Existen {formatMoney(finalStats.total_authorities)} autoridades electas desde 1998,
+                            Existen {formatMoney(finalStats.total_authorities)} autoridades electas desde 1996,
                             contamos con {formatMoney(finalStats.total_declarations)} declaraciones juradas,
                             de las cuales {formatMoney(finalStats.count_declarations_auths)} son de autoridades
                             (al {formatSortableDate(finalStats.last_success_fetch)}).
