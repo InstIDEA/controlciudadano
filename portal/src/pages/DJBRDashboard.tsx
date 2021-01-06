@@ -1,12 +1,12 @@
 import * as React from 'react';
-import {useMemo} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {Avatar, Card, Col, Collapse, Comment, Divider, Layout, Row, Tag, Tooltip, Typography} from 'antd';
 import {Header} from '../components/layout/Header';
 import './AuthoritiesWithDdjj.css'
 import Footer from '../components/layout/Footer';
 import {MultiList, ReactiveBase, ReactiveComponent, ReactiveList, SelectedFilters} from '@appbaseio/reactivesearch';
 import {useMediaQuery} from '@react-hook/media-query'
-import {formatMoney, getInitials} from '../formatters';
+import {formatMoney, formatSortableDate, getInitials} from '../formatters';
 import {Link} from 'react-router-dom';
 import {BySexChart} from '../components/ddjj/SexChart';
 import {ByChargeChart} from '../components/ddjj/ChargeChart';
@@ -15,13 +15,29 @@ import {PresentedDeclarationChart} from '../components/ddjj/PresentedChart';
 import {ByListChart} from '../components/ddjj/ListChart';
 import {ByDepartamentHeatMap} from '../components/ddjj/HeatMap';
 import useMetaTags from 'react-metatags-hook';
+import {DisclaimerComponent} from '../components/Disclaimer';
+import {Async, AsyncHelper, StatisticsDJBR} from '../Model';
+import {RedashAPI} from '../RedashAPI';
 
 
 export function DJBRDashboard() {
 
+    const [statistics, setStatistics] = useState<Async<StatisticsDJBR>>(AsyncHelper.noRequested());
     const isSmall = useMediaQuery('only screen and (max-width: 768px)');
-
     const filter = useMemo(() => <Filter/>, []);
+
+    const finalStats = AsyncHelper.or(statistics, {
+        count_declarations_auths: 1273,
+        last_success_fetch: '2020/12/26',
+        total_authorities: 113742,
+        total_declarations: 13067
+    });
+
+    useEffect(() => {
+        new RedashAPI().getDJBRStatistics()
+            .then(d => setStatistics(AsyncHelper.loaded(d.query_result.data.rows[0])))
+            .catch(e => setStatistics(AsyncHelper.error(e)));
+    }, [])
 
     useMetaTags({
         title: `Declaraciones juradas de bienes y rentas`,
@@ -67,12 +83,16 @@ export function DJBRDashboard() {
                         </Col>
                     </Row>
                     <Row>
-                        <Card className="card-style info-ddjj" style={{width: '100%'}}>
-                            <Typography.Text style={{color: "white", fontSize: '18px'}}>
-                                Podrían existir Declaraciones Juradas presentadas pero no así publicadas por la
-                                Contraloría General de la República
-                            </Typography.Text>
-                        </Card>
+                        <DisclaimerComponent full>
+                            Existen {formatMoney(finalStats.total_authorities)} autoridades electas desde 1998,
+                            contamos con {formatMoney(finalStats.total_declarations)} declaraciones juradas,
+                            de las cuales {formatMoney(finalStats.count_declarations_auths)} son de autoridades
+                            (al {formatSortableDate(finalStats.last_success_fetch)}).
+                            <br/>
+                            Podrían existir Declaraciones
+                            Juradas presentadas pero no así publicadas por la Contraloría General de la República.
+                            <a href="https://djbpublico.contraloria.gov.py/index.php" target="_blank" rel="noopener noreferrer"> Ver fuente.</a>
+                        </DisclaimerComponent>
                     </Row>
                     <ChartsComponent/>
                     <ResultComponent isSmall={isSmall}/>

@@ -526,6 +526,14 @@ export interface AuthoritiesWithoutDocument {
         active: null | number;
     }
 }
+
+export interface StatisticsDJBR {
+    total_authorities: number;
+    total_declarations: number;
+    count_declarations_auths: number;
+    last_success_fetch: string;
+}
+
 /**
  * Represents a networks resource.
  *
