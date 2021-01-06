@@ -56,6 +56,7 @@ function HeatMap(props: {
 
     const [geojson, setGeoJson] = useState<ExtendedFeatureCollection>();
 
+    // XXX: move this to the parent component
     useEffect(() => {
         new SimpleApi().getGeoJson()
             .then(d => setGeoJson(d))
@@ -101,7 +102,7 @@ function HeatMap(props: {
         width={props.width}
         height={props.height}
         data={props.data}
-        domain={[0, 100]}
+        domain={[0, 99]}
         match={(feature, datum) => {
             return feature.properties.dpto_desc === datum.key;
         }}
@@ -110,7 +111,7 @@ function HeatMap(props: {
                 ' Porcentaje '
         }}
         valueFormat={(value) => {
-            return Math.round(value + 0.5) + '%'
+            return value === 0 ? "0%" : Math.round(value + 0.2) + '%'
         }}
         features={geojson.features}
         colors="greens"
