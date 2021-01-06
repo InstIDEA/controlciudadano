@@ -5,9 +5,14 @@ import {InfoCircleTwoTone} from '@ant-design/icons';
 
 export function DisclaimerComponent(props: {
     children: React.ReactNode,
-    full?: boolean
+    full?: boolean,
+    card?: boolean
+
 }) {
-    const className = props.full ? "disclaimer-component full" : "disclaimer-component "
+    let className = "disclaimer-component";
+    if (props.full) className = className + " full";
+    if (props.card) className = className + " as-card";
+
     return <Row className={className}
                 align="middle"
                 justify="space-around">

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {useEffect, useMemo, useState} from 'react';
-import {Avatar, Card, Col, Collapse, Comment, Divider, Layout, Row, Tag, Tooltip, Typography} from 'antd';
+import {Avatar, Card, Col, Collapse, Comment, Divider, Layout, Row, Tooltip, Typography} from 'antd';
 import {Header} from '../components/layout/Header';
 import './AuthoritiesWithDdjj.css'
 import Footer from '../components/layout/Footer';
-import {MultiList, ReactiveBase, ReactiveComponent, ReactiveList, SelectedFilters} from '@appbaseio/reactivesearch';
+import {MultiList, ReactiveBase, ReactiveComponent, ReactiveList} from '@appbaseio/reactivesearch';
 import {useMediaQuery} from '@react-hook/media-query'
 import {formatMoney, formatSortableDate, getInitials} from '../formatters';
 import {Link} from 'react-router-dom';
@@ -18,6 +18,7 @@ import useMetaTags from 'react-metatags-hook';
 import {DisclaimerComponent} from '../components/Disclaimer';
 import {Async, AsyncHelper, StatisticsDJBR} from '../Model';
 import {RedashAPI} from '../RedashAPI';
+import {CurrentFilters} from '../components/ddjj/CurrentFilters';
 
 
 export function DJBRDashboard() {
@@ -76,14 +77,10 @@ export function DJBRDashboard() {
                       </Col>
                     </Row>}
                     <Row>
-                        <Col xs={{span: 24}}>
-                            <Card className="card-style" title="Filtros" style={{width: '100%'}}>
-                                <CurrentFilters/>
-                            </Card>
-                        </Col>
+                        <CurrentFilters/>
                     </Row>
                     <Row>
-                        <DisclaimerComponent full>
+                        <DisclaimerComponent full card>
                             Existen {formatMoney(finalStats.total_authorities)} autoridades electas desde 1998,
                             contamos con {formatMoney(finalStats.total_declarations)} declaraciones juradas,
                             de las cuales {formatMoney(finalStats.count_declarations_auths)} son de autoridades
@@ -91,7 +88,8 @@ export function DJBRDashboard() {
                             <br/>
                             Podrían existir Declaraciones
                             Juradas presentadas pero no así publicadas por la Contraloría General de la República.
-                            <a href="https://djbpublico.contraloria.gov.py/index.php" target="_blank" rel="noopener noreferrer"> Ver fuente.</a>
+                            <a href="https://djbpublico.contraloria.gov.py/index.php" target="_blank"
+                               rel="noopener noreferrer"> Ver fuente.</a>
                         </DisclaimerComponent>
                     </Row>
                     <ChartsComponent/>
@@ -184,54 +182,6 @@ function Filter() {
     </Col>
 }
 
-function CurrentFilters() {
-
-    return <SelectedFilters showClearAll={true}
-                            clearAllLabel="Limpiar"
-                            render={(props) => {
-                                const {selectedValues, setValue} = props;
-                                const clearFilter = (component: string) => {
-                                    setValue(component, null);
-                                };
-
-                                return <>
-                                    {Object.keys(selectedValues).map(key => {
-                                        const component = selectedValues[key];
-
-                                        if (!component.value) {
-                                            return <> </>
-                                        }
-
-                                        if (Array.isArray(component.value)) {
-                                            return component.value.map((val: unknown) => <Tag
-                                                color={FilterColors[key] || 'gray'}
-                                                closable
-                                                key={`${key}_${val}`}
-                                                onClose={() => setValue(key, component.value.filter((sb: unknown) => sb !== val))}
-                                            >
-                                                {getFilterKeyName(key)}: {getMappedValName(val)}
-                                            </Tag>)
-                                        }
-
-                                        let label = JSON.stringify(component.value);
-                                        if (typeof component.value === 'string') {
-                                            label = component.value;
-                                        }
-                                        if (typeof component.value === 'object' && 'label' in component.value) {
-                                            label = component.value.label;
-                                        }
-
-                                        return <Tag closable
-                                                    color={FilterColors[key] || 'gray'}
-                                                    onClose={() => clearFilter(key)}
-                                                    key={key}>
-                                            {getFilterKeyName(key)}: {getMappedValName(label)}
-                                        </Tag>
-                                    })}
-                                </>;
-                            }}
-    />
-}
 
 function ResultComponent(props: {
     isSmall: boolean
@@ -623,13 +573,6 @@ function GraphWrapper(
 
 const ColorList = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae'];
 
-const FilterColors: Record<string, string> = {
-    'list': 'rgb(205 83 52)',
-    'departament': '#f50',
-    'year_elected': '#108ee9',
-    'election': 'rgb(205 83 52)',
-    'district': '#108ee9'
-}
 
 function getColorByIdx(_id: string) {
     let asNumber = parseInt(_id);
@@ -657,21 +600,3 @@ interface ElasticDdjjDataResult {
     list: string;
 }
 
-function getFilterKeyName(val: string): string {
-
-    const keys: Record<string, string> = {
-        "list": "Partido",
-        "departament": "Departamento",
-        "year_elected": "Año",
-        "district": "Distrito",
-        "election": "Elecciones"
-    };
-
-    return keys[val] || val;
-}
-
-function getMappedValName(val: unknown): string {
-
-    if (val && `${val}`.endsWith('EEMBUCU')) return 'ÑEEMBUCU';
-    return `${val}`;
-}

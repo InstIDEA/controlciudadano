@@ -102,8 +102,8 @@
 
 .card-fts-search .fts-search-input-wrapper {
     padding: 5px;
-    border-style: solid;
     border-radius: 10px;
+    border-style: solid;
     border-color: #002E4D;
     border-width: 2px;
 }
