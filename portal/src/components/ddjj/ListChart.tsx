@@ -1,28 +1,46 @@
+import {Bar} from '@nivo/bar';
 import * as React from 'react';
 import {useEffect, useState} from 'react';
 import {LoadingGraphComponent} from './LoadingGraph';
-import {ResponsiveSunburst} from '@nivo/sunburst';
-import {formatMoney} from '../../formatters';
+import {CHART_COLORS} from './PresentedChart';
+import {ResponsiveWrapper} from '@nivo/core';
 
 export function ListChart(props: {
-    data: SunburstData
+    data: ChartData[],
+    width: number,
+    height: number,
+    padRight: number
 }) {
 
-    return <ResponsiveSunburst
-        data={props.data}
-        margin={{top: 10, right: 10, bottom: 10, left: 10}}
-        id="name"
-        value="value"
-        cornerRadius={2}
-        borderWidth={1}
-        valueFormat={formatMoney}
-        borderColor="white"
-        colors={{scheme: 'pastel1'}}
-        childColor={{from: 'color'}}
-        animate={true}
-        motionConfig="gentle"
-        isInteractive={true}
+    const count = props.data.length;
 
+    return <Bar height={props.height}
+                width={props.width}
+                data={props.data}
+                keys={['Presentados', 'No presentados']}
+                indexBy="name"
+                margin={{top: 0, right: props.padRight, bottom: 20, left: 50}}
+                padding={count < 3 ? 0.6 : 0.2}
+                layout="horizontal"
+                valueScale={{type: 'linear'}}
+                colors={[CHART_COLORS.presented, CHART_COLORS.no_presented]}
+                borderColor={{from: 'color', modifiers: [['darker', 1.6]]}}
+                axisTop={null}
+                axisRight={null}
+                axisLeft={{
+                    tickSize: 4,
+                    tickPadding: 4,
+                    tickRotation: 0,
+                    legend: '',
+                    legendPosition: 'middle',
+                    legendOffset: -40
+                }}
+                labelSkipWidth={15}
+                labelSkipHeight={15}
+                labelTextColor={{from: 'color', modifiers: [['darker', 1.6]]}}
+                animate={true}
+                motionStiffness={90}
+                motionDamping={15}
     />
 }
 
@@ -45,36 +63,41 @@ export function ByListChart(props: {
 
     if (!data && !lastShowedData) return <LoadingGraphComponent/>;
 
-    const d = (data || lastShowedData || emptyAgg)
+    const finalData: ChartData[] = (data || lastShowedData || emptyAgg)
         .buckets.map(element => {
             return {
-                name: element.key + " No presentado",
-                value: element.doc_count - element.presented.doc_count,
-                children: [
-                    {
-                        name: element.key + " Presentado",
-                        value: element.presented.doc_count,
-                    }
-                ]
+                name: element.key,
+                total: element.doc_count,
+                "Presentados": element.presented.doc_count,
+                "No presentados": element.doc_count - element.presented.doc_count
             }
-        });
-    const finalData: SunburstData = {
-        name: "list",
-        children: d
-    }
-    return <ListChart data={finalData}/>
+        })
+        .sort((c1, c2) => c1.total - c2.total)
+    ;
+
+    const count = finalData.length;
+    return <ResponsiveWrapper>
+        {({width, height}) => {
+            const finalHeight = Math.max(height, 20 * count);
+            const requireScroll = finalHeight > height;
+            const finalWidth = requireScroll // if the height is equal to the available, no scroll is needed
+                ? width - 10
+                : width;
+            return <div style={{height, overflowX: 'hidden', overflowY: 'auto', position: 'relative'}}>
+                <ListChart data={finalData}
+                           width={finalWidth}
+                           padRight={15}
+                           height={finalHeight}/>
+            </div>
+        }}
+    </ResponsiveWrapper>
 }
 
-interface SunburstData {
+type ChartData = {
     name: string;
-    children: {
-        name: string;
-        value: number;
-        children: {
-            name: string;
-            value: number;
-        }[];
-    }[];
+    total: number;
+    "Presentados": number;
+    "No presentados": number;
 }
 
 const emptyAgg: ByListAggregation = {
