@@ -98,28 +98,3 @@ const emptyAgg: PresentedAggregation = {
     }]
 }
 
-const CenteredMetric = ({dataWithArc, centerX, centerY}: any) => {
-    let presented = 0
-    let notPresented = 0;
-    dataWithArc.forEach((datum: any) => {
-        if (datum.label === "Presentados") presented = datum.value;
-        if (datum.label === "No Presentados") notPresented = datum.value;
-    })
-
-    const percentage = presented === 0 ? 0 : presented / (presented + notPresented) * 100;
-
-    return (
-        <text
-            x={centerX}
-            y={centerY}
-            textAnchor="middle"
-            dominantBaseline="central"
-            style={{
-                fontSize: '14px',
-                fontWeight: 600,
-            }}
-        >
-            {percentage.toPrecision(2)}%
-        </text>
-    )
-}
