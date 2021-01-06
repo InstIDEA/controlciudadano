@@ -9,6 +9,14 @@
     margin-bottom: 10px;
 }
 
+.disclaimer-component.as-card {
+    border-color: rgb(205, 212, 217);
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(227, 232, 236, 1);
+}
+
 @media (max-width: 768px) {
     .disclaimer-component {
         text-align: center;
