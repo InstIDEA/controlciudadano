@@ -84,6 +84,7 @@ export function LandingPage() {
                 <Col lg={{offset: 0, span: 10}}
                      md={{offset: 0, span: 12}}
                      sm={{offset: 2, span: 19}}
+                     xs={{offset: 1, span: 20}}
                      style={{textAlign: 'left'}}>
                     <Input.Search
                         placeholder="Buscar persona"
