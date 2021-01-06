@@ -16,7 +16,7 @@ const menu = <Menu mode="horizontal" id="nav" key="nav">
         <Link className="menu-item" to="/action">Compras COVID</Link>
     </Menu.Item>
     <Menu.Item key="ddjj">
-        <Link className="menu-item" to="/djbr/portal">Declaraciones</Link>
+        <Link className="menu-item" to="/djbr/portal">Declaraciones Juradas</Link>
     </Menu.Item>
     <Menu.Item key="conjunto">
         <Link className="menu-item" to="/sources">Fuente de datos</Link>

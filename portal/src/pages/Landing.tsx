@@ -9,29 +9,26 @@ import {Header} from '../components/layout/Header'
 import Footer from '../components/layout/Footer';
 import {Async, AsyncHelper, GlobalStatistics} from '../Model';
 import {RedashAPI} from '../RedashAPI';
-import {formatIsoDate, formatMoney, formatToMonth} from '../formatters';
+import {formatIsoDate, formatMoney, formatToMonth, formatWF} from '../formatters';
 import {Link, useHistory} from 'react-router-dom';
 import {FilterOutlined} from '@ant-design/icons'
 import {useMediaQuery} from '@react-hook/media-query';
 
-export const page1 = [
+const CARDS = [
     {
         img: explorarDatos,
         href: `/explore`,
         title: 'Explorar Datos',
-        description: '',
     },
     {
         img: comprasCovid,
         title: 'Compras COVID',
         href: `/action`,
-        description: ''
     },
     {
         img: verificacionDDJJ,
-        title: 'Verificación de DDJJ',
+        title: 'Declaraciones Juradas de Autoridades electas',
         href: `/djbr/portal`,
-        description: ''
     },
 ];
 
@@ -41,7 +38,7 @@ export function LandingPage() {
         state: 'NO_REQUESTED'
     })
 
-    const isSmall = useMediaQuery('only screen and (max-width: 768px)');
+    const isSmall = useMediaQuery('only screen and (max-width: 900px)');
 
     useEffect(() => {
         setData({state: 'FETCHING'})
@@ -56,12 +53,11 @@ export function LandingPage() {
             }))
     }, [])
 
-    const children = page1.map(card => (
-        <Col className="card-wrapper" key={card.title} md={isSmall? 12: 8} xs={isSmall? 24: 12}>
+    const children = CARDS.map(card => (
+        <Col className="card-wrapper" key={card.title} xl={8} md={12} xs={24}>
             <Link className="card" to={card.href}>
                 <img src={card.img} alt="" className="card-img-top"/>
                 <div className="card-body">
-                    <span className="description">{card.description}</span>
                     <span className="title">{card.title}</span>
                     <div className="button-wrapper"/>
                     <button className="ver-mas-button">Ver más</button>
@@ -72,7 +68,7 @@ export function LandingPage() {
 
     return (<>
             <Header tableMode={false}/>
-            <Row className="banner-wrapper" gutter={isSmall? 8: [8, 24]}>
+            <Row className="banner-wrapper" gutter={isSmall ? 8 : [8, 24]}>
                 <Col md={{offset: 0, span: 7}}
                      sm={{offset: 1, span: 1}}
                      xs={{offset: 1, span: 1}}
@@ -88,7 +84,6 @@ export function LandingPage() {
                 <Col lg={{offset: 0, span: 10}}
                      md={{offset: 0, span: 12}}
                      sm={{offset: 2, span: 19}}
-                     xs={{offset: 2, span: 19}}
                      style={{textAlign: 'left'}}>
                     <Input.Search
                         placeholder="Buscar persona"
@@ -104,11 +99,12 @@ export function LandingPage() {
                         }}
                         formMethod="submit"/>
                 </Col>
-                <Col xxl={24} xl={24} lg={24} md={24} sm={24} xs={24} className="banner-title-col-wrapper">
+                <Col xs={24} className="banner-title-col-wrapper">
                     <QueueAnim className="banner-title-wrapper">
                         <p className="banner-text" key="content">
-                            Este es un portal en el que vas a poder explorar <strong>Datos Abiertos</strong> y realizar un <strong>control de los gastos
-                            del COVID-19</strong> 
+                            Este es un portal en el que vas a poder explorar <strong>Datos Abiertos</strong> y realizar
+                            un <strong>control de los gastos
+                            del COVID-19</strong>
                         </p>
                     </QueueAnim>
                 </Col>
@@ -119,15 +115,16 @@ export function LandingPage() {
                         className="page row text-center"
                         delay={500}
                     >
-                        <Col className="card-wrapper" key="info" md={20} xs={24}>
+                        <Col className="card-wrapper" key="info" xl={20} md={24} xs={24}>
                             <div className="info-card">
-                                <Statistic name="Salarios Pagados"
+                                <Statistic name={AsyncHelper.loaded("Salarios Pagados")}
                                            obs={AsyncHelper.map(data, d => `Cantidad de funcionarios que recibieron salarios a ${formatToMonth(d.payed_salaries_month)} según la SFP`)}
                                            data={AsyncHelper.map(data, d => d.payed_salaries)}/>
-                                <Statistic name="Contratos del 2020"
-                                           obs={AsyncHelper.map(data, d => `Contratos firmados al ${formatIsoDate(d.calc_date)} reportados por la DNCP`)}
-                                           data={AsyncHelper.map(data, d => d.ocds_current_year_contracts)}/>
-                                <Statistic name="Contratos COVID-19"
+                                <Statistic
+                                    name={AsyncHelper.map(data, d => `Contratos del ${formatWF(d.calc_date, 'yyyy')}`)}
+                                    obs={AsyncHelper.map(data, d => `Contratos firmados al ${formatIsoDate(d.calc_date)} reportados por la DNCP`)}
+                                    data={AsyncHelper.map(data, d => d.ocds_current_year_contracts)}/>
+                                <Statistic name={AsyncHelper.loaded("Contratos COVID-19")}
                                            obs={AsyncHelper.map(data, d => `Contratos realizados contra la pandemia al ${formatIsoDate(d.calc_date)} según la DNCP`)}
                                            data={AsyncHelper.map(data, d => d.ocds_covid_contracts)}/>
                             </div>
@@ -135,13 +132,13 @@ export function LandingPage() {
                     </QueueAnim>
                 </section>
                 <section className="page-wrapper page1">
-                    <QueueAnim
-                        component={Row}
-                        type="bottom"
-                        className="page row text-center"
-                        delay={500}
-                    >
-                        {children}
+                    <QueueAnim component={Row}
+                               type="bottom"
+                               className="page row text-center"
+                               delay={500}>
+                        <Row gutter={[8, 32]} align="middle" justify="center">
+                            {children}
+                        </Row>
                     </QueueAnim>
                 </section>
             </Row>
@@ -152,10 +149,11 @@ export function LandingPage() {
 
 function Statistic(props: {
     data: Async<number>,
-    name: string,
+    name: Async<string>,
     obs: Async<string>
 }) {
     const number = AsyncHelper.or(props.data, 0)
+    const name = AsyncHelper.or(props.name, '')
     const isLoaded = props.data.state === 'LOADED';
     const observation = AsyncHelper.or(props.obs, "Cargando...")
     const numberClasses = isLoaded
@@ -164,7 +162,7 @@ function Statistic(props: {
     return <Tooltip placement="top" title={observation}>
         <Col className="info-box">
             <span className={numberClasses}>{formatMoney(number)}</span>
-            <span className="title">{props.name}</span>
+            <span className="title">{name}</span>
         </Col>
     </Tooltip>
 }

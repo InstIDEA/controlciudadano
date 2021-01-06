@@ -15,8 +15,15 @@
     }
 }
 
+.disclaimer-component.full {
+    width: 100%;
+}
+
 @media (min-width: 1500px) {
     .disclaimer-component {
         margin-right: 10vw;
+    }
+    .disclaimer-component.full {
+        margin-right: 0;
     }
 }
