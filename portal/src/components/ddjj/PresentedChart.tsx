@@ -15,13 +15,13 @@ export function PresentedChart(props: {
 
     return <ResponsivePie
         data={props.data}
-        margin={{top: 0, right: 0, bottom: 0, left: 0}}
+        margin={{top: 0, right: 0, bottom: 10, left: 0}}
         innerRadius={0.20}
         padAngle={0.0}
         fit={true}
         cornerRadius={5}
-        startAngle={97}
-        endAngle={457}
+        startAngle={90}
+        endAngle={450}
         colors={t => t.data.color}
         borderWidth={2}
         borderColor="white"

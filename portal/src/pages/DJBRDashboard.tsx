@@ -6,7 +6,6 @@ import Footer from '../components/layout/Footer';
 import {MultiList, ReactiveBase, ReactiveComponent, ReactiveList} from '@appbaseio/reactivesearch';
 import {useMediaQuery} from '@react-hook/media-query'
 import {formatMoney, formatSortableDate, getInitials} from '../formatters';
-import {Link} from 'react-router-dom';
 import {BySexChart} from '../components/ddjj/SexChart';
 import {ByChargeChart} from '../components/ddjj/ChargeChart';
 import {ByAgeChart} from '../components/ddjj/AgeChart';
@@ -18,8 +17,10 @@ import {DisclaimerComponent} from '../components/Disclaimer';
 import {Async, AsyncHelper, StatisticsDJBR} from '../Model';
 import {RedashAPI} from '../RedashAPI';
 import {CurrentFilters} from '../components/ddjj/CurrentFilters';
+import {Link} from 'react-router-dom';
 
 import './DJBRDashboard.css';
+import {CardPopup} from '../components/ddjj/CardPopup';
 
 export function DJBRDashboard() {
 
@@ -280,7 +281,6 @@ function ChartsComponent() {
                             </GraphWrapper>
                         </Col>
                         <Col xl={12} lg={12} sm={24} xs={24}>
-                            <GraphWrapper title="Tipo Candidatura">
                                 <ReactiveComponent
                                     componentId="DeclarationsChargeChart"
                                     defaultQuery={() => ({
@@ -289,7 +289,7 @@ function ChartsComponent() {
                                                 terms: {
                                                     field: 'charge.keyword',
                                                     order: {_count: 'desc'},
-                                                    size: 5
+                                                    size: 20
                                                 },
                                                 aggs: {
                                                     presented: {
@@ -303,42 +303,43 @@ function ChartsComponent() {
                                             }
                                         }
                                     })}
-                                    render={props => <ByChargeChart {...props} />}
+                                    render={props => <CardPopup title="Tipo de candidatura"
+                                                                cardHeight={200}
+                                                                component={cp => <ByChargeChart {...props} {...cp}/>}/>}
                                     react={{
                                         and: ['list', 'year_elected', 'departament', 'district', 'election'],
                                     }}
                                 />
-                            </GraphWrapper>
                         </Col>
                         <Col xl={12} lg={12} sm={24} xs={24}>
-                            <GraphWrapper title="Partido" height={200}>
-                                <ReactiveComponent
-                                    componentId="DeclarationsListChart"
-                                    defaultQuery={() => ({
-                                        aggs: {
-                                            "list.keyword": {
-                                                terms: {
-                                                    field: 'list.keyword',
-                                                    order: {_count: 'desc'}
-                                                },
-                                                aggs: {
-                                                    presented: {
-                                                        filter: {
-                                                            term: {
-                                                                presented: true
-                                                            }
+                            <ReactiveComponent
+                                componentId="DeclarationsListChart"
+                                defaultQuery={() => ({
+                                    aggs: {
+                                        "list.keyword": {
+                                            terms: {
+                                                field: 'list.keyword',
+                                                order: {_count: 'desc'}
+                                            },
+                                            aggs: {
+                                                presented: {
+                                                    filter: {
+                                                        term: {
+                                                            presented: true
                                                         }
                                                     }
                                                 }
                                             }
                                         }
-                                    })}
-                                    render={props => <ByListChart {...props} />}
-                                    react={{
-                                        and: ['list', 'year_elected', 'departament', 'district', 'election'],
-                                    }}
-                                />
-                            </GraphWrapper>
+                                    }
+                                })}
+                                render={props => <CardPopup title="Partido"
+                                                            cardHeight={200}
+                                                            component={cp => <ByListChart {...props} {...cp}/>}/>}
+                                react={{
+                                    and: ['list', 'year_elected', 'departament', 'district', 'election'],
+                                }}
+                            />
                         </Col>
                         <Col xl={12} lg={12} sm={24} xs={24}>
                             <GraphWrapper title="Edad">
@@ -549,16 +550,15 @@ function LinkToDeclaration(props: {
 }
 
 
-function GraphWrapper(
-    props: {
-        title?: string,
-        children: React.ReactNode,
-        height?: number
-    }
-) {
+function GraphWrapper(props: {
+    title?: string,
+    children: React.ReactNode,
+    height?: number
+}) {
 
     const finalHeight = props.height || 200;
     const graphHeight = props.title ? finalHeight - 50 : finalHeight;
+
     return <div style={{width: '100%', height: finalHeight, border: '1px solid #002E4D', borderRadius: 5}}>
         {props.title && <Typography.Title level={5} style={{
             textAlign: 'center',
