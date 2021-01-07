@@ -189,7 +189,9 @@ function ResultComponent(props: {
 }) {
 
     return <Col xs={{span: 24}}>
-        <Card title="Autoridades Electas" className="card-style">
+        <Card title="Autoridades Electas"
+              extra={<Link to="/djbr/list">Más detalles</Link>}
+              className="card-style">
             <Col xs={{span: 24}}>
                 {!props.isSmall && <ResultHeader/>}
                 <ReactiveList

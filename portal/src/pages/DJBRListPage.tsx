@@ -43,7 +43,12 @@ export function DJBRListPage() {
                     onBack={() => history.push('/')}
                     backIcon={null}
                     title="¿Quiénes presentaron Declaraciones Juradas?"
-                    subTitle="">
+                    subTitle=""
+                    extra={[
+                        <Link to="/sources?query=auths_with_djbr" key="source">
+                            Fuente
+                        </Link>
+                    ]}>
 
             <Typography.Paragraph>
                 Podrían existir Declaraciones Juradas presentadas pero no así publicadas por la Contraloría General de
@@ -53,7 +58,7 @@ export function DJBRListPage() {
             <Table<AuthoritiesWithoutDocument> dataSource={filtered}
                                                className="hide-responsive"
                                                loading={working}
-                                               rowKey="ocid"
+                                               rowKey="id"
                                                size="small"
                                                pagination={{
                                                    defaultCurrent: 1,
