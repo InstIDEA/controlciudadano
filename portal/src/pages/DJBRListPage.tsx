@@ -45,7 +45,7 @@ export function DJBRListPage() {
                     title="¿Quiénes presentaron Declaraciones Juradas?"
                     subTitle=""
                     extra={[
-                        <Link to="/sources?query=auths_with_djbr" key="source">
+                        <Link to="/sources/4" key="source">
                             Fuente
                         </Link>
                     ]}>
