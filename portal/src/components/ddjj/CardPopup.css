@@ -1,0 +1,18 @@
+
+.card-popup.cp-card {
+    width: 100%;
+    border: 1px solid #002E4D;
+    border-radius: 5px;
+}
+
+.card-popup .cp-title {
+    text-align: center;
+    color: rgba(0, 52, 91, 1);
+}
+
+
+.card-popup .cp-title-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px;
+}
