@@ -53,7 +53,7 @@ export function AffidavitList() {
 
                     <br/>
                     No contamos con todas las declaraciones juradas, pues las mismas se actualizan a diario,
-                    esta lista fue actualizada por última vez el 30 de Octubre de 2020.
+                    esta lista fue actualizada por última vez el 15 de Enero de 2021.
                 </DisclaimerComponent>
 
 
