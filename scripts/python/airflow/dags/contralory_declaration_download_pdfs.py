@@ -203,8 +203,8 @@ with dag:
                                         )
                                         ''')
 
-    # for digit in range(0, 10):
-    for digit in range(0, 1):
+    # for digit in range(0, 1):
+    for digit in range(0, 10):
         # Get list from webpage
         download_number = PythonOperator(
             task_id=f"""download_number_{digit}""",
