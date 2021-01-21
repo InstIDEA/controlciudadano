@@ -1,7 +1,7 @@
 import datetime
 import math
 import os
-from typing import List
+from typing import List, Dict
 from urllib.parse import urlparse
 
 import pytz
@@ -31,7 +31,7 @@ def download_file_if_changed(
         file_size = head_info.headers['Content-Length']
         batch_size = math.ceil(int(file_size) / 20) + 20
         if file_size.isdigit():
-            file_size = f"{file_size} ({humansize(int(file_size))})"
+            file_size = f"{file_size} ({get_human_size(int(file_size))})"
     else:
         file_size = 'Unknown'
         batch_size = 16384
@@ -61,14 +61,15 @@ def download_file_if_changed(
             for data in req.iter_content(batch_size):
                 target_file.write(data)
                 downloaded = downloaded + batch_size
-                print(f"Downloading file {url}. {downloaded} ({humansize(downloaded)}) of {file_size}")
+                print(f"Downloading file {url}. {downloaded} ({get_human_size(downloaded)}) of {file_size}")
 
 
 def download_file(
         url: str,
         target: str,
-        verify=True
-):
+        verify=True,
+        verbose=True
+) -> None:
     """
     Performs a get and downloads the file
     :param url: the file path
@@ -86,7 +87,7 @@ def download_file(
             file_size: str = req.headers['Content-Length']
             batch_size = math.ceil(int(file_size) / 20) + 20
             if file_size.isdigit():
-                file_size = f"{file_size} ({humansize(int(file_size))})"
+                file_size = f"{file_size} ({get_human_size(int(file_size))})"
         else:
             file_size = 'Unknown'
             batch_size = 16384
@@ -97,7 +98,8 @@ def download_file(
         for data in req.iter_content(batch_size):
             target_file.write(data)
             downloaded = downloaded + batch_size
-            print(f"Downloading file {url}. {downloaded} ({humansize(downloaded)}) of {file_size}")
+            if verbose:
+                print(f"Downloading file {url}. {downloaded} ({get_human_size(downloaded)}) of {file_size}")
 
 
 def download_links(links: List[str], folder: str, verify: bool = True) -> List[str]:
@@ -119,14 +121,33 @@ def download_links(links: List[str], folder: str, verify: bool = True) -> List[s
 
     return to_ret
 
+
 suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
-def humansize(nbytes: int) -> str:
+
+
+def get_human_size(nbytes: int) -> str:
     i = 0
     while nbytes >= 1024 and i < len(suffixes)-1:
         nbytes /= 1024.
         i += 1
     f = ('%.2f' % nbytes).rstrip('0').rstrip('.')
     return '%s %s' % (f, suffixes[i])
+
+
+def get_head(url: str, verify=True) -> Dict[str, str]:
+    """
+    Returns the headers of a head request, similar to `curl -I url`
+    :param url: the url from the call
+    :return: a dict with the data
+    """
+    print(f"Getting info of {url}")
+
+    head_info = requests.head(url, verify=verify)
+
+    if head_info.status_code != requests.codes.ok:
+        raise NetworkError(f"The url '{url}' returned {head_info.status_code}")
+
+    return head_info.headers
 
 
 class NetworkError(AirflowException):
