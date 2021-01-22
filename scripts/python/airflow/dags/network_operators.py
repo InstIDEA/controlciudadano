@@ -75,6 +75,7 @@ def download_file(
     :param url: the file path
     :param target: the local folder to download the file
     :param verify: if the ssl connection should be valid
+    :param verbose: if it should print the progress
     :return: None
     """
     print(f"Downloading file {url} to {target}")
