@@ -16,6 +16,7 @@ Table `staging.djbr_downloaded_files`:
 """
 import os
 import tempfile
+import time
 from datetime import datetime
 from datetime import timedelta
 from typing import Dict, Union, List
@@ -29,7 +30,7 @@ from airflow.utils.dates import days_ago
 
 from ds_table_operations import calculate_hash_of_file
 from file_system_helper import move
-from network_operators import download_file, get_head
+from network_operators import download_file, get_head, NetworkError
 
 try:
     target_dir = os.path.join(Variable.get("CGR_PDF_FOLDER"))
@@ -65,7 +66,7 @@ def list_navigator(id_ends_with: int, cursor: any):
     :param id_ends_with: the last digit of the id
     :return: yields a page, ends when the list is an empty array
     """
-    batch_size = 2000
+    batch_size = 100
     should_continue = True
     max_iterations = 100 # to prevent a infinite loop
     current_iter = 1
@@ -96,7 +97,7 @@ def list_navigator(id_ends_with: int, cursor: any):
         yield to_yield
 
         current_iter = current_iter + 1
-        should_continue = len(to_yield) == 0 or current_iter >= max_iterations
+        should_continue = len(to_yield) != 0 and current_iter <= max_iterations
 
 
 def get_upsert_query() -> str:
@@ -170,15 +171,20 @@ def do_work(number: int, url: str, target_dir: str):
     for records in list_navigator(number, db_cursor):
         to_insert = []
         for record in records:
-            data = download_pdf(record["remote_id"], url, target_dir, record["downloaded_files"], temp_dir)
-            if data is not None:
-                to_insert.append([
-                    record["id"],
-                    data["file_size"],
-                    data["hash"],
-                    data["file_name"],
-                    datetime.now()
-                ])
+            try:
+                data = download_pdf(record["remote_id"], url, target_dir, record["downloaded_files"], temp_dir)
+                if data is not None:
+                    to_insert.append([
+                        record["id"],
+                        data["file_size"],
+                        data["hash"],
+                        data["file_name"],
+                        datetime.now()
+                    ])
+            except NetworkError as ne:
+                print(f"Error {ne} fetching {record['remote_id']}, skipping")
+                print("Sleeping 60 sec in case we hit a rate limit")
+                time.sleep(60)
 
         print(f"Sending {len(to_insert)} for upsert")
         db_cursor.executemany(sql, to_insert)
