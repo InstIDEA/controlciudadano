@@ -331,7 +331,7 @@ function tryToGuestHeader(baseDoc: string,
                 .filter(h => !!h.cargo)
                 .forEach(h => {
                     const chargeName = `${h.cargo} (${h.descripcionentidad})`
-                        .replaceAll('�', '')
+                        .replace(/�/g, '')
                     if (chargeData[chargeName]) {
                         return;
                     } else {

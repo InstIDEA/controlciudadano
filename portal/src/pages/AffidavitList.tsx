@@ -169,5 +169,5 @@ export function AffidavitList() {
 }
 
 function fixLink(link: string) {
-    return link.replaceAll(" ", "");
+    return link.replace(/ /g, "");
 }
