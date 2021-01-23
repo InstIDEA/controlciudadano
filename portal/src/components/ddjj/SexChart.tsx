@@ -49,13 +49,13 @@ export function SexChart(props: {
             legendPosition: 'middle'
         }}
 
-        labelFormat={t => formatMoney(t)}
+        labelFormat={formatMoney}
+        tooltipFormat={formatMoney}
         labelSkipWidth={12}
         labelSkipHeight={12}
         labelTextColor={{from: 'color', modifiers: [['darker', 1.6]]}}
 
 
-        tooltipFormat={formatMoney}
 
         animate={true}
         motionStiffness={90}
