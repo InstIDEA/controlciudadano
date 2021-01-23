@@ -3,7 +3,7 @@ import {useMemo, useState} from 'react';
 import {PageHeader, Table, Typography} from 'antd';
 import {AsyncHelper, AuthoritiesWithoutDocument} from '../Model';
 import {Link, useHistory} from 'react-router-dom';
-import {filterRedashList, RedashAPI} from '../RedashAPI';
+import {filterRedashList} from '../RedashAPI';
 import {Header} from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import {SearchBar} from '../components/SearchBar';
@@ -14,7 +14,7 @@ import {formatSortableDate} from "../formatters";
 export function DJBRListPage() {
 
     const stats = useDJBRStats();
-    const data = useRedashApi(new RedashAPI().getAuthoritiesWithoutDocument);
+    const data = useRedashApi(45);
     const history = useHistory();
     const [query, setQuery] = useState('');
 

@@ -1,19 +1,23 @@
 import {useEffect, useState} from "react";
-import {Async, AsyncHelper} from "../Model";
-import {BaseRedashResponse} from "../RedashAPI";
+import {Affidavit, Async, AsyncHelper, AuthoritiesWithoutDocument, StatisticsDJBR} from "../Model";
+import {RedashAPI} from "../RedashAPI";
 
 // TODO change this with a data fetcher hook library
-export function useRedashApi<T>(producer: () => Promise<BaseRedashResponse<T>>): Async<T[]> {
+export function useRedashApi<T extends number>(id: T): Async<Array<ApiType<T>>> {
 
-    const [data, setData] = useState<Async<T[]>>(AsyncHelper.noRequested());
+    const [data, setData] = useState<Async<Array<ApiType<T>>>>(AsyncHelper.noRequested());
 
     useEffect(() => {
         setData(AsyncHelper.fetching());
-        producer()
+        new RedashAPI().fetchQuery(id)
             .then(d => setData(AsyncHelper.loaded(d.query_result.data.rows)))
             .catch(e => setData(AsyncHelper.error(e)))
-        // eslint-disable-next-line
-    }, [])
+    }, [id])
 
     return data;
 }
+
+type ApiType<T extends number> =
+    T extends 19 ? Affidavit :
+        T extends 45 ? AuthoritiesWithoutDocument :
+            T extends 49 ? StatisticsDJBR : unknown;

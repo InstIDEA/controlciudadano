@@ -3,7 +3,7 @@ import {useMemo, useState} from 'react';
 import {Card, List, PageHeader, Table} from 'antd';
 import {Affidavit, AsyncHelper} from '../Model';
 import {Link, useHistory} from 'react-router-dom';
-import {filterRedashList, RedashAPI} from '../RedashAPI';
+import {filterRedashList} from '../RedashAPI';
 import {formatMoney, formatSortableDate} from '../formatters';
 import {FilePdfOutlined, ShareAltOutlined} from '@ant-design/icons';
 import {BaseDatosPage} from '../components/BaseDatosPage';
@@ -15,7 +15,7 @@ import {useRedashApi} from "../hooks/useApi";
 export function AffidavitList() {
 
     const stats = useDJBRStats();
-    const data = useRedashApi(new RedashAPI().getAffidavit);
+    const data = useRedashApi(19);
     const history = useHistory();
     const [query, setQuery] = useState('');
     const isExploreMenu = history.location.pathname.includes('explore');

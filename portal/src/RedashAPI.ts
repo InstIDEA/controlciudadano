@@ -58,7 +58,7 @@ export class RedashAPI {
         return this.fetchQuery(21)
     }
 
-    private async fetchQuery(queryNr: number) {
+    async fetchQuery(queryNr: number) {
         const apiKey = API_KEYS[queryNr] || this.apiKey;
         const response = await fetch(`${BASE_API}/queries/${queryNr}/results.json?api_key=${apiKey}`);
 

@@ -1,11 +1,10 @@
-import {RedashAPI} from "../RedashAPI";
 import {useRedashApi} from "./useApi";
 import {AsyncHelper} from "../Model";
 
 
 export function useDJBRStats() {
 
-    const data = useRedashApi(new RedashAPI().getDJBRStatistics)
+    const data = useRedashApi(49)
 
     return AsyncHelper.or(AsyncHelper.map(data, d => d[0]), {
         count_declarations_auths: 1273,
