@@ -7,6 +7,7 @@ import './Welcome.css';
 import buscadorPersonas from '../assets/imgs/buscador_personas.svg'
 import declaraciones from '../assets/imgs/declaraciones.svg'
 import autoridades from '../assets/imgs/autoridades_electas.svg'
+import djbr from '../assets/imgs/verificacion_DDJJ.svg';
 import items from '../assets/imgs/items_adquiridos.svg'
 import rankingItems from '../assets/imgs/ranking_items.svg'
 import proveedores from '../assets/imgs/proveedores.svg'
@@ -33,7 +34,7 @@ const data = [{
     link: '/djbr/list',
     title: 'Declaraciones de autoridades',
     description: 'Listado de declaraciones juradas de bienes y rentas presentadas por autoridades electas',
-    icon: autoridades
+    icon: djbr
 }, {
     link: '/explore/ocds/items',
     title: '¿Se compró más caro?',
