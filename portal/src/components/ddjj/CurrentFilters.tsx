@@ -78,11 +78,12 @@ export function CurrentFilterRenderer(props: {
 }
 
 const FilterColors: Record<string, string> = {
-    'list': 'rgb(205 83 52)',
-    'departament': '#f50',
-    'year_elected': '#108ee9',
-    'election': 'rgb(205 83 52)',
-    'district': '#108ee9'
+    list: 'rgb(205 83 52)',
+    departament: '#f50',
+    year_elected: '#108ee9',
+    election: 'rgb(205 83 52)',
+    district: '#108ee9',
+    charge: "#2e801a"
 }
 
 function getFilterKeyName(val: string): string {
@@ -92,7 +93,8 @@ function getFilterKeyName(val: string): string {
         "departament": "Departamento",
         "year_elected": "Año",
         "district": "Distrito",
-        "election": "Elecciones"
+        "election": "Elecciones",
+        "charge": "Tipo de elección"
     };
 
     return keys[val] || val;
