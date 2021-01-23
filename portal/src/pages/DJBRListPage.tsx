@@ -42,7 +42,7 @@ export function DJBRListPage() {
                     style={{border: '1px solid rgb(235, 237, 240)'}}
                     onBack={() => history.push('/')}
                     backIcon={null}
-                    title="¿Quiénes presentaron Declaraciones Juradas?"
+                    title="Listado de declaraciones juradas presentadas por autoridades electas"
                     subTitle=""
                     extra={[
                         <Link to="/sources/4" key="source">
