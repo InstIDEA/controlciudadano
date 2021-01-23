@@ -1,16 +1,16 @@
 import * as React from 'react';
 import {useCallback, useEffect, useMemo, useState} from 'react';
-import {OCDSSupplierRelation, Supplier} from '../Model';
+import {AsyncHelper, OCDSSupplierRelation, Supplier} from '../Model';
 import {Layout, PageHeader, Space, Spin, Timeline, Typography} from 'antd';
 import {Link, useHistory} from 'react-router-dom';
 import {Edge, Graph, Node, RelationGraph} from '../components/graphs/RelationGraph';
-import {RedashAPI} from '../RedashAPI';
 import {Card} from 'antd/es';
 import {SimpleApi} from '../SimpleApi';
 import {SupplierDescription} from '../components/SupplierDescription';
 import {RELATIONS_COLORS, RELATIONS_NAMES} from '../Constants';
 import {BaseDatosPage} from '../components/BaseDatosPage';
 import './OCDSSupplierRelations.css';
+import {useRedashApi} from "../hooks/useApi";
 
 const colors = RELATIONS_COLORS;
 const names = RELATIONS_NAMES;
@@ -18,20 +18,12 @@ const names = RELATIONS_NAMES;
 
 export function OCDSSupplierRelations() {
 
-    const [data, setData] = useState<OCDSSupplierRelation[]>();
+    const data = useRedashApi(18);
     const [actives, setActives] = useState<string[]>(['OCDS_SAME_LEGAL_CONTACT'])
     const [selected, setSelected] = useState<string>();
     const history = useHistory();
-    const isExploreMenu = history.location.pathname.includes('explore');
 
-    useEffect(() => {
-        new RedashAPI('a2kmZeR9AdGeldeP0RXg2JWSZeevSA62xzpN15jb')
-            .getRelations()
-            .then(d => setData(d.query_result.data.rows));
-        // .then(d => setData(d.query_result.data.rows.slice(0, 2000)));
-    }, [])
-
-    const graph = useMemo(() => toGraph(data), [data]);
+    const graph = useMemo(() => toGraph(AsyncHelper.or(data, [])), [data]);
 
     const filter = useCallback((node: Edge) => {
         return actives.length === 0 || actives.includes(node.label)
@@ -42,7 +34,7 @@ export function OCDSSupplierRelations() {
         else setActives([...actives, type]);
     }
 
-    return <BaseDatosPage menuIndex="relations" sidebar={isExploreMenu}>
+    return <BaseDatosPage menuIndex="relations">
         <PageHeader ghost={false}
                     onBack={() => history.push('')}
                     backIcon={null}
@@ -98,7 +90,7 @@ export function OCDSSupplierRelations() {
 }
 
 export function toGraph(data?: OCDSSupplierRelation[]): Graph {
-    if (!data) return {edges: [], nodes: []};
+    if (!data || data.length === 0) return {edges: [], nodes: []};
     const edges = new Map<string, Edge>();
     const nodes = new Map<string, Node>();
 

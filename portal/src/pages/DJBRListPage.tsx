@@ -4,12 +4,11 @@ import {PageHeader, Table, Typography} from 'antd';
 import {AsyncHelper, AuthoritiesWithoutDocument} from '../Model';
 import {Link, useHistory} from 'react-router-dom';
 import {filterRedashList} from '../RedashAPI';
-import {Header} from '../components/layout/Header';
-import Footer from '../components/layout/Footer';
 import {SearchBar} from '../components/SearchBar';
 import {useDJBRStats} from "../hooks/useStats";
 import {useRedashApi} from "../hooks/useApi";
 import {formatSortableDate} from "../formatters";
+import {BaseDatosPage} from "../components/BaseDatosPage";
 
 export function DJBRListPage() {
 
@@ -26,12 +25,9 @@ export function DJBRListPage() {
         'list',
     ]), [data, query]);
 
-    return <>
-        <Header tableMode={true}
-                showSeparator={false}
-                searchBar={
-                    <SearchBar defaultValue={query || ''} onSearch={v => setQuery(v)}/>
-                }/>
+    return <BaseDatosPage menuIndex="auth_djbr" headerExtra={
+        <SearchBar defaultValue={query || ''} onSearch={setQuery}/>
+    }>
         <PageHeader ghost={false}
                     style={{border: '1px solid rgb(235, 237, 240)'}}
                     onBack={() => history.push('/')}
@@ -108,6 +104,5 @@ export function DJBRListPage() {
                                                    sorter: (a, _) => (a.presented ? 1 : -1),
                                                }]}/>
         </PageHeader>
-        <Footer tableMode={true}/>
-    </>
+    </BaseDatosPage>
 }

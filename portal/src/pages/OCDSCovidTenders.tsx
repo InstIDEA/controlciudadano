@@ -22,7 +22,6 @@ export function OCDSCovidTenders() {
     const [data, setData] = useState<OCDSCovidTenderWithQuery[]>();
     const history = useHistory();
     const [query, setQuery] = useState('');
-    const isExploreMenu = history.location.pathname.includes('explore');
 
     useEffect(() => {
         setWorking(true);
@@ -45,7 +44,7 @@ export function OCDSCovidTenders() {
         'supplier_query'
     ]), d => d.ocid), [data, query]);
 
-    return <BaseDatosPage menuIndex="tenders" sidebar={isExploreMenu} headerExtra={
+    return <BaseDatosPage menuIndex="tenders" headerExtra={
         <SearchBar defaultValue={query || ''} onSearch={setQuery}/>
     }>
         <PageHeader ghost={false}

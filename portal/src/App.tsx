@@ -80,6 +80,7 @@ function Routes() {
                 <Route path="/djbr/portal" exact render={() => <DJBRDashboard/>}/>
                 <Route path="/djbr/tutorial" exact render={() => <TutorialsPage/>}/>
                 <Route path="/djbr/list" exact render={() => <DJBRListPage/>}/>
+                <Route path="/explore/djbr/list" exact render={() => <DJBRListPage/>}/>
 
                 <Route path="/sources/:dataSetId" exact render={() => <DSDownload/>}/>
 

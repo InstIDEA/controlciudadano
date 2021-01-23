@@ -31,7 +31,7 @@ const data = [{
     description: 'Autoridades electas en elecciones generales',
     icon: autoridades
 }, {
-    link: '/djbr/list',
+    link: '/explore/djbr/list',
     title: 'Declaraciones de autoridades',
     description: 'Listado de declaraciones juradas de bienes y rentas presentadas por autoridades electas',
     icon: djbr

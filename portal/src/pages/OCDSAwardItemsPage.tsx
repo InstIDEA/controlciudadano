@@ -17,7 +17,6 @@ export function OCDSAwardItemsPage() {
     const [working, setWorking] = useState(false);
     const [data, setData] = useState<OCDSItemsAwardedCOVID19[]>();
     const history = useHistory();
-    const isExploreMenu = history.location.pathname.includes('explore');
 
     useEffect(() => {
         setWorking(true);
@@ -36,7 +35,7 @@ export function OCDSAwardItemsPage() {
         'buyer_name'
     ]), [data, query]);
 
-    return <BaseDatosPage menuIndex="items" sidebar={isExploreMenu}
+    return <BaseDatosPage menuIndex="items"
                           className="oaip"
                           headerExtra={
                               <SearchBar defaultValue={query}

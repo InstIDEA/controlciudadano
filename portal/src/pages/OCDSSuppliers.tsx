@@ -12,7 +12,6 @@ export function OCDSSuppliers() {
     const [data, setData] = useState<Supplier[]>();
     const history = useHistory();
     const [query, setQuery] = useState('');
-    const isExploreMenu = history.location.pathname.includes('explore');
 
     useEffect(() => {
         setWorking(true);
@@ -31,7 +30,7 @@ export function OCDSSuppliers() {
     ]), [data, query]);
 
     return <>
-        <BaseDatosPage menuIndex="suppliers" sidebar={isExploreMenu} headerExtra={
+        <BaseDatosPage menuIndex="suppliers" headerExtra={
            <SearchBar defaultValue={query || ''} onSearch={setQuery}/>
         }>
             <PageHeader ghost={false}

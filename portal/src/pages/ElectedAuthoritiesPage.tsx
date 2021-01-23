@@ -14,7 +14,6 @@ export function ElectedAuthoritiesPage() {
     const [working, setWorking] = useState(false);
     const [data, setData] = useState<Authorities[]>();
     const history = useHistory();
-    const isExploreMenu = history.location.pathname.includes('explore');
 
     useEffect(() => {
         setWorking(true);
@@ -33,7 +32,7 @@ export function ElectedAuthoritiesPage() {
     ]), [data, query]);
 
     return <>
-        <BaseDatosPage menuIndex="authorities" sidebar={isExploreMenu} headerExtra={
+        <BaseDatosPage menuIndex="authorities" headerExtra={
             <SearchBar defaultValue={query || ''} onSearch={setQuery}/>
         }>
             <PageHeader ghost={false}

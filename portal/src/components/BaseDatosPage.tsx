@@ -8,7 +8,6 @@ import './layout/Layout.css'
 export function BaseDatosPage(props: {
     headerExtra?: ReactNode;
     title?: string;
-    sidebar?: boolean,
     subtitle?: string;
     menuIndex: string;
     children: ReactNode;
@@ -16,7 +15,7 @@ export function BaseDatosPage(props: {
 }) {
     return <div className={props.className}>
         <Header tableMode={true} searchBar={props.headerExtra}/>
-        <Sidebar menuIndex={props.menuIndex} sidebar={props.sidebar}>
+        <Sidebar menuIndex={props.menuIndex}>
             <Row style={{minHeight: "90vh"}}>
                 <Col span={24}>
                     {props.children}
