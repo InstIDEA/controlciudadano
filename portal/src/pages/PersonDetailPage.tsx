@@ -55,8 +55,14 @@ export function PersonDetailPage() {
             .then(d => {
                 if (!d || !d.analysis) return;
                 setAnalysis(d);
-                setAffidavit(d.analysis.declarations)
-                setTsje(d.analysis.tsje_elected);
+                if (d.analysis.declarations && d.analysis.declarations.length > 0) {
+                    d.analysis.declarations.sort((a1, a2) => a2.year - a1.year)
+                    setAffidavit(d.analysis.declarations);
+                }
+                if (d.analysis.tsje_elected && d.analysis.tsje_elected.length > 0) {
+                    d.analysis.tsje_elected.sort((t1, t2) => parseInt(t2.year_elected) - parseInt(t1.year_elected));
+                    setTsje(d.analysis.tsje_elected);
+                }
             })
         new SimpleApi()
             .findPeople(document)
@@ -147,25 +153,25 @@ export function PersonDetailPage() {
                     {
                         local?.staging.pytyvo && local?.staging.pytyvo.length > 0 &&
                         <Col {...spans}>
-                          <Card className="data-box" title="Pytyvo" style={{height: cardHeight}}
-                                extra={<Icon component={Pytyvo} className="icon-card"/>}>
-                            <Space direction="vertical">
-                              <LVRow label={"Departamento"} value={local.staging.pytyvo[0].department}/>
-                              <LVRow label={"Distrito"} value={local.staging.pytyvo[0].district}/>
-                            </Space>
-                          </Card>
+                            <Card className="data-box" title="Pytyvo" style={{height: cardHeight}}
+                                  extra={<Icon component={Pytyvo} className="icon-card"/>}>
+                                <Space direction="vertical">
+                                    <LVRow label={"Departamento"} value={local.staging.pytyvo[0].department}/>
+                                    <LVRow label={"Distrito"} value={local.staging.pytyvo[0].district}/>
+                                </Space>
+                            </Card>
                         </Col>
                     }
                     {
                         local?.staging.nangareko && local?.staging.nangareko.length > 0 &&
                         <Col {...spans}>
-                          <Card className="data-box" title="Ñangareko" style={{height: cardHeight}}
-                                extra={<Icon component={Nangareko} className="icon-card"/>}>
-                            <Space direction="vertical">
-                              <LVRow label={"Departamento"} value={local.staging.nangareko[0].department}/>
-                              <LVRow label={"Distrito"} value={local.staging.nangareko[0].district}/>
-                            </Space>
-                          </Card>
+                            <Card className="data-box" title="Ñangareko" style={{height: cardHeight}}
+                                  extra={<Icon component={Nangareko} className="icon-card"/>}>
+                                <Space direction="vertical">
+                                    <LVRow label={"Departamento"} value={local.staging.nangareko[0].department}/>
+                                    <LVRow label={"Distrito"} value={local.staging.nangareko[0].district}/>
+                                </Space>
+                            </Card>
                         </Col>
                     }
 
@@ -184,34 +190,34 @@ export function PersonDetailPage() {
                     {
                         local?.staging.policia && local?.staging.policia.length > 0 &&
                         <Col {...spans}>
-                          <Card className="data-box" title="Policía Nacional" style={{height: cardHeight}}
-                                extra={<Icon component={PoliciaNacional} className="icon-card"/>}>
-                            <Space direction="vertical">
-                              <LVRow label={"Año"} value={local.staging.policia[0].ano}/>
-                              <LVRow label={"Presupuesto"} value={local.staging.policia[0].presupuesto}/>
-                              <LVRow label={"Remuneración"} value={local.staging.policia[0].remuneracion}/>
-                            </Space>
-                          </Card>
+                            <Card className="data-box" title="Policía Nacional" style={{height: cardHeight}}
+                                  extra={<Icon component={PoliciaNacional} className="icon-card"/>}>
+                                <Space direction="vertical">
+                                    <LVRow label={"Año"} value={local.staging.policia[0].ano}/>
+                                    <LVRow label={"Presupuesto"} value={local.staging.policia[0].presupuesto}/>
+                                    <LVRow label={"Remuneración"} value={local.staging.policia[0].remuneracion}/>
+                                </Space>
+                            </Card>
                         </Col>
                     }
                     {
                         local?.staging.ande_exonerados && local?.staging.ande_exonerados.length > 0 &&
                         <Col {...spans}>
-                          <Card className="data-box" title="Exonerado por la ANDE durante la Pandemia COVID 19"
-                                style={{height: cardHeight}}
-                                extra={<Icon component={Ande} className="icon-card"/>}
-                                actions={[
-                                    <a href="https://informacionpublica.paraguay.gov.py/portal/#!/ciudadano/solicitud/31210"
-                                       target="_blank" rel="noopener noreferrer">Ver solicitud de acceso a información
-                                        pública
-                                    </a>
-                                ]}
-                          >
-                            <Space direction="vertical">
-                              <LVRow label={"Agencia"} value={local.staging.ande_exonerados[0].agencia}/>
-                              <LVRow label={"NIS"} value={local.staging.ande_exonerados[0].nis}/>
-                            </Space>
-                          </Card>
+                            <Card className="data-box" title="Exonerado por la ANDE durante la Pandemia COVID 19"
+                                  style={{height: cardHeight}}
+                                  extra={<Icon component={Ande} className="icon-card"/>}
+                                  actions={[
+                                      <a href="https://informacionpublica.paraguay.gov.py/portal/#!/ciudadano/solicitud/31210"
+                                         target="_blank" rel="noopener noreferrer">Ver solicitud de acceso a información
+                                          pública
+                                      </a>
+                                  ]}
+                            >
+                                <Space direction="vertical">
+                                    <LVRow label={"Agencia"} value={local.staging.ande_exonerados[0].agencia}/>
+                                    <LVRow label={"NIS"} value={local.staging.ande_exonerados[0].nis}/>
+                                </Space>
+                            </Card>
                         </Col>
 
                     }
@@ -278,10 +284,11 @@ function tryToGuestHeader(baseDoc: string,
         const chargeData: Record<string, number> = {};
         localClone.filter(h => !!h.cargo)
             .forEach(h => {
-                if (chargeData[h.cargo]) {
+                const chargeName = `${h.cargo} (${h.descripcion_entidad})`;
+                if (chargeData[chargeName]) {
                     return;
                 } else {
-                    chargeData[h.cargo] = h.anho
+                    chargeData[chargeName] = h.anho
                 }
             });
 
@@ -323,10 +330,12 @@ function tryToGuestHeader(baseDoc: string,
                 .sort((h1, h2) => h1.anio > h2.anio ? 1 : -1)
                 .filter(h => !!h.cargo)
                 .forEach(h => {
-                    if (chargeData[h.cargo]) {
+                    const chargeName = `${h.cargo} (${h.descripcionentidad})`
+                        .replaceAll('�', '')
+                    if (chargeData[chargeName]) {
                         return;
                     } else {
-                        chargeData[h.cargo] = h.anio
+                        chargeData[chargeName] = h.anio
                     }
                 });
 

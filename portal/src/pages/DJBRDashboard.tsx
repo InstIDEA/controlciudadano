@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useEffect, useMemo, useState} from 'react';
+import {useMemo} from 'react';
 import {Avatar, Card, Col, Collapse, Comment, Divider, Layout, Row, Tooltip, Typography} from 'antd';
 import {Header} from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
@@ -14,32 +14,20 @@ import {ByListChart} from '../components/ddjj/ListChart';
 import {ByDepartamentHeatMap} from '../components/ddjj/HeatMap';
 import useMetaTags from 'react-metatags-hook';
 import {DisclaimerComponent} from '../components/Disclaimer';
-import {Async, AsyncHelper, StatisticsDJBR} from '../Model';
-import {RedashAPI} from '../RedashAPI';
 import {CurrentFilters} from '../components/ddjj/CurrentFilters';
 import {Link} from 'react-router-dom';
 
 import './DJBRDashboard.css';
 import {CardPopup} from '../components/ddjj/CardPopup';
+import {useDJBRStats} from "../hooks/useStats";
+
+const ALL_FILTERS_KEYS = ['list', 'year_elected', 'department', 'district', 'election', 'charge'];
 
 export function DJBRDashboard() {
 
-    const [statistics, setStatistics] = useState<Async<StatisticsDJBR>>(AsyncHelper.noRequested());
+    const statistics = useDJBRStats();
     const isSmall = useMediaQuery('only screen and (max-width: 768px)');
     const filter = useMemo(() => <Filter/>, []);
-
-    const finalStats = AsyncHelper.or(statistics, {
-        count_declarations_auths: 1273,
-        last_success_fetch: '2020/12/26',
-        total_authorities: 113742,
-        total_declarations: 13067
-    });
-
-    useEffect(() => {
-        new RedashAPI().getDJBRStatistics()
-            .then(d => setStatistics(AsyncHelper.loaded(d.query_result.data.rows[0])))
-            .catch(e => setStatistics(AsyncHelper.error(e)));
-    }, [])
 
     useMetaTags({
         title: `Declaraciones juradas de bienes y rentas`,
@@ -69,23 +57,23 @@ export function DJBRDashboard() {
             }}>
                 <Layout.Content className="content-padding">
                     {isSmall && <Row>
-                      <Col xs={{span: 24}}>
-                        <Collapse defaultActiveKey={['2']} bordered={false}>
-                          <Collapse.Panel header="Filtros" key="1">
-                              {filter}
-                          </Collapse.Panel>
-                        </Collapse>
-                      </Col>
+                        <Col xs={{span: 24}}>
+                            <Collapse defaultActiveKey={['2']} bordered={false}>
+                                <Collapse.Panel header="Filtros" key="1">
+                                    {filter}
+                                </Collapse.Panel>
+                            </Collapse>
+                        </Col>
                     </Row>}
                     <Row>
                         <CurrentFilters/>
                     </Row>
                     <Row>
                         <DisclaimerComponent full card>
-                            Existen {formatMoney(finalStats.total_authorities)} autoridades electas desde 1996,
-                            contamos con {formatMoney(finalStats.total_declarations)} declaraciones juradas,
-                            de las cuales {formatMoney(finalStats.count_declarations_auths)} son de autoridades
-                            (al {formatSortableDate(finalStats.last_success_fetch)}).
+                            Existen {formatMoney(statistics.total_authorities)} autoridades electas desde 1996,
+                            contamos con {formatMoney(statistics.total_declarations)} declaraciones juradas,
+                            de las cuales {formatMoney(statistics.count_declarations_auths)} son de autoridades
+                            (al {formatSortableDate(statistics.last_success_fetch)}).
                             <br/>
                             Podrían existir Declaraciones
                             Juradas presentadas pero no así publicadas por la Contraloría General de la República.
@@ -116,10 +104,9 @@ function Filter() {
                        queryFormat="and"
                        showCheckbox
                        URLParams
+                       sortBy="desc"
                        showSearch={false}
-                       react={{
-                           and: ['departament', 'list', 'year_elected', 'district', 'election'],
-                       }}
+                       react={{and: ALL_FILTERS_KEYS,}}
             />
             <Divider orientation="left" plain/>
             <Typography.Title className="ant-card-head"
@@ -131,10 +118,7 @@ function Filter() {
                        sortBy="desc"
                        URLParams
                        showSearch={false}
-                       react={{
-                           and: ['departament', 'list', 'year_elected', 'district', 'election'],
-                       }}
-            />
+                       react={{and: ALL_FILTERS_KEYS}}/>
             <Divider orientation="left" plain/>
             <Typography.Title className="ant-card-head"
                               style={{paddingLeft: 0, paddingTop: 10}}>Departamento</Typography.Title>
@@ -145,10 +129,8 @@ function Filter() {
                        URLParams
                        showSearch={true}
                        placeholder='Buscar'
-                       react={{
-                           and: ['year_elected', 'list', 'departament', 'district', 'election'],
-                       }}
-            /><Divider orientation="left" plain/>
+                       react={{and: ALL_FILTERS_KEYS}}/>
+            <Divider orientation="left" plain/>
             <Typography.Title className="ant-card-head"
                               style={{paddingLeft: 0, paddingTop: 10}}>Distrito</Typography.Title>
             <MultiList componentId="district"
@@ -158,9 +140,7 @@ function Filter() {
                        URLParams
                        showSearch={true}
                        placeholder='Buscar'
-                       react={{
-                           and: ['year_elected', 'list', 'departament', 'district', 'election'],
-                       }}/>
+                       react={{and: ALL_FILTERS_KEYS}}/>
             <Typography.Title className="ant-card-head"
                               style={{paddingLeft: 0, paddingTop: 10}}>Partido Político</Typography.Title>
             <MultiList componentId="list"
@@ -175,10 +155,21 @@ function Filter() {
                        showSearch={true}
                        placeholder='Buscar'
                        style={{}}
-                       react={{
-                           and: ['year_elected', 'departament', 'list', 'district', 'election'],
+                       react={{and: ALL_FILTERS_KEYS}}/>
+            <Typography.Title className="ant-card-head"
+                              style={{paddingLeft: 0, paddingTop: 10}}>Tipo de candidatura</Typography.Title>
+            <MultiList componentId="charge"
+                       dataField="charge.keyword"
+                       queryFormat="and"
+                       className="multi-list"
+                       innerClass={{
+                           listSearch: 'list-search'
                        }}
-            />
+                       showCheckbox
+                       URLParams
+                       showSearch={false}
+                       style={{}}
+                       react={{and: ALL_FILTERS_KEYS}}/>
         </Card>
     </Col>
 }
@@ -198,7 +189,7 @@ function ResultComponent(props: {
                     dataField="document.keyword"
                     componentId="SearchResult"
                     react={{
-                        and: ['list', 'year_elected', 'department', 'district', 'election']
+                        and: ALL_FILTERS_KEYS
                     }}
                     infiniteScroll={false}
                     renderNoResults={() => "Sin resultados que cumplan con tu búsqueda"}
@@ -246,9 +237,7 @@ function ChartsComponent() {
                                         }
                                     })}
                                     render={props => <PresentedDeclarationChart {...props} />}
-                                    react={{
-                                        and: ['list', 'year_elected', 'departament', 'district', 'election'],
-                                    }}
+                                    react={{and: ALL_FILTERS_KEYS}}
                                 />
                             </GraphWrapper>
                         </Col>
@@ -276,42 +265,38 @@ function ChartsComponent() {
                                         }
                                     })}
                                     render={props => <BySexChart {...props} />}
-                                    react={{
-                                        and: ['list', 'year_elected', 'departament', 'district', 'election'],
-                                    }}
+                                    react={{and: ALL_FILTERS_KEYS}}
                                 />
                             </GraphWrapper>
                         </Col>
                         <Col xl={12} lg={12} sm={24} xs={24}>
-                                <ReactiveComponent
-                                    componentId="DeclarationsChargeChart"
-                                    defaultQuery={() => ({
-                                        aggs: {
-                                            "charge.keyword": {
-                                                terms: {
-                                                    field: 'charge.keyword',
-                                                    order: {_count: 'desc'},
-                                                    size: 20
-                                                },
-                                                aggs: {
-                                                    presented: {
-                                                        filter: {
-                                                            term: {
-                                                                presented: true
-                                                            }
+                            <ReactiveComponent
+                                componentId="DeclarationsChargeChart"
+                                defaultQuery={() => ({
+                                    aggs: {
+                                        "charge.keyword": {
+                                            terms: {
+                                                field: 'charge.keyword',
+                                                order: {_count: 'desc'},
+                                                size: 20
+                                            },
+                                            aggs: {
+                                                presented: {
+                                                    filter: {
+                                                        term: {
+                                                            presented: true
                                                         }
                                                     }
                                                 }
                                             }
                                         }
-                                    })}
-                                    render={props => <CardPopup title="Tipo de candidatura"
-                                                                cardHeight={200}
-                                                                component={cp => <ByChargeChart {...props} {...cp}/>}/>}
-                                    react={{
-                                        and: ['list', 'year_elected', 'departament', 'district', 'election'],
-                                    }}
-                                />
+                                    }
+                                })}
+                                render={props => <CardPopup title="Tipo de candidatura"
+                                                            cardHeight={200}
+                                                            component={cp => <ByChargeChart {...props} {...cp}/>}/>}
+                                react={{and: ALL_FILTERS_KEYS}}
+                            />
                         </Col>
                         <Col xl={12} lg={12} sm={24} xs={24}>
                             <ReactiveComponent
@@ -338,9 +323,7 @@ function ChartsComponent() {
                                 render={props => <CardPopup title="Partido"
                                                             cardHeight={200}
                                                             component={cp => <ByListChart {...props} {...cp}/>}/>}
-                                react={{
-                                    and: ['list', 'year_elected', 'departament', 'district', 'election'],
-                                }}
+                                react={{and: ALL_FILTERS_KEYS}}
                             />
                         </Col>
                         <Col xl={12} lg={12} sm={24} xs={24}>
@@ -376,9 +359,7 @@ function ChartsComponent() {
                                     render={(props) => (
                                         <ByAgeChart {...props} />
                                     )}
-                                    react={{
-                                        and: ['list', 'year_elected', 'departament', 'district', 'election'],
-                                    }}
+                                    react={{and: ALL_FILTERS_KEYS}}
                                 />
                             </GraphWrapper>
                         </Col>
@@ -410,9 +391,7 @@ function ChartsComponent() {
                                     }
                                 })}
                                 render={(props) => <ByDepartamentHeatMap {...props} />}
-                                react={{
-                                    and: ['list', 'year_elected', 'departament', 'district', 'election'],
-                                }}
+                                react={{and: ALL_FILTERS_KEYS}}
                             />
                         </GraphWrapper>
                     </Col>

@@ -30,6 +30,8 @@ export function ListChart(props: {
                 borderColor={{from: 'color', modifiers: [['darker', 1.6]]}}
                 axisTop={null}
                 axisRight={null}
+                labelFormat={formatMoney}
+                tooltipFormat={formatMoney}
                 axisLeft={{
                     tickSize: 4,
                     tickPadding: 4,
@@ -107,7 +109,13 @@ export function ByListChart(props: {
                    leftTickOnlyInitials={false}
                    height={finalHeight}/>
         {showDisclaimer &&
-        <div style={{textAlign: 'center', width: '100%', fontSize: '0.7em', textDecoration: 'underline', cursor: 'pointer'}}
+        <div style={{
+            textAlign: 'center',
+            width: '100%',
+            fontSize: '0.7em',
+            textDecoration: 'underline',
+            cursor: 'pointer'
+        }}
              onClick={props.requestModal}>Presiona para ver todos los partidos</div>}
     </div>
 
@@ -192,15 +200,15 @@ const AxisTick = ({
 }
 
 const InitialsTick = ({
-                      value: _value,
-                      format,
-                      lineX,
-                      lineY,
-                      onClick,
-                      textBaseline,
-                      textAnchor,
-                      animatedProps,
-                  }: any) => {
+                          value: _value,
+                          format,
+                          lineX,
+                          lineY,
+                          onClick,
+                          textBaseline,
+                          textAnchor,
+                          animatedProps,
+                      }: any) => {
     const theme = useTheme()
 
     let value = _value

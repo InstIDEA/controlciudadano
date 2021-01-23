@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import { OCDSSupplierSanctions, OCDSSupplierWithSanction } from '../Model';
-import { filterRedashList, RedashAPI } from '../RedashAPI';
-import { message, PageHeader, Space, Table, Tooltip, Typography, List, Card } from 'antd';
-import { formatIsoDate, formatMoney } from '../formatters';
-import { BaseDatosPage } from '../components/BaseDatosPage';
-import { SearchBar } from '../components/SearchBar';
+import React, {useEffect, useMemo, useState} from 'react';
+import {Link, useHistory} from 'react-router-dom';
+import {OCDSSupplierSanctions, OCDSSupplierWithSanction} from '../Model';
+import {filterRedashList, RedashAPI} from '../RedashAPI';
+import {Card, List, message, PageHeader, Space, Table, Tooltip, Typography} from 'antd';
+import {formatIsoDate, formatMoney} from '../formatters';
+import {BaseDatosPage} from '../components/BaseDatosPage';
+import {SearchBar} from '../components/SearchBar';
 
 export function OCDSSupplierWithSanctionPage() {
 
@@ -13,7 +13,6 @@ export function OCDSSupplierWithSanctionPage() {
     const [data, setData] = useState<OCDSSupplierWithSanction[]>();
     const [working, setWorking] = useState(false);
     const [query, setQuery] = useState('');
-    const isExploreMenu = history.location.pathname.includes('explore');
 
     useEffect(() => {
         setWorking(false)
@@ -24,7 +23,7 @@ export function OCDSSupplierWithSanctionPage() {
                 message.warn("Can't fetch suppliers");
             })
             .finally(() => setWorking(false))
-            ;
+        ;
     }, []);
 
     const filtered = useMemo(() => filterRedashList(data || [], query, [
@@ -33,15 +32,15 @@ export function OCDSSupplierWithSanctionPage() {
     ]), [data, query]);
 
     return <BaseDatosPage
-        menuIndex="sanctionedSuppliers" sidebar={isExploreMenu} headerExtra={
-            <SearchBar defaultValue={query || ''} onSearch={setQuery}/>
-        }>
+        menuIndex="sanctionedSuppliers" headerExtra={
+        <SearchBar defaultValue={query || ''} onSearch={setQuery}/>
+    }>
         <PageHeader ghost={false}
-            style={{ border: '1px solid rgb(235, 237, 240)' }}
-            onBack={() => history.push('/')}
-            backIcon={null}
-            title="¿A quiénes se compró?"
-            subTitle="">
+                    style={{border: '1px solid rgb(235, 237, 240)'}}
+                    onBack={() => history.push('/')}
+                    backIcon={null}
+                    title="¿A quiénes se compró?"
+                    subTitle="">
 
 
             <Typography.Paragraph>
@@ -62,13 +61,14 @@ export function OCDSSupplierWithSanctionPage() {
                     dataIndex: 'supplier_name',
                     title: 'Proveedor',
                     align: 'left',
-                    render: (_, r) => <Link to={`/ocds/suppliers/${r.supplier_id}?onlyCovid=1`}>{r.supplier_name}</Link>,
+                    render: (_, r) => <Link
+                        to={`/ocds/suppliers/${r.supplier_id}?onlyCovid=1`}>{r.supplier_name}</Link>,
                     sorter: (a, b) => (a.supplier_name || '').localeCompare(b.supplier_name)
                 }, {
                     dataIndex: 'sanctions',
                     align: 'right',
                     title: 'Sanciones',
-                    render: (_, r) => <SanctionComponent data={r.sanctions} />
+                    render: (_, r) => <SanctionComponent data={r.sanctions}/>
                 }, {
                     dataIndex: 'awarded_amount',
                     align: 'right',
@@ -76,49 +76,50 @@ export function OCDSSupplierWithSanctionPage() {
                     defaultSortOrder: 'descend',
                     render: (_, r) => formatMoney(r.awarded_amount, 'PYG'),
                     sorter: (a, b) => a.awarded_amount - b.awarded_amount,
-                }]} />
-                <List
-                    className="show-responsive"
-                    grid={{
-                        gutter: 16,
-                        xs: 1,
-                        sm: 1,
-                        md: 1,
-                        lg: 4,
-                        xl: 5,
-                        xxl: 6
-                    }}
-                    pagination={{
-                        showSizeChanger: true,
-                        position: "bottom"
-                    }}
-                    dataSource={filtered}
-                    loading={working}
-                    renderItem={(r: OCDSSupplierWithSanction) =>
-                        <List.Item className="list-item">
-                            <Card bordered={false}>
-                                Proveedor: <Link to={`/ocds/suppliers/${r.supplier_id}?onlyCovid=1`}>{r.supplier_name}</Link>
-                                <br />
-                                Sanciones: <SanctionComponent data={r.sanctions} />
-                                <br />
-                                Monto total adjudicado: { formatMoney(r.awarded_amount, 'PYG')}
-                                <br />
-                            </Card>
-                        </List.Item>
-                    }
-                >
-                </List>
+                }]}/>
+            <List
+                className="show-responsive"
+                grid={{
+                    gutter: 16,
+                    xs: 1,
+                    sm: 1,
+                    md: 1,
+                    lg: 4,
+                    xl: 5,
+                    xxl: 6
+                }}
+                pagination={{
+                    showSizeChanger: true,
+                    position: "bottom"
+                }}
+                dataSource={filtered}
+                loading={working}
+                renderItem={(r: OCDSSupplierWithSanction) =>
+                    <List.Item className="list-item">
+                        <Card bordered={false}>
+                            Proveedor: <Link
+                            to={`/ocds/suppliers/${r.supplier_id}?onlyCovid=1`}>{r.supplier_name}</Link>
+                            <br/>
+                            Sanciones: <SanctionComponent data={r.sanctions}/>
+                            <br/>
+                            Monto total adjudicado: {formatMoney(r.awarded_amount, 'PYG')}
+                            <br/>
+                        </Card>
+                    </List.Item>
+                }
+            >
+            </List>
         </PageHeader>
     </BaseDatosPage>
 }
 
-export function SanctionComponent({ data }: {
+export function SanctionComponent({data}: {
     data: OCDSSupplierSanctions[]
 }) {
     if (!data
         || !data.length
         || data[0].type === null) {
-        return <span />
+        return <span/>
     }
 
     const keys: string[] = [];
@@ -148,7 +149,7 @@ export function SanctionComponent({ data }: {
             const title = <div>
                 {sanction.type} en {sanction.details.activityTypes.split(";").join(", ")}
                 {sanction.details.products && <React.Fragment>
-                    <br /><b>Productos:</b>
+                    <br/><b>Productos:</b>
                     <ul>{sanction.details.products.map(p => <li key={p.id}>{p.name}</li>)}</ul>
                 </React.Fragment>}
             </div>;

@@ -13,7 +13,6 @@ export function EssapExoneratedList() {
     const [working, setWorking] = useState(false);
     const [data, setData] = useState<EssapExonerated[]>();
     const history = useHistory();
-    const isExploreMenu = history.location.pathname.includes('explore');
 
     useEffect(() => {
         setWorking(true);
@@ -29,7 +28,7 @@ export function EssapExoneratedList() {
     ]), [data, query]);
 
     return <>
-        <BaseDatosPage menuIndex="essap" sidebar={isExploreMenu} headerExtra={
+        <BaseDatosPage menuIndex="essap" headerExtra={
             <div className="header-search-wrapper">
                 <SearchBar defaultValue={query} onSearch={setQuery}/>
             </div>

@@ -17,7 +17,6 @@ export function DocumentSearchPage() {
     const [sfp, setSFP] = useState<object[]>();
     const [local, setLocal] = useState<LocalSearchResult>();
     const history = useHistory();
-    const isExploreMenu = history.location.pathname.includes('explore');
     function doSearchSFP(cedula: string) {
         if (!cedula) return;
 
@@ -45,7 +44,7 @@ export function DocumentSearchPage() {
 
 
     return <> 
-    <BaseDatosPage menuIndex="people" sidebar={isExploreMenu} headerExtra={
+    <BaseDatosPage menuIndex="people" headerExtra={
         <SearchBar defaultValue={document || ''} onSearch={v => setDocument(v)}/>
     }>
     <PageHeader ghost={false}
