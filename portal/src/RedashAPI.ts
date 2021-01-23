@@ -23,6 +23,7 @@ const BASE_API = "https://redash.controlciudadanopy.org/api";
 const API_KEYS: Record<number, string> = {
     1: "Wtp9iNNTzO2yTbUwfoE4bOM7qd9msWnWIJ9aeatl",
     18: 'a2kmZeR9AdGeldeP0RXg2JWSZeevSA62xzpN15jb',
+    19: 't1vzCahxS5vaNYJ8Fdzn0Fur7oEMAShRqMZPMiTS',
     21: "tfBr4sqHm3JYSUxktgeu16EwHKO3Qh9tSEgz6Pui",
     25: "ILEsnIawXqNOajocI8PrxH0QfbdGeeyaEEbzkLsQ",
     26: "YQP3k6QFEDgFDDXLDvyFrI1HWp2OvT07mZUL7ht8",
@@ -129,7 +130,7 @@ export class RedashAPI {
     }
 }
 
-interface BaseRedashResponse<T> {
+export interface BaseRedashResponse<T> {
     query_result: {
         data: {
             columns: object,

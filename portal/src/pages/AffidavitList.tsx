@@ -1,34 +1,26 @@
 import * as React from 'react';
-import {useEffect, useMemo, useState} from 'react';
+import {useMemo, useState} from 'react';
 import {Card, List, PageHeader, Table} from 'antd';
-import {Affidavit} from '../Model';
+import {Affidavit, AsyncHelper} from '../Model';
 import {Link, useHistory} from 'react-router-dom';
 import {filterRedashList, RedashAPI} from '../RedashAPI';
-import {formatMoney} from '../formatters';
+import {formatMoney, formatSortableDate} from '../formatters';
 import {FilePdfOutlined, ShareAltOutlined} from '@ant-design/icons';
 import {BaseDatosPage} from '../components/BaseDatosPage';
 import {SearchBar} from '../components/SearchBar';
 import {DisclaimerComponent} from '../components/Disclaimer';
+import {useDJBRStats} from "../hooks/useStats";
+import {useRedashApi} from "../hooks/useApi";
 
 export function AffidavitList() {
 
-    const [working, setWorking] = useState(false);
-    const [data, setData] = useState<Affidavit[]>();
+    const stats = useDJBRStats();
+    const data = useRedashApi(new RedashAPI().getAffidavit);
     const history = useHistory();
     const [query, setQuery] = useState('');
     const isExploreMenu = history.location.pathname.includes('explore');
 
-    useEffect(() => {
-        setWorking(true);
-        new RedashAPI('t1vzCahxS5vaNYJ8Fdzn0Fur7oEMAShRqMZPMiTS')
-            .getAffidavit()
-            .then(d => setData(d.query_result.data.rows))
-            .finally(() => setWorking(false))
-        ;
-    }, []);
-
-
-    const filtered = useMemo(() => filterRedashList(data || [], query, [
+    const filtered = useMemo(() => filterRedashList(AsyncHelper.or(data, []), query, [
         'name',
         'document',
         'year'
@@ -53,13 +45,13 @@ export function AffidavitList() {
 
                     <br/>
                     No contamos con todas las declaraciones juradas, pues las mismas se actualizan a diario,
-                    esta lista fue actualizada por última vez el 04 de Enero de 2021.
+                    esta lista fue actualizada por última vez el {formatSortableDate(stats.last_success_fetch)}
                 </DisclaimerComponent>
 
 
                 <Table<Affidavit> dataSource={filtered}
                                   className="hide-responsive"
-                                  loading={working}
+                                  loading={data.state === 'FETCHING'}
                                   rowKey="id"
                                   size="small"
                                   pagination={{
@@ -136,7 +128,7 @@ export function AffidavitList() {
                         position: "bottom"
                     }}
                     dataSource={filtered}
-                    loading={working}
+                    loading={data.state === 'FETCHING'}
                     renderItem={(r: Affidavit) =>
                         <List.Item className="list-item">
                             <Card bordered={false}>

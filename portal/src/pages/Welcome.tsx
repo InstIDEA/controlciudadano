@@ -30,6 +30,11 @@ const data = [{
     description: 'Autoridades electas en elecciones generales',
     icon: autoridades
 }, {
+    link: '/djbr/list',
+    title: 'Declaraciones de autoridades',
+    description: 'Listado de declaraciones juradas de bienes y rentas presentadas por autoridades electas',
+    icon: autoridades
+}, {
     link: '/explore/ocds/items',
     title: '¿Se compró más caro?',
     description: 'Ránking de items con posibles sobrecostos, comparados con sus precios antes de la pandemia',

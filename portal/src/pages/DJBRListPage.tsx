@@ -1,30 +1,24 @@
 import * as React from 'react';
-import {useEffect, useMemo, useState} from 'react';
+import {useMemo, useState} from 'react';
 import {PageHeader, Table, Typography} from 'antd';
-import {AuthoritiesWithoutDocument} from '../Model';
+import {AsyncHelper, AuthoritiesWithoutDocument} from '../Model';
 import {Link, useHistory} from 'react-router-dom';
 import {filterRedashList, RedashAPI} from '../RedashAPI';
 import {Header} from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import {SearchBar} from '../components/SearchBar';
+import {useDJBRStats} from "../hooks/useStats";
+import {useRedashApi} from "../hooks/useApi";
+import {formatSortableDate} from "../formatters";
 
 export function DJBRListPage() {
 
-    const [working, setWorking] = useState(false);
-    const [data, setData] = useState<AuthoritiesWithoutDocument[]>();
+    const stats = useDJBRStats();
+    const data = useRedashApi(new RedashAPI().getAuthoritiesWithoutDocument);
     const history = useHistory();
     const [query, setQuery] = useState('');
 
-    useEffect(() => {
-        setWorking(true);
-        new RedashAPI()
-            .getAuthoritiesWithoutDocument()
-            .then(d => setData(d.query_result.data.rows))
-            .finally(() => setWorking(false))
-        ;
-    }, []);
-
-    const filtered = useMemo(() => filterRedashList(data || [], query, [
+    const filtered = useMemo(() => filterRedashList(AsyncHelper.or(data, []), query, [
         'first_name',
         'last_name',
         'document',
@@ -42,7 +36,7 @@ export function DJBRListPage() {
                     style={{border: '1px solid rgb(235, 237, 240)'}}
                     onBack={() => history.push('/')}
                     backIcon={null}
-                    title="Listado de declaraciones juradas presentadas por autoridades electas"
+                    title="Listado de declaraciones juradas de bienes y rentas presentadas por autoridades electas"
                     subTitle=""
                     extra={[
                         <Link to="/sources/4" key="source">
@@ -51,13 +45,14 @@ export function DJBRListPage() {
                     ]}>
 
             <Typography.Paragraph>
-                Podrían existir Declaraciones Juradas presentadas pero no así publicadas por la Contraloría General de
-                la República
+                Podrían existir Declaraciones Juradas de bienes y rentas presentadas pero no así publicadas por la
+                Contraloría General de la República, la información presentada fue actualizada
+                al {formatSortableDate(stats.last_success_fetch)}.
             </Typography.Paragraph>
 
             <Table<AuthoritiesWithoutDocument> dataSource={filtered}
                                                className="hide-responsive"
-                                               loading={working}
+                                               loading={data.state === 'FETCHING'}
                                                rowKey="id"
                                                size="small"
                                                pagination={{
