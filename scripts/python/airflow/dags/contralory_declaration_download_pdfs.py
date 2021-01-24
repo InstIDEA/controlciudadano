@@ -32,10 +32,8 @@ from ds_table_operations import calculate_hash_of_file
 from file_system_helper import move
 from network_operators import download_file, get_head, NetworkError
 
-try:
-    target_dir = os.path.join(Variable.get("CGR_PDF_FOLDER"))
-except KeyError:
-    target_dir = os.path.join(os.sep, "tmp", "contralory", "raw")
+dag_job_target_dir = os.path.join(Variable.get("CGR_PDF_FOLDER", os.path.join(os.sep, "tmp", "contralory", "raw")))
+dag_sub_jobs_count = int(Variable.get("CGR_DOWNLOAD_PDF_SUB_JOBS_COUNT", 10))
 
 default_args = {
     "owner": "airflow",
@@ -46,7 +44,7 @@ default_args = {
     "retry_delay": timedelta(hours=1),
     "params": {
         "url": "https://portaldjbr.contraloria.gov.py/portal-djbr/api/consulta/descargarpdf/",
-        "target_dir": target_dir
+        "target_dir": dag_job_target_dir
     },
 }
 
@@ -59,16 +57,18 @@ dag = DAG(
 )
 
 
-def list_navigator(id_ends_with: int, cursor: any):
+def list_navigator(id_ends_with: int, cursor: any, mod_of: int):
     """
     Fetch a flow of values that ends with a specific number
 
     :param id_ends_with: the last digit of the id
+    :param cursor: a db cursor to fetch the rows
+    :param mod_of: we use a `mod` to check the end digit, with this param we can have more threads
     :return: yields a page, ends when the list is an empty array
     """
-    batch_size = 100
+    batch_size = int(Variable.get("CGR_DOWNLOAD_PDF_BATCH_SIZE", 10))
     should_continue = True
-    max_iterations = 100 # to prevent a infinite loop
+    max_iterations = int(Variable.get("CGR_DOWNLOAD_PDF_MAX_ITER", 100))  # to prevent a infinite loop
     current_iter = 1
 
     while should_continue:
@@ -83,11 +83,12 @@ def list_navigator(id_ends_with: int, cursor: any):
             )) as downloaded_files
         FROM staging.djbr_raw_data raw
         LEFT JOIN staging.djbr_downloaded_files downloaded ON raw.id = downloaded.raw_data_id
-        WHERE mod(raw.id, 10) = %s 
+        WHERE mod(raw.id, %s) = %s
           AND downloaded IS NULL -- we should remove this to allow re-download files if changed
         GROUP BY raw.id, raw.cedula, raw.remote_id
+        ORDER BY raw.id DESC
         LIMIT %s
-        """, [id_ends_with, batch_size])
+        """, [mod_of, id_ends_with, batch_size])
         # fetchall to dictionary
         desc = cursor.description
         column_names = [col[0] for col in desc]
@@ -157,7 +158,7 @@ def download_pdf(remote_id: str,
     }
 
 
-def do_work(number: int, url: str, target_dir: str):
+def do_work(number: int, url: str, target_dir: str, mod_of: int):
     print(f"Downloading documents that end with {number} from {url}")
 
     db_hook = PostgresHook(postgres_conn_id="postgres_default", schema="db")
@@ -168,7 +169,7 @@ def do_work(number: int, url: str, target_dir: str):
 
     temp_dir = tempfile.mkdtemp()
 
-    for records in list_navigator(number, db_cursor):
+    for records in list_navigator(number, db_cursor, mod_of):
         to_insert = []
         for record in records:
             try:
@@ -210,7 +211,7 @@ with dag:
                                         ''')
 
     # for digit in range(0, 1):
-    for digit in range(0, 10):
+    for digit in range(0, dag_sub_jobs_count):
         # Get list from webpage
         download_number = PythonOperator(
             task_id=f"""download_number_{digit}""",
@@ -218,7 +219,8 @@ with dag:
             op_kwargs={
                 "number": digit,
                 "url": "{{ params.url }}",
-                "target_dir": "{{ params.target_dir }}"
+                "target_dir": "{{ params.target_dir }}",
+                "mod_of": dag_sub_jobs_count
             },
         )
 
