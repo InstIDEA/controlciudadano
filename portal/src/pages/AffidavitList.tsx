@@ -100,12 +100,13 @@ export function AffidavitList() {
                                   dataIndex: '',
                                   title: 'Acciones',
                                   render: (_, row) => <div style={{fontSize: '1.5em'}}>
-                                      <a href={row.linksandwich || row.link} target="_blank"
+                                      <a href={fixLink(row.linksandwich || row.link)} target="_blank"
                                          rel="noopener noreferrer"
                                          title="Ver">
                                           <FilePdfOutlined/>
                                       </a>
-                                      <a href={row.source} target="_blank" rel="noopener noreferrer" title="Fuente">
+                                      <a href={fixLink(row.source)} target="_blank" rel="noopener noreferrer"
+                                         title="Fuente">
                                           <ShareAltOutlined/>
                                       </a>
                                   </div>
@@ -149,11 +150,11 @@ export function AffidavitList() {
                             : formatMoney(r.networth)}
                             <br/>
                             <div style={{fontSize: '1.5em'}}>
-                                <a href={r.linksandwich || r.link} target="_blank" rel="noopener noreferrer"
-                                   title="Ver">
+                                <a href={fixLink(r.linksandwich || r.link)} target="_blank"
+                                   rel="noopener noreferrer" title="Ver">
                                     <FilePdfOutlined/>
                                 </a>
-                                <a href={r.source} target="_blank" rel="noopener noreferrer" title="Fuente">
+                                <a href={fixLink(r.source)} target="_blank" rel="noopener noreferrer" title="Fuente">
                                     <ShareAltOutlined/>
                                 </a>
                             </div>
@@ -165,4 +166,8 @@ export function AffidavitList() {
             </List>
         </PageHeader>
     </BaseDatosPage>;
+}
+
+function fixLink(link: string) {
+    return link.replace(/ /g, "");
 }
