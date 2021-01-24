@@ -21,6 +21,7 @@ from datetime import datetime
 from datetime import timedelta
 from typing import Dict, Union, List
 
+import math
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import DAG, Variable
 from airflow.operators.dummy_operator import DummyOperator
@@ -94,7 +95,8 @@ def list_navigator(id_ends_with: int, cursor: any, mod_of: int):
         column_names = [col[0] for col in desc]
         to_yield = [dict(zip(column_names, row)) for row in cursor.fetchall()]
 
-        print(f"Fetched {len(to_yield)} from id {id_ends_with}")
+        progress = math.ceil(current_iter / max_iterations * 100)
+        print(f"Fetched {len(to_yield)} from id {id_ends_with}, iter {current_iter}, {progress}%")
         yield to_yield
 
         current_iter = current_iter + 1
