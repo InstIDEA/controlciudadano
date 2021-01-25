@@ -1,7 +1,8 @@
 DROP TABLE analysis.authorities_with_ddjj;
 
 CREATE TABLE analysis.authorities_with_ddjj AS (
-    SELECT autoridad.document     AS document,
+    SELECT row_number() OVER ()   as id,
+           autoridad.document     AS document,
            autoridad.full_name    AS full_name,
            autoridad.year_elected AS year_elected,
            autoridad.department   AS departament,
