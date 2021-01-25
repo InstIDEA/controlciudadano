@@ -44,3 +44,5 @@ UNION
 --  LIMIT 10
 )
 );
+
+CREATE INDEX "analysis.djbr_document_idx" ON analysis.djbr(document);
