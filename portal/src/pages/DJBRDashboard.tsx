@@ -455,9 +455,11 @@ function SingleResultCard(props: {
 
     return <Row gutter={[8, 8]} justify="start" align="middle">
         <Col span={1}>
-            <Avatar
-                style={{backgroundColor: getColorByIdx(props.id), verticalAlign: 'middle'}}
-                alt={data.full_name}>{getInitials(data.full_name)}</Avatar>
+            {data.photo && <Avatar src={`https://datos.aquieneselegimos.org.py/media/${data.photo}`}/>}
+            {!data.photo && <Avatar className="avatar-person"
+                                    style={{backgroundColor: getColorByIdx(props.id), verticalAlign: 'middle'}}>
+                {getInitials(data.full_name)}
+            </Avatar>}
         </Col>
         <Col span={10}>
             {data.document &&
@@ -562,6 +564,7 @@ function getColorByIdx(_id: string) {
 }
 
 interface ElasticDdjjDataResult {
+    photo: string | null;
     _id: string;
     full_name: string;
     department: string;
