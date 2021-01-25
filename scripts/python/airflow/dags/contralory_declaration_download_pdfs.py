@@ -137,9 +137,9 @@ def download_pdf(remote_id: str,
     """
 
     final_url = f"{base_path}{remote_id}"
-    file_info = get_head(final_url, verify=False)
     file_size = None
     try:
+        file_info = get_head(final_url, verify=False)
         file_size = file_info["Content-Length"]
         # We can also check if the file exists in disk and then compare the size
         find_downloaded = find_in_list(file_size, already_downloaded)
