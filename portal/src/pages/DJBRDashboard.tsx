@@ -77,7 +77,7 @@ export function DJBRDashboard() {
                             <br/>
                             Podrían existir Declaraciones
                             Juradas presentadas pero no así publicadas por la Contraloría General de la República.
-                            <a href="https://djbpublico.contraloria.gov.py/index.php" target="_blank"
+                            <a href="https://portaldjbr.contraloria.gov.py/portal-djbr/" target="_blank"
                                rel="noopener noreferrer"> Ver fuente.</a>
                         </DisclaimerComponent>
                     </Row>
