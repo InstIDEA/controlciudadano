@@ -30,7 +30,7 @@ from airflow.operators.python_operator import PythonOperator
 from airflow.utils.dates import days_ago
 
 from ds_table_operations import calculate_hash_of_file
-from file_system_helper import move
+from file_system_helper import move, get_file_size
 from network_operators import download_file, get_head, NetworkError
 
 dag_job_target_dir = os.path.join(Variable.get("CGR_PDF_FOLDER", os.path.join(os.sep, "tmp", "contralory", "raw")))
@@ -121,7 +121,8 @@ def download_pdf(remote_id: str,
                  base_path: str,
                  target_dir: str,
                  already_downloaded: List[Dict[str, any]],
-                 temp_dir: str
+                 temp_dir: str,
+                 file_prefix: str
                  ) -> Union[Dict[str, str], None]:
     """
     Downloads a pdf if necessary and returns the 'hash', 'file_size' and path of the downloaded file
@@ -131,30 +132,35 @@ def download_pdf(remote_id: str,
     :param target_dir: the final folder destination of the file
     :param already_downloaded: data about the previously downloaded files
     :param temp_dir: a temp dir when we can put temporarily files
+    :param file_prefix: the output file prefix
     :return: a dict with the 'hash', 'file_size' and 'path keys
     """
 
     final_url = f"{base_path}{remote_id}"
     file_info = get_head(final_url, verify=False)
-    file_size = file_info["Content-Length"]
-    # We can also check if the file exists in disk and then compare the size
-    find_downloaded = find_in_list(file_size, already_downloaded)
+    file_size = None
+    try:
+        file_size = file_info["Content-Length"]
+        # We can also check if the file exists in disk and then compare the size
+        find_downloaded = find_in_list(file_size, already_downloaded)
 
-    if find_downloaded is not None:
-        print(f"The file {final_url} already downloaded")
-        # We already has a copy of this file
-        return None
+        if find_downloaded is not None:
+            print(f"The file {final_url} already downloaded")
+            # We already has a copy of this file
+            return None
+    except NetworkError as ne:
+        print(f"An error trying to get the file info {str(ne)}, downloading anyway")
 
-    temp_target_path = f"{temp_dir}{remote_id}.pdf"
+    temp_target_path = f"{temp_dir}{file_prefix}.pdf"
     download_file(final_url, temp_target_path, False, False)
     file_hash = calculate_hash_of_file(temp_target_path)
-    final_name = f"{remote_id}_{file_hash}.pdf"
+    final_name = f"{file_prefix}_{file_hash}.pdf"
     final_path = os.path.join(target_dir, final_name)
     move(temp_target_path, final_path)
 
     return {
         'hash': file_hash,
-        'file_size': file_size,
+        'file_size': file_size if file_size is not None else get_file_size(final_path),
         'file_name': final_name,
         'path': final_path
     }
@@ -175,7 +181,8 @@ def do_work(number: int, url: str, target_dir: str, mod_of: int):
         to_insert = []
         for record in records:
             try:
-                data = download_pdf(record["remote_id"], url, target_dir, record["downloaded_files"], temp_dir)
+                data = download_pdf(record["remote_id"], url, target_dir, record["downloaded_files"], temp_dir,
+                                    record["cedula"])
                 if data is not None:
                     to_insert.append([
                         record["id"],
