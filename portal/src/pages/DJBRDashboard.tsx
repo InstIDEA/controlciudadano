@@ -21,7 +21,7 @@ import './DJBRDashboard.css';
 import {CardPopup} from '../components/ddjj/CardPopup';
 import {useDJBRStats} from "../hooks/useStats";
 
-const ALL_FILTERS_KEYS = ['list', 'year_elected', 'department', 'district', 'election', 'charge'];
+const ALL_FILTERS_KEYS = ['list', 'year_elected', 'departament', 'district', 'election', 'charge'];
 
 export function DJBRDashboard() {
 
