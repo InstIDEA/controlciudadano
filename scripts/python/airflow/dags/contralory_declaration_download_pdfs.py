@@ -193,8 +193,8 @@ def do_work(number: int, url: str, target_dir: str, mod_of: int):
                     ])
             except NetworkError as ne:
                 print(f"Error {ne} fetching {record['remote_id']}, skipping")
-                print("Sleeping 60 sec in case we hit a rate limit")
-                time.sleep(60)
+                print("Sleeping 5 sec in case we hit a rate limit")
+                time.sleep(5)
 
         print(f"Sending {len(to_insert)} for upsert")
         db_cursor.executemany(sql, to_insert)
