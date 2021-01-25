@@ -21,7 +21,7 @@ import './DJBRDashboard.css';
 import {CardPopup} from '../components/ddjj/CardPopup';
 import {useDJBRStats} from "../hooks/useStats";
 
-const ALL_FILTERS_KEYS = ['list', 'year_elected', 'department', 'district', 'election', 'charge'];
+const ALL_FILTERS_KEYS = ['list', 'year_elected', 'departament', 'district', 'election', 'charge'];
 
 export function DJBRDashboard() {
 
@@ -77,7 +77,7 @@ export function DJBRDashboard() {
                             <br/>
                             Podrían existir Declaraciones
                             Juradas presentadas pero no así publicadas por la Contraloría General de la República.
-                            <a href="https://djbpublico.contraloria.gov.py/index.php" target="_blank"
+                            <a href="https://portaldjbr.contraloria.gov.py/portal-djbr/" target="_blank"
                                rel="noopener noreferrer"> Ver fuente.</a>
                         </DisclaimerComponent>
                     </Row>
@@ -455,9 +455,11 @@ function SingleResultCard(props: {
 
     return <Row gutter={[8, 8]} justify="start" align="middle">
         <Col span={1}>
-            <Avatar
-                style={{backgroundColor: getColorByIdx(props.id), verticalAlign: 'middle'}}
-                alt={data.full_name}>{getInitials(data.full_name)}</Avatar>
+            {data.photo && <Avatar src={`https://datos.aquieneselegimos.org.py/media/${data.photo}`}/>}
+            {!data.photo && <Avatar className="avatar-person"
+                                    style={{backgroundColor: getColorByIdx(props.id), verticalAlign: 'middle'}}>
+                {getInitials(data.full_name)}
+            </Avatar>}
         </Col>
         <Col span={10}>
             {data.document &&
@@ -562,6 +564,7 @@ function getColorByIdx(_id: string) {
 }
 
 interface ElasticDdjjDataResult {
+    photo: string | null;
     _id: string;
     full_name: string;
     department: string;

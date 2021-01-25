@@ -24,7 +24,7 @@ export class ContraloryService {
 
     async getDeclarations(size: number, page: number) {
 
-        const QUERY = `SELECT ${COLUMNS} FROM analysis.declarations LIMIT $1 OFFSET $2`;
+        const QUERY = `SELECT ${COLUMNS} FROM analysis.djbr LIMIT $1 OFFSET $2`;
         const pagination = ContraloryService.calcOffsetLimit(page, size);
         const dataP = this.db.query(QUERY, [pagination.limit, pagination.offset]);
         const countP = this.db.query(`SELECT count(*) FROM analysis.declarations`); 
@@ -41,7 +41,7 @@ export class ContraloryService {
 
     async getDeclarationsOf(document: string) {
 
-        const QUERY = `SELECT ${COLUMNS} FROM analysis.declarations WHERE document = $1`;
+        const QUERY = `SELECT ${COLUMNS} FROM analysis.djbr WHERE document = $1`;
         const data = await this.db.query(QUERY, [document]);
 
         return {
