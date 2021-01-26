@@ -87,7 +87,7 @@ def list_navigator(id_ends_with: int, cursor: any, mod_of: int):
         WHERE mod(raw.id, %s) = %s
           AND downloaded IS NULL -- we should remove this to allow re-download files if changed
         GROUP BY raw.id, raw.cedula, raw.remote_id
-        ORDER BY raw.id DESC
+        ORDER BY RANDOM()
         LIMIT %s
         """, [mod_of, id_ends_with, batch_size])
         # fetchall to dictionary
