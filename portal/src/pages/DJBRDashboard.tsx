@@ -66,14 +66,24 @@ export function DJBRDashboard() {
                         </Col>
                     </Row>}
                     <Row>
+                        <DisclaimerComponent full card>
+                            Los funcionarios y empleados públicos están obligados a presentar a la Contraloría, sus
+                            Declaraciones Juradas de Bienes y Rentas dentro de los quince días de haber tomado posesión
+                            de cargo y en igual término al cesar en el mismo.
+                        </DisclaimerComponent>
+                    </Row>
+                    <Row>
                         <CurrentFilters/>
                     </Row>
                     <Row>
                         <DisclaimerComponent full card>
-                            Existen {formatMoney(statistics.total_authorities)} autoridades electas desde 1996,
-                            contamos con {formatMoney(statistics.total_declarations)} declaraciones juradas,
-                            de las cuales {formatMoney(statistics.count_declarations_auths)} son de autoridades
-                            (al {formatSortableDate(statistics.last_success_fetch)}).
+                            Existen {formatMoney(statistics.total_authorities)} autoridades electas
+                            desde {formatMoney(statistics.first_election_year)}, de las
+                            cuales {formatMoney(statistics.total_authorities_in_order)} han presentado sus Declaraciones
+                            Juradas de Bienes. Contamos con {formatMoney(statistics.total_declarations)} declaraciones
+                            juradas, de las cuales {formatMoney(statistics.count_declarations_auths)} son
+                            de autoridades (al {formatSortableDate(statistics.last_success_fetch)}).
+
                             <br/>
                             Podrían existir Declaraciones
                             Juradas presentadas pero no así publicadas por la Contraloría General de la República.
@@ -223,7 +233,7 @@ function ChartsComponent() {
                 <Col xl={12} lg={12} sm={24} xs={24}>
                     <Row gutter={[8, 8]}>
                         <Col xl={24} lg={24} sm={24} xs={24}>
-                            <GraphWrapper title="Cantidad de declaraciones juradas presentadas">
+                            <GraphWrapper title="Cantidad de autoridades electas que han presentado su declaración">
                                 <ReactiveComponent
                                     componentId="PresentedDeclarationsChart"
                                     defaultQuery={() => ({
