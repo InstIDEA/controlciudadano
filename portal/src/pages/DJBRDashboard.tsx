@@ -21,7 +21,7 @@ import './DJBRDashboard.css';
 import {CardPopup} from '../components/ddjj/CardPopup';
 import {useDJBRStats} from "../hooks/useStats";
 
-const ALL_FILTERS_KEYS = ['list', 'year_elected', 'departament', 'district', 'election', 'charge'];
+const ALL_FILTERS_KEYS = ['list', 'year_elected', 'departament', 'district', 'election', 'charge', 'title'];
 
 export function DJBRDashboard() {
 
@@ -116,7 +116,7 @@ function Filter() {
                        URLParams
                        sortBy="desc"
                        showSearch={false}
-                       react={{and: ALL_FILTERS_KEYS,}}
+                       react={{and: ALL_FILTERS_KEYS}}
             />
             <Divider orientation="left" plain/>
             <Typography.Title className="ant-card-head"
@@ -166,6 +166,7 @@ function Filter() {
                        placeholder='Buscar'
                        style={{}}
                        react={{and: ALL_FILTERS_KEYS}}/>
+
             <Typography.Title className="ant-card-head"
                               style={{paddingLeft: 0, paddingTop: 10}}>Tipo de candidatura</Typography.Title>
             <MultiList componentId="charge"
@@ -177,6 +178,22 @@ function Filter() {
                        }}
                        showCheckbox
                        URLParams
+                       showSearch={false}
+                       style={{}}
+                       react={{and: ALL_FILTERS_KEYS}}/>
+
+            <Typography.Title className="ant-card-head"
+                              style={{paddingLeft: 0, paddingTop: 10}}>Titular o suplente</Typography.Title>
+            <MultiList componentId="title"
+                       dataField="title.keyword"
+                       queryFormat="and"
+                       className="multi-list"
+                       innerClass={{
+                           listSearch: 'list-search'
+                       }}
+                       showCheckbox
+                       URLParams
+                       defaultValue={["TITULAR"]}
                        showSearch={false}
                        style={{}}
                        react={{and: ALL_FILTERS_KEYS}}/>
