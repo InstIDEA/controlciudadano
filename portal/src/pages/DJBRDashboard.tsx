@@ -21,7 +21,7 @@ import './DJBRDashboard.css';
 import {CardPopup} from '../components/ddjj/CardPopup';
 import {useDJBRStats} from "../hooks/useStats";
 
-const ALL_FILTERS_KEYS = ['list', 'year_elected', 'departament', 'district', 'election', 'charge'];
+const ALL_FILTERS_KEYS = ['list', 'year_elected', 'departament', 'district', 'election', 'charge', 'title'];
 
 export function DJBRDashboard() {
 
@@ -66,14 +66,24 @@ export function DJBRDashboard() {
                         </Col>
                     </Row>}
                     <Row>
+                        <DisclaimerComponent full card>
+                            Los funcionarios y empleados públicos están obligados a presentar a la Contraloría, sus
+                            Declaraciones Juradas de Bienes y Rentas dentro de los quince días de haber tomado posesión
+                            de cargo y en igual término al cesar en el mismo.
+                        </DisclaimerComponent>
+                    </Row>
+                    <Row>
                         <CurrentFilters/>
                     </Row>
                     <Row>
                         <DisclaimerComponent full card>
-                            Existen {formatMoney(statistics.total_authorities)} autoridades electas desde 1996,
-                            contamos con {formatMoney(statistics.total_declarations)} declaraciones juradas,
-                            de las cuales {formatMoney(statistics.count_declarations_auths)} son de autoridades
-                            (al {formatSortableDate(statistics.last_success_fetch)}).
+                            Existen {formatMoney(statistics.total_authorities)} autoridades electas
+                            desde {formatMoney(statistics.first_election_year)}, de las
+                            cuales {formatMoney(statistics.total_authorities_in_order)} han presentado sus Declaraciones
+                            Juradas de Bienes. Contamos con {formatMoney(statistics.total_declarations)} declaraciones
+                            juradas, de las cuales {formatMoney(statistics.count_declarations_auths)} son
+                            de autoridades (al {formatSortableDate(statistics.last_success_fetch)}).
+
                             <br/>
                             Podrían existir Declaraciones
                             Juradas presentadas pero no así publicadas por la Contraloría General de la República.
@@ -106,7 +116,7 @@ function Filter() {
                        URLParams
                        sortBy="desc"
                        showSearch={false}
-                       react={{and: ALL_FILTERS_KEYS,}}
+                       react={{and: ALL_FILTERS_KEYS}}
             />
             <Divider orientation="left" plain/>
             <Typography.Title className="ant-card-head"
@@ -156,6 +166,7 @@ function Filter() {
                        placeholder='Buscar'
                        style={{}}
                        react={{and: ALL_FILTERS_KEYS}}/>
+
             <Typography.Title className="ant-card-head"
                               style={{paddingLeft: 0, paddingTop: 10}}>Tipo de candidatura</Typography.Title>
             <MultiList componentId="charge"
@@ -167,6 +178,22 @@ function Filter() {
                        }}
                        showCheckbox
                        URLParams
+                       showSearch={false}
+                       style={{}}
+                       react={{and: ALL_FILTERS_KEYS}}/>
+
+            <Typography.Title className="ant-card-head"
+                              style={{paddingLeft: 0, paddingTop: 10}}>Titular o suplente</Typography.Title>
+            <MultiList componentId="title"
+                       dataField="title.keyword"
+                       queryFormat="and"
+                       className="multi-list"
+                       innerClass={{
+                           listSearch: 'list-search'
+                       }}
+                       showCheckbox
+                       URLParams
+                       defaultValue={["TITULAR"]}
                        showSearch={false}
                        style={{}}
                        react={{and: ALL_FILTERS_KEYS}}/>
@@ -223,7 +250,7 @@ function ChartsComponent() {
                 <Col xl={12} lg={12} sm={24} xs={24}>
                     <Row gutter={[8, 8]}>
                         <Col xl={24} lg={24} sm={24} xs={24}>
-                            <GraphWrapper title="Cantidad de declaraciones juradas presentadas">
+                            <GraphWrapper title="Cantidad de autoridades electas que han presentado su declaración">
                                 <ReactiveComponent
                                     componentId="PresentedDeclarationsChart"
                                     defaultQuery={() => ({

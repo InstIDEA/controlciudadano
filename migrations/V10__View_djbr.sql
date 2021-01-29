@@ -1,4 +1,7 @@
 DROP MATERIALIZED VIEW analysis.djbr;
+
+REFRESH MATERIALIZED VIEW analysis.djbr;
+
 CREATE MATERIALIZED VIEW IF NOT EXISTS analysis.djbr AS
 (
 (SELECT raw.id,
@@ -22,7 +25,7 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS analysis.djbr AS
             WHEN file is not null THEN file.download_date
             END                                                                                         as download_date
  FROM staging.djbr_raw_data raw
-          LEFT JOIN staging.djbr_downloaded_files file ON raw.id = file.raw_data_id
+          JOIN staging.djbr_downloaded_files file ON raw.id = file.raw_data_id
 --  LIMIT 10
 )
 UNION

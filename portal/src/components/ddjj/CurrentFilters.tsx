@@ -83,7 +83,8 @@ const FilterColors: Record<string, string> = {
     year_elected: '#108ee9',
     election: 'rgb(205 83 52)',
     district: '#108ee9',
-    charge: "#2e801a"
+    charge: "#2e801a",
+    title: "#a94d74"
 }
 
 function getFilterKeyName(val: string): string {
@@ -94,7 +95,8 @@ function getFilterKeyName(val: string): string {
         "year_elected": "Año",
         "district": "Distrito",
         "election": "Elecciones",
-        "charge": "Tipo de elección"
+        "charge": "Tipo de candidatura",
+        "title": "Titular o suplente"
     };
 
     return keys[val] || val;
