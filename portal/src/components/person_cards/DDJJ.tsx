@@ -23,16 +23,16 @@ export function DDJJCard(props: {
                     pagination={false}
                     columns={[{
                         title: <Typography.Text><strong>Año (revisión)</strong></Typography.Text>,
-                        render: (r: Affidavit) => <a href={r.linksandwich || r.link} target="_blank"
+                        render: (r: Affidavit) => <a href={r.link_sandwich || r.link} target="_blank"
                                                      rel="noopener noreferrer"
                                                      title="Ver">
-                            {r.year} ({r.revision})
+                            {r.year} {r.revision && `({$r.revision})`}
                         </a>
 
                     }, {
                         title: <Typography.Text><strong>Activos (Gs.)</strong></Typography.Text>,
-                        render: (r: Affidavit) => r.actives
-                            ? formatMoney(r.actives)
+                        render: (r: Affidavit) => r.active
+                            ? formatMoney(r.active)
                             : 'Ayudanos a completar',
                         align: 'right'
                     }, {
@@ -41,7 +41,7 @@ export function DDJJCard(props: {
                         align: 'right'
                     }, {
                         title: <Typography.Text><strong>Patrimonio Neto (Gs.)</strong></Typography.Text>,
-                        render: (r: Affidavit) => formatMoney(r.networth),
+                        render: (r: Affidavit) => formatMoney(r.net_worth),
                         align: 'right'
                     }]}>
 

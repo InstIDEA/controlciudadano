@@ -72,13 +72,13 @@ export function AffidavitList() {
                                   render: (_, row) => `${row.year} (${row.revision})`,
                                   sorter: (a, b) => `${a.year}${a.revision}`.localeCompare(`${b.year}${b.revision}`)
                               }, {
-                                  dataIndex: 'actives',
+                                  dataIndex: 'active',
                                   title: 'Activos',
                                   align: 'right',
                                   render: (nw) => nw === undefined || nw === null
                                       ? <span>Ayudanos a completar!</span>
                                       : formatMoney(nw),
-                                  sorter: (a, b) => (a.actives || 0) - (b.actives || 0)
+                                  sorter: (a, b) => (a.active || 0) - (b.active || 0)
                               }, {
                                   dataIndex: 'passive',
                                   title: 'Pasivos',
@@ -88,19 +88,19 @@ export function AffidavitList() {
                                       : formatMoney(nw),
                                   sorter: (a, b) => (a.passive || 0) - (b.passive || 0)
                               }, {
-                                  dataIndex: 'networth',
+                                  dataIndex: 'net_worth',
                                   title: 'Patrimonio neto',
                                   align: 'right',
                                   defaultSortOrder: 'descend',
                                   render: (nw) => nw === undefined || nw === null
                                       ? <span>Ayudanos a completar!</span>
                                       : formatMoney(nw),
-                                  sorter: (a, b) => (a.networth || 0) - (b.networth || 0)
+                                  sorter: (a, b) => (a.net_worth || 0) - (b.net_worth || 0)
                               }, {
                                   dataIndex: '',
                                   title: 'Acciones',
                                   render: (_, row) => <div style={{fontSize: '1.5em'}}>
-                                      <a href={fixLink(row.linksandwich || row.link)} target="_blank"
+                                      <a href={fixLink(row.link_sandwich || row.link)} target="_blank"
                                          rel="noopener noreferrer"
                                          title="Ver">
                                           <FilePdfOutlined/>
@@ -137,20 +137,20 @@ export function AffidavitList() {
                             <br/>
                             Año (revision): {r.year} ({r.revision})
                             <br/>
-                            Activos: {r.actives === undefined || r.actives === null
+                            Activos: {r.active === undefined || r.active === null
                             ? <span>Ayudanos a completar!</span>
-                            : formatMoney(r.actives)}
+                            : formatMoney(r.active)}
                             <br/>
                             Pasivos: {r.passive === undefined || r.passive === null
                             ? <span>Ayudanos a completar!</span>
                             : formatMoney(r.passive)}
                             <br/>
-                            Patrimonio Neto: {r.networth === undefined || r.networth === null
+                            Patrimonio Neto: {r.net_worth === undefined || r.net_worth === null
                             ? <span>Ayudanos a completar!</span>
-                            : formatMoney(r.networth)}
+                            : formatMoney(r.net_worth)}
                             <br/>
                             <div style={{fontSize: '1.5em'}}>
-                                <a href={fixLink(r.linksandwich || r.link)} target="_blank"
+                                <a href={fixLink(r.link_sandwich || r.link)} target="_blank"
                                    rel="noopener noreferrer" title="Ver">
                                     <FilePdfOutlined/>
                                 </a>
