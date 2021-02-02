@@ -59,7 +59,7 @@ export interface AnalysisSearchResult {
 
     query: string;
     analysis: {
-        declarations: Affidavit[],
+        djbr: Affidavit[],
         tsje_elected: Authorities[]
     }
 }

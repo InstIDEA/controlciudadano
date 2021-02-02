@@ -55,9 +55,9 @@ export function PersonDetailPage() {
             .then(d => {
                 if (!d || !d.analysis) return;
                 setAnalysis(d);
-                if (d.analysis.declarations && d.analysis.declarations.length > 0) {
-                    d.analysis.declarations.sort((a1, a2) => a2.year - a1.year)
-                    setAffidavit(d.analysis.declarations);
+                if (d.analysis.djbr && d.analysis.djbr.length > 0) {
+                    d.analysis.djbr.sort((a1, a2) => a2.year - a1.year)
+                    setAffidavit(d.analysis.djbr);
                 }
                 if (d.analysis.tsje_elected && d.analysis.tsje_elected.length > 0) {
                     d.analysis.tsje_elected.sort((t1, t2) => parseInt(t2.year_elected) - parseInt(t1.year_elected));
@@ -406,7 +406,7 @@ export function Sources({local, analysis}: {
         </Tooltip>
         <Tooltip title="Declaraciones Juradas">
             <Icon component={Ddjj} style={{
-                color: analysis?.analysis.declarations?.length ? COLOR_ORANGE : COLOR_GREY,
+                color: analysis?.analysis.djbr?.length ? COLOR_ORANGE : COLOR_GREY,
                 fontSize: '30px'
             }}/>
         </Tooltip>
