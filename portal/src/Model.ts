@@ -271,11 +271,11 @@ export interface Affidavit {
     revision: number;
     link: string;
     source: string;
-    linksandwich: string;
+    link_sandwich: string;
     type: string;
-    actives: number;
+    active: number;
     passive: number;
-    networth: number;
+    net_worth: number;
     charge: string;
 }
 

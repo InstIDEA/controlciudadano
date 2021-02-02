@@ -8,11 +8,11 @@ const COLUMNS = `
     version       AS revision,
     link          AS link,
     origin        AS source,
-    link_sandwich AS linksandwich,
+    link_sandwich AS link_sandwich,
     type          AS type,
-    active        AS actives,
+    active        AS active,
     passive       AS passive,
-    net_worth     AS networth,
+    net_worth     AS net_worth,
     charge        AS charge
 `
 
