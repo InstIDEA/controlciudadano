@@ -18,7 +18,7 @@ const staging = [
 
 const analysis = [
     {table: 'tsje_elected', column: 'document'},
-    {table: 'declarations', column: 'document'},
+    {table: 'djbr', column: 'document'},
 ]
 
 const mappers: { [k: string]: Mapper } = {
