@@ -17,7 +17,7 @@
 
 .VideoTutoriales-page .cards .ant-card {
     margin: auto;
-    box-shadow: 0px 5px 15px rgba(42, 42, 42, 0.06);
+    box-shadow: 0 5px 15px rgba(42, 42, 42, 0.06);
     border-radius: 20px;
 }
 

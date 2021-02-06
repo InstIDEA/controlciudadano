@@ -30,6 +30,7 @@ import {OCDSSupplier} from "./pages/OCDSSupplier";
 import {DJBRDashboard} from "./pages/DJBRDashboard";
 import {TutorialsPage} from "./pages/TutorialsPage";
 import {DJBRListPage} from "./pages/DJBRListPage";
+import {AnalysisLanding} from "./analysis/pages/AnalysisLanding";
 
 export default function App() {
     return <Routes/>
@@ -83,6 +84,8 @@ function Routes() {
                 <Route path="/explore/djbr/list" exact render={() => <DJBRListPage/>}/>
 
                 <Route path="/sources/:dataSetId" exact render={() => <DSDownload/>}/>
+
+                <Route path="/analysis/" exact render={() => <AnalysisLanding />} />
 
                 <Route path="/">
                     <LandingPage/>

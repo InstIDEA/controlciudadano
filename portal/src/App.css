@@ -1,3 +1,31 @@
 .ant-descriptions-item-content.align-right-desc {
     text-align: right;
 }
+
+.custom-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    color: #868e96;
+    display: inline-block;
+    /*width: 90%;*/
+    /*padding: 32px;*/
+    box-shadow: 10px 10px 5px rgba(84, 48, 132, 0.06);
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    text-align: center;
+    border-radius: 20px;
+}
+
+.round-button {
+    font-size: 12px;
+    min-width: 100px;
+    min-height: 30px;
+    text-transform: none !important;
+    padding: 0;
+    background-color: #CD5534;
+    color: white;
+    border-radius: 1rem;
+    border: none;
+    margin-right: 5px;
+    cursor: pointer;
+}
