@@ -65,6 +65,7 @@ function Footer(props: {
                     </div>
                 </Col>
                 <Col xs={24} sm={24} md={12} lg={8} xl={4} xxl={4} style={{textAlign: "center"}}>
+                    <p style={{color: 'white', fontWeight: 'bold'}}>VERSION DE DESARROLLO</p>
                     <a href={`/disclaimer`} className="footer-paragraph">Descargo de responsabilidad</a>
                 </Col>
                 <Col xs={24} sm={24} md={6} lg={8} xl={10} xxl={10} className="repo">

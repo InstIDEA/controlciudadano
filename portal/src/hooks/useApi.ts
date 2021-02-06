@@ -4,6 +4,7 @@ import {
     Async,
     AsyncHelper,
     AuthoritiesWithoutDocument,
+    GlobalStatistics,
     OCDSSupplierRelation,
     StatisticsDJBR
 } from "../Model";
@@ -28,4 +29,5 @@ type ApiType<T extends number> =
     T extends 18 ? OCDSSupplierRelation :
         T extends 19 ? Affidavit :
             T extends 45 ? AuthoritiesWithoutDocument :
-                T extends 49 ? StatisticsDJBR : unknown;
+                T extends 49 ? StatisticsDJBR :
+                    T extends 39 ? GlobalStatistics : unknown;
