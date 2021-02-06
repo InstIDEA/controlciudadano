@@ -13,10 +13,10 @@ export function AnalysisLanding() {
 
         <Layout>
             <Layout.Content style={{minHeight: '75vh', padding: '0 5%'}}>
-                <Row gutter={[16, 16]} dir="vertical">
+                <Row gutter={[16, 16]} style={{flexDirection: 'column'}}>
                     <Col>
-                        <Typography.Title style={{textAlign: 'center'}}>
-                            Análysis
+                        <Typography.Title style={{textAlign: 'center'}} className="title-color">
+                            Análisis
                         </Typography.Title>
                     </Col>
                     <Col>
@@ -37,10 +37,10 @@ export function AnalysisLanding() {
                         >
                             <Row gutter={[8, 8]} justify="center">
                                 <Col>
-                                    <LinkButton linkTo="/analysis/djbr/123456" text="Ejemplo 1"/>
+                                    <LinkButton linkTo="/analysis/net_worth/123456" text="Ejemplo 1"/>
                                 </Col>
                                 <Col>
-                                    <LinkButton linkTo="/analysis/djbr/789012" text="Ejemplo 2"/>
+                                    <LinkButton linkTo="/analysis/net_worth/789012" text="Ejemplo 2"/>
                                 </Col>
                                 <Col>
                                     <Input style={{width: '100%', borderRadius: 5}}
@@ -84,10 +84,11 @@ function Analysis(props: PropsWithChildren<{
                 <iframe title={props.title} src={props.videoUrl} width="100%" height="100%"/>
             </Col>
             <Col md={12} sm={24}>
-                <Row gutter={[8, 8]} dir="vertical" justify="center">
-                    <Col> <Typography.Title>
-                        {props.title}
-                    </Typography.Title>
+                <Row gutter={[8, 8]} justify="center">
+                    <Col>
+                        <Typography.Title className="title-color">
+                            {props.title}
+                        </Typography.Title>
                     </Col>
                     <Col>
                         <Typography.Paragraph>

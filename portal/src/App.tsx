@@ -31,6 +31,7 @@ import {DJBRDashboard} from "./pages/DJBRDashboard";
 import {TutorialsPage} from "./pages/TutorialsPage";
 import {DJBRListPage} from "./pages/DJBRListPage";
 import {AnalysisLanding} from "./analysis/pages/AnalysisLanding";
+import {AnalysisNetWorthIncrement} from "./analysis/pages/AnalysisNetWorthIncrement";
 
 export default function App() {
     return <Routes/>
@@ -85,7 +86,8 @@ function Routes() {
 
                 <Route path="/sources/:dataSetId" exact render={() => <DSDownload/>}/>
 
-                <Route path="/analysis/" exact render={() => <AnalysisLanding />} />
+                <Route path="/analysis/" exact render={() => <AnalysisLanding/>}/>
+                <Route path="/analysis/net_worth/:document" exact render={() => <AnalysisNetWorthIncrement/>}/>
 
                 <Route path="/">
                     <LandingPage/>
