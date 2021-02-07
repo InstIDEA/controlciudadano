@@ -4,8 +4,10 @@ import {
     Async,
     AsyncHelper,
     AuthoritiesWithoutDocument,
+    GlobalStatistics,
     OCDSSupplierRelation,
-    StatisticsDJBR
+    StatisticsDJBR,
+    VideoTutorialesSemillas
 } from "../Model";
 import {RedashAPI} from "../RedashAPI";
 
@@ -28,4 +30,6 @@ type ApiType<T extends number> =
     T extends 18 ? OCDSSupplierRelation :
         T extends 19 ? Affidavit :
             T extends 45 ? AuthoritiesWithoutDocument :
-                T extends 49 ? StatisticsDJBR : unknown;
+                T extends 49 ? StatisticsDJBR :
+                    T extends 39 ? GlobalStatistics :
+                        T extends 48 ? VideoTutorialesSemillas : unknown;

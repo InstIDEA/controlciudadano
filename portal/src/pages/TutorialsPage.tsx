@@ -1,12 +1,12 @@
 import * as React from 'react';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {Card, Col, Radio, Result, Row, Typography} from 'antd';
 import {Header} from '../components/layout/Header';
-import {VideoTutorialesSemillas} from '../Model';
-import {RedashAPI} from '../RedashAPI';
 import {useMediaQuery} from '@react-hook/media-query';
 import Footer from '../components/layout/Footer';
 import './TutorialsPage.css';
+import {useRedashApi} from "../hooks/useApi";
+import {AsyncHelper} from "../Model";
 
 const LABELS: Record<string, string> = {
     'semillas': 'Portal de declaraciones juradas',
@@ -16,19 +16,12 @@ const LABELS: Record<string, string> = {
 
 export function TutorialsPage() {
 
-    const [data, setData] = useState<VideoTutorialesSemillas[]>([]);
+    const data = useRedashApi(48);
     const [filter, setFilter] = useState<string>();
-
     const isSmall = useMediaQuery('only screen and (max-width: 768px)');
 
-    useEffect(() => {
-        new RedashAPI()
-            .getVideoTutorialesSemillas()
-            .then(d => setData(d?.query_result?.data?.rows || []))
-        ;
-    }, []);
 
-    const finalData = data.filter(d => {
+    const finalData = AsyncHelper.or(data, []).filter(d => {
         if (!filter) return true;
         return d.type === filter;
     })
@@ -66,11 +59,11 @@ export function TutorialsPage() {
                     </Col>
                 )}
                 {!finalData.length && <div className="title-paragraph">
-                  <Result
-                    status="404"
-                    title="En progreso"
-                    subTitle="Estamos preparando mas videos, vuelve mas tarde!"
-                  />
+                    <Result
+                        status="404"
+                        title="En progreso"
+                        subTitle="Estamos preparando mas videos, vuelve mas tarde!"
+                    />
                 </div>}
             </Row>
         </div>

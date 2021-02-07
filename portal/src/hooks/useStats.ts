@@ -15,3 +15,10 @@ export function useDJBRStats() {
         total_authorities_in_order: 862
     });
 }
+
+export function useGlobalStats() {
+
+    const data = useRedashApi(39)
+
+    return AsyncHelper.map(data, d => d[0]);
+}

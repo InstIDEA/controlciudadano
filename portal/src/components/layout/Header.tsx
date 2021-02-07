@@ -27,7 +27,7 @@ const menu = <Menu mode="horizontal" id="nav" key="nav">
 </Menu>;
 
 export function Header(props: {
-    tableMode: boolean;
+    tableMode?: boolean;
     searchBar?: ReactNode;
     showSeparator?: boolean;
 }) {
