@@ -40,7 +40,7 @@ export function formatMoney(value: any, symbol?: string, decimalDigits?: number)
 }
 
 export function formatNumber(value: any, decimalDigits: number = 0) {
-    if (!value) return '';
+    if (value !== 0 && !value) return '';
     if (typeof value === 'string') value = parseFloat(value);
 
     const amount = decimalDigits ? value : Math.round(value);
