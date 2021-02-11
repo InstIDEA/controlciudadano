@@ -2,3 +2,6 @@ __pycache__
 venv/
 in/
 out/
+app/log.txt
+app/tests/*.datasetdf
+app/tests/*.txt
