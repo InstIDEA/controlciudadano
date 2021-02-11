@@ -1,6 +1,7 @@
 from os import getenv
 from dotenv import load_dotenv
-load_dotenv()
+
+load_dotenv(dotenv_path='../app/.env')
 
 PARSERENGINE_GO_BIN = getenv("PARSERENGINE_GO_BIN")
 PARSERENGINE_IN = getenv("PARSERENGINE_IN")

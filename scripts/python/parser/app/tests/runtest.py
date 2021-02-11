@@ -15,7 +15,7 @@ if __name__ == '__main__':
 					continue
 				print('{0} [{1}/{2}]'.format(line.strip("\n"), count, len(lines)))
 				payload = {'file': { 'path': line.strip('\n') } }
-				r = post("http://localhost:8000/parser/send", data=dumps(payload))
+				r = post("http://localhost/parser/send", data=dumps(payload))
 				if r.status_code != 200:
 					failed += 1
 				else:
