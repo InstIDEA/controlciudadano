@@ -23,7 +23,7 @@ default_args = {
     'retries': 1,
     'retry_delay': timedelta(seconds=5),
     'params': {
-        'data_folder': f'/tmp/itaipu-hhrr/',
+        'data_folder': f'/data/itaipu/',
         'data_set': 'itaipu',
         'url': 'https://www.itaipu.gov.py/es/recursos-humanos/datos-de-empleados-y-estructura-salarial'
 
@@ -61,9 +61,7 @@ with dag:
 
     create_folder = BashOperator(
         task_id=f'create_folder',
-        bash_command=f"""
-            mkdir -pv "{target_folder_exp}"
-            """,
+        bash_command=f"""mkdir -pv "{target_folder_exp}""",
         retries=10
     )
 
@@ -86,7 +84,7 @@ with dag:
                                         python_callable=upload_files_to_ftp,
                                         provide_context=True,
                                         op_kwargs={
-                                            "prefix": (target_folder_exp + "{{ ds }}"),
+                                            "prefix": target_folder_exp,
                                         })
 
     fetch_links >> download_links_op >> upload_file_to_ftp
