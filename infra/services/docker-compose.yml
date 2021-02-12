@@ -3,9 +3,9 @@
 version: '3.7'
 services:
 
-  webserver:
-    #    image: docker.pkg.github.com/instidea/controlciudadano/microservice_parser:latest
-    build: ../../scripts/python/parser/
+  parser:
+    image: docker.pkg.github.com/instidea/controlciudadano/microservice_parser:latest
+    #build: ../../scripts/python/parser/
     restart: always
     environment:
       PG_CONN: ''
