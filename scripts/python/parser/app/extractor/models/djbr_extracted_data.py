@@ -7,7 +7,7 @@ from extractor.models import Engine
 
 class DJBRExtractedData(Base):
     __tablename__ = 'djbr_extracted_data'
-    __table_args__ = {'schema': 'staging'}
+    __table_args__ = {'schema': 'ms_djbr_parser'}
 
     id = Column(BigInteger, primary_key=True)
     fullname = Column(Text)

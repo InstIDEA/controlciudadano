@@ -17,7 +17,7 @@ from hashlib import md5
 from sqlalchemy.sql.expression import literal
 
 log_config(
-	filename="log.txt",
+	# filename="log.txt",
 	format='%(levelname)s: %(asctime)s: %(module)s: %(message)s'
 )
 
