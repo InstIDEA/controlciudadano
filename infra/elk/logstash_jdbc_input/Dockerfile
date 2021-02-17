@@ -8,5 +8,5 @@ RUN /usr/share/logstash/bin/logstash-plugin install logstash-filter-aggregate &&
 
 RUN curl https://jdbc.postgresql.org/download/postgresql-42.2.18.jar -o $LOGSTASH_JDBC_DRIVER_JAR_LOCATION
 
-ADD ./logstash.conf /usr/share/logstash/pipeline/logstash.conf
+COPY ./*.conf /usr/share/logstash/pipeline/
 
