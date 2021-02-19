@@ -3,7 +3,9 @@ FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
 
 RUN wget https://golang.org/dl/go1.15.8.linux-amd64.tar.gz && tar -C /usr/local -xzf go1.15.8.linux-amd64.tar.gz && rm -f go1.15.8.linux-amd64.tar.gz
 ENV PATH=/usr/local/go/bin:$PATH
-RUN go get -u github.com/InstIDEA/ddjj/parser
+RUN git clone https://www.github.com/InstIDEA/ddjj /opt/ddjj &&\
+    (cd /opt/ddjj/parser && git checkout 1.0.0 && go install)
+   
 ENV PARSERENGINE_GO_BIN=/root/go/bin/parser
 
 RUN apt-get update
