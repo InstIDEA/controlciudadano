@@ -41,7 +41,12 @@ CREATE TABLE analysis.full_data AS (
              (SELECT 'declarations' as source,
                      jsonb_build_object(
                              'name', dec.name,
-                             'confidence', CASE WHEN dec.name is NULL THEN 0 WHEN dec.id > 0 THEN 0.5 ELSE 0.99 END
+                             'confidence', CASE
+                                               WHEN dec.name is NULL THEN 0
+                                               WHEN dec.id < 0 THEN 0.5
+                                               WHEN dec.year <= 2014 THEN 0.5
+                                               WHEN dec.type = 'V1' THEN 0.5
+                                               ELSE 0.99 END
                          )          as name,
                      dec.document   as document,
                      NULL           as photo,
