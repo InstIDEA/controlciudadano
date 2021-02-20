@@ -65,21 +65,21 @@ export function PersonSearchPage() {
 
         <Layout>
             {!isSmall && <Layout.Sider width="20vw">
-              <Typography.Title level={5} style={{textAlign: 'center', paddingTop: 20}}>
-                Filtros
-              </Typography.Title>
+                <Typography.Title level={5} style={{textAlign: 'center', paddingTop: 20}}>
+                    Filtros
+                </Typography.Title>
                 {filter}
             </Layout.Sider>}
             <Layout>
                 <Layout.Content className="content-padding">
                     {isSmall && <Row>
-                      <Col xs={{span: 24}}>
-                        <Collapse defaultActiveKey={['2']} bordered={false}>
-                          <Collapse.Panel header="Mas filtros" key="1">
-                              {filter}
-                          </Collapse.Panel>
-                        </Collapse>
-                      </Col>
+                        <Col xs={{span: 24}}>
+                            <Collapse defaultActiveKey={['2']} bordered={false}>
+                                <Collapse.Panel header="Mas filtros" key="1">
+                                    {filter}
+                                </Collapse.Panel>
+                            </Collapse>
+                        </Col>
                     </Row>}
                     <Row>
                         <Card className="card-style card-fts-search" style={{width: '100%'}}>
@@ -380,6 +380,13 @@ function getColorByIdx(_id: string) {
     return ColorList[asNumber % ColorList.length];
 }
 
+/**
+ * Returns the person data based on all the sources.
+ *
+ * Every source has a confidence that we will use to determine the properties
+ *
+ * @param data
+ */
 function getData(data: Array<ElasticFtsPeopleResult>) {
     const name: { val: string, confidence: number } = {val: "", confidence: 0};
     const photo: { val: string, confidence: number } = {val: "", confidence: 0};
@@ -435,38 +442,15 @@ function getData(data: Array<ElasticFtsPeopleResult>) {
 //     'mh': 'Ministerio de Hacienda',
 //     'sfp': 'Secretaria de la función pública'
 const confidenceByDS: { [k: string]: { name: number, photo?: number, net_worth?: number, salary?: number } } = {
-    'a_quien_elegimos': {
-        name: 100,
-        photo: 100
-    },
-    'tsje_elected': {
-        name: 90,
-    },
-    'declarations': {
-        name: 90,
-        net_worth: 100,
-    },
-    'ande_exonerados': {
-        name: 92
-    },
-    'mh': {
-        name: 92,
-        salary: 100
-    },
-    'sfp': {
-        name: 93,
-        salary: 99
-    },
-    'pytyvo': {
-        name: 85
-    },
-    'nangareko': {
-        name: 85
-    },
-    'policia': {
-        name: 90,
-        salary: 95
-    }
+    'a_quien_elegimos': {name: 100, photo: 100},
+    'tsje_elected': {name: 90,},
+    'declarations': {name: 90, net_worth: 100,},
+    'ande_exonerados': {name: 92},
+    'mh': {name: 92, salary: 100},
+    'sfp': {name: 93, salary: 99},
+    'pytyvo': {name: 85},
+    'nangareko': {name: 85},
+    'policia': {name: 90, salary: 95}
 }
 
 interface ElasticFtsPeopleResult {
@@ -483,7 +467,7 @@ interface ElasticFtsPeopleResult {
 interface ElasticFullDataResult {
     _id: string;
     sources: string[];
-    name: Array<string | null>;
+    name: Array<string | null> | string | null;
     document: number;
     age?: Array<number | null>;
     photo?: Array<string | null>;
@@ -492,15 +476,15 @@ interface ElasticFullDataResult {
 }
 
 const sourceNameIcon: { [k: string]: React.FunctionComponent } = {
-    'declarations': Ddjj,
-    'a_quien_elegimos': Aqe,
-    'ande_exonerados': Ande,
-    'sfp': Sfp,
-    'mh': Hacienda,
-    'pytyvo': Pytyvo,
-    'nangareko': Nangareko,
-    'policia': PoliciaNacional,
-    'tsje_elected': Ddjj
+    declarations: Ddjj,
+    a_quien_elegimos: Aqe,
+    ande_exonerados: Ande,
+    sfp: Sfp,
+    mh: Hacienda,
+    pytyvo: Pytyvo,
+    nangareko: Nangareko,
+    policia: PoliciaNacional,
+    tsje_elected: Ddjj
 }
 
 function SourcesIconListComponent(props: {
@@ -529,7 +513,9 @@ function mapFullDataToFTS(item: ElasticFullDataResult): ElasticFtsPeopleResult[]
             _id: item._id,
             photo: item.photo?.[idx] || "",
             salary: item.salary?.[idx] || undefined,
-            name: item.name && item.name[idx] + "",
+            name: Array.isArray(item.name)
+                ? item.name && item.name[idx] + ""
+                : item.name || '',
             age: item.age?.[idx] || undefined
         })
     })
