@@ -7,8 +7,8 @@ from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator
 
-from _policia_operators import _get_links
 from _muni_operators import get_target_path
+from _policia_operators import _get_links
 from ds_table_operations import upload_to_ftp, create_dir_in_ftp
 # These args will get passed on to each operator
 # You can override them on a per-task basis during operator initialization
@@ -23,8 +23,7 @@ default_args = {
     'retries': 1,
     'retry_delay': timedelta(seconds=5),
     'params': {
-        'data_folder': f'/data/itaipu/',
-        'data_set': 'itaipu',
+        'data_folder': f'/tmp/itaipu/',
         'url': 'https://www.itaipu.gov.py/es/recursos-humanos/datos-de-empleados-y-estructura-salarial'
 
     }
@@ -33,7 +32,7 @@ dag = DAG(
     'itaipu_rrhh_downloader',
     default_args=default_args,
     description='ETL that downloads reports from https://www.itaipu.gov.py/es/recursos-humanos/datos-de-empleados-y-estructura-salarial',
-    start_date=datetime(2021, 1, 1),
+    start_date=datetime(2021, 2, 20),
     schedule_interval=timedelta(weeks=1),
 )
 
@@ -61,17 +60,20 @@ with dag:
 
     create_folder = BashOperator(
         task_id=f'create_folder',
-        bash_command=f"""mkdir -pv "{target_folder_exp}""",
+        bash_command=f"""
+            echo "AAAAAAAAAAAAA"
+            mkdir -pv "{target_folder_exp}"
+            """,
         retries=10
     )
 
     fetch_links = PythonOperator(task_id='fetch_links',
                                  python_callable=_get_links,
                                  op_kwargs={
-                                    "base_link": "https://www.itaipu.gov.py/es/recursos-humanos/datos-de-empleados-y-estructura-salarial/",
-                                    "css_selector": ".corpo .corpo p a",
-                                    "verify": True,
-                                 },)
+                                     "base_link": "https://www.itaipu.gov.py/es/recursos-humanos/datos-de-empleados-y-estructura-salarial/",
+                                     "css_selector": "#corpo p a",
+                                     "verify": True,
+                                 }, )
 
     download_links_op = PythonOperator(task_id='download_links',
                                        python_callable=retrieve_links_and_download,
@@ -84,10 +86,10 @@ with dag:
                                         python_callable=upload_files_to_ftp,
                                         provide_context=True,
                                         op_kwargs={
-                                            "prefix": target_folder_exp,
+                                            "prefix": "/data/itaipu/rrhh/",
                                         })
 
-    fetch_links >> download_links_op >> upload_file_to_ftp
+    create_folder >> fetch_links >> download_links_op >> upload_file_to_ftp
 
 if __name__ == '__main__':
     dag.clear(reset_dag_runs=True)
