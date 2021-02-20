@@ -3,6 +3,7 @@ import {Card, Col, Row, Typography} from "antd";
 import Icon from "@ant-design/icons";
 import {ReactComponent as Ddjj} from "../../assets/logos/ddjj.svg";
 import * as React from "react";
+import {fixName} from "../../nameUtils";
 
 export function TSJECard(props: {
     tsje: Authorities[]
@@ -27,7 +28,7 @@ export function TSJECard(props: {
                         {election.year_elected}
                     </Col>
                     <Col span={11}>
-                        {election.charge}
+                        {election.charge} ({fixName(election.department)})
                     </Col>
                     <Col span={10}>
                         {election.list}

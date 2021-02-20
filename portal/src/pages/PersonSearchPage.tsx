@@ -40,17 +40,18 @@ import {ReactComponent as Nangareko} from '../assets/logos/nangareko.svg';
 import {ReactComponent as PoliciaNacional} from '../assets/logos/policia_nacional.svg';
 import {Link} from 'react-router-dom';
 import {fixName} from '../nameUtils';
+import {hasFilter} from "../components/ddjj/CurrentFilters";
 
 export const SOURCE_NAME_MAP: { [k: string]: string } = {
-    'tsje_elected': 'Autoridades electas',
-    'declarations': 'Declaraciones Juradas de Bienes y Rentas',
-    'a_quien_elegimos': 'A Quíenes Elegimos',
-    'ande_exonerados': 'Exonerados ANDE',
-    'mh': 'Ministerio de Hacienda',
-    'sfp': 'Secretaria de la Función Pública',
-    'pytyvo': 'Subsidio Pytyvo',
-    'nangareko': 'Subsidio Ñangareko',
-    'policia': 'Policía Nacional'
+    tsje_elected: 'Autoridades electas',
+    declarations: 'Declaraciones Juradas de Bienes y Rentas',
+    a_quien_elegimos: 'A Quíenes Elegimos',
+    ande_exonerados: 'Exonerados ANDE',
+    mh: 'Ministerio de Hacienda',
+    sfp: 'Secretaria de la Función Pública',
+    pytyvo: 'Subsidio Pytyvo',
+    nangareko: 'Subsidio Ñangareko',
+    policia: 'Policía Nacional',
 }
 
 
@@ -94,60 +95,12 @@ export function PersonSearchPage() {
                                                 input: 'fts-search-input'
                                             }}
                                             placeholder="Búsqueda por nombres o apellidos"
-                                            dataField={['name', 'document.raw']}/>
+                                            dataField={['name', 'document']}/>
                             </div>
                         </Card>
                     </Row>
                     <Row>
-                        <Col xs={{span: 24}}>
-                            <Card className="card-style" title="Filtros" style={{width: '100%'}}>
-                                <SelectedFilters showClearAll={true}
-                                                 clearAllLabel="Limpiar"
-                                                 render={(props) => {
-                                                     const {selectedValues, setValue} = props;
-                                                     const clearFilter = (component: string) => {
-                                                         setValue(component, null);
-                                                     };
-
-                                                     return <>
-                                                         {Object.keys(selectedValues).map(key => {
-                                                             const component = selectedValues[key];
-
-                                                             if (!component.value) {
-                                                                 return <> </>
-                                                             }
-
-                                                             if (Array.isArray(component.value)) {
-                                                                 return component.value.map((val: unknown) => <Tag
-                                                                     color={FilterColors[key] || 'gray'}
-                                                                     closable
-                                                                     key={`${key}_${val}`}
-                                                                     onClose={() => setValue(key, component.value.filter((sb: unknown) => sb !== val))}
-                                                                 >
-                                                                     {getFilterKeyName(key)}: {getFilterValueName(val)}
-                                                                 </Tag>)
-                                                             }
-
-                                                             let label = JSON.stringify(component.value);
-                                                             if (typeof component.value === 'string') {
-                                                                 label = component.value;
-                                                             }
-                                                             if (typeof component.value === 'object' && 'label' in component.value) {
-                                                                 label = component.value.label;
-                                                             }
-
-                                                             return <Tag closable
-                                                                         color={FilterColors[key] || 'gray'}
-                                                                         onClose={() => clearFilter(key)}
-                                                                         key={key}>
-                                                                 {getFilterKeyName(key)}: {getFilterValueName(label)}
-                                                             </Tag>
-                                                         })}
-                                                     </>;
-                                                 }}
-                                />
-                            </Card>
-                        </Col>
+                        <CurrentFilters/>
                     </Row>
                     <ResultComponent isSmall={isSmall}/>
                 </Layout.Content>
@@ -158,6 +111,59 @@ export function PersonSearchPage() {
 
 }
 
+function CurrentFilters() {
+    return <SelectedFilters showClearAll={true}
+                            clearAllLabel="Limpiar"
+                            render={(props) => {
+                                const {selectedValues, setValue} = props;
+                                const clearFilter = (component: string) => {
+                                    setValue(component, null);
+                                };
+                                
+                                if (!hasFilter(selectedValues)) {
+                                    return <></>
+                                }
+
+                                return <Col xs={{span: 24}}>
+                                    <Card className="card-style" title="Filtros" style={{width: '100%'}}>
+                                        {Object.keys(selectedValues).map(key => {
+                                            const component = selectedValues[key];
+
+                                            if (!component.value) {
+                                                return <span key={key}/>
+                                            }
+
+                                            if (Array.isArray(component.value)) {
+                                                return component.value.map((val: unknown) => <Tag
+                                                    color={FilterColors[key] || 'gray'}
+                                                    closable
+                                                    key={`${key}_${val}`}
+                                                    onClose={() => setValue(key, component.value.filter((sb: unknown) => sb !== val))}
+                                                >
+                                                    {getFilterKeyName(key)}: {getFilterValueName(val)}
+                                                </Tag>)
+                                            }
+
+                                            let label = JSON.stringify(component.value);
+                                            if (typeof component.value === 'string') {
+                                                label = component.value;
+                                            }
+                                            if (typeof component.value === 'object' && 'label' in component.value) {
+                                                label = component.value.label;
+                                            }
+
+                                            return <Tag closable
+                                                        color={FilterColors[key] || 'gray'}
+                                                        onClose={() => clearFilter(key)}
+                                                        key={key}>
+                                                {getFilterKeyName(key)}: {getFilterValueName(label)}
+                                            </Tag>
+                                        })}
+                                    </Card>
+                                </Col>;
+                            }}
+    />;
+}
 
 function Filter() {
     return <Col xs={{span: 24}} style={{padding: 5}}>
@@ -170,7 +176,7 @@ function Filter() {
                        URLParams
                        showSearch={false}
                        react={{
-                           and: ['query', 'Patrimonio', 'Salario', 'Fuente'],
+                           and: ['query', 'Patrimonio', 'Salario', 'Fuente', 'Cargo'],
                        }}
                        render={({loading, error, data, handleChange, value}) => {
                            if (loading) {
@@ -202,7 +208,7 @@ function Filter() {
                          showRadio
                          URLParams
                          react={{
-                             and: ['query', 'Patrimonio', 'Fuente'],
+                             and: ['query', 'Patrimonio', 'Fuente', 'Cargo'],
                          }}
                          includeNullValues={true}
                          data={[
@@ -218,7 +224,7 @@ function Filter() {
             <SingleRange componentId="Patrimonio"
                          dataField="net_worth"
                          react={{
-                             and: ['query', 'Salario', 'Fuente'],
+                             and: ['query', 'Salario', 'Fuente', 'Cargo'],
                          }}
                          showRadio
                          URLParams
@@ -228,16 +234,25 @@ function Filter() {
                              {start: 100000001, end: 500000000, label: 'De 100M a 500M'},
                              {start: 500000001, end: 1000000000, label: 'De 500M a 1.000M'},
                              {start: 1000000001, label: 'Mas de 1.000M'},
-                         ]}
-                         style={{}}/>
+                         ]}/>
+        </Card>
+        <Card title="Cargo" className="card-style">
+            <MultiList componentId="Cargo"
+                       dataField="charges.keyword"
+                       queryFormat="or"
+                       showCheckbox
+                       URLParams
+                       showSearch={true}
+                       placeholder='Buscar'
+                       react={{
+                           and: ['query', 'Salario', 'Fuente', 'Patrimonio'],
+                       }}
+            />
         </Card>
     </Col>
 }
 
-
-function ResultComponent(props: {
-    isSmall: boolean
-}) {
+function ResultComponent(props: { isSmall: boolean }) {
 
     return <Col xs={{span: 24}}>
         <Card title="Resultados" className="card-style">
@@ -247,7 +262,7 @@ function ResultComponent(props: {
                     dataField="document.keyword"
                     componentId="SearchResult"
                     react={{
-                        and: ['query', 'Fuente', 'Salario', 'Patrimonio']
+                        and: ['query', 'Fuente', 'Salario', 'Patrimonio', 'Cargo']
                     }}
                     infiniteScroll={false}
                     renderNoResults={() => "Sin resultados que cumplan con tu búsqueda"}
@@ -364,7 +379,8 @@ const FilterColors: Record<string, string> = {
     'Fuente': 'rgb(205 83 52)',
     'Salario': '#f50',
     'query': '#108ee9',
-    'Patrimonio': '#00a2ae'
+    'Patrimonio': '#00a2ae',
+    'Cargo': '#ac7f0f'
 }
 
 function getInitials(name: string = ""): string {

@@ -10,5 +10,6 @@ export function fixName(name: string) {
         .replace('MU�OZ', 'MUÑOZ')
         .replace('ACU�A', 'ACUÑA')
         .replace('FARI�A', 'FARIÑA')
-        .replace('QUI�ONEZ', 'QUIÑONEZ');
+        .replace('QUI�ONEZ', 'QUIÑONEZ')
+        .replace('ï¿½EEMBUCU', 'ÑEEMBUCU');
 }
