@@ -1,7 +1,7 @@
 /**
  * Represent a single point of income or expense
  */
-interface FinancialDetail {
+export interface FinancialDetail {
     name: string;
     amount: number;
     periodicity: 'yearly' | 'monthly';
@@ -11,12 +11,12 @@ interface FinancialDetail {
 
 export interface DeclarationData {
 
-    /**
-     * Should be removed in favor of active details
-     */
     year: number;
     netWorth: number;
 
+    /**
+     * Should be removed in favor of active details
+     */
     totalActive: number;
     totalPassive: number;
     totalIncome: number;

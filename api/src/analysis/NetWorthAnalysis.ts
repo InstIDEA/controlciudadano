@@ -1,4 +1,4 @@
-import {AnalysisDJBR, DeclarationData, NetWorthIncreaseAnalysis} from "../APIModel";
+import {AnalysisDJBR, DeclarationData, FinancialDetail, NetWorthIncreaseAnalysis} from "../APIModel";
 import {fetchParsedDJBR} from "./DJBRParserApi";
 
 export interface NetWorthAnalysisEnhancer {
@@ -125,6 +125,9 @@ export class NetWorthAnalysis {
 
     private prepareResponse(document: string, allDecs: Array<AnalysisDJBR>, ctx: ContextData): NetWorthIncreaseAnalysis {
 
+        this.calcTotals(ctx.start.data);
+        this.calcTotals(ctx.end.data);
+
         return {
             person: {
                 document: document,
@@ -136,8 +139,25 @@ export class NetWorthAnalysis {
             lastYear: ctx.end.data
         };
     }
+
+    private calcTotals(data: DeclarationData): void {
+        if (!validNumber(data.totalActive)) data.totalActive = sum(data.actives);
+        if (!validNumber(data.totalPassive)) data.totalPassive = sum(data.passives);
+        if (!validNumber(data.totalIncome)) data.totalIncome = sum(data.incomes);
+        if (!validNumber(data.totalExpenses)) data.totalExpenses = sum(data.expenses);
+
+        data.netWorth = data.totalActive - data.totalPassive;
+    }
 }
 
+function validNumber(val?: number): boolean {
+    return val && val > 0
+}
+
+function sum(arr: Array<FinancialDetail>): number {
+    return arr.map(d => d.amount * (d.periodicity === 'yearly' ? 1 : 12))
+        .reduce((a, b) => a + b, 0)
+}
 
 function uniq<T>(a: T[]): T[] {
     return Array.from(new Set(a));
@@ -165,7 +185,7 @@ class DJBRParserEnhancer implements NetWorthAnalysisEnhancer {
         const parsed = (await fetchParsedDJBR(url)).data;
         console.log(JSON.stringify(parsed, null, 2))
 
-        if (parsed.ingresosMensual && parsed.ingresosMensual > 0) {
+        if (validNumber(parsed.ingresosAnual)) {
             toEnhance.incomes.push({
                 amount: parsed.ingresosMensual,
                 periodicity: 'monthly',
@@ -175,7 +195,7 @@ class DJBRParserEnhancer implements NetWorthAnalysisEnhancer {
             });
         }
 
-        if (parsed.ingresosAnual && parsed.ingresosAnual > 0) {
+        if (validNumber(parsed.ingresosAnual)) {
             toEnhance.incomes.push({
                 amount: parsed.ingresosAnual,
                 periodicity: 'yearly',
@@ -185,7 +205,7 @@ class DJBRParserEnhancer implements NetWorthAnalysisEnhancer {
             });
         }
 
-        if (parsed.egresosAnual && parsed.egresosAnual > 0) {
+        if (validNumber(parsed.egresosAnual)) {
             toEnhance.expenses.push({
                 amount: parsed.egresosAnual,
                 periodicity: 'yearly',
@@ -195,7 +215,7 @@ class DJBRParserEnhancer implements NetWorthAnalysisEnhancer {
             });
         }
 
-        if (parsed.egresosMensual && parsed.egresosMensual > 0) {
+        if (validNumber(parsed.egresosMensual)) {
             toEnhance.expenses.push({
                 amount: parsed.egresosMensual,
                 periodicity: 'yearly',
@@ -205,9 +225,9 @@ class DJBRParserEnhancer implements NetWorthAnalysisEnhancer {
             });
         }
 
-        if (parsed.activos && parsed.activos > 0) {
+        if (validNumber(parsed.resumen.totalActivo)) {
             toEnhance.actives.push({
-                amount: parsed.activos,
+                amount: parsed.resumen.totalActivo,
                 periodicity: 'yearly',
                 name: 'Total activos',
                 observation: `Total de activos según declaración`,
@@ -215,9 +235,9 @@ class DJBRParserEnhancer implements NetWorthAnalysisEnhancer {
             });
         }
 
-        if (parsed.pasivos && parsed.pasivos > 0) {
+        if (validNumber(parsed.resumen.totalPasivo)) {
             toEnhance.passives.push({
-                amount: parsed.pasivos,
+                amount: parsed.resumen.totalPasivo,
                 periodicity: 'yearly',
                 name: 'Total pasivos',
                 observation: `Total de pasivos según declaración`,
