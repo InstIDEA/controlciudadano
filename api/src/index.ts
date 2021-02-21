@@ -5,6 +5,7 @@ import {StagingService} from './services/Staging';
 import {OCDSService} from './services/OCDS';
 import helmet from 'helmet';
 import {ContraloryService} from './services/ContraloryService';
+import {AnalysisService} from "./services/AnalysisService";
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -90,6 +91,13 @@ app.get('/api/ocds/suppliers/:supplierRuc/contracts', wrap(req => {
     return new OCDSService(pool).getSupplierContracts(page.page, page.size, supplier);
 }));
 
+
+app.get('/api/analysis/net_worth_increment', wrap(req => {
+    const document = validateNonEmpty('document',
+        validateString('document', req.query.document));
+    return new AnalysisService(pool).netWorthIncrement(document);
+}));
+
 app.listen(port, () => console.log(`API listening at http://localhost:${port}`))
 
 
@@ -158,4 +166,11 @@ export class ApiError extends Error {
 function validateNonEmpty(paramName: string, supplierRuc: string): string {
     if (!supplierRuc || supplierRuc.trim() === '') throw new ApiError(`invalid.${paramName}`)
     return supplierRuc;
+}
+
+function validateString(paramName: string, param: any): string {
+    if (!param || typeof param !== 'string') {
+        throw new ApiError('invalid.' + paramName, 409, {param});
+    }
+    return param;
 }
