@@ -1,10 +1,10 @@
-import {NetWorthIncrementData} from "../../AnalysisModel";
+import {NetWorthIncreaseAnalysis} from "../../../APIModel";
 import {Col, Row, Typography} from "antd";
 import React from "react";
 import {ResponsiveLine} from "@nivo/line";
 
 export function Graphs(props: {
-    data: NetWorthIncrementData
+    data: NetWorthIncreaseAnalysis
 }) {
     return <Row justify="center">
         <Col md={12} sm={24}>

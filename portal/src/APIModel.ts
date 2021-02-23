@@ -34,6 +34,10 @@ export interface DeclarationData {
         periodicity: 'yearly'
     }>;
 
+    sources: Array<{
+        type: string,
+        url: string
+    }>;
 
 }
 

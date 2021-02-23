@@ -28,7 +28,7 @@ export function secondsToDate(seconds?: number) {
 
 export function formatMoney(value: any, symbol?: string, decimalDigits?: number) {
     if (!value && value !== 0) return '';
-    if (typeof value === 'string' && value.startsWith('Gs')) return value;
+    if (typeof value === 'string' && symbol && value.startsWith(symbol)) return value;
 
     const amount = decimalDigits ? value : Math.round(value);
     const formattedAmount = new Intl.NumberFormat('it', {

@@ -10,6 +10,10 @@ import {
     VideoTutorialesSemillas
 } from "../Model";
 import {RedashAPI} from "../RedashAPI";
+import {NetWorthIncreaseAnalysis} from "../APIModel";
+import {SimpleApi} from "../SimpleApi";
+
+const cacheEnabled = false;
 
 // TODO change this with a data fetcher hook library
 export function useRedashApi<T extends number>(id: T): Async<Array<ApiType<T>>> {
@@ -22,6 +26,33 @@ export function useRedashApi<T extends number>(id: T): Async<Array<ApiType<T>>> 
             .then(d => setData(AsyncHelper.loaded(d.query_result.data.rows)))
             .catch(e => setData(AsyncHelper.error(e)))
     }, [id])
+
+    return data;
+}
+
+export function useNetWorthAnalysis(doc: string): Async<NetWorthIncreaseAnalysis> {
+
+    const [data, setData] = useState<Async<NetWorthIncreaseAnalysis>>(AsyncHelper.noRequested());
+
+    useEffect(() => {
+        setData(AsyncHelper.fetching());
+
+        const cached = cacheEnabled
+            ? localStorage.getItem("cache_" + doc)
+            : undefined;
+
+        if (!cached) {
+            new SimpleApi().analysisNetWorth(doc)
+                .then(d => {
+                    localStorage.setItem("cache_" + doc, JSON.stringify(AsyncHelper.loaded(d)));
+                    setData(AsyncHelper.loaded(d));
+                })
+                .catch(e => setData(AsyncHelper.error(e)))
+        } else {
+            setData(JSON.parse(cached));
+        }
+
+    }, [doc])
 
     return data;
 }

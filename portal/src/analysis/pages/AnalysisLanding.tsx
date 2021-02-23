@@ -40,7 +40,7 @@ export function AnalysisLanding() {
                                     <LinkButton linkTo="/analysis/net_worth/123456" text="Ejemplo 1"/>
                                 </Col>
                                 <Col>
-                                    <LinkButton linkTo="/analysis/net_worth/789012" text="Ejemplo 2"/>
+                                    <LinkButton linkTo="/analysis/net_worth/492599" text="Ejemplo 2"/>
                                 </Col>
                                 <Col>
                                     <Input style={{width: '100%', borderRadius: 5}}
