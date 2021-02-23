@@ -187,7 +187,12 @@ class DJBRParserEnhancer implements NetWorthAnalysisEnhancer {
 
 
         const url = source.link;
-        const parsed = (await fetchParsedDJBR(url)).data;
+        const response = (await fetchParsedDJBR(url));
+        const parsed = response.data;
+
+        if (!parsed) {
+            return toEnhance;
+        }
 
         toEnhance.sources = [
             ...toEnhance.sources,
