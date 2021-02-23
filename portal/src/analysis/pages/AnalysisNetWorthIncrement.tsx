@@ -132,5 +132,5 @@ function validNumber(val?: number): boolean {
 
 function sum(arr: Array<FinancialDetail>): number {
     return arr.map(d => d.amount * (d.periodicity === 'yearly' ? 1 : 12))
-        .reduce((a, b) => a + b, 0)
+        .reduce((a, b) => (a || 0) + (b || 0), 0)
 }
