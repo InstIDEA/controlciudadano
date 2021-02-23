@@ -17,9 +17,10 @@ import {
 import {NetWorthIncreaseAnalysis} from "./APIModel";
 import {ApiError} from "./RedashAPI";
 
-const BASE_API = "https://api.controlciudadanopy.org/api";
+const BASE_API = "https://beta.api.controlciudadanopy.org/api";
 const CDN_API = "https://data.controlciudadanopy.org/cdn/";
-//const BASE_API = "http://localhost:3001/api";
+
+// const BASE_API = "http://localhost:3001/api";
 
 export class SimpleApi {
 
