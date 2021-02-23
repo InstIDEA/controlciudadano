@@ -113,7 +113,7 @@ function getMappedValName(val: unknown): string {
  *
  * @param filters
  */
-function hasFilter(filters: Filters): boolean {
+export function hasFilter(filters: Filters): boolean {
 
     if (!filters) return false;
     return !!Object.keys(filters)
