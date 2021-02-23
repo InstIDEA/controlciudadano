@@ -98,6 +98,7 @@ function useDeclarationData(base: NetWorthIncreaseAnalysis) {
         lastYear: calcTotals(base.lastYear)
     }));
 
+    // eslint-disable-next-line
     const setYearData = useCallback(debounce((newData: DeclarationData) => {
         setData(d => ({
             ...d,
