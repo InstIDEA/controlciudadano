@@ -29,7 +29,8 @@ function getDefault(): DeclarationData {
         totalActive: 0,
         totalExpenses: 0,
         totalIncome: 0,
-        totalPassive: 0
+        totalPassive: 0,
+        sources: []
     }
 }
 
@@ -119,7 +120,11 @@ export class NetWorthAnalysis {
             year: dat.year,
             totalPassive: parseFloat(dat.passive) || 0,
             totalActive: parseFloat(dat.active) || 0,
-            netWorth: parseFloat(dat.net_worth) || 0
+            netWorth: parseFloat(dat.net_worth) || 0,
+            sources: [{
+                url: dat.link,
+                type: 'djbr'
+            }]
         }
     }
 
@@ -183,9 +188,16 @@ class DJBRParserEnhancer implements NetWorthAnalysisEnhancer {
 
         const url = source.link;
         const parsed = (await fetchParsedDJBR(url)).data;
-        console.log(JSON.stringify(parsed, null, 2))
 
-        if (validNumber(parsed.ingresosAnual)) {
+        toEnhance.sources = [
+            ...toEnhance.sources,
+            {
+                type: 'djbr',
+                url: url
+            }
+        ]
+
+        if (validNumber(parsed.ingresosMensual)) {
             toEnhance.incomes.push({
                 amount: parsed.ingresosMensual,
                 periodicity: 'monthly',
