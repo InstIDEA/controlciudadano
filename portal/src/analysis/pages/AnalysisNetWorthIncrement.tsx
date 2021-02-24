@@ -11,8 +11,8 @@ import {Graphs} from "../components/net_worth/Graphs";
 import {useNetWorthAnalysis} from "../../hooks/useApi";
 import {DeclarationData, NetWorthIncreaseAnalysis} from "../../APIModel";
 import {FinancialDetail} from "../../../../api/src/APIModel";
-import {AsyncHelper} from "../../Model";
 import {debounce} from 'lodash';
+import {Loading} from "../../components/Loading";
 
 
 export function AnalysisNetWorthIncrement() {
@@ -20,7 +20,6 @@ export function AnalysisNetWorthIncrement() {
     const {document} = useParams<{ document: string }>();
     const fetched = useNetWorthAnalysis(document);
 
-    const name = AsyncHelper.or(AsyncHelper.map(fetched, dat => dat.person.name), document);
 
     return <>
         <Header/>
@@ -28,25 +27,12 @@ export function AnalysisNetWorthIncrement() {
         <Layout>
             <Layout.Content style={{padding: '0 30px', minHeight: '75vh'}}>
                 <Row gutter={[16, 16]} justify="center">
-                    <Col xs={24} xl={18}>
-                        <Row align="middle" justify="center">
-                            <Col xs={22}>
-                                <Typography.Title className="title-color" style={{textAlign: 'center'}}>
-                                    Crecimiento Patrimonial de '{name}' según Declaraciones Juradas de Bienes y
-                                    Rentas.
-                                </Typography.Title>
-                            </Col>
-                            <Col md={{span: 1, offset: 1}} xs={{span: 13, offset: 11}}>
-                                <Button type="primary"
-                                        shape="circle"
-                                        size="large"
-                                        color="#003459"
-                                        icon={<DownloadOutlined/>}/>
-                            </Col>
-                        </Row>
-                    </Col>
                     {fetched.state === 'LOADED' && <Analysis data={fetched.data}/>}
-                    {fetched.state !== 'LOADED' && <div>Cargando ...</div>}
+                    {fetched.state !== 'LOADED' && <Loading text={[
+                        "Buscando datos de " + document,
+                        "Obteniendo datos de la Contraloría General de la República",
+                        "Buscando en fuentes de datos abiertos"
+                    ]}/>}
                 </Row>
             </Layout.Content>
         </Layout>
@@ -60,34 +46,52 @@ function Analysis(props: {
 
     const data = useDeclarationData(props.data);
 
-    return <Row gutter={[16, 16]} justify="center">
-        <Col xs={24} xl={{span: 18}}>
-            <Card className="custom-card custom-shadow-small">
-                <Graphs data={data.data}/>
-            </Card>
-        </Col>
-        <Col md={12} sm={24} xl={9}>
-            <Card className="custom-card custom-shadow-small">
-                <Calculations data={data.data}/>
-            </Card>
-        </Col>
-        <Col md={12} sm={24} xl={9}>
-            <Card className="custom-card custom-shadow-small">
-                <InputData data={data.data} updateDate={data.setYearData}/>
-            </Card>
-        </Col>
-        <Col sm={24} xl={18}>
-            <DisclaimerComponent full card>
-                <Space>
-                    <Typography.Paragraph style={{margin: 'inherit'}}>
-                        Para ver mas detalles sobre este análisis, por favor revista este documento
-                    </Typography.Paragraph>
-                    <button className="round-button">Ver más</button>
-                </Space>
-            </DisclaimerComponent>
-        </Col>
-    </Row>
-
+    return <>
+        <Row gutter={[16, 16]} justify="center">
+            <Col xs={24} xl={18}>
+                <Row align="middle" justify="center">
+                    <Col xs={22}>
+                        <Typography.Title className="title-color" style={{textAlign: 'center'}}>
+                            Crecimiento Patrimonial de '{data.data.person.name}' según Declaraciones Juradas de Bienes y
+                            Rentas.
+                        </Typography.Title>
+                    </Col>
+                    <Col md={{span: 1, offset: 1}} xs={{span: 13, offset: 11}}>
+                        <Button type="primary"
+                                shape="circle"
+                                size="large"
+                                color="#003459"
+                                icon={<DownloadOutlined/>}/>
+                    </Col>
+                </Row>
+            </Col>
+            <Col xs={24} xl={{span: 18}}>
+                <Card className="custom-card custom-shadow-small">
+                    <Graphs data={data.data}/>
+                </Card>
+            </Col>
+            <Col md={12} sm={24} xl={9}>
+                <Card className="custom-card custom-shadow-small">
+                    <Calculations data={data.data}/>
+                </Card>
+            </Col>
+            <Col md={12} sm={24} xl={9}>
+                <Card className="custom-card custom-shadow-small">
+                    <InputData data={data.data} updateDate={data.setYearData}/>
+                </Card>
+            </Col>
+            <Col sm={24} xl={18}>
+                <DisclaimerComponent full card>
+                    <Space>
+                        <Typography.Paragraph style={{margin: 'inherit'}}>
+                            Para ver mas detalles sobre este análisis, por favor revista este documento
+                        </Typography.Paragraph>
+                        <button className="round-button">Ver más</button>
+                    </Space>
+                </DisclaimerComponent>
+            </Col>
+        </Row>
+    </>
 }
 
 function useDeclarationData(base: NetWorthIncreaseAnalysis) {

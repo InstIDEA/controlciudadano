@@ -107,7 +107,7 @@ export function SingleDeclaration(props: {
 
                         const val: FinancialDetail = form.getFieldValue(["incomes", field.name]);
 
-                        return <Form.Item label={val?.name}>
+                        return <Form.Item label={val?.name} key={field.name}>
                             <Row gutter={[8, 8]}>
                                 <Col>
                                     <Form.Item name={[field.name, "amount"]}
