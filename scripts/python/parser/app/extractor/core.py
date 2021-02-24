@@ -34,7 +34,7 @@ class DJBRParser:
 	filepath = None
 
 	def __init__(self, ppath, pcid='', pfullname='', ptype='autodetect', premote=True, pversion=''):
-		self.djbr_path = ppath
+		self.djbr_path = ppath.strip()
 		self.djbr_cid = pcid
 		self.djbr_fullname = pfullname
 		self.djbr_type = ptype
