@@ -177,3 +177,4 @@ class DJBRParser:
 		djbr = DJBRExtractedData(fullname, data, key)
 		session.add(djbr)
 		session.commit()
+		session.close()
