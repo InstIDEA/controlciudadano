@@ -158,6 +158,7 @@ const emptyAgg: ByListAggregation = {
     }]
 }
 
+// TODO check if this can be replaced with a `format: formatMoney`
 const AxisTick = ({
                       value: _value,
                       format,
@@ -199,6 +200,7 @@ const AxisTick = ({
     )
 }
 
+// TODO check if this can be replaced with a `format: getInitials`
 const InitialsTick = ({
                           value: _value,
                           format,

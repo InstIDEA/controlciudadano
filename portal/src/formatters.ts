@@ -102,7 +102,18 @@ export function formatSecondsDuration(seconds: number) {
 export function getInitials(name: string) {
     const split = name.split(" ");
     let initials = "";
-    split.forEach(s => initials = initials + s.substr(0,1));
+    split.forEach(s => initials = initials + s.substr(0, 1));
     return initials;
 }
 
+
+export function millionFormatter(num: any) {
+    if (typeof num !== 'number') return '';
+    if (num >= 1000000000) {
+        return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'Mil M';
+    }
+    if (num >= 1000000) {
+        return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+    }
+    return num;
+}
