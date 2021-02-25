@@ -8,6 +8,7 @@ export function Graphs(props: {
     data: NetWorthIncreaseAnalysis
 }) {
 
+    // TODO: move this calculation to the logic hook
     const earnings = (props.data.firstYear.totalIncome + props.data.lastYear.totalIncome) / 2;
     const totalIncome = earnings * props.data.duration;
     const totalIncomePlus1 = earnings * (props.data.duration + 1)
