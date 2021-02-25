@@ -1,6 +1,6 @@
 import {Layout, Menu} from 'antd';
 import * as React from 'react';
-import {ReactNode} from 'react';
+import {ReactNode, useMemo} from 'react';
 import {Link, useHistory} from 'react-router-dom';
 
 const menus = {
@@ -36,19 +36,23 @@ export function Sidebar(props: {
 }) {
 
     const history = useHistory();
-    const {Sider} = Layout;
-    const menuItems = getMenu(history.location.pathname);
+    const items = useMemo(
+        () => getMenu(history.location.pathname).map(i => <Menu.Item key={i.key}>
+            <Link to={i.link}/>{i.label}
+        </Menu.Item>),
+        [history.location.pathname]
+    );
 
     return <>
         <Layout>
-            <Sider width={320}
-                   breakpoint='lg'
-                   collapsedWidth={0}
+            <Layout.Sider width={320}
+                          breakpoint='lg'
+                          collapsedWidth={0}
             >
                 <Menu mode="inline" defaultSelectedKeys={[props.menuIndex]} style={{height: '100%', borderRight: 0}}>
-                    {menuItems.map(i => <Menu.Item key={i.key}><Link to={i.link}/>{i.label}</Menu.Item>)}
+                    {items}
                 </Menu>
-            </Sider>
+            </Layout.Sider>
             <Layout.Content>
                 {props.children}
             </Layout.Content>
