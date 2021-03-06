@@ -9,7 +9,7 @@ import {
     StatisticsDJBR,
     VideoTutorialesSemillas
 } from "../Model";
-import {RedashAPI} from "../RedashAPI";
+import {ApiError, RedashAPI} from "../RedashAPI";
 import {NetWorthIncreaseAnalysis} from "../APIModel";
 import {SimpleApi} from "../SimpleApi";
 
@@ -30,9 +30,9 @@ export function useRedashApi<T extends number>(id: T): Async<Array<ApiType<T>>> 
     return data;
 }
 
-export function useNetWorthAnalysis(doc: string): Async<NetWorthIncreaseAnalysis> {
+export function useNetWorthAnalysis(doc: string): Async<NetWorthIncreaseAnalysis, ApiError> {
 
-    const [data, setData] = useState<Async<NetWorthIncreaseAnalysis>>(AsyncHelper.noRequested());
+    const [data, setData] = useState<Async<NetWorthIncreaseAnalysis, ApiError>>(AsyncHelper.fetching());
 
     useEffect(() => {
         setData(AsyncHelper.fetching());

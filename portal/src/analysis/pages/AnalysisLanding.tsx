@@ -2,7 +2,7 @@ import React, {PropsWithChildren} from "react";
 import {Header} from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
 import {Card, Carousel, Col, Input, Layout, Result, Row, Typography} from "antd";
-import {Link} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import inProgressIcon from "../../assets/imgs/analysis_in_progress.svg";
 import './AnalysisLanding.css';
 
@@ -32,6 +32,8 @@ const DBJRExamples = shuffle([
 
 export function AnalysisLanding() {
 
+    const history = useHistory();
+
     return <>
         <Header/>
 
@@ -54,6 +56,13 @@ export function AnalysisLanding() {
                                 </Col>)}
                                 <Col>
                                     <Input style={{width: '100%', borderRadius: 5}}
+                                           onKeyPress={e => {
+                                               const keyCode = e.key;
+                                               if (keyCode === 'Enter') {
+                                                   history.push(`/analysis/net_worth/${e.currentTarget.value}`)
+                                                   return false;
+                                               }
+                                           }}
                                            placeholder="Ingrese una cédula"/>
                                 </Col>
                             </Row>

@@ -41,6 +41,14 @@ export interface DeclarationData {
 
 }
 
+export interface NWAnalysisAvailableYear {
+    id: number;
+    link: string;
+    year: number;
+    date: string;
+    downloadedDate: string;
+}
+
 export interface NetWorthIncreaseAnalysis {
 
     person: {
@@ -49,10 +57,16 @@ export interface NetWorthIncreaseAnalysis {
     }
 
     duration: number;
+    /**
+     * The first year of the declaration, for example 2015
+     */
     firstYear: DeclarationData,
+    /**
+     * The last year of the analysis, for example 2020
+     */
     lastYear: DeclarationData
 
-    availableYears: number[];
+    availableYears: Array<NWAnalysisAvailableYear>;
 }
 
 

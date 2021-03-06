@@ -63,6 +63,10 @@ export function formatToMonth(value: any) {
     return formatWF(value, "MMMM 'de' yyyy");
 }
 
+export function formatToDay(value: any) {
+    return formatWF(value, "dd 'de' MMMM 'de' yyyy");
+}
+
 export function formatWF(value: any, f: string) {
     if (value) {
         return format(new Date(value), f, {locale: es});

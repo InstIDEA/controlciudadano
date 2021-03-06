@@ -14,7 +14,7 @@ import {
     PaginatedResult,
     SimpleAPINotPaginatedResult
 } from './Model';
-import {NetWorthIncreaseAnalysis} from "./APIModel";
+import {DeclarationData, NetWorthIncreaseAnalysis} from "./APIModel";
 import {ApiError} from "./RedashAPI";
 
 const BASE_API = "https://beta.api.controlciudadanopy.org/api";
@@ -97,6 +97,10 @@ export class SimpleApi {
 
     async analysisNetWorth(document: string): Promise<NetWorthIncreaseAnalysis> {
         return this.doGet<NetWorthIncreaseAnalysis>(`analysis/net_worth_increment?document=${document}`);
+    }
+
+    async analysisGetYear(document: string, id: number): Promise<DeclarationData> {
+        return this.doGet<DeclarationData>(`analysis/net_worth_increment/byDec?document=${document}&id=${id}`);
     }
 
     async doGet<T>(url: string): Promise<T> {
