@@ -165,7 +165,9 @@ export function SingleDeclaration(props: {
 
     useEffect(() => {
         form.setFieldsValue(props.data);
-    }, [props.data.year])
+        // we know we should override the data only if the year changes
+        // eslint-disable-next-line
+    }, [props.data.year, form])
 
     return <Form {...layout}
                  form={form}
