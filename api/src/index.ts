@@ -6,9 +6,15 @@ import {OCDSService} from './services/OCDS';
 import helmet from 'helmet';
 import {ContraloryService} from './services/ContraloryService';
 import {AnalysisService} from "./services/AnalysisService";
+import {AdminOperationsService} from "./services/AdminOperationsService";
 
 const app = express()
 const port = process.env.PORT || 3000
+
+const apiKey = process.env.API_KEY || generateRandomString(32);
+if (!process.env.API_KEY) {
+    console.warn(`No API_KEY provided, using generated key: "${apiKey}"`)
+}
 
 const pool = new pg.Pool()
 
@@ -105,6 +111,17 @@ app.get('/api/analysis/net_worth_increment/byDec', wrap(req => {
     return new AnalysisService(pool).getDataOfYear(document, id);
 }));
 
+app.get('/api/admin/parse_all_decs', wrap(req => {
+    const document = validateNonEmpty('document',
+        validateString('document', req.query.document));
+    const givenKey = validateNonEmpty('apiKey',
+        validateString('apiKey', req.query.apiKey));
+
+    if (apiKey !== givenKey) {
+        throw new ApiError("Invalid api key", 403, {key: givenKey});
+    }
+    return new AdminOperationsService(pool).parseAllDecs(document);
+}));
 
 app.listen(port, () => console.log(`API listening at http://localhost:${port}`))
 
@@ -189,4 +206,14 @@ function validateNumber(paramName: string, param: any): number {
     }
 
     return parseInt(param);
+}
+
+function generateRandomString(length: number): string {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
 }
