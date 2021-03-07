@@ -52,7 +52,13 @@ export interface NetWorthIncreaseAnalysis {
     firstYear: DeclarationData,
     lastYear: DeclarationData
 
-    availableYears: number[];
+    availableYears: Array<{
+        id: number;
+        link: string;
+        year: number;
+        date: string;
+        downloadedDate: string;
+    }>;
 }
 
 
@@ -71,5 +77,5 @@ export interface AnalysisDJBR {
     net_worth: string;
     scrapped_data: object;
     charge: string;
-    download_date: string;
+    download_date: Date;
 }

@@ -1,18 +1,17 @@
-import React, {useCallback, useState} from "react";
+import React from "react";
 import {Header} from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
-import {Button, Card, Col, Layout, Row, Space, Typography} from "antd";
-import {useParams} from "react-router-dom";
+import {Button, Card, Col, Layout, Result, Row, Space, Typography} from "antd";
+import {Link, useParams} from "react-router-dom";
 import {DownloadOutlined} from "@ant-design/icons";
 import {DisclaimerComponent} from "../../components/Disclaimer";
 import {Calculations} from "../components/net_worth/Calculations";
 import {InputData} from "../components/net_worth/InputData";
 import {Graphs} from "../components/net_worth/Graphs";
 import {useNetWorthAnalysis} from "../../hooks/useApi";
-import {DeclarationData, NetWorthIncreaseAnalysis} from "../../APIModel";
-import {FinancialDetail} from "../../../../api/src/APIModel";
-import {debounce} from 'lodash';
+import {NetWorthIncreaseAnalysis} from "../../APIModel";
 import {Loading} from "../../components/Loading";
+import {useNWHook} from "../NetWorthHook";
 
 
 export function AnalysisNetWorthIncrement() {
@@ -28,11 +27,19 @@ export function AnalysisNetWorthIncrement() {
             <Layout.Content style={{padding: '0 30px', minHeight: '75vh'}}>
                 <Row gutter={[16, 16]} justify="center">
                     {fetched.state === 'LOADED' && <Analysis data={fetched.data}/>}
-                    {fetched.state !== 'LOADED' && <Loading text={[
+                    {fetched.state === 'FETCHING' && <Loading text={[
                         "Buscando datos de " + document,
                         "Obteniendo datos de la Contraloría General de la República",
-                        "Buscando en fuentes de datos abiertos"
+                        "Buscando en fuentes de datos abiertos",
                     ]}/>}
+                    {fetched.state === 'ERROR' && <Result status={fetched.error.asSimpleCode()}
+                                                          title={`No se encontraron datos de ${document}`}
+                                                          extra={<Link to="/analysis/">
+                                                              <Button>
+                                                                  Volver
+                                                              </Button>
+                                                          </Link>}
+                    />}
                 </Row>
             </Layout.Content>
         </Layout>
@@ -44,7 +51,7 @@ function Analysis(props: {
     data: NetWorthIncreaseAnalysis
 }) {
 
-    const data = useDeclarationData(props.data);
+    const data = useNWHook(props.data);
 
     return <>
         <Row gutter={[16, 16]} justify="center">
@@ -77,7 +84,11 @@ function Analysis(props: {
             </Col>
             <Col md={12} sm={24} xl={9}>
                 <Card className="custom-card custom-shadow-small">
-                    <InputData data={data.data} updateDate={data.setYearData}/>
+                    <InputData data={data.data}
+                               disabled={data.working}
+                               updateDate={data.setYearData}
+                               updateSingleYear={data.changeYear}
+                    />
                 </Card>
             </Col>
             <Col sm={24} xl={18}>
@@ -94,47 +105,6 @@ function Analysis(props: {
     </>
 }
 
-function useDeclarationData(base: NetWorthIncreaseAnalysis) {
-
-    const [data, setData] = useState<NetWorthIncreaseAnalysis>(() => ({
-        ...base,
-        firstYear: calcTotals(base.firstYear),
-        lastYear: calcTotals(base.lastYear)
-    }));
-
-    // eslint-disable-next-line
-    const setYearData = useCallback(debounce((newData: DeclarationData) => {
-        setData(d => ({
-            ...d,
-            firstYear: newData.year === d.firstYear.year ? calcTotals(newData) : d.firstYear,
-            lastYear: newData.year === d.lastYear.year ? calcTotals(newData) : d.lastYear
-        }))
-    }, 1000), []);
-
-    return {
-        data,
-        setYearData
-    }
-}
 
 
-function calcTotals(base: DeclarationData): DeclarationData {
-    const data: DeclarationData = {
-        ...base,
-        totalActive: validNumber(base.totalActive) ? base.totalActive : sum(base.actives),
-        totalPassive: validNumber(base.totalPassive) ? base.totalPassive : sum(base.passives),
-        totalIncome: sum(base.incomes),
-        totalExpenses: validNumber(base.totalExpenses) ? base.totalExpenses : sum(base.expenses)
-    };
-    data.netWorth = data.totalActive - data.totalPassive;
-    return data;
-}
 
-function validNumber(val?: number): boolean {
-    return !!(val && val > 0)
-}
-
-function sum(arr: Array<FinancialDetail>): number {
-    return arr.map(d => d.amount * (d.periodicity === 'yearly' ? 1 : 12))
-        .reduce((a, b) => (a || 0) + (b || 0), 0)
-}

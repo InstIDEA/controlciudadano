@@ -98,6 +98,14 @@ app.get('/api/analysis/net_worth_increment', wrap(req => {
     return new AnalysisService(pool).netWorthIncrement(document);
 }));
 
+app.get('/api/analysis/net_worth_increment/byDec', wrap(req => {
+    const document = validateNonEmpty('document',
+        validateString('document', req.query.document));
+    const id = validateNumber('id', req.query.id);
+    return new AnalysisService(pool).getDataOfYear(document, id);
+}));
+
+
 app.listen(port, () => console.log(`API listening at http://localhost:${port}`))
 
 
@@ -163,9 +171,9 @@ export class ApiError extends Error {
     }
 }
 
-function validateNonEmpty(paramName: string, supplierRuc: string): string {
-    if (!supplierRuc || supplierRuc.trim() === '') throw new ApiError(`invalid.${paramName}`)
-    return supplierRuc;
+function validateNonEmpty(paramName: string, param: string): string {
+    if (!param || param.trim() === '') throw new ApiError(`invalid.${paramName}`)
+    return param;
 }
 
 function validateString(paramName: string, param: any): string {
@@ -173,4 +181,12 @@ function validateString(paramName: string, param: any): string {
         throw new ApiError('invalid.' + paramName, 409, {param});
     }
     return param;
+}
+
+function validateNumber(paramName: string, param: any): number {
+    if (!param || typeof param !== 'string' || isNaN(parseInt(param))) {
+        throw new ApiError('invalid.' + paramName, 409, {param});
+    }
+
+    return parseInt(param);
 }

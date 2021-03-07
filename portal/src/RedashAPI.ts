@@ -196,6 +196,12 @@ export class ApiError extends Error {
     getCode() {
         return this.code;
     }
+
+    asSimpleCode() {
+        if (this.code === 404) return 404;
+        if (this.code === 403) return 403;
+        return 500;
+    }
 }
 
 (window as any).RedashAPI = RedashAPI;

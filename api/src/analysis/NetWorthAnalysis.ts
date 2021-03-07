@@ -5,7 +5,7 @@ export interface NetWorthAnalysisEnhancer {
     enhance(context: ContextData): Promise<void>;
 }
 
-interface ContextData {
+export interface ContextData {
     document: string;
     start: {
         dbRow: AnalysisDJBR,
@@ -34,6 +34,8 @@ function getDefault(): DeclarationData {
     }
 }
 
+type GroupedDecs = { [k: number]: AnalysisDJBR };
+
 
 export class NetWorthAnalysis {
     enhancers: NetWorthAnalysisEnhancer[] = [];
@@ -49,9 +51,11 @@ export class NetWorthAnalysis {
 
     async buildData(decs: Array<AnalysisDJBR>, document: string): Promise<NetWorthIncreaseAnalysis> {
 
+        // first: we get the last declaration per year
+        const latest = this.getLatestDeclarationsPerYear(decs);
 
         // second: use the latest two (with a spam of al least 4 years)
-        const {first, last} = this.checkBestDeclarations(decs);
+        const {first, last} = this.getBestDeclarations(latest);
 
         // third create base struct
         const context: ContextData = {
@@ -81,34 +85,70 @@ export class NetWorthAnalysis {
         );
     }
 
+    async getSpecificYear(dec: AnalysisDJBR): Promise<DeclarationData> {
 
-    private checkBestDeclarations(allDecs: Array<AnalysisDJBR>, minSpan: number = 4): {
+        const ctx: ContextData = {
+            start: {
+                data: this.createBaseData(dec),
+                dbRow: dec
+            },
+            end: {
+                data: this.createBaseData(null),
+                dbRow: dec
+            },
+            document: ''
+        }
+
+        // four enhance with sources
+        for (const enhancer of this.enhancers) {
+            await Promise.all([
+                enhancer.enhance(ctx)
+            ])
+        }
+
+        return ctx.start.data;
+    }
+
+    getLatestDeclarationsPerYear(decs: Array<AnalysisDJBR>): GroupedDecs {
+        const toRet: GroupedDecs = {};
+
+        for (const dec of decs) {
+            if (!toRet[dec.year]) {
+                toRet[dec.year] = dec;
+            } else {
+                const previous = toRet[dec.year];
+                if (previous.download_date < dec.download_date) {
+                    toRet[dec.year] = dec;
+                }
+            }
+        }
+
+        return toRet;
+    }
+
+
+    public getBestDeclarations(allDecs: GroupedDecs): {
         first: AnalysisDJBR | null,
         last: AnalysisDJBR | null
     } {
 
-        if (!allDecs || allDecs.length === 0) {
+        if (!allDecs || Object.keys(allDecs).length === 0) {
             return {first: null, last: null};
         }
 
-        if (allDecs.length === 1) {
-            return {first: null, last: allDecs[0]};
+        if (Object.keys(allDecs).length === 1) {
+            return {first: null, last: Object.values(allDecs)[0]};
         }
 
-        const clone = [...allDecs].sort((f, s) => s.year - f.year);
+        const years = Object.keys(allDecs).map(y => parseInt(y));
+        years.sort((y1, y2) => y1 - y2);
 
-
-        const last = clone[0];
-
-        let prev = clone.filter(d => d.year < last.year - minSpan).pop();
-
-        // there was not any good candidate, pick the last one
-        if (!prev) prev = clone.pop();
-
+        const lastYear = years.pop();
+        const previousYear = years.length > 0 ? years.pop() : undefined;
 
         return {
-            first: prev,
-            last: last
+            first: allDecs[previousYear],
+            last: allDecs[lastYear]
         };
     }
 
@@ -138,7 +178,7 @@ export class NetWorthAnalysis {
                 document: document,
                 name: ctx.end.dbRow.name || ctx.start.dbRow.name || ''
             },
-            availableYears: uniq(allDecs.map(d => d.year)),
+            availableYears: prepareAvailableDecs(this.getLatestDeclarationsPerYear(allDecs)),
             duration: ctx.end.data.year - ctx.start.data.year,
             firstYear: ctx.start.data,
             lastYear: ctx.end.data
@@ -155,6 +195,17 @@ export class NetWorthAnalysis {
     }
 }
 
+function prepareAvailableDecs(decs: GroupedDecs): NetWorthIncreaseAnalysis["availableYears"] {
+
+    return Object.values(decs).map(dec => ({
+        id: dec.id,
+        date: `${dec.year}/01/01`, // TODO get the dec date
+        downloadedDate: `${dec.download_date}`,
+        link: dec.link,
+        year: dec.year
+    })).sort((d1, d2) => d2.year - d1.year)
+}
+
 function validNumber(val?: number): boolean {
     return val && val > 0
 }
@@ -163,11 +214,6 @@ function sum(arr: Array<FinancialDetail>): number {
     return arr.map(d => d.amount * (d.periodicity === 'yearly' ? 1 : 12))
         .reduce((a, b) => a + b, 0)
 }
-
-function uniq<T>(a: T[]): T[] {
-    return Array.from(new Set(a));
-}
-
 
 class DJBRParserEnhancer implements NetWorthAnalysisEnhancer {
 

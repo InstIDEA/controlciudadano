@@ -17,7 +17,6 @@ export function Loading(props: {
 
     useEffect(() => {
         const ival = setInterval(() => {
-            console.log("jumping")
             setIdx(pre => (pre + 1) % size);
         }, props.interval || 1000);
 
