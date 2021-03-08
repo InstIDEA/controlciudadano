@@ -1,40 +1,34 @@
 import * as React from 'react';
-import {useMemo, useState} from 'react';
-import {Card, List, PageHeader, Table} from 'antd';
-import {Affidavit, AsyncHelper} from '../Model';
+import {Card, List, PageHeader, Result, Table} from 'antd';
+import {Affidavit} from '../Model';
 import {Link, useHistory} from 'react-router-dom';
-import {filterRedashList} from '../RedashAPI';
-import {formatMoney, formatSortableDate} from '../formatters';
+import {formatMoney, formatToDay} from '../formatters';
 import {FilePdfOutlined, ShareAltOutlined} from '@ant-design/icons';
 import {BaseDatosPage} from '../components/BaseDatosPage';
 import {SearchBar} from '../components/SearchBar';
 import {DisclaimerComponent} from '../components/Disclaimer';
 import {useDJBRStats} from "../hooks/useStats";
-import {useRedashApi} from "../hooks/useApi";
+import {usePaginatedTable} from "../hooks/usePaginatedTable";
+
 
 export function AffidavitList() {
 
     const stats = useDJBRStats();
-    const data = useRedashApi(19);
+    const data = usePaginatedTable<Affidavit>('contralory/declarations');
     const history = useHistory();
-    const [query, setQuery] = useState('');
 
-    const filtered = useMemo(() => filterRedashList(AsyncHelper.or(data, []), query, [
-        'name',
-        'document',
-        'year'
-    ]), [data, query]);
+    if (data.hasError) {
+        return <Result status="error" title="Error obteniendo datos"/>
+    }
 
     return <BaseDatosPage menuIndex="affidavit" headerExtra={
-        <SearchBar defaultValue={query || ''} onSearch={setQuery}/>
+        <SearchBar defaultValue={''} onSearch={val => data.updateFilters(guestQuery(val))}/>
     }>
         <PageHeader ghost={false}
                     style={{border: '1px solid rgb(235, 237, 240)'}}
                     onBack={() => history.push('/')}
                     title="Declaraciones Juradas de Bienes y Rentas de Funcionarios públicos"
-                    subTitle=""
                     backIcon={null}>
-
 
             <DisclaimerComponent>
                 Lista de las declaraciones juradas <b>públicas</b> que han sido publicadas al portal
@@ -43,24 +37,27 @@ export function AffidavitList() {
 
                 <br/>
                 No contamos con todas las declaraciones juradas, pues las mismas se actualizan a diario,
-                esta lista fue actualizada por última vez el {formatSortableDate(stats.last_success_fetch)}
+                esta lista fue actualizada por última vez el {formatToDay(stats.last_success_fetch)}
             </DisclaimerComponent>
 
 
-            <Table<Affidavit> dataSource={filtered}
+            <Table<Affidavit> dataSource={data.rows}
                               className="hide-responsive"
-                              loading={data.state === 'FETCHING'}
+                              loading={data.isLoading}
                               rowKey="id"
                               size="small"
+                              onChange={data.onChange}
                               pagination={{
                                   defaultCurrent: 1,
-                                  defaultPageSize: 10
+                                  defaultPageSize: 10,
+                                  total: data.total,
+                                  current: data.page
                               }}
                               columns={[{
                                   dataIndex: 'document',
                                   title: 'Documento',
                                   align: 'right',
-                                  render: document => <Link to={`/person/${document}`}>{document}</Link>,
+                                  render: (document, row) => <Link to={`/person/${document}`}>{row.document}</Link>,
                                   sorter: (a, b) => (a.document || '').localeCompare(b.document)
                               }, {
                                   dataIndex: 'name',
@@ -69,8 +66,8 @@ export function AffidavitList() {
                               }, {
                                   dataIndex: 'year',
                                   title: 'Año (revision)',
-                                  render: (_, row) => `${row.year} (${row.revision})`,
-                                  sorter: (a, b) => `${a.year}${a.revision}`.localeCompare(`${b.year}${b.revision}`)
+                                  render: (_, row) => `${row.year} (${row.version})`,
+                                  sorter: (a, b) => `${a.year}${a.version}`.localeCompare(`${b.year}${b.version}`)
                               }, {
                                   dataIndex: 'active',
                                   title: 'Activos',
@@ -111,57 +108,60 @@ export function AffidavitList() {
                                       </a>
                                   </div>
                               }]}/>
-            <List
-                className="show-responsive"
-                grid={{
-                    gutter: 16,
-                    xs: 1,
-                    sm: 1,
-                    md: 1,
-                    lg: 4,
-                    xl: 5,
-                    xxl: 6
-                }}
-                pagination={{
-                    showSizeChanger: true,
-                    position: "bottom"
-                }}
-                dataSource={filtered}
-                loading={data.state === 'FETCHING'}
-                renderItem={(r: Affidavit) =>
-                    <List.Item className="list-item">
-                        <Card bordered={false}>
-                            Documento: <Link to={`/person/${r.document}`}>{r.document}</Link>
-                            <br/>
-                            Nombre: {r.name}
-                            <br/>
-                            Año (revision): {r.year} ({r.revision})
-                            <br/>
-                            Activos: {r.active === undefined || r.active === null
-                            ? <span>Ayudanos a completar!</span>
-                            : formatMoney(r.active)}
-                            <br/>
-                            Pasivos: {r.passive === undefined || r.passive === null
-                            ? <span>Ayudanos a completar!</span>
-                            : formatMoney(r.passive)}
-                            <br/>
-                            Patrimonio Neto: {r.net_worth === undefined || r.net_worth === null
-                            ? <span>Ayudanos a completar!</span>
-                            : formatMoney(r.net_worth)}
-                            <br/>
-                            <div style={{fontSize: '1.5em'}}>
-                                <a href={fixLink(r.link_sandwich || r.link)} target="_blank"
-                                   rel="noopener noreferrer" title="Ver">
-                                    <FilePdfOutlined/>
-                                </a>
-                                <a href={fixLink(r.source)} target="_blank" rel="noopener noreferrer" title="Fuente">
-                                    <ShareAltOutlined/>
-                                </a>
-                            </div>
+            <List className="show-responsive"
+                  grid={{
+                      gutter: 16,
+                      xs: 1,
+                      sm: 1,
+                      md: 1,
+                      lg: 4,
+                      xl: 5,
+                      xxl: 6
+                  }}
+                  pagination={{
+                      showSizeChanger: true,
+                      position: "bottom",
+                      current: data.page,
+                      total: data.total,
+                      onChange: data.setPage,
+                      onShowSizeChange: data.setPageSize
+                  }}
+                  dataSource={data.rows}
+                  loading={data.isLoading}
+                  renderItem={(r: Affidavit) =>
+                      <List.Item className="list-item">
+                          <Card bordered={false}>
+                              Documento: <Link to={`/person/${r.document}`}>{r.document}</Link>
+                              <br/>
+                              Nombre: {r.name}
+                              <br/>
+                              Año (revision): {r.year} ({r.version})
+                              <br/>
+                              Activos: {r.active === undefined || r.active === null
+                              ? <span>Ayudanos a completar!</span>
+                              : formatMoney(r.active)}
+                              <br/>
+                              Pasivos: {r.passive === undefined || r.passive === null
+                              ? <span>Ayudanos a completar!</span>
+                              : formatMoney(r.passive)}
+                              <br/>
+                              Patrimonio Neto: {r.net_worth === undefined || r.net_worth === null
+                              ? <span>Ayudanos a completar!</span>
+                              : formatMoney(r.net_worth)}
+                              <br/>
+                              <div style={{fontSize: '1.5em'}}>
+                                  <a href={fixLink(r.link_sandwich || r.link)} target="_blank"
+                                     rel="noopener noreferrer" title="Ver">
+                                      <FilePdfOutlined/>
+                                  </a>
+                                  <a href={fixLink(r.source)} target="_blank" rel="noopener noreferrer" title="Fuente">
+                                      <ShareAltOutlined/>
+                                  </a>
+                              </div>
 
-                        </Card>
-                    </List.Item>
-                }
+                          </Card>
+                      </List.Item>
+                  }
             >
             </List>
         </PageHeader>
@@ -169,5 +169,15 @@ export function AffidavitList() {
 }
 
 function fixLink(link: string) {
-    return link.replace(/ /g, "");
+    return (link || '').replace(/ /g, "");
+}
+
+function guestQuery(val: string): Partial<Affidavit> {
+    if (!val || val === '') return {};
+    const asNum = parseInt(val);
+    if (!isNaN(asNum)) {
+        if (asNum < 9999) return {year: asNum};
+        else return {document: `${asNum}`};
+    }
+    return {name: val};
 }
