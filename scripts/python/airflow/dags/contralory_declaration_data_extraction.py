@@ -85,7 +85,9 @@ def list_navigator(cursor, ap, year, batch_size):
 		cursor.execute("""
 		SELECT drd.id as raw_id, ddf.file_name from staging.djbr_downloaded_files ddf
 		INNER JOIN staging.djbr_raw_data drd on ddf.raw_data_id = drd.id
+		LEFT JOIN analysis.djbr_readable_data parsed ON parsed.raw_data_id = drd.id
 		WHERE drd.periodo >= %s
+		AND parsed IS NULL
 		ORDER BY drd.id DESC -- begin with the latest declaration
 		OFFSET %s
 		LIMIT %s
@@ -107,13 +109,14 @@ def do_work(first_item, second_item, year, batch_size):
 	page_size = ap(1, first_item, second_item)
 
 	insert_query = """
-	INSERT INTO analysis.ddjj_readable_data (
+	INSERT INTO analysis.djbr_readable_data (
 		raw_data_id,
 		active,
 		passive,
 		net_worth,
-		parser
-	) VALUES (%s, %s, %s, %s, %s)
+		source,
+		parsed
+	) VALUES (%s, %s, %s, %s, %s, %s)
 	ON CONFLICT DO NOTHING;
 	"""
 
@@ -135,7 +138,7 @@ def do_work(first_item, second_item, year, batch_size):
 					if is_valid_data(data):
 						to_insert.append([row['raw_id'],data['resumen']['totalActivo'],
 						data['resumen']['totalPasivo'], data['resumen']['patrimonioNeto'],
-						"ms_djbr_parser"])
+						"ms_djbr_parser", dumps(data)])
 					else:
 						to_delete.append([row['raw_id']])
 
@@ -158,15 +161,17 @@ with dag:
 
 	clean_db = PostgresOperator(task_id='clean_table',
 								sql="""
-									CREATE TABLE IF NOT EXISTS analysis.ddjj_readable_data (
+									CREATE TABLE IF NOT EXISTS analysis.djbr_readable_data (
 										id bigserial primary key,
 										raw_data_id bigint,
 										active numeric(20,2),
 										passive numeric(20,2),
 										net_worth numeric(20,2),
 										declaration_date timestamp,
-										parser text NULL,
-										UNIQUE(raw_data_id)
+										source text NULL,
+										parsed jsonb,
+										UNIQUE(raw_data_id),
+										FOREIGN KEY(raw_data_id) REFERENCES staging.djbr_raw_data(id)
 									);
 									""")
 
