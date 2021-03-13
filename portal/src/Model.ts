@@ -193,6 +193,10 @@ export interface OCDSItemTenderInfo {
     supplier?: {
         id: string;
         name: string;
+    },
+    buyer?: {
+        id: string;
+        name: string;
     }
 }
 
@@ -283,6 +287,8 @@ export interface OCDSSupplierContract {
     contract_award_id: string;
     tender_slug: string;
     tender_title: string;
+    buyer_id: string;
+    buyer_name: string;
     contract_id: string;
     name: string;
     ruc: string;

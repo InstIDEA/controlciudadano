@@ -62,6 +62,7 @@ export function Sidebar(props: {
 
 function getMenu(path: string) {
     if (path.includes('action')) return menus.action;
+    if (path.includes('ocds')) return menus.action;
     if (path.includes('explore')) return menus.explore;
     return menus.djbr;
 }
