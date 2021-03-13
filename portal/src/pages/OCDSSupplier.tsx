@@ -142,6 +142,13 @@ export function ContractsTable(props: {
             render: (amount, row) => formatMoney(amount, row.currency),
             sorter: (a, b) => parseInt(a.amount) - parseInt(b.amount)
         }, {
+            dataIndex: 'published_date',
+            title: 'Fecha de publicación',
+            align: 'right',
+            render: sign => formatIsoDate(sign),
+            sorter: (a, b) => (a.published_date || '')
+                .localeCompare(b.published_date),
+        }, {
             dataIndex: 'sign_date',
             title: 'Fecha de firma',
             align: 'right',

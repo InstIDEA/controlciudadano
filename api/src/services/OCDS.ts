@@ -65,6 +65,7 @@ const QUERY_CONTRACTS_PER_SUPPLIER = `
            s.supplier_id                                   as ruc,
            c.amount                                        as amount,
            c.currency                                      as currency,
+           t.tender_date_published                         as published_date,
            c.date_signed                                   as sign_date,
            t.tender_procurementmethod                      as procurement_method,
            coalesce(t.characteristics ? 'covid_19', false) as is_covid

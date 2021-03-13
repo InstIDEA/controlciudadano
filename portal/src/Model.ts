@@ -287,6 +287,7 @@ export interface OCDSSupplierContract {
     contract_award_id: string;
     tender_slug: string;
     tender_title: string;
+    published_date: string;
     buyer_id: string;
     buyer_name: string;
     contract_id: string;
