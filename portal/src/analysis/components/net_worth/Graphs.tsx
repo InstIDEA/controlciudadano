@@ -3,21 +3,12 @@ import {Col, Row, Typography} from "antd";
 import React from "react";
 import {ResponsiveLine} from "@nivo/line";
 import {formatMoney, millionFormatter} from "../../../formatters";
+import {NetWorthCalculations} from "../../NetWorthHook";
 
-export function Graphs(props: {
-    data: NetWorthIncreaseAnalysis
+export function Graphs({data, calc}: {
+    data: NetWorthIncreaseAnalysis,
+    calc: NetWorthCalculations
 }) {
-
-    // TODO: move this calculation to the logic hook
-    const earnings = (props.data.firstYear.totalIncome + props.data.lastYear.totalIncome) / 2;
-    const totalIncome = earnings * props.data.duration;
-    const totalIncomePlus1 = earnings * (props.data.duration + 1)
-    const forInversion = totalIncome * 0.35;
-    const forInversionPlu1 = totalIncomePlus1 * 0.35
-    const variation = props.data.lastYear.netWorth - props.data.firstYear.netWorth;
-    const result = forInversion <= 0
-        ? 1
-        : (variation / forInversion);
 
     return <Row justify="center">
         <Col md={12} sm={24}>
@@ -27,15 +18,15 @@ export function Graphs(props: {
             <div style={{height: 300}}>
                 <NetWorthIncrement data={[{
                     data: [{
-                        x: `${props.data.firstYear.year}-01-01`,
-                        y: props.data.firstYear.netWorth
+                        x: `${data.firstYear.year}-01-01`,
+                        y: data.firstYear.netWorth.amount
                     }, {
-                        x: `${props.data.lastYear.year}-01-01`,
-                        y: props.data.lastYear.netWorth
+                        x: `${data.lastYear.year}-01-01`,
+                        y: data.lastYear.netWorth.amount
                     }],
-                    color: result > 1.1
+                    color: calc.result > 1.1
                         ? '#C44040'
-                        : result > 1
+                        : calc.result > 1
                             ? 'hsl(55, 70%, 50%)'
                             : 'hsl(99,98%,18%)',
                     id: "Real"
@@ -43,21 +34,21 @@ export function Graphs(props: {
                     id: "Leve",
                     color: "hsl(55, 70%, 50%)",
                     data: [{
-                        x: `${props.data.firstYear.year}-01-01`,
-                        y: props.data.firstYear.netWorth
+                        x: `${data.firstYear.year}-01-01`,
+                        y: data.firstYear.netWorth.amount
                     }, {
-                        x: `${props.data.lastYear.year + 1}-01-01`,
-                        y: props.data.firstYear.netWorth + (forInversionPlu1 * 1.1)
+                        x: `${data.lastYear.year + 1}-01-01`,
+                        y: data.firstYear.netWorth.amount + (calc.nextYearForInversion * 1.1)
                     }],
                 }, {
                     id: "Normal",
                     color: "hsl(99,98%,18%)",
                     data: [{
-                        x: `${props.data.firstYear.year}-01-01`,
-                        y: props.data.firstYear.netWorth
+                        x: `${data.firstYear.year}-01-01`,
+                        y: data.firstYear.netWorth.amount
                     }, {
-                        x: `${props.data.lastYear.year + 1}-01-01`,
-                        y: props.data.firstYear.netWorth + forInversionPlu1
+                        x: `${data.lastYear.year + 1}-01-01`,
+                        y: data.firstYear.netWorth.amount + calc.nextYearForInversion
                     }],
                 }]}/>
             </div>
@@ -71,11 +62,11 @@ export function Graphs(props: {
                     id: "Ingresos",
                     color: "#364D79",
                     data: [{
-                        x: `${props.data.firstYear.year}-01-01`,
-                        y: props.data.firstYear.totalIncome
+                        x: `${data.firstYear.year}-01-01`,
+                        y: data.firstYear.totalIncome.amount
                     }, {
-                        x: `${props.data.lastYear.year}-01-01`,
-                        y: props.data.lastYear.totalIncome
+                        x: `${data.lastYear.year}-01-01`,
+                        y: data.lastYear.totalIncome.amount
                     }]
                 },]}/>
             </div>

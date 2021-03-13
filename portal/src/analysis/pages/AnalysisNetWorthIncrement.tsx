@@ -12,6 +12,7 @@ import {useNetWorthAnalysis} from "../../hooks/useApi";
 import {NetWorthIncreaseAnalysis} from "../../APIModel";
 import {Loading} from "../../components/Loading";
 import {useNWHook} from "../NetWorthHook";
+import useMetaTags from "react-metatags-hook";
 
 
 export function AnalysisNetWorthIncrement() {
@@ -19,6 +20,21 @@ export function AnalysisNetWorthIncrement() {
     const {document} = useParams<{ document: string }>();
     const fetched = useNetWorthAnalysis(document);
 
+    useMetaTags({
+        title: `Análisis de crecimiento patrimonial de ${document}`,
+        description: `Análisis de crecimiento patrimonial de ${document}`,
+        charset: 'utf8',
+        lang: 'en',
+        openGraph: {
+            title: `Análisis de crecimiento patrimonial de ${document}`,
+            site_name: 'controlciudadanopy.org'
+        },
+        twitter: {
+            card: 'summary',
+            creator: '@InstIDEA',
+            title: `Análisis de crecimiento patrimonial de ${document}`,
+        }
+    }, [])
 
     return <>
         <Header/>
@@ -52,10 +68,12 @@ function Analysis(props: {
 }) {
 
     const data = useNWHook(props.data);
+    const xlSpan = 22;
+    const xxlSpan = 18;
 
     return <>
         <Row gutter={[16, 16]} justify="center">
-            <Col xs={24} xl={18}>
+            <Col xs={24} xl={xlSpan} xxl={xxlSpan}>
                 <Row align="middle" justify="center">
                     <Col xs={22}>
                         <Typography.Title className="title-color" style={{textAlign: 'center'}}>
@@ -72,17 +90,17 @@ function Analysis(props: {
                     </Col>
                 </Row>
             </Col>
-            <Col xs={24} xl={{span: 18}}>
+            <Col xs={24} xl={xlSpan} xxl={xxlSpan}>
                 <Card className="custom-card custom-shadow-small">
-                    <Graphs data={data.data}/>
+                    <Graphs data={data.data} calc={data.analysis}/>
                 </Card>
             </Col>
-            <Col md={12} sm={24} xl={9}>
+            <Col md={12} sm={24} xl={xlSpan / 2} xxl={xxlSpan / 2}>
                 <Card className="custom-card custom-shadow-small">
-                    <Calculations data={data.data}/>
+                    <Calculations data={data.data} calculations={data.analysis}/>
                 </Card>
             </Col>
-            <Col md={12} sm={24} xl={9}>
+            <Col md={12} sm={24} xl={xlSpan / 2} xxl={xxlSpan / 2}>
                 <Card className="custom-card custom-shadow-small">
                     <InputData data={data.data}
                                disabled={data.working}
@@ -91,7 +109,7 @@ function Analysis(props: {
                     />
                 </Card>
             </Col>
-            <Col sm={24} xl={18}>
+            <Col sm={24} xl={xlSpan} xxl={xxlSpan}>
                 <DisclaimerComponent full card>
                     <Space>
                         <Typography.Paragraph style={{margin: 'inherit'}}>

@@ -1,26 +1,24 @@
 /**
  * Represent a single point of income or expense
  */
-export interface FinancialDetail {
+export interface FinancialDetail extends AmountWithSource {
     name: string;
-    amount: number;
     periodicity: 'yearly' | 'monthly';
-    source: string;
     observation: string;
 }
 
 export interface DeclarationData {
 
     year: number;
-    netWorth: number;
+    netWorth: AmountWithSource;
 
     /**
      * Should be removed in favor of active details
      */
-    totalActive: number;
-    totalPassive: number;
-    totalIncome: number;
-    totalExpenses: number;
+    totalActive: AmountWithSource;
+    totalPassive: AmountWithSource;
+    totalIncome: AmountWithSource;
+    totalExpenses: AmountWithSource;
 
     actives: Array<FinancialDetail & {
         periodicity: 'yearly'
@@ -39,6 +37,11 @@ export interface DeclarationData {
         url: string
     }>;
 
+}
+
+export interface AmountWithSource {
+    amount: number;
+    source: string;
 }
 
 export interface NetWorthIncreaseAnalysis {

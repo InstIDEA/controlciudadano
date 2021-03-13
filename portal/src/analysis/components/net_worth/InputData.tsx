@@ -1,30 +1,15 @@
 import {DeclarationData, FinancialDetail, NetWorthIncreaseAnalysis, NWAnalysisAvailableYear} from "../../../APIModel";
-import {
-    Button,
-    Card,
-    Col,
-    Descriptions,
-    Form,
-    Input,
-    InputNumber,
-    Modal,
-    Radio,
-    Row,
-    Space,
-    Timeline,
-    Tooltip,
-    Typography
-} from "antd";
+import {Button, Card, Col, Descriptions, Form, Modal, Radio, Row, Space, Timeline, Tooltip, Typography} from "antd";
 import React, {useEffect, useState} from "react";
-import {formatMoney, formatToDay} from "../../../formatters";
-import {MinusCircleOutlined, PlusOutlined} from '@ant-design/icons';
+import {formatToDay} from "../../../formatters";
+import {PlusOutlined} from '@ant-design/icons';
 import {Loading} from "../../../components/Loading";
 import {ExternalLinkIcon} from "../../../components/icons/ExternalLinkIcon";
 import {Disable} from "react-disable";
 import {DisclaimerComponent} from "../../../components/Disclaimer";
+import {AmountInput} from "./AmountInput";
+import {merge} from 'lodash';
 
-const amountFormatter = (value?: string | number) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-const amountParser = (value?: string) => `${value}`.replace(/\./g, '')
 
 export function InputData(props: {
     data: NetWorthIncreaseAnalysis;
@@ -92,7 +77,7 @@ function InputTitle(props: {
 }
 
 function getLink(dat: DeclarationData): string | undefined {
-    return dat.sources.filter(val => val.type === 'djbr').map(v => v.url).shift();
+    return dat.sources.filter(val => val.type === 'DJBR').map(v => v.url).shift();
 }
 
 function SelectDeclarationModal(props: {
@@ -175,23 +160,22 @@ export function SingleDeclaration(props: {
                  size="small"
                  initialValues={props.data}
                  onValuesChange={(ch, all) => {
-                     props.update({
-                         ...props.data,
-                         ...all
-                     });
+                     const newData = merge(
+                         props.data,
+                         all
+                     );
+                     props.update(newData);
                  }}
     >
-        <Form.Item name="totalActive" label="Total activos:" rules={[{required: true}]}>
-            <InputNumber precision={0}
-                         formatter={amountFormatter}
-                         parser={amountParser}
-                         style={{width: '100%'}}/>
+        <Form.Item name={["totalActive"]} label="Total activos:" rules={[{required: true}]}>
+            <AmountInput/>
+            {/*<InputNumber precision={0}*/}
+            {/*             // formatter={amountFormatter}*/}
+            {/*             // parser={amountParser}*/}
+            {/*             // style={{width: '100%'}}/>*/}
         </Form.Item>
-        <Form.Item name="totalPassive" label="Total Pasivos:" rules={[{required: true}]}>
-            <InputNumber precision={0}
-                         formatter={amountFormatter}
-                         parser={amountParser}
-                         style={{width: '100%'}}/>
+        <Form.Item name={["totalPassive"]} label="Total Pasivos:" rules={[{required: true}]}>
+            <AmountInput/>
         </Form.Item>
 
         <Form.List name="incomes">
@@ -199,20 +183,14 @@ export function SingleDeclaration(props: {
                 <>
                     {fields.map(field => {
 
-                        const val: FinancialDetail = form.getFieldValue(["incomes", field.name]);
+                        const val: FinancialDetail = props.data.incomes[field.name];
                         return <Form.Item label={val?.name} key={field.name}>
                             <Row gutter={[8, 8]} align="top">
-                                <Col span={10}>
-                                    <Form.Item name={[field.name, "amount"]}
-                                               fieldKey={[field.fieldKey, "amount"]}
+                                <Col span={14}>
+                                    <Form.Item name={[field.name]}
+                                               fieldKey={[field.fieldKey]}
                                                required>
-                                        <InputNumber precision={0}
-                                                     formatter={amountFormatter}
-                                                     parser={amountParser}
-                                                     style={{width: '100%'}}
-                                                     placeholder="Monto"
-                                                     prefix="Gs."
-                                        />
+                                        <AmountInput/>
                                     </Form.Item>
                                 </Col>
                                 <Col span={6}>
@@ -230,12 +208,8 @@ export function SingleDeclaration(props: {
                                 </Col>
 
                                 <Col span={4}>
-                                    <Tooltip title="Fuente"> {val?.source} </Tooltip>
-                                </Col>
-
-                                <Col span={4}>
                                     <Tooltip title="Eliminar ingreso">
-                                        <MinusCircleOutlined onClick={() => funcs.remove(field.name)}/>
+                                        <Button onClick={() => funcs.remove(field.name)} danger>Eliminar</Button>
                                     </Tooltip>
                                 </Col>
                             </Row>
@@ -258,12 +232,14 @@ export function SingleDeclaration(props: {
 
         </Form.List>
 
-        <Form.Item label="Ingresos totales (por año)">
-            <Input disabled value={formatMoney(props.data.totalIncome)}/>
+        <Form.Item label="Ingresos por año">
+            <AmountInput disabled
+                         value={props.data.totalIncome}/>
         </Form.Item>
         <Form.Item label="Patrimonio Neto">
-            <Input disabled value={formatMoney(props.data.netWorth)}/>
+            <AmountInput disabled value={props.data.netWorth}/>
         </Form.Item>
     </Form>;
 }
+
 

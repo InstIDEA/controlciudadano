@@ -2,18 +2,21 @@ import {Card, Col, Row, Space, Typography} from "antd";
 import React from "react";
 import {formatMoney, formatNumber} from "../../../formatters";
 import {NetWorthIncreaseAnalysis} from "../../../APIModel";
+import {NetWorthCalculations} from "../../NetWorthHook";
 
 export function Calculations(props: {
-    data: NetWorthIncreaseAnalysis
+    data: NetWorthIncreaseAnalysis,
+    calculations: NetWorthCalculations
 }) {
 
-    const earnings = (props.data.firstYear.totalIncome + props.data.lastYear.totalIncome) / 2;
-    const totalIncome = earnings * props.data.duration;
-    const forInversion = totalIncome * 0.35;
-    const variation = props.data.lastYear.netWorth - props.data.firstYear.netWorth;
-    const result = forInversion <= 0
-        ? 1
-        : (variation / forInversion);
+    const {
+        earnings,
+        totalIncome,
+        forInversion,
+        variation,
+        result
+    } = props.calculations;
+
     return <Row justify="center" gutter={[8, 8]}>
         <Col sm={24}>
             <Typography.Title level={5} className="title-color">
@@ -22,22 +25,22 @@ export function Calculations(props: {
         </Col>
 
         <DataCard title="Variación"
-                  first={props.data.lastYear.netWorth}
-                  second={props.data.firstYear.netWorth}
+                  first={props.data.lastYear.netWorth.amount}
+                  second={props.data.firstYear.netWorth.amount}
                   operator="-"
                   result={variation}/>
 
         <DataCard title="Patrimonio Neto Inicial"
-                  first={props.data.firstYear.totalActive}
-                  second={props.data.firstYear.totalPassive}
+                  first={props.data.firstYear.totalActive.amount}
+                  second={props.data.firstYear.totalPassive.amount}
                   operator="-"
-                  result={props.data.firstYear.netWorth}/>
+                  result={props.data.firstYear.netWorth.amount}/>
 
         <DataCard title="Patrimonio Neto final"
-                  first={props.data.lastYear.totalActive}
-                  second={props.data.lastYear.totalPassive}
+                  first={props.data.lastYear.totalActive.amount}
+                  second={props.data.lastYear.totalPassive.amount}
                   operator="-"
-                  result={props.data.lastYear.netWorth}/>
+                  result={props.data.lastYear.netWorth.amount}/>
 
         <DataCard title="Tiempo de análisis"
                   first={props.data.lastYear.year}
@@ -46,8 +49,8 @@ export function Calculations(props: {
                   result={props.data.duration + " años"}/>
 
         <DataCard title="Ingresos Totales por año"
-                  first={props.data.firstYear.totalIncome}
-                  second={props.data.lastYear.totalIncome}
+                  first={props.data.firstYear.totalIncome.amount}
+                  second={props.data.lastYear.totalIncome.amount}
                   operator="+"
                   type="division"
                   divider="2"
