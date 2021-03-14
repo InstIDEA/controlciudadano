@@ -16,6 +16,7 @@ import {SupplierRelationsTable} from "../components/SupplierRelationsTable";
 import {RelationGraph} from "../components/graphs/RelationGraph";
 import {useApi, useRedashApi} from "../hooks/useApi";
 import {ApiError} from "../RedashAPI";
+import {SupplierDashBoard} from "../components/ocds/SupplierDashboard";
 
 export function OCDSSupplier() {
 
@@ -55,7 +56,12 @@ export function OCDSSupplier() {
                                              Solo fondos de emergencia
                                          </Checkbox>
                                      ]}
-                                     footer={<Tabs defaultActiveKey="CONTRACTS">
+                                     footer={<Tabs defaultActiveKey="DASHBOARD">
+                                         <Tabs.TabPane tab="Datos" key="DASHBOARD">
+                                             <SupplierDashBoard contracts={finalContracts}
+                                                                header={supplier.data}
+                                                                relations={relations}/>
+                                         </Tabs.TabPane>
                                          <Tabs.TabPane tab="Contratos" key="CONTRACTS">
                                              {/*TODO replace for dynamic table*/}
                                              <AsyncRenderer resourceName={`Contratos de ${supplier.data.name}`}
@@ -94,7 +100,7 @@ export function ContractsTable(props: {
     return <Table<OCDSSupplierContract>
         dataSource={props.contracts}
         loading={!props.contracts}
-        rowKey="ruc"
+        rowKey="tender_slug"
         size="small"
         scroll={{
             x: props.isSmall ? 1000 : undefined
@@ -110,7 +116,7 @@ export function ContractsTable(props: {
             current: props.page.page
         }}
         columns={[{
-            key: 'process_slug',
+            key: 'tender_slug',
             title: 'Llamado',
             render: (_, r) => {
                 const url = getTenderLink(r.tender_slug, r.procurement_method)

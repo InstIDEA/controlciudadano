@@ -34,7 +34,7 @@ export function AsyncRenderer<T>(props: {
     }
 }
 
-function getStatus(error: Error) {
+export function getStatus(error: Error) {
     if (error instanceof ApiError) {
         return error.asSimpleCode()
     }
