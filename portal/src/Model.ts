@@ -588,5 +588,21 @@ export const AsyncHelper = {
                 return AsyncHelper.noRequested();
 
         }
+    },
+
+    filter: function <T, E>(nr: Async<T[], E>, filter: (toFilter: T) => boolean): Async<T[], E> {
+        switch (nr.state) {
+            case 'ERROR':
+                return AsyncHelper.error(nr.error);
+            case 'FETCHING':
+                return AsyncHelper.fetching();
+            case 'LOADED':
+                const filtered = nr.data.filter(filter);
+                return AsyncHelper.loaded(filtered);
+            case 'NO_REQUESTED':
+            default:
+                return AsyncHelper.noRequested();
+
+        }
     }
 };

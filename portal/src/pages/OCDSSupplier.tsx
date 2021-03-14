@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useMemo, useState} from 'react';
-import {AsyncHelper, OCDSSupplierContract} from '../Model';
+import {Async, AsyncHelper, OCDSSupplierContract, OCDSSupplierRelation} from '../Model';
 import {SimpleApi} from '../SimpleApi';
 import {Checkbox, PageHeader, Result, Table, Tabs} from 'antd';
 import {Link, useHistory, useParams} from 'react-router-dom';
@@ -15,6 +15,7 @@ import {toGraph} from "./OCDSSupplierRelations";
 import {SupplierRelationsTable} from "../components/SupplierRelationsTable";
 import {RelationGraph} from "../components/graphs/RelationGraph";
 import {useApi, useRedashApi} from "../hooks/useApi";
+import {ApiError} from "../RedashAPI";
 
 export function OCDSSupplier() {
 
@@ -27,6 +28,12 @@ export function OCDSSupplier() {
     const contracts = useApi(new SimpleApi().getSupplierContracts, [ruc, page])
 
     const isSmall = useMediaQuery('only screen and (max-width: 768px)');
+
+    // TODO fetch only this supplier relations
+    const allRelations = useRedashApi(18);
+    const relations = useMemo(() => AsyncHelper.filter(allRelations, r => {
+        return ruc.endsWith(r.p1ruc) || ruc.endsWith(r.p2ruc);
+    }), [allRelations, ruc])
 
     const finalContracts = AsyncHelper
         .map(contracts.data, result => result.data.filter(c => c.is_covid === !!onlyCovid))
@@ -61,7 +68,9 @@ export function OCDSSupplier() {
                                              </AsyncRenderer>
                                          </Tabs.TabPane>
                                          <Tabs.TabPane tab="Asociaciones" key="RELATIONS">
-                                             <SupplierRelations ruc={ruc} name={supplier.data.name}/>
+                                             <SupplierRelations name={supplier.data.name}
+                                                                relations={relations}
+                                             />
                                          </Tabs.TabPane>
                                      </Tabs>}>
                 <div className="content">
@@ -166,25 +175,19 @@ export function ContractsTable(props: {
 
 
 export function SupplierRelations(props: {
-    ruc: string,
-    name: string
+    name: string,
+    relations: Async<OCDSSupplierRelation[], ApiError>
 }) {
 
-    const {ruc} = props;
-    const relations = useRedashApi(18);
-
-    const filtered = useMemo(() => AsyncHelper.or(relations, []).filter(r => {
-        return ruc.endsWith(r.p1ruc) || ruc.endsWith(r.p2ruc);
-    }), [relations, ruc])
-    const graph = useMemo(() => toGraph(filtered), [filtered]);
+    const graph = useMemo(() => toGraph(AsyncHelper.or(props.relations, [])), [props.relations]);
 
     return <AsyncRenderer resourceName={`Relaciones de ${props.name}`}
-                          data={relations}>
-        {() => filtered.length === 0
+                          data={props.relations}>
+        {data => data.length === 0
             ? <Result title={`El proveedor ${props.name} no tiene relaciones`}/>
             : <Tabs defaultActiveKey="TABLE">
                 <Tabs.TabPane tab="Tabla" key="TABLE">
-                    <SupplierRelationsTable data={filtered} showOrigin={false}/>
+                    <SupplierRelationsTable data={data} showOrigin={false}/>
                 </Tabs.TabPane>
                 <Tabs.TabPane tab="Grafico" key="RELATIONS">
                     <RelationGraph nodes={graph.nodes}
