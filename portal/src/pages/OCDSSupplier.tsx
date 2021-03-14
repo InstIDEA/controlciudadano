@@ -1,83 +1,79 @@
 import * as React from 'react';
-import {useEffect, useMemo, useState} from 'react';
-import {OCDSSupplierContract, OCDSSupplierRelation, Supplier} from '../Model';
+import {useMemo, useState} from 'react';
+import {AsyncHelper, OCDSSupplierContract} from '../Model';
 import {SimpleApi} from '../SimpleApi';
-import {Checkbox, message, PageHeader, Table, Tabs} from 'antd';
+import {Checkbox, PageHeader, Result, Table, Tabs} from 'antd';
 import {Link, useHistory, useParams} from 'react-router-dom';
 import {SupplierDescription} from '../components/SupplierDescription';
-import {getTenderLink} from './OCDSAwardItemsPage';
 import {BooleanParam, useQueryParam} from 'use-query-params';
 import {Header} from "../components/layout/Header";
 import {useMediaQuery} from "@react-hook/media-query";
+import {AsyncRenderer} from "../components/AsyncRenderer";
+import {getTenderLink} from "./OCDSAwardItemsPage";
 import {formatIsoDate, formatMoney} from "../formatters";
-import {RedashAPI} from "../RedashAPI";
 import {toGraph} from "./OCDSSupplierRelations";
 import {SupplierRelationsTable} from "../components/SupplierRelationsTable";
 import {RelationGraph} from "../components/graphs/RelationGraph";
+import {useApi, useRedashApi} from "../hooks/useApi";
 
 export function OCDSSupplier() {
 
     const {ruc} = useParams<{ ruc: string }>();
     const history = useHistory();
-    const [data, setData] = useState<Supplier>();
+    const data = useApi(new SimpleApi().getSupplier, [ruc]);
     const [onlyCovid, setOnlyCovid] = useQueryParam('onlyCovid', BooleanParam);
 
-    const [contracts, setContracts] = useState<OCDSSupplierContract[]>();
     const [page, setPage] = useState({page: 1, pageSize: 100});
+    const contracts = useApi(new SimpleApi().getSupplierContracts, [ruc, page])
 
     const isSmall = useMediaQuery('only screen and (max-width: 768px)');
 
-    useEffect(() => {
-        new SimpleApi().getSupplier(ruc)
-            .then(d => setData(d.data))
-            .catch(e => {
-                message.warn("Can't fetch supplier")
-                console.warn(e)
-            })
-        ;
-    }, [ruc]);
-
-    useEffect(() => {
-        setContracts(undefined);
-        new SimpleApi().getSupplierContracts(ruc, page)
-            .then(d => setContracts(d.data));
-    }, [ruc, page]);
-
-    const finalContracts = contracts
-        ? contracts.filter(c => c.is_covid === !!onlyCovid)
-        : [];
+    const finalContracts = AsyncHelper
+        .map(contracts.data, result => result.data.filter(c => c.is_covid === !!onlyCovid))
 
 
     return <>
         <Header tableMode={true}/>
-        <PageHeader ghost={false}
-                    onBack={() => history.goBack()}
-                    style={{border: '1px solid rgb(235, 237, 240)'}}
-                    title={data ? `${data.name}` : 'Cargando...'}
-                    subTitle=""
-                    extra={[
-                        <Checkbox key="onlyCovid" checked={!!onlyCovid} onChange={_ => setOnlyCovid(a => !a)}>
-                            Solo fondos de emergencia
-                        </Checkbox>
-                    ]}
-                    footer={<Tabs defaultActiveKey="CONTRACTS">
-                        <Tabs.TabPane tab="Contratos" key="CONTRACTS">
-                            <ContractsTable contracts={finalContracts} page={page} setPage={setPage} isSmall={isSmall}/>
-                        </Tabs.TabPane>
-                        <Tabs.TabPane tab="Asociaciones" key="RELATIONS">
-                            <SupplierRelations ruc={ruc}/>
-                        </Tabs.TabPane>
-                    </Tabs>}>
-
-            <div className="content">
-                <div className="main">
-                    {data && <SupplierDescription data={data} columns={2}/>}
+        <AsyncRenderer resourceName={`Proveedor ${ruc}`}
+                       data={data.data}
+                       refresh={data.refresh}>
+            {supplier => <PageHeader ghost={false}
+                                     onBack={() => history.goBack()}
+                                     style={{border: '1px solid rgb(235, 237, 240)'}}
+                                     title={supplier.data.name}
+                                     subTitle=""
+                                     extra={[
+                                         <Checkbox key="onlyCovid" checked={!!onlyCovid}
+                                                   onChange={_ => setOnlyCovid(a => !a)}>
+                                             Solo fondos de emergencia
+                                         </Checkbox>
+                                     ]}
+                                     footer={<Tabs defaultActiveKey="CONTRACTS">
+                                         <Tabs.TabPane tab="Contratos" key="CONTRACTS">
+                                             {/*TODO replace for dynamic table*/}
+                                             <AsyncRenderer resourceName={`Contratos de ${supplier.data.name}`}
+                                                            loadingText={["Obteniendo contratos", `Cargando datos de ${supplier.data.name}`]}
+                                                            data={finalContracts} refresh={contracts.refresh}>
+                                                 {c => <ContractsTable contracts={c}
+                                                                       page={page}
+                                                                       setPage={setPage}
+                                                                       isSmall={isSmall}/>}
+                                             </AsyncRenderer>
+                                         </Tabs.TabPane>
+                                         <Tabs.TabPane tab="Asociaciones" key="RELATIONS">
+                                             <SupplierRelations ruc={ruc} name={supplier.data.name}/>
+                                         </Tabs.TabPane>
+                                     </Tabs>}>
+                <div className="content">
+                    <div className="main">
+                        {data && <SupplierDescription data={supplier.data} columns={2}/>}
+                    </div>
                 </div>
-            </div>
-
-
-        </PageHeader>
+            </PageHeader>
+            }
+        </AsyncRenderer>
     </>
+
 }
 
 export function ContractsTable(props: {
@@ -150,7 +146,7 @@ export function ContractsTable(props: {
                 .localeCompare(b.published_date),
         }, {
             dataIndex: 'sign_date',
-            title: 'Fecha de firma',
+            title: 'Fecha de firma de contrato',
             align: 'right',
             render: sign => formatIsoDate(sign),
             sorter: (a, b) => (a.sign_date || '')
@@ -168,37 +164,37 @@ export function ContractsTable(props: {
     />
 }
 
+
 export function SupplierRelations(props: {
     ruc: string,
+    name: string
 }) {
 
     const {ruc} = props;
-    const [data, setData] = useState<OCDSSupplierRelation[]>();
+    const relations = useRedashApi(18);
 
-    useEffect(() => {
-        new RedashAPI()
-            .getRelations()
-            .then(relations => setData(relations.query_result.data.rows.filter(r => {
-                return ruc.endsWith(r.p1ruc) || ruc.endsWith(r.p2ruc);
-            })))
-    }, [ruc])
+    const filtered = useMemo(() => AsyncHelper.or(relations, []).filter(r => {
+        return ruc.endsWith(r.p1ruc) || ruc.endsWith(r.p2ruc);
+    }), [relations, ruc])
+    const graph = useMemo(() => toGraph(filtered), [filtered]);
 
-    const graph = useMemo(() => toGraph(data), [data]);
+    return <AsyncRenderer resourceName={`Relaciones de ${props.name}`}
+                          data={relations}>
+        {() => filtered.length === 0
+            ? <Result title={`El proveedor ${props.name} no tiene relaciones`}/>
+            : <Tabs defaultActiveKey="TABLE">
+                <Tabs.TabPane tab="Tabla" key="TABLE">
+                    <SupplierRelationsTable data={filtered} showOrigin={false}/>
+                </Tabs.TabPane>
+                <Tabs.TabPane tab="Grafico" key="RELATIONS">
+                    <RelationGraph nodes={graph.nodes}
+                                   edges={graph.edges}
+                                   onSelect={() => null}
+                    />
+                </Tabs.TabPane>
+            </Tabs>
+        }
+    </AsyncRenderer>
 
-    if (!data) return <>Cargando</>;
-
-    if (!data.length) return <>Sin relaciones</>;
-
-    return <Tabs defaultActiveKey="TABLE">
-        <Tabs.TabPane tab="Tabla" key="TABLE">
-            <SupplierRelationsTable data={data} showOrigin={false}/>
-        </Tabs.TabPane>
-        <Tabs.TabPane tab="Grafico" key="RELATIONS">
-            <RelationGraph nodes={graph.nodes}
-                           edges={graph.edges}
-                           onSelect={() => null}
-            />
-        </Tabs.TabPane>
-    </Tabs>
 }
 
