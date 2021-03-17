@@ -540,7 +540,9 @@ export interface StatisticsDJBR {
     count_declarations_auths: number;
     last_success_fetch: string;
     total_authorities_in_order: number;
-    first_election_year: number
+    first_election_year: number;
+    last_election_year: number;
+    count_auths_with_decs: number;
 }
 
 /**
