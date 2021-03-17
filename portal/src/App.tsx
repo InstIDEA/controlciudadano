@@ -11,7 +11,7 @@ import {DS} from './pages/Datasources';
 import {OCDSSupplierRelations} from './pages/OCDSSupplierRelations';
 import {AffidavitList} from './pages/AffidavitList';
 import {PersonSearchPage} from './pages/PersonSearchPage'
-import {PersonDetailPage} from './pages/PersonDetailPage'
+import {PersonDetailPage} from './person/pages/PersonDetailPage'
 import {OCDSItemsRankingPage} from './pages/OCDSItemsRankingPage';
 import {AndeExoneratedList} from './pages/AndeExonerated';
 import {EssapExoneratedList} from './pages/EssapExonerated';
