@@ -23,6 +23,7 @@ import {Disable} from "react-disable";
 import {DisclaimerComponent} from "../../../components/Disclaimer";
 import {AmountInput} from "./AmountInput";
 import {merge} from 'lodash';
+import './InputData.css';
 
 
 export function InputData(props: {
@@ -35,7 +36,7 @@ export function InputData(props: {
     const [currentYearToChange, setCurrentYearToChange] = useState<DeclarationData>();
 
     return <Disable disabled={props.disabled}>
-        <Row gutter={[0, 16]}>
+        <Row gutter={[0, 16]} className="nw-input">
             <Col xs={24}>
                 <Typography.Title level={5} className="title-color">
                     Datos
@@ -43,20 +44,16 @@ export function InputData(props: {
             </Col>
             <Col xs={24}>
                 <Card className="custom-card-no-shadow">
-                    <Space direction="vertical">
-                        <InputTitle data={props.data.firstYear}
-                                    onClick={() => setCurrentYearToChange(props.data.firstYear)}/>
-                        <SingleDeclaration data={props.data.firstYear} update={props.updateDate}/>
-                    </Space>
+                    <InputTitle data={props.data.firstYear}
+                                onClick={() => setCurrentYearToChange(props.data.firstYear)}/>
+                    <SingleDeclaration data={props.data.firstYear} update={props.updateDate}/>
                 </Card>
             </Col>
             <Col xs={24}>
                 <Card className="custom-card-no-shadow">
-                    <Space direction="vertical">
-                        <InputTitle data={props.data.lastYear}
-                                    onClick={() => setCurrentYearToChange(props.data.lastYear)}/>
-                        <SingleDeclaration data={props.data.lastYear} update={props.updateDate}/>
-                    </Space>
+                    <InputTitle data={props.data.lastYear}
+                                onClick={() => setCurrentYearToChange(props.data.lastYear)}/>
+                    <SingleDeclaration data={props.data.lastYear} update={props.updateDate}/>
                 </Card>
             </Col>
 
@@ -204,6 +201,7 @@ export function SingleDeclaration(props: {
                             <Input.Group compact>
                                 <Form.Item name={[field.name]}
                                            fieldKey={[field.fieldKey]}
+                                           className="income-amount"
                                            required>
                                     <AmountInput/>
                                 </Form.Item>

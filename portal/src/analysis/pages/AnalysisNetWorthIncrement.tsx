@@ -68,12 +68,14 @@ function Analysis(props: {
 }) {
 
     const data = useNWHook(props.data);
+    const xsSpan = 24;
+    const lgSpan = 24;
     const xlSpan = 22;
-    const xxlSpan = 18;
+    const xxlSpan = 21;
 
     return <>
         <Row gutter={[16, 16]} justify="center">
-            <Col xs={24} xl={xlSpan} xxl={xxlSpan}>
+            <Col xs={xsSpan} lg={lgSpan} xl={xlSpan} xxl={xxlSpan}>
                 <Row align="middle" justify="center">
                     <Col xs={22}>
                         <Typography.Title className="title-color" style={{textAlign: 'center'}}>
@@ -90,17 +92,17 @@ function Analysis(props: {
                     </Col>
                 </Row>
             </Col>
-            <Col xs={24} xl={xlSpan} xxl={xxlSpan}>
+            <Col xs={xsSpan} lg={lgSpan} xl={xlSpan} xxl={xxlSpan - 1}>
                 <Card className="custom-card custom-shadow-small">
                     <Graphs data={data.data} calc={data.analysis}/>
                 </Card>
             </Col>
-            <Col md={12} sm={24} xl={xlSpan / 2} xxl={xxlSpan / 2}>
+            <Col md={xsSpan} lg={lgSpan / 2} sm={24} xl={xlSpan / 2} xxl={xxlSpan / 2}>
                 <Card className="custom-card custom-shadow-small">
                     <Calculations data={data.data} calculations={data.analysis}/>
                 </Card>
             </Col>
-            <Col md={12} sm={24} xl={xlSpan / 2} xxl={xxlSpan / 2}>
+            <Col md={xsSpan} lg={lgSpan / 2} sm={24} xl={xlSpan / 2} xxl={xxlSpan / 2}>
                 <Card className="custom-card custom-shadow-small">
                     <InputData data={data.data}
                                disabled={data.working}
@@ -109,7 +111,7 @@ function Analysis(props: {
                     />
                 </Card>
             </Col>
-            <Col sm={24} xl={xlSpan} xxl={xxlSpan}>
+            <Col sm={xsSpan} lg={lgSpan} xl={xlSpan} xxl={xxlSpan}>
                 <DisclaimerComponent full card>
                     <Space>
                         <Typography.Paragraph style={{margin: 'inherit'}}>
