@@ -1,74 +1,83 @@
 import {NetWorthIncreaseAnalysis} from "../../../APIModel";
 import {Col, Row, Typography} from "antd";
-import React from "react";
+import React, {useMemo} from "react";
 import {ResponsiveLine} from "@nivo/line";
 import {formatMoney, millionFormatter} from "../../../formatters";
 import {NetWorthCalculations} from "../../NetWorthHook";
+import './Graphs.css'
 
 export function Graphs({data, calc}: {
     data: NetWorthIncreaseAnalysis,
     calc: NetWorthCalculations
 }) {
 
-    return <Row justify="center">
-        <Col md={12} sm={24}>
+    const netWorthIncrease = useMemo(() => {
+        return [{
+            data: [{
+                x: `${data.firstYear.year}-01-01`,
+                y: data.firstYear.netWorth.amount
+            }, {
+                x: `${data.lastYear.year}-01-01`,
+                y: data.lastYear.netWorth.amount
+            }],
+            color: calc.result > 1.1
+                ? '#C44040'
+                : calc.result > 1
+                    ? 'hsl(55, 70%, 50%)'
+                    : 'hsl(99,98%,18%)',
+            id: "Real"
+        }, {
+            id: "Leve",
+            color: "hsl(55, 70%, 50%)",
+            data: [{
+                x: `${data.firstYear.year}-01-01`,
+                y: data.firstYear.netWorth.amount
+            }, {
+                x: `${data.lastYear.year + 1}-01-01`,
+                y: data.firstYear.netWorth.amount + (calc.nextYearForInversion * 1.1)
+            }],
+        }, {
+            id: "Normal",
+            color: "hsl(99,98%,18%)",
+            data: [{
+                x: `${data.firstYear.year}-01-01`,
+                y: data.firstYear.netWorth.amount
+            }, {
+                x: `${data.lastYear.year + 1}-01-01`,
+                y: data.firstYear.netWorth.amount + calc.nextYearForInversion
+            }],
+        }];
+    }, [data]);
+
+    const incomeIncrease = useMemo(() => {
+        return [{
+            id: "Ingresos",
+            color: "#364D79",
+            data: [{
+                x: `${data.firstYear.year}-01-01`,
+                y: data.firstYear.totalIncome.amount
+            }, {
+                x: `${data.lastYear.year}-01-01`,
+                y: data.lastYear.totalIncome.amount
+            }]
+        },]
+    }, [data]);
+
+    return <Row justify="center" className="graphs">
+        <Col md={12} xs={24}>
             <Typography.Title level={5} className="title-color">
                 Crecimiento Patrimonial
             </Typography.Title>
-            <div style={{height: 300}}>
-                <NetWorthIncrement data={[{
-                    data: [{
-                        x: `${data.firstYear.year}-01-01`,
-                        y: data.firstYear.netWorth.amount
-                    }, {
-                        x: `${data.lastYear.year}-01-01`,
-                        y: data.lastYear.netWorth.amount
-                    }],
-                    color: calc.result > 1.1
-                        ? '#C44040'
-                        : calc.result > 1
-                            ? 'hsl(55, 70%, 50%)'
-                            : 'hsl(99,98%,18%)',
-                    id: "Real"
-                }, {
-                    id: "Leve",
-                    color: "hsl(55, 70%, 50%)",
-                    data: [{
-                        x: `${data.firstYear.year}-01-01`,
-                        y: data.firstYear.netWorth.amount
-                    }, {
-                        x: `${data.lastYear.year + 1}-01-01`,
-                        y: data.firstYear.netWorth.amount + (calc.nextYearForInversion * 1.1)
-                    }],
-                }, {
-                    id: "Normal",
-                    color: "hsl(99,98%,18%)",
-                    data: [{
-                        x: `${data.firstYear.year}-01-01`,
-                        y: data.firstYear.netWorth.amount
-                    }, {
-                        x: `${data.lastYear.year + 1}-01-01`,
-                        y: data.firstYear.netWorth.amount + calc.nextYearForInversion
-                    }],
-                }]}/>
+            <div className="graph">
+                <NetWorthIncrement data={netWorthIncrease}/>
             </div>
         </Col>
-        <Col md={12} sm={24}>
+        <Col md={12} xs={24}>
             <Typography.Title level={5} className="title-color">
                 Crecimiento de Ingresos
             </Typography.Title>
-            <div style={{height: 300}}>
-                <NetWorthIncrement data={[{
-                    id: "Ingresos",
-                    color: "#364D79",
-                    data: [{
-                        x: `${data.firstYear.year}-01-01`,
-                        y: data.firstYear.totalIncome.amount
-                    }, {
-                        x: `${data.lastYear.year}-01-01`,
-                        y: data.lastYear.totalIncome.amount
-                    }]
-                },]}/>
+            <div className="graph">
+                <NetWorthIncrement data={incomeIncrease}/>
             </div>
         </Col>
     </Row>

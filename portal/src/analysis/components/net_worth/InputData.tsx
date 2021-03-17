@@ -1,8 +1,22 @@
 import {DeclarationData, FinancialDetail, NetWorthIncreaseAnalysis, NWAnalysisAvailableYear} from "../../../APIModel";
-import {Button, Card, Col, Descriptions, Form, Modal, Radio, Row, Space, Timeline, Tooltip, Typography} from "antd";
+import {
+    Button,
+    Card,
+    Col,
+    Descriptions,
+    Form,
+    Input,
+    Modal,
+    Radio,
+    Row,
+    Space,
+    Timeline,
+    Tooltip,
+    Typography
+} from "antd";
 import React, {useEffect, useState} from "react";
 import {formatToDay} from "../../../formatters";
-import {PlusOutlined} from '@ant-design/icons';
+import {DeleteOutlined, PlusOutlined} from '@ant-design/icons';
 import {Loading} from "../../../components/Loading";
 import {ExternalLinkIcon} from "../../../components/icons/ExternalLinkIcon";
 import {Disable} from "react-disable";
@@ -22,22 +36,27 @@ export function InputData(props: {
 
     return <Disable disabled={props.disabled}>
         <Row gutter={[0, 16]}>
-            <Col sm={24}>
+            <Col xs={24}>
                 <Typography.Title level={5} className="title-color">
                     Datos
                 </Typography.Title>
             </Col>
-            <Col sm={24}>
+            <Col xs={24}>
                 <Card className="custom-card-no-shadow">
-                    <InputTitle data={props.data.firstYear}
-                                onClick={() => setCurrentYearToChange(props.data.firstYear)}/>
-                    <SingleDeclaration data={props.data.firstYear} update={props.updateDate}/>
+                    <Space direction="vertical">
+                        <InputTitle data={props.data.firstYear}
+                                    onClick={() => setCurrentYearToChange(props.data.firstYear)}/>
+                        <SingleDeclaration data={props.data.firstYear} update={props.updateDate}/>
+                    </Space>
                 </Card>
             </Col>
-            <Col sm={24}>
+            <Col xs={24}>
                 <Card className="custom-card-no-shadow">
-                    <InputTitle data={props.data.lastYear} onClick={() => setCurrentYearToChange(props.data.lastYear)}/>
-                    <SingleDeclaration data={props.data.lastYear} update={props.updateDate}/>
+                    <Space direction="vertical">
+                        <InputTitle data={props.data.lastYear}
+                                    onClick={() => setCurrentYearToChange(props.data.lastYear)}/>
+                        <SingleDeclaration data={props.data.lastYear} update={props.updateDate}/>
+                    </Space>
                 </Card>
             </Col>
 
@@ -90,6 +109,7 @@ function SelectDeclarationModal(props: {
 
     return <Modal title="Datos de la declaración"
                   visible={props.visible}
+                  cancelText="Cancelar"
                   okButtonProps={{style: {display: 'none'}}}
                   width="80%"
                   onCancel={props.onCancel}>
@@ -108,7 +128,7 @@ function SelectDeclarationModal(props: {
                 </Descriptions.Item>
             </Descriptions>
             {props.options.length
-                ? <Descriptions column={1} title="Cambiar por" size="small"/>
+                ? <Descriptions column={1} title="Puedes cambiar por otra declaración, elije una" size="small"/>
                 : <DisclaimerComponent full card>No se cuentan con otras declaraciones</DisclaimerComponent>
             }
             <Timeline>
@@ -168,14 +188,10 @@ export function SingleDeclaration(props: {
                  }}
     >
         <Form.Item name={["totalActive"]} label="Total activos:" rules={[{required: true}]}>
-            <AmountInput/>
-            {/*<InputNumber precision={0}*/}
-            {/*             // formatter={amountFormatter}*/}
-            {/*             // parser={amountParser}*/}
-            {/*             // style={{width: '100%'}}/>*/}
+            <AmountInput placeholder="Total activos"/>
         </Form.Item>
         <Form.Item name={["totalPassive"]} label="Total Pasivos:" rules={[{required: true}]}>
-            <AmountInput/>
+            <AmountInput placeholder="Total pasivos"/>
         </Form.Item>
 
         <Form.List name="incomes">
@@ -185,34 +201,31 @@ export function SingleDeclaration(props: {
 
                         const val: FinancialDetail = props.data.incomes[field.name];
                         return <Form.Item label={val?.name} key={field.name}>
-                            <Row gutter={[8, 8]} align="top">
-                                <Col span={14}>
-                                    <Form.Item name={[field.name]}
-                                               fieldKey={[field.fieldKey]}
-                                               required>
-                                        <AmountInput/>
+                            <Input.Group compact>
+                                <Form.Item name={[field.name]}
+                                           fieldKey={[field.fieldKey]}
+                                           required>
+                                    <AmountInput/>
+                                </Form.Item>
+                                <Tooltip title="Indica si el ingreso es mensual o anual">
+                                    <Form.Item name={[field.name, "periodicity"]}
+                                               fieldKey={[field.fieldKey, "periodicity"]}>
+                                        <Radio.Group>
+                                            <Radio.Button value="monthly"
+                                                          style={{width: '100%'}}>Mensual</Radio.Button>
+                                            <Radio.Button value="yearly"
+                                                          style={{width: '100%'}}>Anual</Radio.Button>
+                                        </Radio.Group>
                                     </Form.Item>
-                                </Col>
-                                <Col span={6}>
-                                    <Tooltip title="Indica si el ingreso es mensual o anual">
-                                        <Form.Item name={[field.name, "periodicity"]}
-                                                   fieldKey={[field.fieldKey, "periodicity"]}>
-                                            <Radio.Group>
-                                                <Radio.Button value="monthly"
-                                                              style={{width: '100%'}}>Mensual</Radio.Button>
-                                                <Radio.Button value="yearly"
-                                                              style={{width: '100%'}}>Anual</Radio.Button>
-                                            </Radio.Group>
-                                        </Form.Item>
-                                    </Tooltip>
-                                </Col>
-
-                                <Col span={4}>
+                                </Tooltip>
+                                <Form.Item>
                                     <Tooltip title="Eliminar ingreso">
-                                        <Button onClick={() => funcs.remove(field.name)} danger>Eliminar</Button>
+                                        <Button type="primary" icon={<DeleteOutlined/>}
+                                                danger
+                                                onClick={() => funcs.remove(field.name)}/>
                                     </Tooltip>
-                                </Col>
-                            </Row>
+                                </Form.Item>
+                            </Input.Group>
                         </Form.Item>
                     })}
 

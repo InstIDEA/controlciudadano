@@ -1,4 +1,4 @@
-import {Input, Space, Tooltip} from "antd";
+import {Input, Tooltip} from "antd";
 import React from "react";
 import {AmountWithSource} from "../../../APIModel";
 
@@ -19,6 +19,7 @@ export function AmountInput(props: {
     title?: string;
     align?: 'right' | 'left';
     extraAddon?: React.ReactNode;
+    placeholder?: string;
 }) {
 
     const {extraAddon, ...rest} = props;
@@ -34,30 +35,30 @@ export function AmountInput(props: {
 
     const title = generateTitle(props.title, props.value?.source);
 
-    const body = <Input {...rest}
-                        value={amountFormatter(props.value?.amount)}
-                        onChange={onChange}
-                        addonBefore={<Space>
-                            <span>{props.value?.source}</span>
-                            {extraAddon}
-                        </Space>}
-                        placeholder="Monto"
-                        style={{textAlign: props.align || 'right'}}
-                        maxLength={25}/>
+    return <Tooltip title={title}
+                    placement="topLeft"
+                    overlayClassName="numeric-input">
+        <Input placeholder="Monto"
+               {...rest}
+               value={amountFormatter(props.value?.amount)}
+               onChange={onChange}
+               addonBefore={<SourceWithTooltip source={props.value?.source}/>}
+               style={{textAlign: props.align || 'right'}}
+               maxLength={25}/>
+    </Tooltip>;
 
-    if (title) {
-        return <Tooltip title={title}
-                        placement="topLeft"
-                        overlayClassName="numeric-input">
-            {body}
-        </Tooltip>;
-    }
+}
 
-    return body
+function SourceWithTooltip({source}: { source?: string }) {
+    if (!source) return null;
+    const title = generateTitle(undefined, source)
+    return <Tooltip title={title}>
+        <span>{source}</span>
+    </Tooltip>
 }
 
 function generateTitle(title?: string, source?: string): string | undefined {
     if (title) return title;
-    if (source) return source === 'MANUAL' ? 'Valor ingresado' : `Obtenido de '${source}'`;
+    if (source) return source === 'MANUAL' ? 'Valor ingresado manualmente' : `Obtenido de '${source}'`;
     return undefined;
 }

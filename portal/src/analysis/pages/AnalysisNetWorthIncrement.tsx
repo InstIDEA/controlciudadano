@@ -40,7 +40,7 @@ export function AnalysisNetWorthIncrement() {
         <Header/>
 
         <Layout>
-            <Layout.Content style={{padding: '0 30px', minHeight: '75vh'}}>
+            <Layout.Content style={{padding: '10px 30px', minHeight: '75vh'}}>
                 <Row gutter={[16, 16]} justify="center">
                     {fetched.state === 'LOADED' && <Analysis data={fetched.data}/>}
                     {fetched.state === 'FETCHING' && <Loading text={[
