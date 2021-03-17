@@ -73,17 +73,17 @@ export function OCDSItem() {
             <div className="content">
                 <div className="main">
                     {data && <Descriptions column={isSmall ? 1 : 2} size="small">
-                      <Descriptions.Item label="Nombre">{header.name}</Descriptions.Item>
-                      <Descriptions.Item label="ID">{header.id}</Descriptions.Item>
-                      <Descriptions.Item label="Llamados">{header.processCount}</Descriptions.Item>
-                      <Descriptions.Item label="Concursantes">
-                        <Space>
-                          <Tooltip title="Cantidad total de concursantes. Puede haber duplicados.">
-                            <InfoCircleOutlined/>
-                          </Tooltip>
-                            {header.tendersCount}
-                        </Space>
-                      </Descriptions.Item>
+                        <Descriptions.Item label="Nombre">{header.name}</Descriptions.Item>
+                        <Descriptions.Item label="ID">{header.id}</Descriptions.Item>
+                        <Descriptions.Item label="Llamados">{header.processCount}</Descriptions.Item>
+                        <Descriptions.Item label="Concursantes">
+                            <Space>
+                                <Tooltip title="Cantidad total de concursantes. Puede haber duplicados.">
+                                    <InfoCircleOutlined/>
+                                </Tooltip>
+                                {header.tendersCount}
+                            </Space>
+                        </Descriptions.Item>
                         {Object.keys(header.totalAmount).map(currency =>
                             <Descriptions.Item label={`Total ${currency}`} key={currency}>
                                 {formatMoney(header.totalAmount[currency], currency)}
@@ -203,7 +203,7 @@ function PartyTab(props: { header: HeaderData, isSmall: boolean }) {
                 }} width={props.isSmall ? 0 : 400}>
                     <Space direction="vertical" style={{width: '100%'}}>
                         {party && <Card
-                          title={<Link to={`/ocds/suppliers/${party.ruc}`}>{party.name}</Link>}>
+                            title={<Link to={`/ocds/suppliers/${party.ruc}`}>{party.name}</Link>}>
                             {data && <SupplierDescription data={party} columns={1}/>}
                         </Card>}
                         <Card title="Relaciones"
@@ -324,6 +324,14 @@ function TenderSubTable(props: { data: OCDSItemTenderInfo[] }) {
                 </Link>
                 : 'N/A',
         }, {
+            title: 'Entidad Convocante',
+            dataIndex: 'local_name',
+            render: (_, r) => r.buyer
+                ? <Link to={`/ocds/buyer/${r.buyer.id}`}>
+                    {r.buyer.name}
+                </Link>
+                : '',
+        }, {
             title: 'Nombre en licitación',
             dataIndex: 'local_name'
         }, {
@@ -338,7 +346,7 @@ function TenderSubTable(props: { data: OCDSItemTenderInfo[] }) {
             align: 'right',
             render: (_, r) => r.tenders || 'N/A'
         }, {
-            title: 'Fecha',
+            title: 'Fecha de publicación',
             dataIndex: 'date_start',
             defaultSortOrder: 'descend',
             render: (_, t) => `${formatIsoDate(t.date)}`,

@@ -3,17 +3,17 @@ import {useEffect, useMemo, useState} from 'react';
 import {OCDSSupplierContract, OCDSSupplierRelation, Supplier} from '../Model';
 import {SimpleApi} from '../SimpleApi';
 import {Checkbox, message, PageHeader, Table, Tabs} from 'antd';
-import {useHistory, useParams} from 'react-router-dom';
-import {formatIsoDate, formatMoney} from '../formatters';
+import {Link, useHistory, useParams} from 'react-router-dom';
 import {SupplierDescription} from '../components/SupplierDescription';
-import {RedashAPI} from '../RedashAPI';
-import {RelationGraph} from '../components/graphs/RelationGraph';
-import {toGraph} from './OCDSSupplierRelations';
-import {SupplierRelationsTable} from '../components/SupplierRelationsTable';
 import {getTenderLink} from './OCDSAwardItemsPage';
 import {BooleanParam, useQueryParam} from 'use-query-params';
 import {Header} from "../components/layout/Header";
 import {useMediaQuery} from "@react-hook/media-query";
+import {formatIsoDate, formatMoney} from "../formatters";
+import {RedashAPI} from "../RedashAPI";
+import {toGraph} from "./OCDSSupplierRelations";
+import {SupplierRelationsTable} from "../components/SupplierRelationsTable";
+import {RelationGraph} from "../components/graphs/RelationGraph";
 
 export function OCDSSupplier() {
 
@@ -116,6 +116,16 @@ export function ContractsTable(props: {
             sorter: (a, b) => (a.tender_title || '')
                 .localeCompare(b.tender_title),
         }, {
+            key: 'buyer_id',
+            title: 'Entidad Contratante',
+            render: (_, r) => {
+                return r.buyer_id
+                    ? <Link to={`/ocds/buyer/${r.buyer_id}`}> {r.buyer_name} </Link>
+                    : null
+            },
+            sorter: (a, b) => (a.buyer_name || '')
+                .localeCompare(b.buyer_name),
+        }, {
             dataIndex: 'contract_id',
             title: 'Contrato',
             align: 'right',
@@ -131,6 +141,13 @@ export function ContractsTable(props: {
             align: 'right',
             render: (amount, row) => formatMoney(amount, row.currency),
             sorter: (a, b) => parseInt(a.amount) - parseInt(b.amount)
+        }, {
+            dataIndex: 'published_date',
+            title: 'Fecha de publicación',
+            align: 'right',
+            render: sign => formatIsoDate(sign),
+            sorter: (a, b) => (a.published_date || '')
+                .localeCompare(b.published_date),
         }, {
             dataIndex: 'sign_date',
             title: 'Fecha de firma',

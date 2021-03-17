@@ -1,30 +1,10 @@
-import React, {ReactNode} from 'react';
+import React, {ReactNode, useMemo} from 'react';
 import {Col, Dropdown, Menu, Row} from 'antd';
 import './Header.css'
 import {MenuOutlined} from '@ant-design/icons';
 import {Link} from 'react-router-dom';
 import controlCiudadano from '../../assets/logos/control_ciudadano.svg';
 
-const menu = <Menu mode="horizontal" id="nav" key="nav">
-    <Menu.Item key="home">
-        <Link className="menu-item" to="/">Inicio</Link>
-    </Menu.Item>
-    <Menu.Item key="explorar">
-        <Link className="menu-item" to="/explore">Explorar Datos</Link>
-    </Menu.Item>
-    <Menu.Item key="analisis">
-        <Link className="menu-item" to="/action">Compras COVID</Link>
-    </Menu.Item>
-    <Menu.Item key="ddjj">
-        <Link className="menu-item" to="/djbr/portal">Declaraciones Juradas</Link>
-    </Menu.Item>
-    <Menu.Item key="conjunto">
-        <Link className="menu-item" to="/sources">Fuente de datos</Link>
-    </Menu.Item>
-    <Menu.Item key="docs">
-        <Link className="menu-item" to="/about">Acerca de</Link>
-    </Menu.Item>
-</Menu>;
 
 export function Header(props: {
     tableMode?: boolean;
@@ -35,6 +15,27 @@ export function Header(props: {
     const showSeparator = props.showSeparator !== undefined
         ? props.showSeparator
         : props.tableMode;
+
+    const menu = useMemo(() => <Menu mode="horizontal" id="nav" key="nav">
+        <Menu.Item key="home">
+            <Link className="menu-item" to="/">Inicio</Link>
+        </Menu.Item>
+        <Menu.Item key="explorar">
+            <Link className="menu-item" to="/explore">Explorar Datos</Link>
+        </Menu.Item>
+        <Menu.Item key="analisis">
+            <Link className="menu-item" to="/action">Compras COVID</Link>
+        </Menu.Item>
+        <Menu.Item key="ddjj">
+            <Link className="menu-item" to="/djbr/portal">Declaraciones Juradas</Link>
+        </Menu.Item>
+        <Menu.Item key="conjunto">
+            <Link className="menu-item" to="/sources">Fuente de datos</Link>
+        </Menu.Item>
+        <Menu.Item key="docs">
+            <Link className="menu-item" to="/about">Acerca de</Link>
+        </Menu.Item>
+    </Menu>, []);
 
     return (props.tableMode
             ? <div id="header" className="header">
