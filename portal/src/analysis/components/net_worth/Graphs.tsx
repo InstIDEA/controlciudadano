@@ -20,9 +20,9 @@ export function Graphs({data, calc}: {
                 x: `${data.lastYear.year}-01-01`,
                 y: data.lastYear.netWorth.amount
             }],
-            color: calc.result > 1.1
+            color: calc.result.amount > 1.1
                 ? '#C44040'
-                : calc.result > 1
+                : calc.result.amount > 1
                     ? 'hsl(55, 70%, 50%)'
                     : 'hsl(99,98%,18%)',
             id: "Real"
@@ -34,7 +34,7 @@ export function Graphs({data, calc}: {
                 y: data.firstYear.netWorth.amount
             }, {
                 x: `${data.lastYear.year + 1}-01-01`,
-                y: data.firstYear.netWorth.amount + (calc.nextYearForInversion * 1.1)
+                y: data.firstYear.netWorth.amount + (calc.nextYearForInversion.amount * 1.1)
             }],
         }, {
             id: "Normal",
@@ -44,7 +44,7 @@ export function Graphs({data, calc}: {
                 y: data.firstYear.netWorth.amount
             }, {
                 x: `${data.lastYear.year + 1}-01-01`,
-                y: data.firstYear.netWorth.amount + calc.nextYearForInversion
+                y: data.firstYear.netWorth.amount + calc.nextYearForInversion.amount
             }],
         }];
     }, [data, calc]);

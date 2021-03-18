@@ -6,13 +6,13 @@ import {message} from "antd";
 import {AmountWithSource, FinancialDetail} from "../../../api/src/APIModel";
 
 export interface NetWorthCalculations {
-    earnings: number;
-    totalIncome: number;
-    forInversion: number;
-    variation: number;
-    result: number;
-    nextYearEarnings: number;
-    nextYearForInversion: number;
+    earnings: AmountWithSource;
+    totalIncome: AmountWithSource;
+    forInversion: AmountWithSource;
+    variation: AmountWithSource;
+    result: AmountWithSource;
+    nextYearEarnings: AmountWithSource;
+    nextYearForInversion: AmountWithSource;
 }
 
 /**
@@ -130,14 +130,17 @@ function doCalculation(dat: NetWorthIncreaseAnalysis): NetWorthCalculations {
     const nextYearEarnings = earnings * (dat.duration + 1);
     const nextYearForInversion = nextYearEarnings * 0.35;
 
+    const earningsSource = [dat.firstYear.totalIncome.source, dat.lastYear.totalIncome.source];
+    const variationSource = [dat.firstYear.netWorth.source, dat.lastYear.netWorth.source]
+
     return {
-        earnings,
-        totalIncome,
-        forInversion,
-        variation,
-        result,
-        nextYearEarnings,
-        nextYearForInversion
+        earnings: buildAmount(earnings, earningsSource),
+        totalIncome: buildAmount(totalIncome, earningsSource),
+        forInversion: buildAmount(forInversion, earningsSource),
+        variation: buildAmount(variation, variationSource),
+        result: buildAmount(result, [...variationSource, ...earningsSource]),
+        nextYearEarnings: buildAmount(nextYearEarnings, ['']),
+        nextYearForInversion: buildAmount(nextYearForInversion, [''])
     }
 }
 
@@ -172,16 +175,27 @@ function sum(arr: Array<FinancialDetail>): AmountWithSource {
         }), {amount: 0, source: ''}));
 }
 
+function buildSources(a?: string) {
+    return uniq((a || '').split(","))
+        .filter(s => !!s)
+        .map(s => s.trim())
+        .sort((s1, s2) => s1.localeCompare(s2)).join(",");
+}
+
 function simplifySources(a: AmountWithSource): AmountWithSource {
     return {
         amount: a.amount,
-        source: uniq((a.source || '').split(","))
-            .filter(s => !!s)
-            .map(s => s.trim())
-            .sort((s1, s2) => s1.localeCompare(s2)).join(",")
+        source: buildSources(a?.source)
     }
 }
 
 function uniq<T>(a: T[]): T[] {
     return Array.from(new Set(a));
+}
+
+function buildAmount(amount: number, sources?: Array<string>): AmountWithSource {
+    return {
+        source: buildSources((sources || []).join(",")),
+        amount
+    }
 }
