@@ -47,7 +47,7 @@ export function Graphs({data, calc}: {
                 y: data.firstYear.netWorth.amount + calc.nextYearForInversion
             }],
         }];
-    }, [data]);
+    }, [data, calc]);
 
     const incomeIncrease = useMemo(() => {
         return [{

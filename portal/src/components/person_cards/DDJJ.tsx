@@ -1,19 +1,30 @@
 import {Affidavit} from "../../Model";
-import {Card, Col, Table, Typography} from "antd";
+import {Button, Card, Col, Table, Tooltip, Typography} from "antd";
 import Icon from "@ant-design/icons";
 import {ReactComponent as Ddjj} from "../../assets/logos/ddjj.svg";
 import * as React from "react";
 import {formatMoney} from "../../formatters";
 import './DDJJ.css'
 import {SOURCE_NAME_MAP} from "../../pages/PersonSearchPage";
+import {Link} from "react-router-dom";
 
 export function DDJJCard(props: {
     affidavit: Affidavit[]
 }) {
+    if (!props.affidavit
+        || props.affidavit.length === 0
+    ) return null;
+
     const affidavit = props.affidavit;
+    const first = props.affidavit[0]
     return <>
         <Col {...{xxl: 12, xl: 12, lg: 12, md: 12, sm: 24, xs: 24}} className="ddjj">
             <Card className="data-box" title={SOURCE_NAME_MAP['declarations']}
+                  actions={[
+                      <Link to={`/analysis/net_worth/${first.document}?name=${first.name}`}>
+                          Realizar análisis de crecimiento Patrimonial
+                      </Link>
+                  ]}
                   extra={<Icon component={Ddjj} className="icon-card"/>}>
                 <Table<Affidavit>
                     dataSource={affidavit}
