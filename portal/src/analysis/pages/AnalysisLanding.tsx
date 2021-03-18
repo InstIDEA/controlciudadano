@@ -1,10 +1,12 @@
 import React, {PropsWithChildren} from "react";
 import {Header} from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
-import {Card, Carousel, Col, Input, Layout, Result, Row, Typography} from "antd";
+import {Card, Col, Layout, Result, Row, Typography} from "antd";
 import {Link, useHistory} from "react-router-dom";
 import inProgressIcon from "../../assets/imgs/analysis_in_progress.svg";
 import './AnalysisLanding.css';
+import useMetaTags from "react-metatags-hook";
+import Search from "antd/es/input/Search";
 
 const DBJRText = [{
     title: 'Análisis de declaraciones juradas de bienes y rentas',
@@ -33,6 +35,21 @@ const DBJRExamples = shuffle([
 export function AnalysisLanding() {
 
     const history = useHistory();
+    useMetaTags({
+        title: `Análisis de crecimiento patrimonial`,
+        description: `Listado de análisis disponibles en el portal`,
+        charset: 'utf8',
+        lang: 'en',
+        openGraph: {
+            title: `Análisis de crecimiento patrimonial`,
+            site_name: 'controlciudadanopy.org'
+        },
+        twitter: {
+            card: 'summary',
+            creator: '@InstIDEA',
+            title: `Análisis de crecimiento patrimonial`,
+        }
+    }, [])
 
     return <>
         <Header/>
@@ -43,27 +60,22 @@ export function AnalysisLanding() {
                 <Row gutter={[16, 16]} style={{flexDirection: 'column'}}>
                     <Col>
                         <Typography.Title style={{textAlign: 'center'}} className="title-color">
-                            Análisis
+                            Análisis de crecimiento patrimonial
                         </Typography.Title>
                     </Col>
                     <Col>
                         <Analysis videoUrl="https://www.youtube.com/embed/C_LruTtdrgo"
                                   name="Crecimiento patrimonial"
                                   parts={DBJRText}>
-                            <Row gutter={[8, 8]} justify="center">
+                            <Row gutter={[8, 8]} justify="center" className="align-left">
                                 {DBJRExamples.map((ex, idx) => <Col key={ex}>
                                     <LinkButton linkTo={`/analysis/net_worth/${ex}`} text={`Ejemplo ${idx + 1}`}/>
                                 </Col>)}
-                                <Col>
-                                    <Input style={{width: '100%', borderRadius: 5}}
-                                           onKeyPress={e => {
-                                               const keyCode = e.key;
-                                               if (keyCode === 'Enter') {
-                                                   history.push(`/analysis/net_worth/${e.currentTarget.value}`)
-                                                   return false;
-                                               }
-                                           }}
-                                           placeholder="Ingrese una cédula"/>
+                                <Col style={{flexGrow: 1}} className="search-button">
+                                    <Search placeholder="Ingresa una cédula"
+                                            onSearch={t => t && history.push(`/analysis/net_worth/${t}`)}
+                                            enterButton
+                                            style={{width: '100%', borderRadius: 5}}/>
                                 </Col>
                             </Row>
                         </Analysis>
@@ -106,33 +118,20 @@ function Analysis(props: PropsWithChildren<{
                 <iframe title={props.name} src={props.videoUrl} width="100%" height="100%"/>
             </Col>
             <Col md={12} sm={24}>
-                <Row gutter={[8, 8]} justify="center">
-                    <Col xs={24}>
-                        <Carousel dotPosition="top" adaptiveHeight dots>
-                            {props.parts.map(part => <div key={part.title}>
-                                    <Row style={{
-                                        minHeight: 200,
-                                        paddingTop: 20,
-                                        // color: '#fff',
-                                        // lineHeight: 100,
-                                        textAlign: 'left',
-                                        // background: '#364d79',
-                                    }}>
-                                        <Col>
-                                            <Typography.Title className="title-color">
-                                                {part.title}
-                                            </Typography.Title>
-                                        </Col>
-                                        <Col>
-                                            <Typography.Paragraph>
-                                                <div dangerouslySetInnerHTML={{__html: part.description}}/>
-                                            </Typography.Paragraph>
-                                        </Col>
-                                    </Row>
-                                </div>
-                            )}
-                        </Carousel>
-                    </Col>
+                <Row gutter={[8, 8]} justify="start" className="left-align">
+                    {props.parts.map(part => <React.Fragment key={part.title}>
+                            <Col>
+                                <Typography.Title level={4} className="title-color">
+                                    {part.title}
+                                </Typography.Title>
+                            </Col>
+                            <Col>
+                                <Typography.Paragraph>
+                                    <div dangerouslySetInnerHTML={{__html: part.description}}/>
+                                </Typography.Paragraph>
+                            </Col>
+                        </React.Fragment>
+                    )}
                     <Col>
                         {props.children}
                     </Col>

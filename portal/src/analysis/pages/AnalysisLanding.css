@@ -7,3 +7,14 @@
     opacity: 1;
     background: #364D79;
 }
+
+.search-button .ant-input {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.search-button .ant-input-search > .ant-input-group > .ant-input-group-addon:last-child .ant-input-search-button {
+
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
