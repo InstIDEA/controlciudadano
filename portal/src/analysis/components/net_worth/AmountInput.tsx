@@ -35,23 +35,18 @@ export function AmountInput(props: {
 
     const title = generateTitle(props.title, props.value?.source);
 
-    return <Tooltip title={title}
-                    placement="topLeft"
-                    overlayClassName="numeric-input">
-        <Input placeholder="Monto"
-               {...rest}
-               value={amountFormatter(props.value?.amount)}
-               onChange={onChange}
-               addonBefore={<SourceWithTooltip source={props.value?.source}/>}
-               style={{textAlign: props.align || 'right'}}
-               maxLength={25}/>
-    </Tooltip>;
+    return <Input placeholder="Monto"
+                  {...rest}
+                  value={amountFormatter(props.value?.amount)}
+                  onChange={onChange}
+                  addonBefore={<SourceWithTooltip source={props.value?.source} title={title}/>}
+                  style={{textAlign: props.align || 'right'}}
+                  maxLength={25}/>;
 
 }
 
-function SourceWithTooltip({source}: { source?: string }) {
+function SourceWithTooltip({source, title}: { source?: string, title?: string }) {
     if (!source) return null;
-    const title = generateTitle(undefined, source)
     return <Tooltip title={title}>
         <span>{source}</span>
     </Tooltip>

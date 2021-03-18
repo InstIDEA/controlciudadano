@@ -14,7 +14,7 @@ import {
     Tooltip,
     Typography
 } from "antd";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {formatMoney, formatToDay} from "../../../formatters";
 import {DeleteOutlined, PlusOutlined} from '@ant-design/icons';
 import {Loading} from "../../../components/Loading";
@@ -47,6 +47,7 @@ export function InputData(props: {
             <Col xs={24}>
                 <Card className="custom-card-no-shadow">
                     <InputTitle data={props.data.firstYear}
+                                prefix="Declaración Inicial"
                                 onClick={() => setCurrentYearToChange(props.data.firstYear)}/>
                     <SingleDeclaration data={props.data.firstYear} update={props.updateDate}/>
                 </Card>
@@ -54,6 +55,7 @@ export function InputData(props: {
             <Col xs={24}>
                 <Card className="custom-card-no-shadow">
                     <InputTitle data={props.data.lastYear}
+                                prefix="Declaración final"
                                 onClick={() => setCurrentYearToChange(props.data.lastYear)}/>
                     <SingleDeclaration data={props.data.lastYear} update={props.updateDate}/>
                 </Card>
@@ -77,6 +79,7 @@ export function InputData(props: {
 function InputTitle(props: {
     data: DeclarationData;
     onClick: () => void;
+    prefix: string;
 }) {
 
     return <Typography.Title level={5} className="title-color">
@@ -88,7 +91,7 @@ function InputTitle(props: {
                      cursor: 'pointer'
                  }}
             >
-                Año {props.data.year}
+                {props.prefix} (Año {props.data.year})
             </div>
         </Tooltip>
     </Typography.Title>
@@ -143,7 +146,8 @@ function SelectDeclarationModal(props: {
                            rel="noopener noreferrer"> Ver fuente.</a>
             </DisclaimerComponent>
             {props.options.length
-                ? <Card className="custom-card-no-shadow left-align" title="Puedes cambiar por otra declaración, elige una">
+                ? <Card className="custom-card-no-shadow left-align"
+                        title="Puedes cambiar por otra declaración, elige una">
                     <Timeline>
                         {props.options.map(op => <Timeline.Item key={op.year}>
                             <Space>
@@ -191,6 +195,17 @@ export function SingleDeclaration(props: {
         // we know we should override the data only if the year changes
         // eslint-disable-next-line
     }, [props.data.year, form])
+
+    const inputTooltip = useMemo(() => {
+        return `Ingresos aproximados utilizando los datos proveídos, fuentes: ${props.data.totalIncome.source}.
+                Este número se obtiene multiplicando los ingresos mensuales por 12 y luego se le suma todos los
+                ingresos anuales cargados.`;
+    }, [props.data.totalIncome])
+
+    const nwTooltip = useMemo(() => {
+        return `Patrimonio neto aproximado utilizando los datos proveídos, fuentes: ${props.data.netWorth.source}.
+                Este número se obtiene restando los pasivos de los activos.`;
+    }, [props.data.netWorth])
 
     return <Form {...layout}
                  form={form}
@@ -265,11 +280,10 @@ export function SingleDeclaration(props: {
         </Form.List>
 
         <Form.Item label="Ingresos por año">
-            <AmountInput disabled
-                         value={props.data.totalIncome}/>
+            <AmountInput disabled title={inputTooltip} value={props.data.totalIncome}/>
         </Form.Item>
         <Form.Item label="Patrimonio Neto">
-            <AmountInput disabled value={props.data.netWorth}/>
+            <AmountInput disabled title={nwTooltip} value={props.data.netWorth}/>
         </Form.Item>
     </Form>;
 }
