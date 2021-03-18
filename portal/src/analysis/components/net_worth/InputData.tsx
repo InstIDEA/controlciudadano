@@ -15,7 +15,7 @@ import {
     Typography
 } from "antd";
 import React, {useEffect, useState} from "react";
-import {formatToDay} from "../../../formatters";
+import {formatMoney, formatToDay} from "../../../formatters";
 import {DeleteOutlined, PlusOutlined} from '@ant-design/icons';
 import {Loading} from "../../../components/Loading";
 import {ExternalLinkIcon} from "../../../components/icons/ExternalLinkIcon";
@@ -24,6 +24,8 @@ import {DisclaimerComponent} from "../../../components/Disclaimer";
 import {AmountInput} from "./AmountInput";
 import {merge} from 'lodash';
 import './InputData.css';
+import {useDJBRStats} from "../../../hooks/useStats";
+import {useMediaQuery} from "@react-hook/media-query";
 
 
 export function InputData(props: {
@@ -104,52 +106,71 @@ function SelectDeclarationModal(props: {
     onCancel: () => void;
 }) {
 
+    const statistics = useDJBRStats();
+    const isSmall = useMediaQuery('only screen and (max-width: 900px)');
+
     return <Modal title="Datos de la declaración"
                   visible={props.visible}
                   cancelText="Cancelar"
                   okButtonProps={{style: {display: 'none'}}}
-                  width="80%"
+                  width={isSmall ? "80%" : undefined}
                   onCancel={props.onCancel}>
-        {props.current && <Space direction="vertical">
-            <Descriptions column={1} title="Declaración actual" size="small">
-                <Descriptions.Item label="Documento original">
-                    <a href={getLink(props.current)} target="__blank">
-                        <Space>
-                            Ver PDF
-                            <ExternalLinkIcon/>
-                        </Space>
-                    </a>
-                </Descriptions.Item>
-                <Descriptions.Item label="Año">
-                    {props.current.year}
-                </Descriptions.Item>
-            </Descriptions>
+        {props.current && <Space direction="vertical" size={16}>
+
+            <Card className="custom-card-no-shadow left-align">
+                <Descriptions column={1} title="Declaración actual" size="small">
+                    <Descriptions.Item label="Documento original">
+                        <a href={getLink(props.current)} target="__blank">
+                            <Space>
+                                Ver PDF
+                                <ExternalLinkIcon/>
+                            </Space>
+                        </a>
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Año">
+                        {props.current.year}
+                    </Descriptions.Item>
+                </Descriptions>
+            </Card>
+            <DisclaimerComponent full card>
+                El portal cuenta en total con {formatMoney(statistics.total_declarations)} declaraciones
+                juradas de empleados públicos.
+
+                <br/>
+                Podrían existir declaraciones juradas presentadas, pero
+                que no han sido publicadas por la CGR o aún no han sido incorporadas a este
+                portal. <a href="https://portaldjbr.contraloria.gov.py/portal-djbr/" target="_blank"
+                           rel="noopener noreferrer"> Ver fuente.</a>
+            </DisclaimerComponent>
             {props.options.length
-                ? <Descriptions column={1} title="Puedes cambiar por otra declaración, elije una" size="small"/>
+                ? <Card className="custom-card-no-shadow left-align" title="Puedes cambiar por otra declaración, elige una">
+                    <Timeline>
+                        {props.options.map(op => <Timeline.Item key={op.year}>
+                            <Space>
+                                <div>
+                                    Declaración al {formatToDay(op.date)} (
+                                    <a href={op.link}>
+                                        <Space align="end">
+                                            Ver PDF
+                                            <ExternalLinkIcon/>
+                                        </Space>
+                                    </a>)
+                                </div>
+                                <Button onClick={() => props.onSelect(op)}>Seleccionar</Button>
+                            </Space>
+                        </Timeline.Item>)}
+                    </Timeline>
+                </Card>
                 : <DisclaimerComponent full card>No se cuentan con otras declaraciones</DisclaimerComponent>
             }
-            <Timeline>
-                {props.options.map(op => <Timeline.Item key={op.year}>
-                    <Space>
-                        <div>
-                            Declaración al {formatToDay(op.date)} (
-                            <a href={op.link}>
-                                <Space align="end">
-                                    Ver PDF
-                                    <ExternalLinkIcon/>
-                                </Space>
-                            </a>)
-                        </div>
-                        <Button onClick={() => props.onSelect(op)}>Seleccionar</Button>
-                    </Space>
-                </Timeline.Item>)}
-            </Timeline>
+
             {props.options.length
                 ? <DisclaimerComponent full card>
                     Al cambiar de declaración, se perderán los datos que hayas modificado manualmente
                 </DisclaimerComponent>
                 : null
             }
+
         </Space>}
         {!props.current && <Loading/>}
     </Modal>

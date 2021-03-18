@@ -1,5 +1,5 @@
 import {Affidavit} from "../../Model";
-import {Button, Card, Col, Table, Tooltip, Typography} from "antd";
+import {Card, Col, Table, Typography} from "antd";
 import Icon from "@ant-design/icons";
 import {ReactComponent as Ddjj} from "../../assets/logos/ddjj.svg";
 import * as React from "react";

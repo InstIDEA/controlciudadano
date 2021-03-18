@@ -126,6 +126,11 @@ function Analysis(props: {
                 <DisclaimerComponent full card>
                     <Space>
                         <Typography.Paragraph style={{margin: 'inherit'}}>
+                            El resultado del análisis es un indicador que clasifica el crecimiento
+                            patrimonial y que da una probabilidad de inconsistencia. El resultado no es
+                            concluyente y requiere de verificación manual y análisis más profundo de los
+                            datos.
+                            <br />
                             Para ver mas detalles sobre este análisis, por favor revista este documento
                         </Typography.Paragraph>
                         <button className="round-button">Ver más</button>
