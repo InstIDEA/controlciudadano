@@ -94,6 +94,7 @@ function Analysis(props: {
                                 shape="circle"
                                 size="large"
                                 color="#003459"
+                                onClick={doPrint}
                                 icon={<DownloadOutlined/>}/>
                         <Link to={`/person/${data.data.person.document}?name=${data.data.person.name}`}>
                             <Button type="primary"
@@ -162,3 +163,7 @@ function Analysis(props: {
 
 
 
+
+function doPrint() {
+    (window as any).print();
+}
