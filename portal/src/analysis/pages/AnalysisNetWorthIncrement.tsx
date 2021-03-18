@@ -13,6 +13,8 @@ import {NetWorthIncreaseAnalysis} from "../../APIModel";
 import {Loading} from "../../components/Loading";
 import {useNWHook} from "../NetWorthHook";
 import useMetaTags from "react-metatags-hook";
+import {ExternalLinkIcon} from "../../components/icons/ExternalLinkIcon";
+import {useMediaQuery} from "@react-hook/media-query";
 
 
 export function AnalysisNetWorthIncrement() {
@@ -68,6 +70,7 @@ function Analysis(props: {
 }) {
 
     const data = useNWHook(props.data);
+    const isSmall = useMediaQuery('only screen and (max-width: 900px)');
     const xsSpan = 24;
     const lgSpan = 24;
     const xlSpan = 22;
@@ -83,12 +86,20 @@ function Analysis(props: {
                             Rentas.
                         </Typography.Title>
                     </Col>
-                    <Col md={{span: 1, offset: 1}} xs={{span: 13, offset: 11}}>
-                        <Button type="primary"
-                                shape="circle"
-                                size="large"
-                                color="#003459"
-                                icon={<DownloadOutlined/>}/>
+                    <Col md={{span: 1, offset: 1}} xs={{span: 13, offset: 9}}>
+                        <Space direction={isSmall ? 'horizontal' : 'vertical'}>
+                            <Button type="primary"
+                                    shape="circle"
+                                    size="large"
+                                    color="#003459"
+                                    icon={<DownloadOutlined/>}/>
+                            <Link to={`/person/${data.data.person.document}?name=${data.data.person.name}`}>
+                                <Button type="primary"
+                                        shape="circle"
+                                        size="large"
+                                        icon={<ExternalLinkIcon color="white"/>}/>
+                            </Link>
+                        </Space>
                     </Col>
                 </Row>
             </Col>
