@@ -15,7 +15,7 @@ import {
     Typography
 } from "antd";
 import React, {useEffect, useMemo, useState} from "react";
-import {formatMoney, formatToDay} from "../../../formatters";
+import {formatMoney, formatToYear} from "../../../formatters";
 import {DeleteOutlined, PlusOutlined} from '@ant-design/icons';
 import {Loading} from "../../../components/Loading";
 import {ExternalLinkIcon} from "../../../components/icons/ExternalLinkIcon";
@@ -116,7 +116,7 @@ function SelectDeclarationModal(props: {
                   visible={props.visible}
                   cancelText="Cancelar"
                   okButtonProps={{style: {display: 'none'}}}
-                  width={isSmall ? "80%" : undefined}
+                  width={isSmall ? "80%" : "60%"}
                   onCancel={props.onCancel}>
         {props.current && <Space direction="vertical" size={16}>
 
@@ -152,7 +152,7 @@ function SelectDeclarationModal(props: {
                         {props.options.map(op => <Timeline.Item key={op.year}>
                             <Space>
                                 <div>
-                                    Declaración al {formatToDay(op.date)} (
+                                    Declaración al {formatToYear(op.date)} (
                                     <a href={op.link}>
                                         <Space align="end">
                                             Ver PDF
