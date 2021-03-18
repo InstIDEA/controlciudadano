@@ -1,16 +1,18 @@
 import * as React from 'react';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {AsyncHelper, OCDSSupplierRelation, Supplier} from '../Model';
-import {Layout, PageHeader, Space, Spin, Timeline, Typography} from 'antd';
+import {Layout, PageHeader, Space, Timeline} from 'antd';
 import {Link, useHistory} from 'react-router-dom';
 import {Edge, Graph, Node, RelationGraph} from '../components/graphs/RelationGraph';
 import {Card} from 'antd/es';
-import {SimpleApi} from '../SimpleApi';
 import {SupplierDescription} from '../components/SupplierDescription';
 import {RELATIONS_COLORS, RELATIONS_NAMES} from '../Constants';
 import {BaseDatosPage} from '../components/BaseDatosPage';
 import './OCDSSupplierRelations.css';
 import {useRedashApi} from "../hooks/useApi";
+import {DisclaimerComponent} from "../components/Disclaimer";
+import {LoadingGraphComponent} from "../components/ddjj/LoadingGraph";
+import {SimpleApi} from "../SimpleApi";
 
 const colors = RELATIONS_COLORS;
 const names = RELATIONS_NAMES;
@@ -19,43 +21,50 @@ const names = RELATIONS_NAMES;
 export function OCDSSupplierRelations() {
 
     const data = useRedashApi(18);
-    const [actives, setActives] = useState<string[]>(['OCDS_SAME_LEGAL_CONTACT'])
+    const [actives, setActives] = useState<Set<string>>(new Set(['OCDS_SAME_LEGAL_CONTACT']))
     const [selected, setSelected] = useState<string>();
     const history = useHistory();
 
     const graph = useMemo(() => toGraph(AsyncHelper.or(data, [])), [data]);
 
     const filter = useCallback((node: Edge) => {
-        return actives.length === 0 || actives.includes(node.label)
+        return actives.has(node.label)
     }, [actives])
 
     function toggle(type: string) {
-        if (actives.includes(type)) setActives(actives.filter(a => a !== type));
-        else setActives([...actives, type]);
+        setActives(curr => {
+            const newActives = new Set(curr)
+            if (newActives.has(type)) newActives.delete(type);
+            else newActives.add(type);
+            return newActives
+        });
     }
+
 
     return <BaseDatosPage menuIndex="relations">
         <PageHeader ghost={false}
                     onBack={() => history.push('')}
                     backIcon={null}
                     style={{border: '1px solid rgb(235, 237, 240)'}}
-                    title={"Relaciones ente proveedores ¿Tienen vínculos a quienes se compró?"}
+                    title="Relaciones ente proveedores ¿Tienen vínculos a quienes se compró?"
                     subTitle=""
         >
-            <Typography.Paragraph>
-                Nodos de relación entre proveedores con igual dirección o número de contacto. Se considera
-                “relación entre proveedores” a las empresas que cuenten con el mismo contacto y/o dirección,
-                lo cual no implica una relación directa con la contratación ni se considera un delito en sí.
-            </Typography.Paragraph>
+            <DisclaimerComponent>
+                Nodos de relación entre proveedores con igual dirección o número de contacto.
+
+                <br/>
+                Se considera "relación entre proveedores" a las empresas que cuenten con el mismo contacto y/o
+                dirección, lo cual no implica una relación directa con la contratación ni se considera un delito en sí.
+            </DisclaimerComponent>
             <Layout>
                 <Layout>
                     <Layout.Content>
-                        {data && <RelationGraph nodes={graph.nodes}
-                                                edges={graph.edges}
-                                                onSelect={setSelected}
-                                                filterEdge={filter}
+                        {data.state === 'LOADED' && <RelationGraph nodes={graph.nodes}
+                                                                   edges={graph.edges}
+                                                                   onSelect={setSelected}
+                                                                   filterEdge={filter}
                         />}
-                        {!data && 'Cargando ...'}
+                        {data.state !== 'LOADED' && <LoadingGraphComponent/>}
                     </Layout.Content>
                     <Layout.Sider style={{
                         background: '#ececec',
@@ -72,14 +81,17 @@ export function OCDSSupplierRelations() {
                                         color={colors[type]}
                                         key={type}>
                                         <span style={{
-                                            color: actives.includes(type) ? 'black' : 'gray'
+                                            color: actives.has(type) ? 'black' : 'gray'
                                         }} onClick={() => toggle(type)}>
                                             {names[type]}
                                         </span>
                                     </Timeline.Item>)}
                                 </Timeline>
                             </Card>
-                            {selected && <SupplierCard id={selected}/>}
+                            {selected
+                                ? <SupplierCard id={selected}/>
+                                : null
+                            }
                         </Space>
                     </Layout.Sider>
                 </Layout>
@@ -137,7 +149,7 @@ export function SupplierCard({id}: { id: string }) {
 
     }, [id])
 
-    if (!data) return <><Spin/></>;
+    if (!data) return <LoadingGraphComponent/>;
 
     return <Card
         title={<Link to={`/ocds/suppliers/${id}`}>{data ? data.name : id}</Link>}

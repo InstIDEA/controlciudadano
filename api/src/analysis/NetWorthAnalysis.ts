@@ -1,4 +1,4 @@
-import {AnalysisDJBR, DeclarationData, FinancialDetail, NetWorthIncreaseAnalysis} from "../APIModel";
+import {AmountWithSource, AnalysisDJBR, DeclarationData, FinancialDetail, NetWorthIncreaseAnalysis} from "../APIModel";
 import {fetchParsedDJBR} from "./DJBRParserApi";
 
 export interface NetWorthAnalysisEnhancer {
@@ -18,18 +18,19 @@ export interface ContextData {
     }
 }
 
+
 function getDefault(): DeclarationData {
     return {
         year: new Date().getFullYear(),
-        netWorth: 0,
+        netWorth: getAmount(0),
         actives: [],
         expenses: [],
         incomes: [],
         passives: [],
-        totalActive: 0,
-        totalExpenses: 0,
-        totalIncome: 0,
-        totalPassive: 0,
+        totalActive: getAmount(0),
+        totalExpenses: getAmount(0),
+        totalIncome: getAmount(0),
+        totalPassive: getAmount(0),
         sources: []
     }
 }
@@ -158,12 +159,12 @@ export class NetWorthAnalysis {
         return {
             ...getDefault(),
             year: dat.year,
-            totalPassive: parseFloat(dat.passive) || 0,
-            totalActive: parseFloat(dat.active) || 0,
-            netWorth: parseFloat(dat.net_worth) || 0,
+            totalPassive: getAmount(parseFloat(dat.passive) || 0, 'DJBR'),
+            totalActive: getAmount(parseFloat(dat.active) || 0, 'DJBR'),
+            netWorth: getAmount(parseFloat(dat.net_worth) || 0, 'DJBR'),
             sources: [{
                 url: dat.link,
-                type: 'djbr'
+                type: 'DJBR'
             }]
         }
     }
@@ -186,12 +187,15 @@ export class NetWorthAnalysis {
     }
 
     private calcTotals(data: DeclarationData): void {
-        if (!validNumber(data.totalActive)) data.totalActive = sum(data.actives);
-        if (!validNumber(data.totalPassive)) data.totalPassive = sum(data.passives);
-        if (!validNumber(data.totalIncome)) data.totalIncome = sum(data.incomes);
-        if (!validNumber(data.totalExpenses)) data.totalExpenses = sum(data.expenses);
+        if (!validNumber(data.totalActive.amount)) data.totalActive = simplifySources(sum(data.actives));
+        if (!validNumber(data.totalPassive.amount)) data.totalPassive = simplifySources(sum(data.passives));
+        if (!validNumber(data.totalIncome.amount)) data.totalIncome = simplifySources(sum(data.incomes));
+        if (!validNumber(data.totalExpenses.amount)) data.totalExpenses = simplifySources(sum(data.expenses));
 
-        data.netWorth = data.totalActive - data.totalPassive;
+        data.netWorth = simplifySources({
+            amount: data.totalActive.amount - data.totalPassive.amount,
+            source: `${data.totalActive.source},${data.totalPassive.source}`
+        });
     }
 }
 
@@ -210,9 +214,12 @@ function validNumber(val?: number): boolean {
     return val && val > 0
 }
 
-function sum(arr: Array<FinancialDetail>): number {
-    return arr.map(d => d.amount * (d.periodicity === 'yearly' ? 1 : 12))
-        .reduce((a, b) => a + b, 0)
+function sum(arr: Array<FinancialDetail>): AmountWithSource {
+    return arr.map(d => ({amount: d.amount * (d.periodicity === 'yearly' ? 1 : 12), source: d.source}))
+        .reduce((a, b) => ({
+            amount: a.amount + b.amount,
+            source: `${a.source}, ${b.source}`
+        }), {amount: 0, source: ''})
 }
 
 class DJBRParserEnhancer implements NetWorthAnalysisEnhancer {
@@ -243,7 +250,7 @@ class DJBRParserEnhancer implements NetWorthAnalysisEnhancer {
         toEnhance.sources = [
             ...toEnhance.sources,
             {
-                type: 'djbr',
+                type: 'DJBR',
                 url: url
             }
         ]
@@ -310,4 +317,26 @@ class DJBRParserEnhancer implements NetWorthAnalysisEnhancer {
 
         return toEnhance;
     }
+}
+
+function getAmount(amount?: number, source?: string) {
+    return {
+        amount: amount || 0,
+        source: source || ''
+    }
+}
+
+
+function simplifySources(a: AmountWithSource): AmountWithSource {
+    return {
+        amount: a.amount,
+        source: uniq((a.source || '').split(","))
+            .filter(s => !!s)
+            .map(s => s.trim())
+            .sort((s1, s2) => s1.localeCompare(s2)).join(",")
+    }
+}
+
+function uniq<T>(a: T[]): T[] {
+    return Array.from(new Set(a));
 }

@@ -48,7 +48,7 @@ export interface Data {
 export interface ParserResult {
     message: string[];
     status: number;
-    data: Data;
+    data?: Data;
     raw: string[];
 }
 
@@ -56,6 +56,7 @@ export interface ParserResult {
 export async function fetchParsedDJBR(url: string): Promise<ParserResult> {
 
     // curl -X POST --data '{ "file": { "path": "https://data.controlciudadanopy.org/contraloria/declaraciones/775497_a76ff476d9d3a23716ac225e9a46e794.pdf" } }'  localhost:8080/parser/send
+    console.log(`Trying to parse dec: "${url}"`)
     const parsed = await fetch('http://data.controlciudadanopy.org:8081/parser/send', {
         method: 'POST',
         timeout: 5000,

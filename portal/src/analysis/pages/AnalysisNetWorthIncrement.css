@@ -1,0 +1,40 @@
+
+.print-only {
+    display: none;
+}
+
+@media print {
+    .nw-increment-page .input-data-panel {
+        display: none;
+    }
+
+    .nw-increment-page #footer {
+        display: none;
+    }
+
+    .nw-increment-page #header {
+        display: none;
+    }
+
+    .nw-increment-page .global-actions {
+        display: none;
+    }
+
+    .nw-increment-page .main-title {
+        font-size: 1em;
+    }
+
+    .print-only {
+        display: block;
+    }
+
+    .top-disclaimer {
+        padding: 20px
+    }
+
+    .print-horizontal-margin {
+        margin-left: 2%;
+        width: 96%;
+    }
+
+}

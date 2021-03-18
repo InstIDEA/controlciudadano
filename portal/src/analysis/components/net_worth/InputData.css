@@ -1,0 +1,7 @@
+.nw-input .ant-input-group-compact {
+    display: flex
+}
+
+.nw-input .income-amount {
+    flex-grow: 1;
+}

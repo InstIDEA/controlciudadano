@@ -193,6 +193,10 @@ export interface OCDSItemTenderInfo {
     supplier?: {
         id: string;
         name: string;
+    },
+    buyer?: {
+        id: string;
+        name: string;
     }
 }
 
@@ -264,11 +268,12 @@ export interface PaginatedResult<T> {
 }
 
 export interface Affidavit {
+    revision: string;
     id: number;
     name: string;
     document: string;
     year: number;
-    revision: number;
+    version: number;
     link: string;
     source: string;
     link_sandwich: string;
@@ -283,6 +288,9 @@ export interface OCDSSupplierContract {
     contract_award_id: string;
     tender_slug: string;
     tender_title: string;
+    published_date: string;
+    buyer_id: string;
+    buyer_name: string;
     contract_id: string;
     name: string;
     ruc: string;
@@ -533,7 +541,9 @@ export interface StatisticsDJBR {
     count_declarations_auths: number;
     last_success_fetch: string;
     total_authorities_in_order: number;
-    first_election_year: number
+    first_election_year: number;
+    last_election_year: number;
+    count_auths_with_decs: number;
 }
 
 /**

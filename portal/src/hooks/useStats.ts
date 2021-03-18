@@ -12,7 +12,9 @@ export function useDJBRStats() {
         total_authorities: 113742,
         total_declarations: 707810,
         first_election_year: 1996,
-        total_authorities_in_order: 862
+        total_authorities_in_order: 862,
+        count_auths_with_decs: 4360,
+        last_election_year: 2018
     });
 }
 

@@ -29,6 +29,10 @@
     border-radius: 20px;
 }
 
+.left-align {
+    text-align: left !important;
+}
+
 .custom-shadow-small {
     box-shadow: 5px 5px 2px rgba(84, 48, 132, 0.06);
 }

@@ -6,11 +6,19 @@ import {OCDSService} from './services/OCDS';
 import helmet from 'helmet';
 import {ContraloryService} from './services/ContraloryService';
 import {AnalysisService} from "./services/AnalysisService";
+import {AdminOperationsService} from "./services/AdminOperationsService";
+import {ColumnConfig, DataTablesService} from "./datatables/DataTablesService";
 
 const app = express()
 const port = process.env.PORT || 3000
 
+const apiKey = process.env.API_KEY || generateRandomString(32);
+if (!process.env.API_KEY) {
+    console.warn(`No API_KEY provided, using generated key: "${apiKey}"`)
+}
+
 const pool = new pg.Pool()
+const dtService = new DataTablesService(pool);
 
 app.use(cors())
 app.use(helmet());
@@ -41,8 +49,33 @@ app.get('/api/people/:document/declarations', wrap(req => {
 }));
 
 app.get('/api/contralory/declarations', wrap(req => {
-    const page = extractPage(req);
-    return new ContraloryService(pool).getDeclarations(page.size, page.page);
+    const columns: ColumnConfig[] = [
+        {name: 'id', filterType: "no_filter"},
+        {name: 'document', filterType: 'equals'},
+        {name: 'name', filterType: 'contain'},
+        {name: 'year', filterType: 'equals'},
+        {name: 'version', filterType: 'equals'},
+        {name: 'link', filterType: 'no_filter'},
+        {name: 'origin', filterType: 'no_filter'},
+        {name: 'link_sandwich', filterType: 'no_filter'},
+        {name: 'type', filterType: 'no_filter'},
+        {name: 'active', filterType: 'equals', descNullLast: true},
+        {name: 'passive', filterType: 'equals', descNullLast: true},
+        {name: 'net_worth', filterType: 'equals', descNullLast: true},
+        {name: 'charge', filterType: 'equals'},
+    ];
+    return dtService.query({
+        columns,
+        table: 'analysis.djbr',
+        idColumn: 'id',
+        baseOrder: {
+            'net_worth': 'DESC'
+        }
+    }, {
+        ...extractPage(req),
+        filter: dtService.extractColumnFilter(req.query, columns),
+        order: dtService.extractSortOrder(req.query, columns)
+    });
 }));
 
 app.get('/api/ocds/items', wrap(req => {
@@ -105,6 +138,17 @@ app.get('/api/analysis/net_worth_increment/byDec', wrap(req => {
     return new AnalysisService(pool).getDataOfYear(document, id);
 }));
 
+app.get('/api/admin/parse_all_decs', wrap(req => {
+    const document = validateNonEmpty('document',
+        validateString('document', req.query.document));
+    const givenKey = validateNonEmpty('apiKey',
+        validateString('apiKey', req.query.apiKey));
+
+    if (apiKey !== givenKey) {
+        throw new ApiError("Invalid api key", 403, {key: givenKey});
+    }
+    return new AdminOperationsService(pool).parseAllDecs(document);
+}));
 
 app.listen(port, () => console.log(`API listening at http://localhost:${port}`))
 
@@ -134,19 +178,19 @@ async function handlePromise(
     }
 }
 
-function extractPage(req: express.Request) {
-    const page = toNumber(req.query.page);
-    const size = toNumber(req.query.size);
+function extractPage(req: express.Request): { page: number, size: number } {
+    const page = toNumber(req.query.page || '1');
+    const size = toNumber(req.query.size || '10');
     if (!assertNumber(page) || !assertNumber(size)) {
-        throw new ApiError('invalid.pagination', 400, {page, size});
+        throw new ApiError('invalid.pagination', 400, {page: req.query.page, size: req.query.size});
     }
 
     return {page, size}
 }
 
-function handleError(err: unknown, res: express.Response) {
+function handleError(err: object, res: express.Response) {
     if (err instanceof ApiError) {
-        console.warn('Error in API, check console ', err.meta, err);
+        console.warn('ApiError in API, check console ', err.meta, err);
         res.status(err.code || 500).send({reason: err.message || 'Unexpected error', meta: err.meta})
     } else {
         console.warn('Error in API, check console ', err);
@@ -155,7 +199,7 @@ function handleError(err: unknown, res: express.Response) {
 }
 
 function assertNumber(val: any): val is number {
-    return typeof val === 'number';
+    return typeof val === 'number' && !isNaN(val);
 
 }
 
@@ -176,6 +220,12 @@ function validateNonEmpty(paramName: string, param: string): string {
     return param;
 }
 
+function validateNonEmptyString(paramName: string, param: unknown): string {
+    const str = validateString(paramName, param);
+    if (!str || str.length === 0) throw new ApiError(`invalid.${paramName}`)
+    return str;
+}
+
 function validateString(paramName: string, param: any): string {
     if (!param || typeof param !== 'string') {
         throw new ApiError('invalid.' + paramName, 409, {param});
@@ -189,4 +239,14 @@ function validateNumber(paramName: string, param: any): number {
     }
 
     return parseInt(param);
+}
+
+function generateRandomString(length: number): string {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
 }
