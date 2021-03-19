@@ -40,6 +40,11 @@ export function AnalysisNetWorthIncrement() {
     }, [])
 
     return <div className="nw-increment-page">
+	<div id="watermark" className="print-only">
+		{currDate()}<br/>
+		{window.location.href}
+	</div>
+
         <Header/>
 
         <Layout>
@@ -81,9 +86,9 @@ function Analysis(props: {
         <Col xs={xsSpan} lg={lgSpan} xl={xlSpan} xxl={xxlSpan}>
             <Row align="middle" justify="center">
                 <Col xs={22}>
-                    <Typography.Title className="title-color main-title" style={{textAlign: 'center'}}>
-                        Crecimiento Patrimonial de '{data.data.person.name}' según Declaraciones Juradas de Bienes y
-                        Rentas.
+                    <Typography.Title className="title-color main-title">
+                        Crecimiento Patrimonial de '{data.data.person.name}'
+                        <Typography.Text className="main-title-source"> según Declaraciones Juradas de Bienes y Rentas.</Typography.Text>
                     </Typography.Title>
                 </Col>
 
@@ -168,4 +173,16 @@ function Analysis(props: {
 
 function doPrint() {
     (window as any).print();
+}
+
+function currDate() {
+    let temp = new Date();
+    let date = temp.getDate() + "/" + 
+        (temp.getMonth() + 1) + "/" +
+        temp.getFullYear();
+    let time = temp.getHours() + ':' + 
+        temp.getMinutes() + ':' + 
+        temp.getSeconds();
+
+    return date + " " + time
 }

@@ -1,40 +1,107 @@
+.nw-increment-page .main-title {
+	text-align: center;
+}
 
 .print-only {
-    display: none;
+	display: none;
 }
 
 @media print {
-    .nw-increment-page .input-data-panel {
-        display: none;
-    }
+	/* if browser support force page size to A4 portrait */
+	@page {
+		size: A4 portrait;
+	}
 
-    .nw-increment-page #footer {
-        display: none;
-    }
+	.nw-increment-page .input-data-panel {
+		display: none;
+	}
 
-    .nw-increment-page #header {
-        display: none;
-    }
+	.nw-increment-page #footer {
+		display: none;
+	}
 
-    .nw-increment-page .global-actions {
-        display: none;
-    }
+	.nw-increment-page #header {
+		display: none;
+	}
 
-    .nw-increment-page .main-title {
-        font-size: 1em;
-    }
+	.nw-increment-page .global-actions {
+		display: none;
+	}
 
-    .print-only {
-        display: block;
-    }
+	.nw-increment-page .main-title {
+		font-size: 1em;
+		text-align: left;
+	}
 
-    .top-disclaimer {
-        padding: 20px
-    }
+	button {
+		display: none;
+	}
 
-    .print-horizontal-margin {
-        margin-left: 2%;
-        width: 96%;
-    }
+	.print-only {
+		display: block;
+	}
 
+	.top-disclaimer {
+		padding: 20px
+	}
+
+	.print-horizontal-margin {
+		margin-left: 2%;
+		width: 96%;
+	}
+
+	/* postcss-page-break */
+	.print-pagebreak {
+		page-break-after: always;
+	}
+
+	/* cards container */
+	.ant-card.ant-card-bordered.custom-card.custom-shadow-small {
+		border: none;
+		padding: none;
+		box-shadow: none;
+
+		margin-top: auto;
+		margin-bottom: auto;
+		margin-right: 0px;
+		margin-left: 0px;
+	}
+
+	/* cards container header */
+	.ant-typography.title-color {
+		text-align: left;
+		margin: 0px;
+	}
+
+	/* jump line between main title and the source */
+	.nw-increment-page .main-title .main-title-source::before {
+		content: "\a";
+		white-space: pre;
+	}
+
+	.disclaimer-component,
+	.disclaimer-component.full,
+	.disclaimer-component.full.as-card {
+		text-align: left;
+		padding: 0px;
+		margin: 0px;
+		box-shadow: none;
+		border: none;
+	}
+
+	#watermark {
+		position: fixed;
+		text-align: center;
+		top: 50%;
+		left: 50%;
+		font-size: 2em;
+		color: red;
+		transform: translate(-50%,-50%) rotate(-30deg);
+		z-index: 2;
+	}
+
+	#root {
+		z-index: 1;
+	}
 }
+
