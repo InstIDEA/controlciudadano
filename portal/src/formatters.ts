@@ -59,6 +59,10 @@ export function formatIsoDate(value: any) {
     return '';
 }
 
+export function formatToYear(value: any) {
+    return formatWF(value, "yyyy");
+}
+
 export function formatToMonth(value: any) {
     return formatWF(value, "MMMM 'de' yyyy");
 }

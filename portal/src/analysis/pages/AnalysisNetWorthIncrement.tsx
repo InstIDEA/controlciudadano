@@ -95,11 +95,13 @@ function Analysis(props: {
                                 size="large"
                                 color="#003459"
                                 onClick={doPrint}
+                                title="Descargar"
                                 icon={<DownloadOutlined/>}/>
                         <Link to={`/person/${data.data.person.document}?name=${data.data.person.name}`}>
                             <Button type="primary"
                                     shape="circle"
                                     size="large"
+                                    title="Ver mas información"
                                     icon={<ExternalLinkIcon color="white"/>}/>
                         </Link>
                     </Space>
