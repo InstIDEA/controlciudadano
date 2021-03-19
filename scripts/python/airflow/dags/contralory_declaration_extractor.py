@@ -56,18 +56,28 @@ def is_valid_data(data: Dict[str, any]) -> bool:
     if data is None:
         return False
 
+    calc_active = data['activos']
+    calc_passives = data['pasivos']
+    calc_nw = data['patrimonioNeto']
+
     if 'resumen' not in data.keys():
         return False
 
-    items = list(data['resumen'].values())
+    summary = data['resumen']
+
+    items = list(summary.values())
 
     if len(items) != 3:
         return False
 
-    if sum(map(abs, items)) == 0:
-        return False
+    if sum(map(abs, items)) != 0:
+        return True
 
-    return True
+    base_active = summary['totalActivo']
+    base_passives = summary['totalPasivo']
+    base_nw = summary['patrimonioNeto']
+
+    return  calc_active == base_active and calc_passives == base_passives and calc_nw == base_nw
 
 
 def get_random_url() -> str:
@@ -88,7 +98,7 @@ def list_navigator(cursor: any, idx: int, year: int, batch_size: int):
                  drd.id as raw_id, 
                  ddf.file_name 
             FROM staging.djbr_downloaded_files ddf
-            INNER JOIN staging.djbr_raw_data drd on ddf.raw_data_id = drd.id
+                 JOIN staging.djbr_raw_data drd on ddf.raw_data_id = drd.id
             LEFT JOIN analysis.djbr_readable_data parsed ON parsed.raw_data_id = drd.id
             WHERE drd.periodo >= %s
               AND mod(drd.id, %s) = %s
@@ -109,7 +119,7 @@ def list_navigator(cursor: any, idx: int, year: int, batch_size: int):
 
 def parse(file_name: str):
     t = Template(dumps(parser_request))
-    payload = t.substitute(resource=file_name)
+    payload = t.substitute(resource=f"https://data.controlciudadanopy.org/contraloria/declaraciones/{file_name}")
 
     result = post(get_random_url(), data=payload)
 
@@ -161,12 +171,12 @@ def do_work(idx: int, year: int, batch_size: int):
             if dag_timer > 0:
                 sleep(dag_timer)
 
-        if len(to_delete) > 0:
+        if len(to_delete) > 0 and dag_remove_invalid_djbr:
             print(f"Sending {len(to_delete)} to delete")
             db_cursor.executemany(delete_query, to_delete)
             db_conn.commit()
 
-        if len(to_insert) > 0 and dag_remove_invalid_djbr:
+        if len(to_insert) > 0:
             print(f"Sending {len(to_insert)} to insert")
             db_cursor.executemany(insert_query, to_insert)
             db_conn.commit()
