@@ -4,7 +4,7 @@ from json import loads
 from random import randint
 from string import Template
 from time import sleep
-from typing import Dict
+from typing import Dict, Union
 
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import DAG
@@ -16,7 +16,8 @@ from airflow.utils.dates import days_ago
 from requests import post
 
 dag_timer = int(Variable.get("CGR_PARSER_TIMER", 0))
-dag_services = str(Variable.get("CGR_PARSER_SERVICES", "http://data.controlciudadanopy.org:8081/parser/send")).split(",")
+DEF_API_URLS = "http://data.controlciudadanopy.org:8081/parser/send"
+dag_services = str(Variable.get("CGR_PARSER_SERVICES", DEF_API_URLS)).split(",")
 dag_year_filter = int(Variable.get("CGR_PARSER_MIN_YEAR", 2015))
 dag_sub_jobs_count = int(Variable.get("CGR_PARSER_SUB_JOBS_COUNT", 16))
 dag_sub_jobs_batch_size = int(Variable.get("CGR_PARSER_PDF_SUB_JOBS_BATCH_SIZE", 10))
@@ -77,7 +78,7 @@ def is_valid_data(data: Dict[str, any]) -> bool:
     base_passives = summary['totalPasivo']
     base_nw = summary['patrimonioNeto']
 
-    return  calc_active == base_active and calc_passives == base_passives and calc_nw == base_nw
+    return calc_active == base_active and calc_passives == base_passives and calc_nw == base_nw
 
 
 def get_random_url() -> str:
@@ -99,7 +100,7 @@ def list_navigator(cursor: any, idx: int, year: int, batch_size: int):
                  ddf.file_name 
             FROM staging.djbr_downloaded_files ddf
                  JOIN staging.djbr_raw_data drd on ddf.raw_data_id = drd.id
-            LEFT JOIN analysis.djbr_readable_data parsed ON parsed.raw_data_id = drd.id
+            LEFT JOIN analysis.djbr_data parsed ON parsed.raw_data_id = drd.id
             WHERE drd.periodo >= %s
               AND mod(drd.id, %s) = %s
               AND parsed IS NULL
@@ -131,20 +132,40 @@ def parse(file_name: str):
     return None
 
 
+def get_charge(data: Dict) -> Union[str, None]:
+    if 'instituciones' in data and len(data['instituciones']) > 0:
+        first = data['instituciones'][0]
+        cargo = ''
+        inst = ''
+        if 'cargo' in first:
+            cargo = first['cargo']
+        if 'institucion' in first:
+            inst = f"({first['institucion']})"
+        return f"{cargo} {inst}".rstrip()
+
+    return None
+
+
 def do_work(idx: int, year: int, batch_size: int):
     db_hook = PostgresHook(postgres_conn_id="postgres_default", schema="db")
     db_conn = db_hook.get_conn()
     db_cursor = db_conn.cursor()
 
     insert_query = """
-    INSERT INTO analysis.djbr_readable_data (
+    INSERT INTO analysis.djbr_data (
         raw_data_id,
         active,
         passive,
         net_worth,
+        declaration_date,
+        monthly_income,
+        anual_income,
+        monthly_expenses,
+        anual_expenses,
+        charge,
         source,
         parsed
-    ) VALUES (%s, %s, %s, %s, %s, %s)
+    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     ON CONFLICT DO NOTHING;
     """
 
@@ -159,10 +180,17 @@ def do_work(idx: int, year: int, batch_size: int):
             data = parse(row['file_name'])
 
             if is_valid_data(data):
+                charge = get_charge(data)
                 to_insert.append([row['raw_id'],
                                   data['resumen']['totalActivo'],
                                   data['resumen']['totalPasivo'],
                                   data['resumen']['patrimonioNeto'],
+                                  data['fecha'],
+                                  data['ingresosMensual'],
+                                  data['ingresosAnual'],
+                                  data['egresosMensual'],
+                                  data['egresosAnual'],
+                                  charge,
                                   "MS_DJBR_PARSER",
                                   dumps(data)])
             else:
@@ -188,12 +216,17 @@ with dag:
 
     ensure_table_created = PostgresOperator(task_id='ensure_table_exists',
                                             sql="""
-                                    CREATE TABLE IF NOT EXISTS analysis.djbr_readable_data (
+                                    CREATE TABLE IF NOT EXISTS analysis.djbr_data (
                                         id bigserial primary key,
                                         raw_data_id bigint,
+                                        charge text,
                                         active numeric(20,2),
                                         passive numeric(20,2),
                                         net_worth numeric(20,2),
+                                        monthly_income numeric(20, 2),
+                                        anual_income numeric(20, 2),
+                                        monthly_expenses numeric(20, 2),
+                                        anual_expenses numeric(20, 2),
                                         declaration_date timestamp,
                                         source text NULL,
                                         parsed jsonb,
