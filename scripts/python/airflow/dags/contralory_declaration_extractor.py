@@ -39,6 +39,16 @@ parser_request = {
     }
 }
 
+
+# https://data.controlciudadanopy.org/contraloria/declaraciones/492599_e2995154cf9ceda88e3b9556731a6f38.pdf
+max_expected_values = {
+    "resumen": {
+        "totalActivo": 3017299467736,
+        "totalPasivo": 2256141600,
+        "patrimonioNeto": 3015043326136
+    }
+}
+
 dag = DAG(
     dag_id="contralory_declaration_data_extraction",
     default_args=default_args,
@@ -73,6 +83,25 @@ def is_valid_data(data: Dict[str, any]) -> bool:
 
     if len(items) != 3:
         return False
+
+    # numeric(20, 2) overflow control
+    overflow = [bool(len(str(value)) >= 19) for value in items]
+
+    if True in overflow:
+        return False
+
+    # max expected values control
+    if max_expected_values is not None:
+        for item in data:
+            if item in max_expected_values.keys():
+                if hasattr(data[item], "keys") and hasattr(max_expected_values[item], "keys"):
+                    for sub in data[item].keys():
+                        if sub in max_expected_values[item]:
+                            if data[item][sub] > max_expected_values[item][sub]:
+                                return False					
+                else:
+                    if data[item] > max_expected_values[item]:
+                        return False
 
     if sum(map(abs, items)) != 0:
         return True
