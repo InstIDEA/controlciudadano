@@ -133,7 +133,7 @@ def parse(file_name: str):
 
 
 def get_charge(data: Dict) -> Union[str, None]:
-    if 'instituciones' in data and len(data['instituciones']) > 0:
+    if 'instituciones' in data and data['instituciones'] is not None and len(data['instituciones']) > 0:
         first = data['instituciones'][0]
         cargo = ''
         inst = ''
