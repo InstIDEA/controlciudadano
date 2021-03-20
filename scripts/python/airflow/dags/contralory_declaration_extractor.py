@@ -66,6 +66,9 @@ def is_valid_data(data: Dict[str, any]) -> bool:
 
     summary = data['resumen']
 
+    if summary is None:
+        return False
+
     items = list(summary.values())
 
     if len(items) != 3:
@@ -177,24 +180,37 @@ def do_work(idx: int, year: int, batch_size: int):
 
         for row in rows:
 
-            data = parse(row['file_name'])
+            data = None
+            try:
+                data = parse(row['file_name'])
 
-            if is_valid_data(data):
-                charge = get_charge(data)
-                to_insert.append([row['raw_id'],
-                                  data['resumen']['totalActivo'],
-                                  data['resumen']['totalPasivo'],
-                                  data['resumen']['patrimonioNeto'],
-                                  data['fecha'],
-                                  data['ingresosMensual'],
-                                  data['ingresosAnual'],
-                                  data['egresosMensual'],
-                                  data['egresosAnual'],
-                                  charge,
-                                  "MS_DJBR_PARSER",
-                                  dumps(data)])
-            else:
-                to_delete.append([row['raw_id']])
+                if is_valid_data(data):
+                    charge = get_charge(data)
+                    to_insert.append([row['raw_id'],
+                                      data['resumen']['totalActivo'],
+                                      data['resumen']['totalPasivo'],
+                                      data['resumen']['patrimonioNeto'],
+                                      data['fecha'],
+                                      data['ingresosMensual'],
+                                      data['ingresosAnual'],
+                                      data['egresosMensual'],
+                                      data['egresosAnual'],
+                                      charge,
+                                      "MS_DJBR_PARSER",
+                                      dumps(data)])
+                else:
+                    to_delete.append([row['raw_id']])
+
+            except Exception as e:
+                print(f"Error parsing {row['raw_id']}, error:")
+                print(e)
+                print('-----------------')
+                if data is not None:
+                    print(data)
+                    print('-----------------')
+                print('SKIPING')
+                raise e
+
 
             if dag_timer > 0:
                 sleep(dag_timer)
