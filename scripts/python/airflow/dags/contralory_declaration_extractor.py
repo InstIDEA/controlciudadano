@@ -211,19 +211,27 @@ def do_work(idx: int, year: int, batch_size: int):
                 print('SKIPING')
                 raise e
 
-
             if dag_timer > 0:
                 sleep(dag_timer)
 
-        if len(to_delete) > 0 and dag_remove_invalid_djbr:
-            print(f"Sending {len(to_delete)} to delete")
-            db_cursor.executemany(delete_query, to_delete)
-            db_conn.commit()
+        try:
+            if len(to_delete) > 0 and dag_remove_invalid_djbr:
+                print(f"Sending {len(to_delete)} to delete")
+                db_cursor.executemany(delete_query, to_delete)
+                db_conn.commit()
 
-        if len(to_insert) > 0:
-            print(f"Sending {len(to_insert)} to insert")
-            db_cursor.executemany(insert_query, to_insert)
-            db_conn.commit()
+            if len(to_insert) > 0:
+                print(f"Sending {len(to_insert)} to insert")
+                db_cursor.executemany(insert_query, to_insert)
+                db_conn.commit()
+        except Exception as e:
+            print("Error inserting/deleting:")
+            print(to_delete)
+            print('-------')
+            print(to_insert)
+            print('-------')
+            raise e
+
 
 
 with dag:
