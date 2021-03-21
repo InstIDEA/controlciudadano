@@ -39,6 +39,7 @@ parser_request = {
     }
 }
 
+
 dag = DAG(
     dag_id="contralory_declaration_data_extraction",
     default_args=default_args,
@@ -72,6 +73,12 @@ def is_valid_data(data: Dict[str, any]) -> bool:
     items = list(summary.values())
 
     if len(items) != 3:
+        return False
+
+    # numeric(20, 2) overflow control
+    overflow = [bool(len(str(value)) >= 19) for value in items]
+
+    if True in overflow:
         return False
 
     if sum(map(abs, items)) != 0:
