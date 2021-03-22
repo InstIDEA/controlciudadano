@@ -33,6 +33,9 @@ from ds_table_operations import calculate_hash_of_file
 from file_system_helper import move, get_file_size
 from network_operators import download_file, get_head, NetworkError
 
+from contralory_declaration_link_fetcher import keep_num_data
+from contralory_declaration_link_fetcher import is_valid_ci
+
 dag_job_target_dir = os.path.join(Variable.get("CGR_PDF_FOLDER", os.path.join(os.sep, "tmp", "contralory", "raw")))
 dag_sub_jobs_count = int(Variable.get("CGR_DOWNLOAD_PDF_SUB_JOBS_COUNT", 10))
 
@@ -150,6 +153,12 @@ def download_pdf(remote_id: str,
             return None
     except NetworkError as ne:
         print(f"An error trying to get the file info {str(ne)}, downloading anyway")
+
+    numdata = keep_num_data(file_prefix)
+    if not is_valid_ci(numdata):
+        return None
+
+    file_prefix = numdata
 
     temp_target_path = f"{temp_dir}{file_prefix}.pdf"
     download_file(final_url, temp_target_path, False, False)

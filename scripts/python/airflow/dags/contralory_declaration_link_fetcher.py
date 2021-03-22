@@ -2,6 +2,7 @@ from datetime import timedelta
 
 import math
 import requests
+from re import findall as re_findall
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import DAG
 from airflow.operators.dummy_operator import DummyOperator
@@ -29,6 +30,24 @@ dag = DAG(
     schedule_interval=timedelta(weeks=1),
 )
 
+def keep_num_data(data: str):
+    pattern = '[0-9]'
+    re = re_findall(pattern, data, re_unicode)
+
+    # retrive all numbers
+    return ''.join(re)
+
+def is_valid_ci(cedula):
+    if not isinstance(cedula, str):
+        return False
+
+    if not cedula.isnumeric():
+        return False
+
+    if len(cedula) < 5:
+        return False
+
+    return True
 
 def list_navigator(base_query: str, url: str):
     """
@@ -86,7 +105,13 @@ def fetch_list(letter: str, url: str, **kwargs):
 
     for records in list_navigator(letter, url):
         to_insert = []
+
         for record in records:
+            numdata = keep_num_data(record["cedula"])
+            if not is_valid_ci(numdata):
+                continue
+
+            record["cedula"] = numdata
             to_insert.append(to_upsert_values(record))
 
         print(f"Sending {len(to_insert)} for upsert")
