@@ -39,7 +39,6 @@ parser_request = {
     }
 }
 
-
 dag = DAG(
     dag_id="contralory_declaration_data_extraction",
     default_args=default_args,
@@ -49,13 +48,15 @@ dag = DAG(
 )
 
 
-def is_valid_data(data: Dict[str, any]) -> bool:
+def is_valid_data(data: Dict[str, any], id: int) -> bool:
     """
     Check if the data returned by the parsed is valid
     :param data:  the returned data
+    :param id: the id of the row for debugging
     :return: True if is valid, False otherwise
     """
     if data is None:
+        print(f"{id} - Returing false because data is null")
         return False
 
     calc_active = data['activos']
@@ -63,22 +64,26 @@ def is_valid_data(data: Dict[str, any]) -> bool:
     calc_nw = data['patrimonioNeto']
 
     if 'resumen' not in data.keys():
+        print(f"{id} - Returing false because resumen is not present")
         return False
 
     summary = data['resumen']
 
     if summary is None:
+        print(f"{id} - Returing false because resumen is not present")
         return False
 
     items = list(summary.values())
 
     if len(items) != 3:
+        print(f"{id} - Returing false because resumen doesn't have 3 keys")
         return False
 
     # numeric(20, 2) overflow control
     overflow = [bool(len(str(value)) >= 19) for value in items]
 
     if True in overflow:
+        print(f"{id} - Returing false because al least one value has more that 19 digsits {items}")
         return False
 
     if sum(map(abs, items)) != 0:
@@ -88,7 +93,12 @@ def is_valid_data(data: Dict[str, any]) -> bool:
     base_passives = summary['totalPasivo']
     base_nw = summary['patrimonioNeto']
 
-    return calc_active == base_active and calc_passives == base_passives and calc_nw == base_nw
+    to_ret = calc_active == base_active and calc_passives == base_passives and calc_nw == base_nw
+
+    if not to_ret:
+        print(f"{id} - Returing false because calculations are not the same that the resume")
+
+    return to_ret
 
 
 def get_random_url() -> str:
@@ -191,7 +201,7 @@ def do_work(idx: int, year: int, batch_size: int):
             try:
                 data = parse(row['file_name'])
 
-                if is_valid_data(data):
+                if is_valid_data(data, row['raw_id']):
                     charge = get_charge(data)
                     to_insert.append([row['raw_id'],
                                       data['resumen']['totalActivo'],
@@ -206,6 +216,9 @@ def do_work(idx: int, year: int, batch_size: int):
                                       "MS_DJBR_PARSER",
                                       dumps(data)])
                 else:
+                    print(f"Adding to remove: {row['raw_id']}")
+                    print(data)
+                    print('----------------')
                     to_delete.append([row['raw_id']])
 
             except Exception as e:
@@ -238,7 +251,6 @@ def do_work(idx: int, year: int, batch_size: int):
             print(to_insert)
             print('-------')
             raise e
-
 
 
 with dag:
