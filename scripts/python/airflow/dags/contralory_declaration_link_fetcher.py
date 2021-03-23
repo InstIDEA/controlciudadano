@@ -32,7 +32,7 @@ dag = DAG(
 
 def keep_num_data(data: str):
     pattern = '[0-9]'
-    re = re_findall(pattern, data, re_unicode)
+    re = re_findall(pattern, data)
 
     # retrieve all numbers
     return ''.join(re)
