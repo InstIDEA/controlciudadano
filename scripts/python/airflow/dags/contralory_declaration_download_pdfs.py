@@ -156,6 +156,7 @@ def download_pdf(remote_id: str,
 
     numdata = keep_num_data(file_prefix)
     if not is_valid_ci(numdata):
+        print(f"Skipped file {final_url} from raw id {remote_id} because the string '{file_prefix}' doesn't contain a valid CI number")
         return None
 
     file_prefix = numdata

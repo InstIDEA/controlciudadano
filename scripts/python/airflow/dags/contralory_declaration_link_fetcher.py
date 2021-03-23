@@ -34,17 +34,20 @@ def keep_num_data(data: str):
     pattern = '[0-9]'
     re = re_findall(pattern, data, re_unicode)
 
-    # retrive all numbers
+    # retrieve all numbers
     return ''.join(re)
 
 def is_valid_ci(cedula):
     if not isinstance(cedula, str):
+        print("Invalid data type for CI validation")
         return False
 
     if not cedula.isnumeric():
+        print("CI is not numeric or is null")
         return False
 
     if len(cedula) < 5:
+        print(f"This value {cedula} is not valid for CI range")
         return False
 
     return True
@@ -109,6 +112,7 @@ def fetch_list(letter: str, url: str, **kwargs):
         for record in records:
             numdata = keep_num_data(record["cedula"])
             if not is_valid_ci(numdata):
+                print(f"Skip insertion of (CI={record['cedula']}, nombres={record['nombres']}, periodo={record['periodo']}) because CI is not valid")
                 continue
 
             record["cedula"] = numdata
