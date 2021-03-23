@@ -1,27 +1,24 @@
+.nw-increment-page .main-title {
+    text-align: center;
+}
 
 .print-only {
     display: none;
 }
 
 @media print {
-    .nw-increment-page .input-data-panel {
-        display: none;
-    }
-
-    .nw-increment-page #footer {
-        display: none;
-    }
-
-    .nw-increment-page #header {
-        display: none;
-    }
-
-    .nw-increment-page .global-actions {
-        display: none;
+    /* if browser support force page size to A4 portrait */
+    @page {
+        size: A4 portrait;
     }
 
     .nw-increment-page .main-title {
         font-size: 1em;
+        text-align: left;
+    }
+
+    .screen-only {
+        display: none;
     }
 
     .print-only {
@@ -34,7 +31,82 @@
 
     .print-horizontal-margin {
         margin-left: 2%;
-        width: 96%;
+        max-width: 90%;
+    }
+    
+    .print-pagebreak {
+        page-break-after: always;
     }
 
+    /* jump line between main title and the source */
+    .nw-increment-page .main-title .main-title-source::before {
+        content: "\a";
+        white-space: pre;
+    }
+
+    /* cards container */
+    .ant-card.ant-card-bordered.custom-card.custom-shadow-small {
+        border: none;
+        padding: none;
+        box-shadow: none;
+
+        margin-top: auto;
+        margin-bottom: auto;
+        margin-right: 0px;
+        margin-left: 0px;
+    }
+
+    #root {
+        z-index: 1;
+    }
+
+    #watermark {
+        position: fixed;
+        text-align: center;
+        top: 50%;
+        left: 50%;
+        font-size: 2em;
+        color:rgba(255, 0, 0, 0.4);
+        transform: translate(-50%,-50%) rotate(-30deg);
+        z-index: 2;
+    }
+
+    table.nw-calc {
+        margin-left: 10px;
+        border-collapse: collapse;
+        border-style: hidden;
+    }
+
+    table.nw-calc th,
+    table.nw-calc td {
+        border-collapse: collapse;
+        border-style: hidden;
+        padding: 10px;
+        width: 185px;
+        max-width: 185px;
+    }
+
+    .row-header {
+        color: rgba(0, 0, 0, 0.85);
+        font-weight: 600;
+        font-size: 12px;
+    }
+
+    .col-align-left {
+        text-align: left;
+    }
+
+    .col-align-right {
+        text-align: right;
+    }
+
+    .col-value {
+        color: rgba(0, 52, 91, 1);
+        line-height: 1.5715;
+        font-size: 12px;
+    }
+
+    .row-divider {
+        height: 30px;
+    }
 }
