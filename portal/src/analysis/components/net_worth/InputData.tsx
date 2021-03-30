@@ -15,7 +15,7 @@ import {
     Typography
 } from "antd";
 import React, {useEffect, useMemo, useState} from "react";
-import {formatMoney, formatToYear} from "../../../formatters";
+import {formatMoney, formatToDay} from "../../../formatters";
 import {DeleteOutlined, PlusOutlined} from '@ant-design/icons';
 import {Loading} from "../../../components/Loading";
 import {ExternalLinkIcon} from "../../../components/icons/ExternalLinkIcon";
@@ -91,7 +91,7 @@ function InputTitle(props: {
                      cursor: 'pointer'
                  }}
             >
-                {props.prefix} (Año {props.data.year})
+                {props.prefix} ({formatToDay(props.data.date)})
             </div>
         </Tooltip>
     </Typography.Title>
@@ -116,7 +116,7 @@ function SelectDeclarationModal(props: {
                   visible={props.visible}
                   cancelText="Cancelar"
                   okButtonProps={{style: {display: 'none'}}}
-                  width={isSmall ? "80%" : "60%"}
+                  width={isSmall ? "80%" : "70%"}
                   onCancel={props.onCancel}>
         {props.current && <Space direction="vertical" size={16}>
 
@@ -131,7 +131,7 @@ function SelectDeclarationModal(props: {
                         </a>
                     </Descriptions.Item>
                     <Descriptions.Item label="Año">
-                        {props.current.year}
+                        {formatToDay(props.current.date)}
                     </Descriptions.Item>
                 </Descriptions>
             </Card>
@@ -149,10 +149,10 @@ function SelectDeclarationModal(props: {
                 ? <Card className="custom-card-no-shadow left-align"
                         title="Puedes cambiar por otra declaración, elige una">
                     <Timeline>
-                        {props.options.map(op => <Timeline.Item key={op.year}>
+                        {props.options.map(op => <Timeline.Item key={op.date}>
                             <Space>
                                 <div>
-                                    Declaración al {formatToYear(op.date)} (
+                                    Declaración al {formatToDay(op.date)} (
                                     <a href={op.link}>
                                         <Space align="end">
                                             Ver PDF
@@ -194,7 +194,7 @@ export function SingleDeclaration(props: {
         form.setFieldsValue(props.data);
         // we know we should override the data only if the year changes
         // eslint-disable-next-line
-    }, [props.data.year, form])
+    }, [props.data.date, form])
 
     const inputTooltip = useMemo(() => {
         return `Ingresos aproximados utilizando los datos proveídos, fuentes: ${props.data.totalIncome.source}.
@@ -209,7 +209,7 @@ export function SingleDeclaration(props: {
 
     return <Form {...layout}
                  form={form}
-                 name={`dec_form_${props.data.year}`}
+                 name={`dec_form_${props.data.date}`}
                  size="small"
                  initialValues={props.data}
                  onValuesChange={(ch, all) => {

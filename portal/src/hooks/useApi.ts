@@ -13,7 +13,7 @@ import {ApiError, RedashAPI} from "../RedashAPI";
 import {NetWorthIncreaseAnalysis} from "../APIModel";
 import {SimpleApi} from "../SimpleApi";
 
-const cacheEnabled = true;
+const cacheEnabled = false;
 
 // TODO change this with a data fetcher hook library
 export function useRedashApi<T extends number>(id: T): Async<Array<ApiType<T>>> {

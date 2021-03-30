@@ -2,7 +2,7 @@ import {NetWorthIncreaseAnalysis} from "../../../APIModel";
 import {Col, Row, Typography} from "antd";
 import React, {useMemo} from "react";
 import {ResponsiveLine} from "@nivo/line";
-import {formatMoney, millionFormatter} from "../../../formatters";
+import {formatMoney, formatWF, millionFormatter} from "../../../formatters";
 import {NetWorthCalculations} from "../../NetWorthHook";
 import './Graphs.css'
 
@@ -14,10 +14,10 @@ export function Graphs({data, calc}: {
     const netWorthIncrease = useMemo(() => {
         return [{
             data: [{
-                x: `${data.firstYear.year}-01-01`,
+                x: formatWF(data.firstYear.date, 'dd-MM-yyyy'),
                 y: data.firstYear.netWorth.amount
             }, {
-                x: `${data.lastYear.year}-01-01`,
+                x: formatWF(data.lastYear.date, 'dd-MM-yyyy'),
                 y: data.lastYear.netWorth.amount
             }],
             color: calc.result.amount > 1.1
@@ -30,34 +30,39 @@ export function Graphs({data, calc}: {
             id: "Leve",
             color: "hsl(55, 70%, 50%)",
             data: [{
-                x: `${data.firstYear.year}-01-01`,
+                x: formatWF(data.firstYear.date, 'dd-MM-yyyy'),
                 y: data.firstYear.netWorth.amount
             }, {
-                x: `${data.lastYear.year + 1}-01-01`,
+                x: formatWF(data.lastYear.date, 'dd-MM-yyyy'),
                 y: data.firstYear.netWorth.amount + (calc.nextYearForInversion.amount * 1.1)
             }],
         }, {
             id: "Normal",
             color: "hsl(99,98%,18%)",
             data: [{
-                x: `${data.firstYear.year}-01-01`,
+                x: formatWF(data.firstYear.date, 'dd-MM-yyyy'),
                 y: data.firstYear.netWorth.amount
             }, {
-                x: `${data.lastYear.year + 1}-01-01`,
+                x: formatWF(data.lastYear.date, 'dd-MM-yyyy'),
                 y: data.firstYear.netWorth.amount + calc.nextYearForInversion.amount
             }],
         }];
     }, [data, calc]);
+
+    const periodicity: 'every 1 month' | 'every 1 year' = useMemo(() => {
+        if (data.duration > 12) return 'every 1 year';
+        return 'every 1 month';
+    }, [data.duration])
 
     const incomeIncrease = useMemo(() => {
         return [{
             id: "Ingresos",
             color: "#364D79",
             data: [{
-                x: `${data.firstYear.year}-01-01`,
+                x: formatWF(data.firstYear.date, 'dd-MM-yyyy'),
                 y: data.firstYear.totalIncome.amount
             }, {
-                x: `${data.lastYear.year}-01-01`,
+                x: formatWF(data.lastYear.date, 'dd-MM-yyyy'),
                 y: data.lastYear.totalIncome.amount
             }]
         },]
@@ -69,7 +74,7 @@ export function Graphs({data, calc}: {
                 Crecimiento Patrimonial
             </Typography.Title>
             <div className="graph">
-                <NetWorthIncrement data={netWorthIncrease}/>
+                <NetWorthIncrement data={netWorthIncrease} periodicity={periodicity}/>
             </div>
         </Col>
         <Col md={12} xs={24}>
@@ -77,7 +82,7 @@ export function Graphs({data, calc}: {
                 Crecimiento de Ingresos
             </Typography.Title>
             <div className="graph">
-                <NetWorthIncrement data={incomeIncrease}/>
+                <NetWorthIncrement data={incomeIncrease} periodicity={periodicity}/>
             </div>
         </Col>
     </Row>
@@ -85,6 +90,7 @@ export function Graphs({data, calc}: {
 
 
 export function NetWorthIncrement(props: {
+    periodicity: 'every 1 month' | 'every 1 year'
     data: Array<{
         id: string,
         color: string,
@@ -95,15 +101,18 @@ export function NetWorthIncrement(props: {
     }>
 }) {
 
+    const colors = useMemo(() => props.data.map(d => d.color), [props.data]);
+    const min = useMemo(() => Math.min(...props.data[0].data.map(d => d.y)) * 0.9, [props.data]);
+
     return <ResponsiveLine
         data={props.data}
         margin={{top: 50, right: 110, bottom: 50, left: 60}}
         xScale={{
             type: "time",
-            format: "%Y-%m-%d"
+            format: "%d-%m-%Y"
         }}
         xFormat="time:%Y"
-        colors={props.data.map(d => d.color)}
+        colors={colors}
         // colors={{scheme: "nivo"}}
         yScale={{
             type: "linear",
@@ -126,17 +135,19 @@ export function NetWorthIncrement(props: {
             format: millionFormatter
         }}
         axisBottom={{
-            format: "%Y",
-            tickValues: "every 1 year",
+            format: props.periodicity === 'every 1 month' ? "%m-%Y" : '%Y',
+            tickValues: props.periodicity,
             // tickRotation: -90,
             legend: "",
             legendOffset: -12
         }}
-        areaBaselineValue={Math.min(...props.data[0].data.map(d => d.y))}
+        areaBaselineValue={min}
         pointSize={2}
         pointColor={{theme: "background"}}
         pointBorderWidth={2}
         pointBorderColor={{from: "serieColor"}}
+        animate
+        motionStiffness={10}
         pointLabel="y"
         pointLabelYOffset={-12}
         useMesh={true}

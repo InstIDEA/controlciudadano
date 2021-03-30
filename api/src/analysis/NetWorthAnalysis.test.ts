@@ -39,13 +39,13 @@ describe('NetWorthAnalysisTest', () => { // the tests container
     it('Fetch single year', async () => { // the single test
         const toTest = new NetWorthAnalysis([new NoOpEnhancer()]); // this will be your class
 
-        const dec = getDec({download_date: new Date('2020/01/02 12:40'), id: 17, year: 2019});
+        const dec = getDec({download_date: new Date('2020/01/02 12:40'), id: 17, date: new Date('2019/01/02')});
 
 
         const best = await toTest.getSpecificYear(dec);
 
         expect(best).to.be.exist;
-        expect(best.year).to.be.eq(2019);
+        expect(best.date.getFullYear()).to.be.eq(2019);
 
     });
 });
@@ -68,6 +68,11 @@ function getDec(base: Partial<AnalysisDJBR>): AnalysisDJBR {
         scrapped_data: {},
         type: '',
         version: 2,
+        monthly_expenses: '0',
+        anual_expenses: '0',
+        date: new Date(),
+        anual_income: '0',
+        monthly_income: '0',
         ...base
     }
 }

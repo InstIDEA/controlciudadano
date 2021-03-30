@@ -16,6 +16,7 @@ import useMetaTags from "react-metatags-hook";
 import {ExternalLinkIcon} from "../../components/icons/ExternalLinkIcon";
 import {useMediaQuery} from "@react-hook/media-query";
 import './AnalysisNetWorthIncrement.css';
+import {CalculationsPrint} from "../components/net_worth/CalculationsPrint";
 
 
 export function AnalysisNetWorthIncrement() {
@@ -42,9 +43,9 @@ export function AnalysisNetWorthIncrement() {
     return <div className="nw-increment-page">
         <div className="print-only">
             <div id="watermark">
-                    {currDate()}
-                    <br/>
-                    {window.location.href}
+                {currDate()}
+                <br/>
+                {window.location.href}
             </div>
         </div>
         <div className="screen-only">
@@ -94,7 +95,8 @@ function Analysis(props: {
                     <Col xs={22}>
                         <Typography.Title className="title-color main-title">
                             Crecimiento Patrimonial de '{data.data.person.name}'
-                            <Typography.Text className="main-title-source"> según Declaraciones Juradas de Bienes y Rentas.</Typography.Text>
+                            <Typography.Text className="main-title-source"> según Declaraciones Juradas de Bienes y
+                                Rentas.</Typography.Text>
                         </Typography.Title>
                     </Col>
 
@@ -152,9 +154,9 @@ function Analysis(props: {
             <Col md={xsSpan} lg={lgSpan / 2} sm={24} xl={xlSpan / 2} xxl={xxlSpan / 2} className="input-data-panel">
                 <Card className="custom-card custom-shadow-small screen-only">
                     <InputData data={data.data}
-                            disabled={data.working}
-                            updateDate={data.setYearData}
-                            updateSingleYear={data.changeYear}
+                               disabled={data.working}
+                               updateDate={data.setYearData}
+                               updateSingleYear={data.changeYear}
                     />
                 </Card>
             </Col>
@@ -178,14 +180,11 @@ function Analysis(props: {
             </div>
         </Row>
         <div className="print-only">
-            <div className="print-pagebreak"></div>
-            <Calculations data={data.data} calculations={data.analysis}/>
+            <div className="print-pagebreak"/>
+            <CalculationsPrint data={data.data} calculations={data.analysis}/>
         </div>
     </div>
 }
-
-
-
 
 
 function doPrint() {
@@ -194,11 +193,11 @@ function doPrint() {
 
 function currDate() {
     let temp = new Date();
-    let date = temp.getDate() + "/" + 
+    let date = temp.getDate() + "/" +
         (temp.getMonth() + 1) + "/" +
         temp.getFullYear();
-    let time = temp.getHours() + ':' + 
-        temp.getMinutes() + ':' + 
+    let time = temp.getHours() + ':' +
+        temp.getMinutes() + ':' +
         temp.getSeconds();
 
     return date + " " + time
