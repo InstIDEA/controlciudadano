@@ -29,7 +29,7 @@ from airflow.operators.postgres_operator import PostgresOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.dates import days_ago
 
-from ds_table_operations import calculate_hash_of_file
+from ds_table_operations import calculate_hash_of_file, create_dir_in_ftp
 from file_system_helper import move, get_file_size
 from network_operators import download_file, get_head, NetworkError
 
@@ -60,6 +60,26 @@ dag = DAG(
     schedule_interval=timedelta(weeks=1),
 )
 
+def successful_ftp_upload(file_name: str, file_path: str, remote_path: str):
+    con_id = "ftp_data.controlciudadano.org.py"
+    create_dir_in_ftp(con_id, os.path.dirname(remote_path))
+
+    try:
+        print(f"Trying to upload the file {file_name} to ftp")
+
+        target_path = os.path.join(remote_path, final_name)
+        upload_to_ftp(
+            con_id,
+            target_path,
+            file_path
+        )
+    except Exception as e:
+        print(str(e))
+        print(f"An exception occurred while trying to upload the file {file_path} to ftp")
+    else:
+        return True
+
+    return False
 
 def list_navigator(id_ends_with: int, cursor: any, mod_of: int):
     """
@@ -194,6 +214,10 @@ def do_work(number: int, url: str, target_dir: str, mod_of: int):
                 data = download_pdf(record["remote_id"], url, target_dir, record["downloaded_files"], temp_dir,
                                     record["cedula"])
                 if data is not None:
+                    if not successful_ftp_upload(data["file_name"], data["path"], target_dir):
+                        print(f"Skip data insertion for file {data['file_name']} because it doesn't exists in ftp folder")
+                        continue
+
                     to_insert.append([
                         record["id"],
                         data["file_size"],
