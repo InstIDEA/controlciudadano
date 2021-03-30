@@ -7,7 +7,7 @@ import controlCiudadano from '../../assets/logos/control_ciudadano.svg';
 
 
 export function Header(props: {
-    tableMode: boolean;
+    tableMode?: boolean;
     searchBar?: ReactNode;
     showSeparator?: boolean;
 }) {

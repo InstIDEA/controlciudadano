@@ -268,11 +268,12 @@ export interface PaginatedResult<T> {
 }
 
 export interface Affidavit {
+    revision: string;
     id: number;
     name: string;
     document: string;
     year: number;
-    revision: number;
+    version: number;
     link: string;
     source: string;
     link_sandwich: string;

@@ -17,3 +17,10 @@ export function useDJBRStats() {
         last_election_year: 2018
     });
 }
+
+export function useGlobalStats() {
+
+    const data = useRedashApi(39)
+
+    return AsyncHelper.map(data, d => d[0]);
+}

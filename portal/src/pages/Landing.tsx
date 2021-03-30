@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import QueueAnim from 'rc-queue-anim';
 import {Col, Input, Row, Tooltip} from 'antd';
 import './Landing.css';
@@ -7,12 +7,13 @@ import comprasCovid from '../assets/imgs/compras_covid.svg';
 import verificacionDDJJ from '../assets/imgs/verificacion_DDJJ.svg';
 import {Header} from '../components/layout/Header'
 import Footer from '../components/layout/Footer';
-import {Async, AsyncHelper, GlobalStatistics} from '../Model';
-import {RedashAPI} from '../RedashAPI';
+import {Async, AsyncHelper} from '../Model';
 import {formatIsoDate, formatMoney, formatToMonth, formatWF} from '../formatters';
 import {Link, useHistory} from 'react-router-dom';
 import {FilterOutlined} from '@ant-design/icons'
 import {useMediaQuery} from '@react-hook/media-query';
+import landingAnalysis from '../assets/imgs/landing_analysis.svg'
+import {useGlobalStats} from "../hooks/useStats";
 
 const CARDS = [
     {
@@ -30,31 +31,23 @@ const CARDS = [
         title: 'Declaraciones Juradas de Autoridades electas',
         href: `/djbr/portal`,
     },
+    {
+        img: landingAnalysis,
+        title: 'Portal de análisis',
+        href: '/analysis/'
+    }
 ];
 
 export function LandingPage() {
+
     const history = useHistory();
-    const [data, setData] = useState<Async<GlobalStatistics>>({
-        state: 'NO_REQUESTED'
-    })
+    const data = useGlobalStats();
 
     const isSmall = useMediaQuery('only screen and (max-width: 900px)');
 
-    useEffect(() => {
-        setData({state: 'FETCHING'})
-        new RedashAPI().getMainStatistics()
-            .then(d => setData({
-                state: 'LOADED',
-                data: d.query_result.data.rows[0]
-            }))
-            .catch(e => setData({
-                state: 'ERROR',
-                error: e
-            }))
-    }, [])
 
     const children = CARDS.map(card => (
-        <Col className="card-wrapper" key={card.title} xl={8} md={12} xs={24}>
+        <Col className="card-wrapper" key={card.title} xl={9} md={12} xs={24}>
             <Link className="card" to={card.href}>
                 <img src={card.img} alt="" className="card-img-top"/>
                 <div className="card-body">

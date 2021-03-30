@@ -11,6 +11,7 @@ import {
     Descriptions,
     Layout,
     Row,
+    Space,
     Tag,
     Tooltip,
     Typography
@@ -119,7 +120,7 @@ function CurrentFilters() {
                                 const clearFilter = (component: string) => {
                                     setValue(component, null);
                                 };
-                                
+
                                 if (!hasFilter(selectedValues)) {
                                     return <></>
                                 }
@@ -312,33 +313,43 @@ function SingleResultCard(props: {
 
     const data = getData(props.data);
 
+    const hasDecs = data.sources.includes('declarations')
+
     if (props.isSmall) {
         return <Card className="card-style">
             <Comment author={data.document}
                      className="small-card"
+                     actions={
+                         [
+                             <Link to={`/person/${data.document}`}>
+                                 <Button className="mas-button">Ver más</Button>
+                             </Link>,
+                             hasDecs
+                                 ? <Tooltip title={`Ver análisis de crecimiento patrimonial de ${data.name}`}>
+                                     <Link to={`/analysis/net_worth/${data.document}?name=${data.name}`}>
+                                         <Button className="mas-button">Análisis DJBR</Button>
+                                     </Link>
+                                 </Tooltip>
+                                 : null
+                         ]
+                     }
                      avatar={
                          <Avatar
                              style={{backgroundColor: getColorByIdx(props.id), verticalAlign: 'middle'}}
                              src={data.photo}
                              alt={data.name}>{getInitials(data.name)}</Avatar>
                      }
-                     content={<><Descriptions title={data.name}>
-                         {data.salary &&
-                         <Descriptions.Item label="Salario">{formatMoney(data.salary)}</Descriptions.Item>}
-                         {data.net_worth &&
-                         <Descriptions.Item label="Patrimonio">{formatMoney(data.net_worth)}</Descriptions.Item>}
-                     </Descriptions>
-                         <Row justify="space-between" align="middle">
-                             <Col>
-                                 <SourcesIconListComponent sources={data.sources}/>
-                             </Col>
-                             <Col>
-                                 <Link to={`/person/${data.document}`}>
-                                     <Button className="mas-button">Ver más</Button>
-                                 </Link>
-                             </Col>
-                         </Row>
-                     </>
+                     content={<Space direction="vertical" align="center">
+                         <Descriptions title={data.name}>
+                             {data.salary &&
+                             <Descriptions.Item label="Salario">{formatMoney(data.salary)}</Descriptions.Item>}
+                             {data.net_worth &&
+                             <Descriptions.Item label="Patrimonio">{formatMoney(data.net_worth)}</Descriptions.Item>}
+                         </Descriptions>
+                         <Col>
+                             <SourcesIconListComponent sources={data.sources}/>
+                         </Col>
+                     </Space>
                      }
             />
         </Card>
@@ -366,9 +377,16 @@ function SingleResultCard(props: {
             <SourcesIconListComponent sources={data.sources}/>
         </Col>
         <Col span={2} offset={1}>
-            <Link to={`/person/${data.document}`}>
-                <Button className="mas-button">Ver más</Button>
-            </Link>
+            <Space direction="vertical">
+                <Link to={`/person/${data.document}`}>
+                    <Button className="mas-button">Ver más</Button>
+                </Link>
+                {hasDecs && <Tooltip title={`Ver análisis de crecimiento patrimonial de ${data.name}`}>
+                    <Link to={`/analysis/net_worth/${data.document}?name=${data.name}`}>
+                        <Button className="mas-button">Análisis DJBR</Button>
+                    </Link>
+                </Tooltip>}
+            </Space>
         </Col>
     </Row>
 }

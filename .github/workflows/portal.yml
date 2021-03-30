@@ -60,13 +60,12 @@ jobs:
         [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
         # Use Docker `latest` tag convention
         [ "$VERSION" == "master" ] && VERSION=latest
-        [ "$VERSION" == "semillas" ] && VERSION=semillas
         echo IMAGE_ID=$IMAGE_ID
         echo VERSION=$VERSION
         docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
         docker push $IMAGE_ID:$VERSION
 
         [ "$VERSION" == "latest" ] && curl "${{ secrets.HOOK_PORTAL }}"
-        [ "$VERSION" == "semillas" ] && curl "${{ secrets.HOOK_PORTAL_SEMILLAS }}"
+        [ "$VERSION" == "develop" ] && curl "${{ secrets.HOOK_PORTAL_DEVELOP }}"
         echo "Succeed"
 

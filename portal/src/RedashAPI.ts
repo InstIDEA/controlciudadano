@@ -2,20 +2,21 @@ import {
     Affidavit,
     AndeExonerated,
     Authorities,
+    AuthoritiesWithoutDocument,
+    DataSet,
     EssapExonerated,
     GlobalStatistics,
-    PersonDataStatistics,
     OCDSBuyerWithAmount,
     OCDSCovidTender,
     OCDSItemRankingListRow,
     OCDSItemsAwardedCOVID19,
     OCDSSupplierRelation,
     OCDSSupplierWithSanction,
+    PersonDataStatistics,
     SourceData,
+    StatisticsDJBR,
     Supplier,
-    DataSet,
-    VideoTutorialesSemillas,
-    AuthoritiesWithoutDocument, StatisticsDJBR
+    VideoTutorialesSemillas
 } from './Model';
 
 const BASE_API = "https://redash.controlciudadanopy.org/api";
@@ -65,7 +66,7 @@ export class RedashAPI {
         if (response.status >= 200 && response.status < 300) return response.json();
 
         const body = await response.text();
-        throw  new ApiError(response.statusText, response.status, body);
+        throw new ApiError(response.statusText, response.status, body);
     }
 
     getRelations(): Promise<BaseRedashResponse<OCDSSupplierRelation>> {
@@ -170,7 +171,7 @@ export function removeDuplicated<T>(
     source: T[],
     keyProvider: (t: T) => string
 ): T[] {
-    const toRet: { [k: string]: T} = {};
+    const toRet: { [k: string]: T } = {};
 
     source.forEach(s => {
         toRet[keyProvider(s)] = s
@@ -194,6 +195,12 @@ export class ApiError extends Error {
 
     getCode() {
         return this.code;
+    }
+
+    asSimpleCode() {
+        if (this.code === 404) return 404;
+        if (this.code === 403) return 403;
+        return 500;
     }
 }
 

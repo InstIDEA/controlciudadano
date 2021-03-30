@@ -20,8 +20,8 @@ export function AffidavitTable(props: {
                              columns={[{
                                  dataIndex: 'year',
                                  title: 'Año (revision)',
-                                 render: (_, row) => `${row.year} (${row.revision})`,
-                                 sorter: (a, b) => `${a.year}${a.revision}`.localeCompare(`${b.year}${b.revision}`)
+                                 render: (_, row) => `${row.year} (${row.revision || ''})`,
+                                 sorter: (a, b) => `${a.year}${a.revision || ''}`.localeCompare(`${b.year}${b.revision || ''}`)
                              }, {
                                  dataIndex: 'active',
                                  title: 'Activos',
