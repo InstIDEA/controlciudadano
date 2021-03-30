@@ -9,7 +9,7 @@ export interface FinancialDetail extends AmountWithSource {
 
 export interface DeclarationData {
 
-    year: number;
+    date: Date;
     netWorth: AmountWithSource;
 
     /**
@@ -58,8 +58,7 @@ export interface NetWorthIncreaseAnalysis {
     availableYears: Array<{
         id: number;
         link: string;
-        year: number;
-        date: string;
+        date: Date;
         downloadedDate: string;
     }>;
 }
@@ -81,4 +80,11 @@ export interface AnalysisDJBR {
     scrapped_data: object;
     charge: string;
     download_date: Date;
+
+    monthly_expenses: string;
+    monthly_income: string;
+    anual_expenses: string;
+    anual_income: string;
+    date: Date;
 }
+

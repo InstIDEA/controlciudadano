@@ -4,6 +4,8 @@ import {debounce} from "lodash";
 import {SimpleApi} from "../SimpleApi";
 import {message} from "antd";
 import {AmountWithSource, FinancialDetail} from "../../../api/src/APIModel";
+import moment from "moment";
+import {formatToMonth} from "../formatters";
 
 export interface NetWorthCalculations {
     earnings: AmountWithSource;
@@ -32,8 +34,8 @@ export function useNWHook(base: NetWorthIncreaseAnalysis) {
     const setYearData = useCallback(debounce((newData: DeclarationData) => {
         setData(d => ({
             ...d,
-            firstYear: newData.year === d.firstYear.year ? calcTotals(newData) : d.firstYear,
-            lastYear: newData.year === d.lastYear.year ? calcTotals(newData) : d.lastYear
+            firstYear: newData.date === d.firstYear.date ? calcTotals(newData) : d.firstYear,
+            lastYear: newData.date === d.lastYear.date ? calcTotals(newData) : d.lastYear
         }))
     }, 1000), []);
 
@@ -50,7 +52,7 @@ export function useNWHook(base: NetWorthIncreaseAnalysis) {
         data: {
             ...data,
             // we filter the already selected years
-            availableYears: data.availableYears.filter(ay => ay.year !== data.firstYear.year && ay.year !== data.lastYear.year)
+            availableYears: data.availableYears.filter(ay => ay.date !== data.firstYear.date && ay.date !== data.lastYear.date)
         } as NetWorthIncreaseAnalysis,
         setYearData,
         working,
@@ -68,11 +70,11 @@ export function useNWHook(base: NetWorthIncreaseAnalysis) {
 function getNWDataMerger(prevYear: DeclarationData, nd: DeclarationData): (d: NetWorthIncreaseAnalysis) => NetWorthIncreaseAnalysis {
     return d => {
 
-        const toKeep = d.firstYear.year === prevYear.year
+        const toKeep = d.firstYear.date === prevYear.date
             ? d.lastYear
             : d.firstYear;
 
-        const {first, last} = toKeep.year > nd.year
+        const {first, last} = toKeep.date > nd.date
             ? {first: nd, last: toKeep}
             : {first: toKeep, last: nd};
 
@@ -84,7 +86,7 @@ function getNWDataMerger(prevYear: DeclarationData, nd: DeclarationData): (d: Ne
 
         return {
             ...d,
-            duration: last.year - first.year,
+            duration: moment(last.date).diff(moment(first.date), 'months', false),
             firstYear: calcTotals(first),
             lastYear: calcTotals(last)
         }
@@ -99,7 +101,7 @@ function fetchNewYearData(person: NetWorthIncreaseAnalysis["person"], prevYear: 
 
     message.loading({
         duration: 0,
-        content: `Cargando datos del ${newYear.year}`,
+        content: `Cargando datos del ${formatToMonth(newYear.date)}`,
         key: 'changing_year'
     });
 
@@ -107,7 +109,7 @@ function fetchNewYearData(person: NetWorthIncreaseAnalysis["person"], prevYear: 
         .catch(err => {
             console.warn(err);
             message.warn({
-                content: `No se pudo cargar declaración de ${person.name} (${person.document}) del ${newYear.year}`,
+                content: `No se pudo cargar declaración de ${person.name} (${person.document}) del ${formatToMonth(newYear.date)}`,
                 key: 'changing_year',
                 duration: 10
             });
@@ -119,22 +121,24 @@ function fetchNewYearData(person: NetWorthIncreaseAnalysis["person"], prevYear: 
 
 function doCalculation(dat: NetWorthIncreaseAnalysis): NetWorthCalculations {
 
-    const earnings = (dat.firstYear.totalIncome.amount + dat.lastYear.totalIncome.amount) / 2;
-    const totalIncome = earnings * dat.duration;
+    const firstYearEarningsPerMonth = dat.firstYear.totalIncome.amount / 12;
+    const lastYearEarningsPerMonth = dat.lastYear.totalIncome.amount / 12;
+    const averageIncomePerMonth = (firstYearEarningsPerMonth + lastYearEarningsPerMonth) / 2
+    const totalIncome = averageIncomePerMonth * dat.duration;
     const forInversion = totalIncome * 0.35;
     const variation = dat.lastYear.netWorth.amount - dat.firstYear.netWorth.amount;
     const result = forInversion <= 0
         ? 1
         : (variation / forInversion);
 
-    const nextYearEarnings = earnings * (dat.duration + 1);
+    const nextYearEarnings = averageIncomePerMonth * (dat.duration + 12);
     const nextYearForInversion = nextYearEarnings * 0.35;
 
     const earningsSource = [dat.firstYear.totalIncome.source, dat.lastYear.totalIncome.source];
     const variationSource = [dat.firstYear.netWorth.source, dat.lastYear.netWorth.source]
 
     return {
-        earnings: buildAmount(earnings, earningsSource),
+        earnings: buildAmount(averageIncomePerMonth * 12, earningsSource),
         totalIncome: buildAmount(totalIncome, earningsSource),
         forInversion: buildAmount(forInversion, earningsSource),
         variation: buildAmount(variation, variationSource),
@@ -155,10 +159,6 @@ function calcTotals(base: DeclarationData): DeclarationData {
     data.netWorth = simplifySources({
         amount: data.totalActive.amount - data.totalPassive.amount,
         source: `${data.totalActive.source},${data.totalPassive.source}`
-    });
-    console.log({
-        result: data,
-        base
     });
     return data;
 }

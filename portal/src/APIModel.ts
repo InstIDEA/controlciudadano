@@ -14,7 +14,8 @@ export interface AmountWithSource {
 
 export interface DeclarationData {
 
-    year: number;
+    date: string;
+
     netWorth: AmountWithSource;
 
     totalActive: AmountWithSource;
@@ -44,7 +45,6 @@ export interface DeclarationData {
 export interface NWAnalysisAvailableYear {
     id: number;
     link: string;
-    year: number;
     date: string;
     downloadedDate: string;
 }

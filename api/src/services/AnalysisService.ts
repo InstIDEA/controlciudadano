@@ -47,4 +47,5 @@ export class AnalysisService {
         const data = await this.pool.query("SELECT * FROM analysis.djbr WHERE id = $1", [id])
         return data.rows;
     }
+
 }

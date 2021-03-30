@@ -21,7 +21,7 @@ export interface ContextData {
 
 function getDefault(): DeclarationData {
     return {
-        year: new Date().getFullYear(),
+        date: new Date(),
         netWorth: getAmount(0),
         actives: [],
         expenses: [],
@@ -31,7 +31,7 @@ function getDefault(): DeclarationData {
         totalExpenses: getAmount(0),
         totalIncome: getAmount(0),
         totalPassive: getAmount(0),
-        sources: []
+        sources: [],
     }
 }
 
@@ -43,7 +43,7 @@ export class NetWorthAnalysis {
 
     constructor(enhancers?: NetWorthAnalysisEnhancer[]) {
         if (!enhancers) {
-            this.enhancers = [new DJBRParserEnhancer()];
+            this.enhancers = [new DJBRDBEnhancer()];
         } else {
             this.enhancers = enhancers;
         }
@@ -158,14 +158,7 @@ export class NetWorthAnalysis {
 
         return {
             ...getDefault(),
-            year: dat.year,
-            totalPassive: getAmount(parseFloat(dat.passive) || 0, 'DJBR'),
-            totalActive: getAmount(parseFloat(dat.active) || 0, 'DJBR'),
-            netWorth: getAmount(parseFloat(dat.net_worth) || 0, 'DJBR'),
-            sources: [{
-                url: dat.link,
-                type: 'DJBR'
-            }]
+            date: dat.date
         }
     }
 
@@ -180,7 +173,7 @@ export class NetWorthAnalysis {
                 name: ctx.end.dbRow.name || ctx.start.dbRow.name || ''
             },
             availableYears: prepareAvailableDecs(this.getLatestDeclarationsPerYear(allDecs)),
-            duration: ctx.end.data.year - ctx.start.data.year,
+            duration: monthDiff(ctx.start.data.date, ctx.end.data.date),
             firstYear: ctx.start.data,
             lastYear: ctx.end.data
         };
@@ -203,15 +196,25 @@ function prepareAvailableDecs(decs: GroupedDecs): NetWorthIncreaseAnalysis["avai
 
     return Object.values(decs).map(dec => ({
         id: dec.id,
-        date: `${dec.year}/01/01`, // TODO get the dec date
+        date: dec.date,
         downloadedDate: `${dec.download_date}`,
-        link: dec.link,
-        year: dec.year
-    })).sort((d1, d2) => d2.year - d1.year)
+        link: dec.link
+    })).sort((d1, d2) => d2.date.getUTCMilliseconds() - d1.date.getUTCMilliseconds())
 }
 
-function validNumber(val?: number): boolean {
+function validNumber(val?: number | string): boolean {
+    if (typeof val === 'string') {
+        const asNum = parseFloat(val);
+        if (isNaN(asNum)) return false;
+        return validNumber(asNum);
+    }
     return val && val > 0
+}
+
+function toNumber(val: string): number {
+    const asNum = parseFloat(val);
+    if (isNaN(asNum)) return 0;
+    return asNum;
 }
 
 function sum(arr: Array<FinancialDetail>): AmountWithSource {
@@ -222,6 +225,99 @@ function sum(arr: Array<FinancialDetail>): AmountWithSource {
         }), {amount: 0, source: ''})
 }
 
+
+class DJBRDBEnhancer implements NetWorthAnalysisEnhancer {
+    constructor() {
+    }
+
+    async enhance(data: ContextData) {
+        await Promise.all([
+            this.enhanceSingle(data.start.data, data.start.dbRow),
+            this.enhanceSingle(data.end.data, data.end.dbRow),
+        ])
+    }
+
+    async enhanceSingle(toEnhance: DeclarationData, source: AnalysisDJBR) {
+
+        if (source.date) {
+            toEnhance.date = source.date;
+        }
+
+        toEnhance.sources = [
+            ...toEnhance.sources,
+            {
+                type: 'DJBR',
+                url: source.link
+            }
+        ]
+
+        if (validNumber(source.monthly_income)) {
+            toEnhance.incomes.push({
+                amount: toNumber(source.monthly_income),
+                periodicity: 'monthly',
+                name: 'Ingresos Mensuales',
+                observation: `Total de ingresos mensuales según declaración`,
+                source: 'DJBR'
+            });
+        }
+
+        if (validNumber(source.anual_income)) {
+            toEnhance.incomes.push({
+                amount: toNumber(source.anual_income),
+                periodicity: 'yearly',
+                name: 'Ingresos Anuales',
+                observation: `Total de ingresos anuales según declaración`,
+                source: 'DJBR'
+            });
+        }
+
+        if (validNumber(source.anual_expenses)) {
+            toEnhance.expenses.push({
+                amount: toNumber(source.anual_expenses),
+                periodicity: 'yearly',
+                name: 'Egresos Anuales',
+                observation: `Total de egresos anuales según declaración`,
+                source: 'DJBR'
+            });
+        }
+
+        if (validNumber(source.monthly_expenses)) {
+            toEnhance.expenses.push({
+                amount: toNumber(source.monthly_expenses),
+                periodicity: 'yearly',
+                name: 'Egresos Mensuales',
+                observation: `Total de egresos mensuales según declaración`,
+                source: 'DJBR'
+            });
+        }
+
+        if (validNumber(source.active)) {
+            toEnhance.actives.push({
+                amount: toNumber(source.active),
+                periodicity: 'yearly',
+                name: 'Total activos',
+                observation: `Total de activos según declaración`,
+                source: 'DJBR'
+            });
+        }
+
+        if (validNumber(source.passive)) {
+            toEnhance.passives.push({
+                amount: toNumber(source.passive),
+                periodicity: 'yearly',
+                name: 'Total pasivos',
+                observation: `Total de pasivos según declaración`,
+                source: 'DJBR'
+            });
+        }
+
+        return toEnhance;
+    }
+}
+
+/**
+ * @deprecated use stored data
+ */
 class DJBRParserEnhancer implements NetWorthAnalysisEnhancer {
 
     constructor() {
@@ -339,4 +435,13 @@ function simplifySources(a: AmountWithSource): AmountWithSource {
 
 function uniq<T>(a: T[]): T[] {
     return Array.from(new Set(a));
+}
+
+function monthDiff(start: Date, end: Date): number {
+    if (start > end) return monthDiff(end, start);
+    let months: number;
+    months = (end.getFullYear() - start.getFullYear()) * 12;
+    months -= start.getMonth();
+    months += end.getMonth();
+    return months <= 0 ? 0 : months;
 }
