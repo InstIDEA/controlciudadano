@@ -17,6 +17,7 @@ import {ExternalLinkIcon} from "../../components/icons/ExternalLinkIcon";
 import {useMediaQuery} from "@react-hook/media-query";
 import './AnalysisNetWorthIncrement.css';
 import {CalculationsPrint} from "../components/net_worth/CalculationsPrint";
+import { formatNumber } from "../../formatters";
 
 
 export function AnalysisNetWorthIncrement() {
@@ -61,7 +62,7 @@ export function AnalysisNetWorthIncrement() {
                         "Buscando en fuentes de datos abiertos",
                     ]}/>}
                     {fetched.state === 'ERROR' && <Result status={fetched.error.asSimpleCode()}
-                                                          title={`No se encontraron datos de ${document}`}
+                                                          title={`No se encontraron datos de ${formatNumber(document)}`}
                                                           extra={<Link to="/analysis/">
                                                               <Button>
                                                                   Volver

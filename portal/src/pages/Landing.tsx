@@ -33,7 +33,7 @@ const CARDS = [
     },
     {
         img: landingAnalysis,
-        title: 'Portal de análisis',
+        title: 'Análisis de crecimiento patrimonial',
         href: '/analysis/'
     }
 ];
