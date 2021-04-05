@@ -29,7 +29,7 @@ from airflow.operators.postgres_operator import PostgresOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.dates import days_ago
 
-from ds_table_operations import calculate_hash_of_file, create_dir_in_ftp
+from ds_table_operations import calculate_hash_of_file, create_dir_in_ftp, upload_to_ftp
 from file_system_helper import move, get_file_size
 from network_operators import download_file, get_head, NetworkError
 
@@ -67,7 +67,7 @@ def successful_ftp_upload(file_name: str, file_path: str, remote_path: str):
     try:
         print(f"Trying to upload the file {file_name} to ftp")
 
-        target_path = os.path.join(remote_path, final_name)
+        target_path = os.path.join(remote_path, file_name)
         upload_to_ftp(
             con_id,
             target_path,
@@ -206,6 +206,7 @@ def do_work(number: int, url: str, target_dir: str, mod_of: int):
     sql = get_upsert_query()
 
     temp_dir = tempfile.mkdtemp()
+    ftp_dir = Variable.get("CGR_FTP_PDF_FOLDER", "/data/contraloria/declaraciones/")
 
     for records in list_navigator(number, db_cursor, mod_of):
         to_insert = []
@@ -214,7 +215,7 @@ def do_work(number: int, url: str, target_dir: str, mod_of: int):
                 data = download_pdf(record["remote_id"], url, target_dir, record["downloaded_files"], temp_dir,
                                     record["cedula"])
                 if data is not None:
-                    if not successful_ftp_upload(data["file_name"], data["path"], target_dir):
+                    if not successful_ftp_upload(data["file_name"], data["path"], ftp_dir):
                         print(f"Skip data insertion for file {data['file_name']} because it doesn't exists in ftp folder")
                         continue
 
