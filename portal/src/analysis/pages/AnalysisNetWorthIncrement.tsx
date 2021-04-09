@@ -121,6 +121,13 @@ function Analysis(props: {
                         </Col>
                     </div>
                 </Row>
+                <Row hidden={!data.oneDeclaration} align="middle" justify="center">
+                    <Col xs={24} style={{textAlign: "center"}}>
+                            <Typography.Text className="main-title-source" style={{color: 'rgb(205 83 52)'}}> Se encontró una sola Declaración Jurada de
+                                Bienes y Rentas para esta persona. Favor completar los datos faltantes en la sección de
+                                declaración final para realizar el análisis.</Typography.Text>
+                    </Col>
+                </Row>
             </Col>
 
             <Col span={24} className="print-only top-disclaimer">
@@ -157,6 +164,7 @@ function Analysis(props: {
                                disabled={data.working}
                                updateDate={data.setYearData}
                                updateSingleYear={data.changeYear}
+                               oneDeclaration={data.oneDeclaration}
                     />
                 </Card>
             </Col>
