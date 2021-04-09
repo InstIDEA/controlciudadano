@@ -1,5 +1,4 @@
 import {
-    AmountWithSource,
     DeclarationData,
     FinancialDetail,
     NetWorthIncreaseAnalysis,
@@ -14,7 +13,7 @@ import {
     Input,
     Modal,
     Radio,
-    Row, Select,
+    Row,
     Space,
     Timeline,
     Tooltip,
@@ -92,8 +91,6 @@ function InputTitle(props: {
     onClick: () => void;
     prefix: string;
 }) {
-
-    if(props.data.date != "") {
         return <Typography.Title level={5} className="title-color">
             <Tooltip title="Ver información de fuente">
                 <div onClick={props.onClick}
@@ -107,21 +104,6 @@ function InputTitle(props: {
                 </div>
             </Tooltip>
         </Typography.Title>;
-    } else {
-        return <Typography.Title level={5} className="title-color">
-            <Tooltip title="Seleccionar fecha">
-                <div onClick={props.onClick}
-                     style={{
-                         color: 'rgb(24, 144, 255)',
-                         textDecoration: 'underline',
-                         cursor: 'pointer'
-                     }}
-                >
-                    {props.prefix}
-                </div>
-            </Tooltip>
-        </Typography.Title>;
-    }
 }
 
 

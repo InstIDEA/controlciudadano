@@ -144,7 +144,7 @@ function doCalculation(dat: NetWorthIncreaseAnalysis): NetWorthCalculations {
 
     const nextYearEarnings = averageIncomePerMonth * (dat.duration + 12);
     let nextYearForInversion = nextYearEarnings * 0.35;
-    if(dat.firstYear.date == dat.lastYear.date) {
+    if(dat.firstYear.date === dat.lastYear.date) {
        nextYearForInversion =  nextYearEarnings
     }
 
