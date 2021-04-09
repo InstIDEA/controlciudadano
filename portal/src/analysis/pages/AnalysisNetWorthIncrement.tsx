@@ -182,7 +182,10 @@ function Analysis(props: {
                                 <br/>
                                 Para ver mas detalles sobre este análisis, por favor revista este documento
                             </Typography.Paragraph>
-                            <button className="round-button">Ver más</button>
+                            <a href="https://drive.google.com/file/d/115iD7gwOFFtb5Ko8UCNyd-3NiyUdxN4W/view?usp=sharing"
+                               rel="noopener noreferrer" target="_blank" >
+                                <button className="round-button" >Ver más</button>
+                            </a>
                         </Space>
                     </DisclaimerComponent>
                 </Col>
