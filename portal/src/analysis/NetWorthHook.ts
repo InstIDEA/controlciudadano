@@ -22,7 +22,7 @@ export interface NetWorthCalculations {
  * @param base the base data for the analysis
  */
 export function useNWHook(base: NetWorthIncreaseAnalysis) {
-
+    const oneDeclaration = !base.lastYear.date
     const [data, setData] = useState<NetWorthIncreaseAnalysis>(() => ({
         ...base,
         firstYear: calcTotals(base.firstYear),
@@ -32,11 +32,21 @@ export function useNWHook(base: NetWorthIncreaseAnalysis) {
 
     // eslint-disable-next-line
     const setYearData = useCallback(debounce((newData: DeclarationData) => {
-        setData(d => ({
-            ...d,
-            firstYear: newData.date === d.firstYear.date ? calcTotals(newData) : d.firstYear,
-            lastYear: newData.date === d.lastYear.date ? calcTotals(newData) : d.lastYear
-        }))
+        if(oneDeclaration){
+            setData(d => ({
+                ...d,
+                duration: moment(d.lastYear.date).diff(moment(d.firstYear.date), 'months', false),
+                firstYear: newData.date === d.firstYear.date ? calcTotals(newData) : d.firstYear,
+                lastYear: newData.date === d.lastYear.date ? calcTotals(newData) : d.lastYear
+            }))
+        } else {
+            setData(d => ({
+                ...d,
+                firstYear: newData.date === d.firstYear.date ? calcTotals(newData) : d.firstYear,
+                lastYear: newData.date === d.lastYear.date ? calcTotals(newData) : d.lastYear
+            }))
+        }
+
     }, 1000), []);
 
     const changeYear = useCallback((prevYear: DeclarationData, newYear: NWAnalysisAvailableYear) => {
@@ -57,7 +67,8 @@ export function useNWHook(base: NetWorthIncreaseAnalysis) {
         setYearData,
         working,
         changeYear,
-        analysis
+        analysis,
+        oneDeclaration
     }
 }
 
@@ -132,7 +143,10 @@ function doCalculation(dat: NetWorthIncreaseAnalysis): NetWorthCalculations {
         : (variation / forInversion);
 
     const nextYearEarnings = averageIncomePerMonth * (dat.duration + 12);
-    const nextYearForInversion = nextYearEarnings * 0.35;
+    let nextYearForInversion = nextYearEarnings * 0.35;
+    if(dat.firstYear.date === dat.lastYear.date) {
+       nextYearForInversion =  nextYearEarnings
+    }
 
     const earningsSource = [dat.firstYear.totalIncome.source, dat.lastYear.totalIncome.source];
     const variationSource = [dat.firstYear.netWorth.source, dat.lastYear.netWorth.source]

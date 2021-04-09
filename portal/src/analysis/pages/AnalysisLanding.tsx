@@ -64,7 +64,7 @@ export function AnalysisLanding() {
                         </Typography.Title>
                     </Col>
                     <Col>
-                        <Analysis videoUrl="https://www.youtube.com/embed/pOelku14ZVQ"
+                        <Analysis videoUrl="https://www.youtube.com/embed/a_IkwaUlsB0"
                                   name="Crecimiento patrimonial"
                                   parts={DBJRText}>
                             <Row gutter={[8, 8]} justify="center" className="align-left">

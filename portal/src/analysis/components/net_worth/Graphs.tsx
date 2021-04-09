@@ -12,7 +12,8 @@ export function Graphs({data, calc}: {
 }) {
 
     const netWorthIncrease = useMemo(() => {
-        return [{
+        if(data.lastYear.date){
+            return [{
             data: [{
                 x: formatWF(data.firstYear.date, 'dd-MM-yyyy'),
                 y: data.firstYear.netWorth.amount
@@ -47,6 +48,35 @@ export function Graphs({data, calc}: {
                 y: data.firstYear.netWorth.amount + calc.nextYearForInversion.amount
             }],
         }];
+        } else {
+            return [{
+            data: [{
+                x: formatWF(data.firstYear.date, 'dd-MM-yyyy'),
+                y: data.firstYear.netWorth.amount
+            }],
+            color: calc.result.amount > 1.1
+                ? '#C44040'
+                : calc.result.amount > 1
+                    ? 'hsl(55, 70%, 50%)'
+                    : 'hsl(99,98%,18%)',
+            id: "Real"
+        }, {
+            id: "Leve",
+            color: "hsl(55, 70%, 50%)",
+            data: [{
+                x: formatWF(data.firstYear.date, 'dd-MM-yyyy'),
+                y: data.firstYear.netWorth.amount
+            }],
+        }, {
+            id: "Normal",
+            color: "hsl(99,98%,18%)",
+            data: [{
+                x: formatWF(data.firstYear.date, 'dd-MM-yyyy'),
+                y: data.firstYear.netWorth.amount
+            }],
+        }];
+        }
+
     }, [data, calc]);
 
     const periodicity: 'every 1 month' | 'every 1 year' = useMemo(() => {
@@ -55,7 +85,8 @@ export function Graphs({data, calc}: {
     }, [data.duration])
 
     const incomeIncrease = useMemo(() => {
-        return [{
+        if(data.lastYear.date){
+             return [{
             id: "Ingresos",
             color: "#364D79",
             data: [{
@@ -66,6 +97,17 @@ export function Graphs({data, calc}: {
                 y: data.lastYear.totalIncome.amount
             }]
         },]
+        } else {
+             return [{
+            id: "Ingresos",
+            color: "#364D79",
+            data: [{
+                x: formatWF(data.firstYear.date, 'dd-MM-yyyy'),
+                y: data.firstYear.totalIncome.amount
+            }]
+        },]
+        }
+
     }, [data]);
 
     return <Row justify="center" className="graphs">

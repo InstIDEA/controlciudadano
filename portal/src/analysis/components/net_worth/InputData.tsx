@@ -1,8 +1,13 @@
-import {DeclarationData, FinancialDetail, NetWorthIncreaseAnalysis, NWAnalysisAvailableYear} from "../../../APIModel";
+import {
+    DeclarationData,
+    FinancialDetail,
+    NetWorthIncreaseAnalysis,
+    NWAnalysisAvailableYear
+} from "../../../APIModel";
 import {
     Button,
     Card,
-    Col,
+    Col, DatePicker,
     Descriptions,
     Form,
     Input,
@@ -32,10 +37,17 @@ export function InputData(props: {
     data: NetWorthIncreaseAnalysis;
     disabled: boolean;
     updateDate: (newData: DeclarationData) => void;
-    updateSingleYear: (prev: DeclarationData, newData: NWAnalysisAvailableYear) => void
+    updateSingleYear: (prev: DeclarationData, newData: NWAnalysisAvailableYear) => void;
+    oneDeclaration: boolean;
 }) {
 
     const [currentYearToChange, setCurrentYearToChange] = useState<DeclarationData>();
+    let intpuTitle = <InputTitle data={props.data.lastYear}
+                                prefix="Declaración final"
+                                onClick={() => setCurrentYearToChange(props.data.lastYear)}/>;
+    if(props.oneDeclaration) {
+        intpuTitle = <ChangeDeclarationDate data={props.data.lastYear} update={props.updateDate} />;
+    }
 
     return <Disable disabled={props.disabled}>
         <Row gutter={[0, 16]} className="nw-input">
@@ -54,9 +66,7 @@ export function InputData(props: {
             </Col>
             <Col xs={24}>
                 <Card className="custom-card-no-shadow">
-                    <InputTitle data={props.data.lastYear}
-                                prefix="Declaración final"
-                                onClick={() => setCurrentYearToChange(props.data.lastYear)}/>
+                   {intpuTitle}
                     <SingleDeclaration data={props.data.lastYear} update={props.updateDate}/>
                 </Card>
             </Col>
@@ -81,21 +91,22 @@ function InputTitle(props: {
     onClick: () => void;
     prefix: string;
 }) {
-
-    return <Typography.Title level={5} className="title-color">
-        <Tooltip title="Ver información de fuente">
-            <div onClick={props.onClick}
-                 style={{
-                     color: 'rgb(24, 144, 255)',
-                     textDecoration: 'underline',
-                     cursor: 'pointer'
-                 }}
-            >
-                {props.prefix} ({formatToDay(props.data.date)})
-            </div>
-        </Tooltip>
-    </Typography.Title>
+        return <Typography.Title level={5} className="title-color">
+            <Tooltip title="Ver información de fuente">
+                <div onClick={props.onClick}
+                     style={{
+                         color: 'rgb(24, 144, 255)',
+                         textDecoration: 'underline',
+                         cursor: 'pointer'
+                     }}
+                >
+                    {props.prefix} ({formatToDay(props.data.date)})
+                </div>
+            </Tooltip>
+        </Typography.Title>;
 }
+
+
 
 function getLink(dat: DeclarationData): string | undefined {
     return dat.sources.filter(val => val.type === 'DJBR').map(v => v.url).shift();
@@ -288,4 +299,43 @@ export function SingleDeclaration(props: {
     </Form>;
 }
 
+export function ChangeDeclarationDate(props: {
+    data: DeclarationData,
+    onChange?: (newVal: string) => void;
+    update: (newData: DeclarationData) => void;
+}) {
 
+    const [form] = Form.useForm();
+    const layout = {
+        labelCol: {span: 8},
+        wrapperCol: {span: 16},
+    };
+    const onChange = (value: any, dateString: string) => {
+        if(value){
+            let newData = props.data;
+            newData.date = dateString+'T03:00:00.000Z';
+            props.update(newData);
+        }
+    };
+
+    return <Form {...layout}
+                 form={form}
+                 name={`date_form_${props.data.date}`}
+                 size="small"
+                 onValuesChange={(ch, all) => {
+                     const newData = merge(
+                         props.data,
+                         all
+                     );
+                     props.update(newData);
+                 }}>
+        <Typography.Title level={5} className="title-color">Declaración final</Typography.Title>
+        <Typography.Paragraph style={{margin: 'inherit'}}>
+               Se encontró solo una declaración, favor complete los datos faltantes para realizar el análisis.
+        </Typography.Paragraph>
+        <Space/>
+        <Form.Item name={["date"]} label="Fecha de declaración:" rules={[{required: true}]}>
+            <DatePicker onChange={onChange} style={{width: '100%'}} placeholder={'Seleccione fecha de declaración'} allowClear={false}/>
+        </Form.Item>
+    </Form>
+}
