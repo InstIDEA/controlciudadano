@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 from json import dumps
 from json import loads
 from random import randint
@@ -48,15 +48,28 @@ dag = DAG(
 )
 
 
-def is_valid_data(data: Dict[str, any], id: int) -> bool:
+def is_valid_data(year: int, data: Dict[str, any], row: Dict[str, any]) -> bool:
     """
     Check if the data returned by the parsed is valid
+    :param year: minimum year for the parsed declaration
     :param data:  the returned data
-    :param id: the id of the row for debugging
+    :param row: current row data
     :return: True if is valid, False otherwise
     """
+
+    id = row['raw_id'] # for debugging
+
     if data is None:
         print(f"{id} - Returing false because data is null")
+        return False
+
+    periodo = datetime.strptime(data['fecha'].split('T')[0], '%Y-%m-%d').year
+    if periodo != row['raw_periodo']:
+        print(f"{id} - Mismatch between parsed year {periodo} and fetched year {row['periodo']}")
+        return False
+
+    if periodo < year:
+        print(f"{id} - The parsed year {periodo} is less than the required minimum year {year}")
         return False
 
     calc_active = data['activos']
@@ -117,11 +130,12 @@ def list_navigator(cursor: any, idx: int, year: int, batch_size: int):
         cursor.execute("""
             SELECT 
                  drd.id as raw_id, 
-                 ddf.file_name 
+                 ddf.file_name,
+                 drd.periodo as raw_periodo
             FROM staging.djbr_downloaded_files ddf
                  JOIN staging.djbr_raw_data drd on ddf.raw_data_id = drd.id
             LEFT JOIN analysis.djbr_data parsed ON parsed.raw_data_id = drd.id
-            WHERE drd.periodo >= %s
+            WHERE drd.periodo BETWEEN %s AND date_part('year', current_date)
               AND mod(drd.id, %s) = %s
               AND parsed IS NULL
             ORDER BY RANDOM()
@@ -201,7 +215,7 @@ def do_work(idx: int, year: int, batch_size: int):
             try:
                 data = parse(row['file_name'])
 
-                if is_valid_data(data, row['raw_id']):
+                if is_valid_data(year, data, row):
                     charge = get_charge(data)
                     to_insert.append([row['raw_id'],
                                       data['resumen']['totalActivo'],
