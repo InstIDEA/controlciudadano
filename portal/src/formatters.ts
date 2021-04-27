@@ -73,7 +73,8 @@ export function formatToDay(value: any) {
 
 export function formatWF(value: any, f: string) {
     if (value) {
-        return format(new Date(value), f, {locale: es});
+        const date = value.split("T")[0].split('-');
+        return format(new Date(Date.UTC(Number(date[0]), Number(date[1]) -1, Number(date[2]) +1)), f, {locale: es});
     }
 
     return '';
