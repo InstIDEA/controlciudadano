@@ -15,6 +15,9 @@ export interface NetWorthCalculations {
     result: AmountWithSource;
     nextYearEarnings: AmountWithSource;
     nextYearForInversion: AmountWithSource;
+
+    smallIncrement: AmountWithSource;
+    normalIncrement: AmountWithSource;
 }
 
 /**
@@ -85,7 +88,7 @@ function getNWDataMerger(prevYear: DeclarationData, nd: DeclarationData): (d: Ne
             ? d.lastYear
             : d.firstYear;
 
-        const {first, last} = toKeep.date > nd.date
+        const {first, last} = toKeep.date! > nd.date!
             ? {first: nd, last: toKeep}
             : {first: toKeep, last: nd};
 
@@ -124,7 +127,6 @@ function fetchNewYearData(person: NetWorthIncreaseAnalysis["person"], prevYear: 
                 key: 'changing_year',
                 duration: 10
             });
-            return;
         });
 
 }
@@ -148,8 +150,13 @@ function doCalculation(dat: NetWorthIncreaseAnalysis): NetWorthCalculations {
        nextYearForInversion =  nextYearEarnings
     }
 
+    const smallIncrement = (forInversion * 1.1);
+    const normalIncrement = forInversion;
+
     const earningsSource = [dat.firstYear.totalIncome.source, dat.lastYear.totalIncome.source];
     const variationSource = [dat.firstYear.netWorth.source, dat.lastYear.netWorth.source]
+
+    const incrementSource = [dat.firstYear.netWorth.source, ...earningsSource];
 
     return {
         earnings: buildAmount(averageIncomePerMonth * 12, earningsSource),
@@ -158,7 +165,9 @@ function doCalculation(dat: NetWorthIncreaseAnalysis): NetWorthCalculations {
         variation: buildAmount(variation, variationSource),
         result: buildAmount(result, [...variationSource, ...earningsSource]),
         nextYearEarnings: buildAmount(nextYearEarnings, ['']),
-        nextYearForInversion: buildAmount(nextYearForInversion, [''])
+        nextYearForInversion: buildAmount(nextYearForInversion, ['']),
+        smallIncrement: buildAmount(smallIncrement, incrementSource),
+        normalIncrement: buildAmount(normalIncrement, incrementSource)
     }
 }
 
@@ -181,7 +190,7 @@ function validNumber(val?: AmountWithSource): boolean {
     return !!(val && val.amount > 0)
 }
 
-function sum(arr: Array<FinancialDetail>): AmountWithSource {
+export function sum(arr: Array<FinancialDetail>): AmountWithSource {
     return simplifySources(arr.map(d => ({amount: d.amount * (d.periodicity === 'yearly' ? 1 : 12), source: d.source}))
         .reduce((a, b) => ({
             amount: a.amount + b.amount,
