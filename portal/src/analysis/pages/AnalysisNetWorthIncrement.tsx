@@ -17,7 +17,7 @@ import {ExternalLinkIcon} from "../../components/icons/ExternalLinkIcon";
 import {useMediaQuery} from "@react-hook/media-query";
 import './AnalysisNetWorthIncrement.css';
 import {CalculationsPrint} from "../components/net_worth/CalculationsPrint";
-import { formatNumber } from "../../formatters";
+import {formatNumber} from "../../formatters";
 
 
 export function AnalysisNetWorthIncrement() {
@@ -124,9 +124,10 @@ function Analysis(props: {
                 </Row>
                 <Row hidden={!data.oneDeclaration} align="middle" justify="center">
                     <Col xs={24} style={{textAlign: "center"}}>
-                            <Typography.Text className="main-title-source" style={{color: 'rgb(205 83 52)'}}> Se encontró una sola Declaración Jurada de
-                                Bienes y Rentas para esta persona. Favor completar los datos faltantes en la sección de
-                                declaración final para realizar el análisis.</Typography.Text>
+                        <Typography.Text className="main-title-source" style={{color: 'rgb(205 83 52)'}}> Se encontró
+                            una sola Declaración Jurada de
+                            Bienes y Rentas para esta persona. Favor completar los datos faltantes en la sección de
+                            declaración final para realizar el análisis.</Typography.Text>
                     </Col>
                 </Row>
             </Col>
@@ -171,7 +172,7 @@ function Analysis(props: {
             </Col>
 
             <div className="screen-only">
-                <Col sm={xsSpan} lg={lgSpan} xl={xlSpan} xxl={xxlSpan}>
+                <Col sm={xsSpan} lg={lgSpan} xl={{span: xlSpan, offset: (24 - xlSpan) / 2}} xxl={xxlSpan}>
                     <DisclaimerComponent full card>
                         <Space>
                             <Typography.Paragraph style={{margin: 'inherit'}}>
@@ -183,8 +184,8 @@ function Analysis(props: {
                                 Para ver mas detalles sobre este análisis, por favor revista este documento
                             </Typography.Paragraph>
                             <a href="https://drive.google.com/file/d/115iD7gwOFFtb5Ko8UCNyd-3NiyUdxN4W/view?usp=sharing"
-                               rel="noopener noreferrer" target="_blank" >
-                                <button className="round-button" >Ver más</button>
+                               rel="noopener noreferrer" target="_blank">
+                                <button className="round-button">Ver más</button>
                             </a>
                         </Space>
                     </DisclaimerComponent>
