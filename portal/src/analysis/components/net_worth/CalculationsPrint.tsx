@@ -29,7 +29,7 @@ export function CalculationsPrint(props: {
             <tr>
                 <td className="row-header col-align-left">TIEMPO DE ANÁLISIS</td>
                 <td/>
-                <td className="col-align-right col-value">{props.data.duration + " AÑOS"}</td>
+                <td className="col-align-right col-value">{props.data.duration + " MESES"}</td>
                 <td className="col-align-right col-value">DJBR</td>
             </tr>
             <tr>
