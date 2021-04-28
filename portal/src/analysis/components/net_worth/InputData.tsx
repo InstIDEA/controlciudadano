@@ -39,11 +39,11 @@ export function InputData(props: {
 }) {
 
     const [currentYearToChange, setCurrentYearToChange] = useState<DeclarationData>();
-    let intpuTitle = <InputTitle data={props.data.lastYear}
+    let inputTitle = <InputTitle data={props.data.lastYear}
                                  prefix="Declaración final"
                                  onClick={() => setCurrentYearToChange(props.data.lastYear)}/>;
     if (props.oneDeclaration) {
-        intpuTitle = <ChangeDeclarationDate data={props.data.lastYear} update={props.updateDate}/>;
+        inputTitle = <ChangeDeclarationDate data={props.data.lastYear} update={props.updateDate}/>;
     }
 
     return <Disable disabled={props.disabled}>
@@ -63,7 +63,7 @@ export function InputData(props: {
             </Col>
             <Col xs={24}>
                 <Card className="custom-card-no-shadow">
-                    {intpuTitle}
+                    {inputTitle}
                     <SingleDeclaration data={props.data.lastYear} update={props.updateDate}/>
                 </Card>
             </Col>
@@ -90,14 +90,9 @@ function InputTitle(props: {
 }) {
     return <Typography.Title level={5} className="title-color">
         <Tooltip title="Ver información de fuente">
-            <div onClick={props.onClick}
-                 style={{
-                     color: 'rgb(24, 144, 255)',
-                     textDecoration: 'underline',
-                     cursor: 'pointer'
-                 }}
-            >
-                {props.prefix} ({formatToDay(props.data.date)})
+            <div>
+                {props.prefix} ({formatToDay(props.data.date)}) {"  "}
+                <Button onClick={props.onClick} type="link">Ver más DJBR</Button>
             </div>
         </Tooltip>
     </Typography.Title>;
