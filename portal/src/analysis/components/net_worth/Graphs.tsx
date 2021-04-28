@@ -4,6 +4,7 @@ import React, {useMemo} from "react";
 import {ResponsiveLine} from "@nivo/line";
 import {formatMoney, formatWF, millionFormatter} from "../../../formatters";
 import {NetWorthCalculations} from "../../NetWorthHook";
+import {BasicTooltip} from '@nivo/tooltip'
 import './Graphs.css'
 
 export function Graphs({data, calc}: {
@@ -190,6 +191,20 @@ export function NetWorthIncrement(props: {
         pointBorderColor={{from: "serieColor"}}
         animate
         motionStiffness={10}
+
+        tooltip={({point}) => {
+            return <BasicTooltip
+                id={
+                    <span>
+                        {point.serieId} {point.data.xFormatted}: <b>{point.data.yFormatted}</b> Gs.
+                    </span>
+                }
+                enableChip={true}
+                color={point.serieColor}
+            />
+
+        }}
+
         pointLabel="y"
         pointLabelYOffset={-12}
         useMesh={true}
