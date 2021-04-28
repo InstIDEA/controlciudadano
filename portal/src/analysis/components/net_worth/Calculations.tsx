@@ -65,10 +65,10 @@ export function Calculations(props: {
         />
 
         <DataCard title="Ingresos totales en periodo"
-                  first={earnings.amount}
-                  second={props.data.duration}
+                  first={`${formatMoney(earnings.amount)} (ingresos anuales) / 12`}
+                  second={`${props.data.duration} meses`}
                   operator="x"
-                  result={totalIncome.amount * props.data.duration}
+                  result={totalIncome.amount}
                   source={totalIncome.source}
         />
 
