@@ -68,7 +68,12 @@
         font-size: 2em;
         color:rgba(255, 0, 0, 0.4);
         transform: translate(-50%,-50%) rotate(-30deg);
-        z-index: 2;
+
+        /* 
+        check z-index value from ResponsiveLine component before change 
+        this value to prevent overlap between watermark and interactive graph
+         */
+         z-index: 11;
     }
 
     table.nw-calc {
