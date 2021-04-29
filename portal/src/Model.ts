@@ -536,6 +536,8 @@ export interface AuthoritiesWithoutDocument {
 }
 
 export interface StatisticsDJBR {
+    total_parsed: number;
+    count_employees: number;
     total_authorities: number;
     total_declarations: number;
     count_declarations_auths: number;

@@ -1,4 +1,4 @@
-import React, {PropsWithChildren} from "react";
+import React, {PropsWithChildren, useMemo} from "react";
 import {Header} from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
 import {Card, Col, Layout, Result, Row, Typography} from "antd";
@@ -7,18 +7,40 @@ import inProgressIcon from "../../assets/imgs/analysis_in_progress.svg";
 import './AnalysisLanding.css';
 import useMetaTags from "react-metatags-hook";
 import Search from "antd/es/input/Search";
+import {useDJBRStats} from "../../hooks/useStats";
+import {StatisticsDJBR} from "../../Model";
+import {formatNumber} from "../../formatters";
 
-const DBJRText = [{
-    title: 'Análisis de declaraciones juradas de bienes y rentas',
-    description: 'La herramienta de análisis de declaraciones juradas, es una plataforma tecnológica que permite generar información preliminar sobre la razonabilidad del crecimiento patrimonial de los funcionarios públicos, comparando los datos de los activos, pasivos e ingresos declarados por los funcionarios públicos en sus declaraciones juradas de bienes y rentas presentadas que se publican en la página de la <a href="https://portaldjbr.contraloria.gov.py/portal-djbr/"> Contraloría General de la República </a>.'
-}, {
-    title: '¿Cómo se alimenta la plataforma?',
-    description: 'La herramienta utiliza un proceso de extracción de datos de distintas fuentes, siendo la\n                            principal el portal de declaraciones juradas de la Contraloría General de la República, una\n                            vez obtenidos los documentos, se realiza una tarea de extracción de información, en la cual\n                            se extraen los datos más relevantes de una declaración y se guardan en un formato de datos\n                            abiertos'
-}, {
-    title: '¿Qué puedo hacer si detecto una inconsistencia alta?',
-    description: 'Cada análisis generado es de exclusiva responsabilidad del usuario. El mismo,  puede enviar una nota formal dirigida a la CGR, mediante sus canales institucionales, a fin de que esta institución tome conocimiento y proceda a realizar el análisis formal de correspondencia sobre las declaraciones juradas analizadas.\n' +
-        '<br /><br />Véase <a href="https://www.contraloria.gov.py/">https://www.contraloria.gov.py/</a>'
-}];
+function getDBJRText(dat: StatisticsDJBR) {
+    return [{
+        title: 'Análisis de declaraciones juradas de bienes y rentas',
+        description: 'La herramienta de análisis de declaraciones juradas, es una plataforma tecnológica que ' +
+            'permite generar información preliminar sobre la razonabilidad del crecimiento patrimonial de los ' +
+            'funcionarios públicos, comparando los datos de los activos, pasivos e ingresos declarados por los ' +
+            'funcionarios públicos en sus declaraciones juradas de bienes y rentas presentadas que se publican ' +
+            'en la página de la <a href="https://portaldjbr.contraloria.gov.py/portal-djbr/"> Contraloría General ' +
+            'de la República </a>.'
+    }, {
+        title: '¿Cómo se alimenta la plataforma?',
+        description: 'La herramienta utiliza un proceso de extracción de datos de distintas fuentes, siendo la' +
+            'principal el portal de declaraciones juradas de la Contraloría General de la República, una' +
+            'vez obtenidos los documentos, se realiza una tarea de extracción de información, en la cual' +
+            'se extraen los datos más relevantes de una declaración y se guardan en un formato de datos' +
+            'abiertos. <br /><br />' +
+            `La plataforma ControlCiudadanoPY cuenta con ${formatNumber(dat.total_declarations)} declaraciones ` +
+            'juradas de bienes y renta (DJBR) ' +
+            'descargadas del portal de DJBR de la <a href="https://portaldjbr.contraloria.gov.py/portal-djbr/" target="_blank">Controlaría General de la República</a> ' +
+            `que corresponden a ${formatNumber(dat.count_employees)} personas. De las ` +
+            `${formatNumber(dat.total_declarations)} DJBR, ${formatNumber(dat.total_parsed)} pudieron ser ` +
+            'transcriptas automáticamente a la base de datos del portal para el análisis de crecimiento patrimonial. ' +
+            ' La información contenida ' +
+            'en las demás DJBR, pueden ser descargadas y transcriptas manualmente en la página de análisis.'
+    }, {
+        title: '¿Qué puedo hacer si detecto una inconsistencia alta?',
+        description: 'Cada análisis generado es de exclusiva responsabilidad del usuario. El mismo,  puede enviar una nota formal dirigida a la CGR, mediante sus canales institucionales, a fin de que esta institución tome conocimiento y proceda a realizar el análisis formal de correspondencia sobre las declaraciones juradas analizadas.\n' +
+            '<br /><br />Véase <a href="https://www.contraloria.gov.py/">https://www.contraloria.gov.py/</a>'
+    }];
+}
 
 
 const DBJRExamples = shuffle([
@@ -54,6 +76,9 @@ export function AnalysisLanding() {
         }
     }, [])
 
+    const stats = useDJBRStats();
+    const text = useMemo(() => getDBJRText(stats), [stats]);
+
     return <>
         <Header/>
 
@@ -69,7 +94,7 @@ export function AnalysisLanding() {
                     <Col>
                         <Analysis videoUrl="https://www.youtube.com/embed/a_IkwaUlsB0"
                                   name="Crecimiento patrimonial"
-                                  parts={DBJRText}>
+                                  parts={text}>
                             <Row gutter={[8, 8]} justify="center" className="align-left">
                                 {DBJRExamples.map((ex, idx) => <Col key={ex}>
                                     <LinkButton linkTo={`/analysis/net_worth/${ex}`} text={`Ejemplo ${idx + 1}`}/>
