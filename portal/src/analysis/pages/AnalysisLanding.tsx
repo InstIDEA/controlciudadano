@@ -34,7 +34,7 @@ function getDBJRText(dat: StatisticsDJBR) {
             `${formatNumber(dat.total_declarations)} DJBR, ${formatNumber(dat.total_parsed)} pudieron ser ` +
             'transcriptas automáticamente a la base de datos del portal para el análisis de crecimiento patrimonial. ' +
             ' La información contenida ' +
-            'en las demás DJBR, pueden ser descargadas y transcripta manualmente en la página de análisis.'
+            'en las demás DJBR, puede ser descargada y transcripta manualmente en la página de análisis.'
     }, {
         title: '¿Qué puedo hacer si detecto una inconsistencia alta?',
         description: 'Cada análisis generado es de exclusiva responsabilidad del usuario. El mismo,  puede enviar una nota formal dirigida a la CGR, mediante sus canales institucionales, a fin de que esta institución tome conocimiento y proceda a realizar el análisis formal de correspondencia sobre las declaraciones juradas analizadas.\n' +
