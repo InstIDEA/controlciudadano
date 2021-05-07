@@ -87,7 +87,7 @@ export class SimpleApi {
     }
 
     async getSuppliersByBuyer(buyerId: string): Promise<SimpleAPINotPaginatedResult<OCDSBuyerWithSuppliers>> {
-        return this.doGet(`${BASE_API}/ocds/buyer/${buyerId}/suppliers`);
+        return this.doGet(`ocds/buyer/${buyerId}/suppliers`);
     }
 
     async getGeoJson() {
