@@ -120,7 +120,7 @@ function PriceEvolutionTab(props: { id: string }) {
     const keys = Object.keys(groups).sort((k1, k2) => groups[k2].count - groups[k1].count);
     const def = keys.length > 0 ? keys[0] : undefined;
     const graphData = selected ? groups[selected].rows : def ? groups[def].rows : undefined;
-
+    const finalData = log ? graphData?.filter(d => d.price.original_amount > 0) : graphData;
 
     return <Row style={{
         width: '100%',
@@ -130,7 +130,7 @@ function PriceEvolutionTab(props: { id: string }) {
         <Col span={isSmall ? 24 : 20}
              order={isSmall ? 2 : 0}
         >
-            {graphData && <ItemPriceEvolutionGraph points={graphData} adjusted={adjusted} log={log}/>}
+            {finalData && <ItemPriceEvolutionGraph points={finalData} adjusted={adjusted} log={log}/>}
         </Col>
         <Col span={isSmall ? 24 : 4}
              style={{paddingTop: isSmall ? 10 : 0}}

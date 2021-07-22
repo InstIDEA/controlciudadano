@@ -268,11 +268,12 @@ export interface PaginatedResult<T> {
 }
 
 export interface Affidavit {
+    revision: string;
     id: number;
     name: string;
     document: string;
     year: number;
-    revision: number;
+    version: number;
     link: string;
     source: string;
     link_sandwich: string;
@@ -535,12 +536,16 @@ export interface AuthoritiesWithoutDocument {
 }
 
 export interface StatisticsDJBR {
+    total_parsed: number;
+    count_employees: number;
     total_authorities: number;
     total_declarations: number;
     count_declarations_auths: number;
     last_success_fetch: string;
     total_authorities_in_order: number;
-    first_election_year: number
+    first_election_year: number;
+    last_election_year: number;
+    count_auths_with_decs: number;
 }
 
 /**

@@ -28,7 +28,7 @@ export function secondsToDate(seconds?: number) {
 
 export function formatMoney(value: any, symbol?: string, decimalDigits?: number) {
     if (!value && value !== 0) return '';
-    if (typeof value === 'string' && value.startsWith('Gs')) return value;
+    if (typeof value === 'string' && symbol && value.startsWith(symbol)) return value;
 
     const amount = decimalDigits ? value : Math.round(value);
     const formattedAmount = new Intl.NumberFormat('it', {
@@ -40,7 +40,7 @@ export function formatMoney(value: any, symbol?: string, decimalDigits?: number)
 }
 
 export function formatNumber(value: any, decimalDigits: number = 0) {
-    if (!value) return '';
+    if (value !== 0 && !value) return '';
     if (typeof value === 'string') value = parseFloat(value);
 
     const amount = decimalDigits ? value : Math.round(value);
@@ -59,13 +59,22 @@ export function formatIsoDate(value: any) {
     return '';
 }
 
+export function formatToYear(value: any) {
+    return formatWF(value, "yyyy");
+}
+
 export function formatToMonth(value: any) {
     return formatWF(value, "MMMM 'de' yyyy");
 }
 
+export function formatToDay(value: any) {
+    return formatWF(value, "dd 'de' MMMM 'de' yyyy");
+}
+
 export function formatWF(value: any, f: string) {
     if (value) {
-        return format(new Date(value), f, {locale: es});
+        const date = value.replaceAll("/", "-").split("T")[0].split("-");
+        return format(new Date(Date.UTC(date[0], Number(date[1]) -1, Number(date[2]) +1)), f, {locale: es});
     }
 
     return '';
@@ -105,7 +114,6 @@ export function getInitials(name: string) {
     split.forEach(s => initials = initials + s.substr(0, 1));
     return initials;
 }
-
 
 export function millionFormatter(num: any, prefix: string = '') {
     if (typeof num !== 'number') return '';

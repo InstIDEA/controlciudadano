@@ -11,7 +11,7 @@ export function BaseDatosPage(props: {
     subtitle?: string;
     menuIndex: string;
     children: ReactNode;
-    className?: string
+    className?: string;
 }) {
     return <div className={props.className}>
         <Header tableMode={true} searchBar={props.headerExtra}/>

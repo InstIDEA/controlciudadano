@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import QueueAnim from 'rc-queue-anim';
 import {Col, Input, Row, Tooltip} from 'antd';
 import './Landing.css';
@@ -7,18 +7,19 @@ import comprasCovid from '../assets/imgs/compras_covid.svg';
 import verificacionDDJJ from '../assets/imgs/verificacion_DDJJ.svg';
 import {Header} from '../components/layout/Header'
 import Footer from '../components/layout/Footer';
-import {Async, AsyncHelper, GlobalStatistics} from '../Model';
-import {RedashAPI} from '../RedashAPI';
+import {Async, AsyncHelper} from '../Model';
 import {formatIsoDate, formatMoney, formatToMonth, formatWF} from '../formatters';
 import {Link, useHistory} from 'react-router-dom';
 import {FilterOutlined} from '@ant-design/icons'
 import {useMediaQuery} from '@react-hook/media-query';
+import landingAnalysis from '../assets/imgs/landing_analysis.svg'
+import {useGlobalStats} from "../hooks/useStats";
 
 const CARDS = [
     {
-        img: explorarDatos,
-        href: `/explore`,
-        title: 'Explorar Datos',
+        img: landingAnalysis,
+        title: 'Análisis de crecimiento patrimonial',
+        href: '/analysis/'
     },
     {
         img: comprasCovid,
@@ -30,31 +31,23 @@ const CARDS = [
         title: 'Declaraciones Juradas de Autoridades electas',
         href: `/djbr/portal`,
     },
+    {
+        img: explorarDatos,
+        href: `/explore`,
+        title: 'Explorar Datos',
+    }
 ];
 
 export function LandingPage() {
+
     const history = useHistory();
-    const [data, setData] = useState<Async<GlobalStatistics>>({
-        state: 'NO_REQUESTED'
-    })
+    const data = useGlobalStats();
 
     const isSmall = useMediaQuery('only screen and (max-width: 900px)');
 
-    useEffect(() => {
-        setData({state: 'FETCHING'})
-        new RedashAPI().getMainStatistics()
-            .then(d => setData({
-                state: 'LOADED',
-                data: d.query_result.data.rows[0]
-            }))
-            .catch(e => setData({
-                state: 'ERROR',
-                error: e
-            }))
-    }, [])
 
     const children = CARDS.map(card => (
-        <Col className="card-wrapper" key={card.title} xl={8} md={12} xs={24}>
+        <Col className="card-wrapper" key={card.title} xl={9} md={12} xs={24}>
             <Link className="card" to={card.href}>
                 <img src={card.img} alt="" className="card-img-top"/>
                 <div className="card-body">
@@ -103,9 +96,9 @@ export function LandingPage() {
                 <Col xs={24} className="banner-title-col-wrapper">
                     <QueueAnim className="banner-title-wrapper">
                         <p className="banner-text" key="content">
-                            Este es un portal en el que vas a poder explorar <strong>Datos Abiertos</strong> y realizar
-                            un <strong>control de los gastos
-                            del COVID-19</strong>
+                        Este es un portal en el que vas a poder explorar <strong>Datos Abiertos</strong>,
+                        realizar un <strong>control de los gastos del COVID-19</strong> y
+                        analizar el <strong> crecimiento patrimonial de funcionarios públicos</strong> en base a sus Declaraciones Juradas de Bienes y Renta
                         </p>
                     </QueueAnim>
                 </Col>

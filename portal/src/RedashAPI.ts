@@ -66,7 +66,7 @@ export class RedashAPI {
         if (response.status >= 200 && response.status < 300) return response.json();
 
         const body = await response.text();
-        throw  new ApiError(response.statusText, response.status, body);
+        throw new ApiError(response.statusText, response.status, body);
     }
 
     getRelations(): Promise<BaseRedashResponse<OCDSSupplierRelation>> {
