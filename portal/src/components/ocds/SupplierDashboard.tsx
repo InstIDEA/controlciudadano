@@ -6,7 +6,7 @@ import {Loading} from "../Loading";
 import {getStatus} from "../AsyncRenderer";
 import {millionFormatter} from "../../formatters";
 import {groupBy} from "../../pages/OCDSItem";
-import './SupplierDashboard.scss';
+import './SupplierDashboard.css';
 
 
 export function SupplierDashBoard(props: {
@@ -16,7 +16,7 @@ export function SupplierDashBoard(props: {
                                   }
 ) {
 
-    return <Row gutter={[8, 8]} className="ocds-supplier-dashboard">
+    return <Row gutter={[24, 24]} className="ocds-supplier-dashboard">
         <Widget title="Relaciones"
                 data={AsyncHelper.map(props.relations, t => t.length)}
                 children={relations => <Statistic
@@ -64,6 +64,23 @@ function Widget<T>(props: {
     height?: number
 }) {
 
+    return <Col xxl={6} xl={8} md={12} xs={24} className="widget">
+        <div className="widget-wrapper">
+            <WidgetRenderer {...props} />
+        </div>
+    </Col>
+}
+
+function WidgetRenderer<T>(props: {
+    title: string,
+    data: Async<T, ApiError>,
+    loadingText?: string | string[],
+    errorMsg?: string,
+    refresh?: () => void,
+    children: (d: T) => React.ReactElement,
+    height?: number
+}) {
+
     switch (props.data.state) {
         case "ERROR":
             return <Result status={getStatus(props.data.error)}
@@ -75,14 +92,11 @@ function Widget<T>(props: {
                            ]}
             />;
         case "FETCHING":
-            return <Loading text={props.loadingText}/>
+            return <Loading text={props.loadingText}/>;
         case "LOADED":
             if (props.data.data === null || props.data.data === undefined || isEmptyArray(props.data.data))
                 return <></>;
-            const dat = props.data.data;
-            return <Col xxl={6} xl={8} md={8} xs={12}>
-                {props.children(dat)}
-            </Col>
+            return props.children(props.data.data);
         case "NO_REQUESTED":
         default:
             return <Result title={props.title}/>
