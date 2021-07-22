@@ -6,6 +6,7 @@ import {Loading} from "../Loading";
 import {getStatus} from "../AsyncRenderer";
 import {millionFormatter} from "../../formatters";
 import {groupBy} from "../../pages/OCDSItem";
+import './SupplierDashboard.scss';
 
 
 export function SupplierDashBoard(props: {
@@ -15,7 +16,7 @@ export function SupplierDashBoard(props: {
                                   }
 ) {
 
-    return <Row gutter={[8, 8]}>
+    return <Row gutter={[8, 8]} className="ocds-supplier-dashboard">
         <Widget title="Relaciones"
                 data={AsyncHelper.map(props.relations, t => t.length)}
                 children={relations => <Statistic

@@ -81,7 +81,7 @@ export function OCDSSupplier() {
                                      </Tabs>}>
                 <div className="content">
                     <div className="main">
-                        {data && <SupplierDescription data={supplier.data} columns={2}/>}
+                        <SupplierDescription data={supplier.data} columns={2}/>
                     </div>
                 </div>
             </PageHeader>

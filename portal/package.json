@@ -14,22 +14,10 @@
     "@nivo/pie": "^0.67.0",
     "@nivo/scatterplot": "^0.67.0",
     "@react-hook/media-query": "^1.1.1",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
-    "@types/jest": "^25.2.3",
-    "@types/lodash": "^4.14.168",
-    "@types/node": "^14.0.5",
-    "@types/react": "^16.9.35",
-    "@types/react-dom": "^16.9.8",
-    "@types/react-router-dom": "^5.1.5",
-    "add": "^2.0.6",
     "antd": "^4.8.5",
     "date-fns": "^2.14.0",
-    "enquire-js": "^0.2.1",
-    "install": "^0.13.0",
     "lodash": "^4.17.21",
-    "npm": "^6.14.5",
+    "node-sass": "^6.0.1",
     "query-string": "^6.13.1",
     "rc-animate": "^3.1.1",
     "rc-queue-anim": "^1.4.0",
@@ -41,9 +29,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.0-next.98",
     "react-sigma": "^1.2.34",
-    "typescript": "^4.1.0",
-    "use-query-params": "^1.1.6",
-    "yarn": "^1.22.4"
+    "use-query-params": "^1.1.6"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -69,6 +55,18 @@
     ]
   },
   "devDependencies": {
-    "@types/d3-geo": "^2.0.0"
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "@types/d3-geo": "^2.0.0",
+    "@types/jest": "^25.2.3",
+    "@types/lodash": "^4.14.168",
+    "@types/node": "^14.0.5",
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
+    "@types/react-router-dom": "^5.1.5",
+    "npm": "^6.14.5",
+    "typescript": "^4.1.0",
+    "yarn": "^1.22.4"
   }
 }
