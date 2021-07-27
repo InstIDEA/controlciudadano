@@ -184,7 +184,7 @@ export interface OCDSItemTenderInfo {
     local_name: string;
     tenders: string | null;
     status: string;
-    sign_date: string | null;
+    sign_date?: string | null;
     process_duration: string | null;
     quantity: string;
     amount: string;
@@ -536,6 +536,8 @@ export interface AuthoritiesWithoutDocument {
 }
 
 export interface StatisticsDJBR {
+    total_parsed: number;
+    count_employees: number;
     total_authorities: number;
     total_declarations: number;
     count_declarations_auths: number;
@@ -586,6 +588,22 @@ export const AsyncHelper = {
             case 'LOADED':
                 const mapped: K = mapper(nr.data);
                 return AsyncHelper.loaded<K>(mapped);
+            case 'NO_REQUESTED':
+            default:
+                return AsyncHelper.noRequested();
+
+        }
+    },
+
+    filter: function <T, E>(nr: Async<T[], E>, filter: (toFilter: T) => boolean): Async<T[], E> {
+        switch (nr.state) {
+            case 'ERROR':
+                return AsyncHelper.error(nr.error);
+            case 'FETCHING':
+                return AsyncHelper.fetching();
+            case 'LOADED':
+                const filtered = nr.data.filter(filter);
+                return AsyncHelper.loaded(filtered);
             case 'NO_REQUESTED':
             default:
                 return AsyncHelper.noRequested();

@@ -1,7 +1,7 @@
 import {Card, Col, Row, Space, Tooltip, Typography} from "antd";
 import React from "react";
 import {formatMoney, formatNumber, formatToDay} from "../../../formatters";
-import {NetWorthIncreaseAnalysis} from "../../../APIModel";
+import {AmountWithSource, NetWorthIncreaseAnalysis} from "../../../APIModel";
 import {NetWorthCalculations} from "../../NetWorthHook";
 
 export function Calculations(props: {
@@ -14,13 +14,13 @@ export function Calculations(props: {
         totalIncome,
         forInversion,
         variation,
-        result
+        result,
     } = props.calculations;
 
     return <Row justify="center" gutter={[8, 8]}>
         <Col sm={24}>
             <Typography.Title level={5} className="title-color">
-                Análisis
+                Análisis (en Gs.)
             </Typography.Title>
         </Col>
 
@@ -65,10 +65,10 @@ export function Calculations(props: {
         />
 
         <DataCard title="Ingresos totales en periodo"
-                  first={earnings.amount}
-                  second={props.data.duration}
+                  first={`${formatMoney(earnings.amount)} (ingresos anuales) / 12`}
+                  second={`${props.data.duration} meses`}
                   operator="x"
-                  result={totalIncome.amount * props.data.duration}
+                  result={totalIncome.amount}
                   source={totalIncome.source}
         />
 
@@ -92,6 +92,8 @@ export function Calculations(props: {
                     actives={forInversion.amount}
                     nwVariation={variation.amount}
                     sources={variation.source}
+                    normal={props.calculations.normalIncrement}
+                    small={props.calculations.smallIncrement}
         />
     </Row>
 }
@@ -158,6 +160,8 @@ function ResultCard(props: {
     actives: number;
     nwVariation: number;
     sources: string;
+    normal: AmountWithSource,
+    small: AmountWithSource
 }) {
     const color = props.result > 1.1
         ? '#DF2935'
@@ -201,7 +205,14 @@ function ResultCard(props: {
                                 <Typography.Paragraph>35% de ingresos</Typography.Paragraph>
                             </Space>
                         </Col>
-                        <Col span={24} style={{color: 'darkgray', fontSize: 14}}>
+
+                        <Col md={12} xs={24} style={{color: 'darkgray', fontSize: 14}}>
+                            Incremento normal hasta {formatNumber(props.normal.amount)}
+                        </Col>
+                        <Col md={12} xs={24} style={{color: 'darkgray', fontSize: 14}}>
+                            Inconsistencia leve hasta {formatNumber(props.small.amount)}
+                        </Col>
+                        <Col md={24} style={{color: 'darkgray', fontSize: 14}}>
                             Fuentes utilizadas: {props.sources}
                         </Col>
                     </Row>

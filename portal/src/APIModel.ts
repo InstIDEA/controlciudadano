@@ -14,7 +14,7 @@ export interface AmountWithSource {
 
 export interface DeclarationData {
 
-    date: string;
+    date?: string;
 
     netWorth: AmountWithSource;
 

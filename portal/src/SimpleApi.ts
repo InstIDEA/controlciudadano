@@ -20,8 +20,6 @@ import {ApiError} from "./RedashAPI";
 const BASE_API = "https://beta.api.controlciudadanopy.org/api";
 const CDN_API = "https://data.controlciudadanopy.org/cdn/";
 
-// const BASE_API = "http://localhost:3001/api";
-
 export class SimpleApi {
 
     async findPeople(query: string): Promise<LocalSearchResult> {
@@ -87,7 +85,7 @@ export class SimpleApi {
     }
 
     async getSuppliersByBuyer(buyerId: string): Promise<SimpleAPINotPaginatedResult<OCDSBuyerWithSuppliers>> {
-        return this.doGet(`${BASE_API}/ocds/buyer/${buyerId}/suppliers`);
+        return this.doGet(`ocds/buyer/${buyerId}/suppliers`);
     }
 
     async getGeoJson() {

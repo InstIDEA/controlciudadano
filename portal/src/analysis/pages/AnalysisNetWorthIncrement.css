@@ -12,6 +12,18 @@
         size: A4 portrait;
     }
 
+    body {
+        /* A4 portrait */
+        width: 21cm;
+        height: 29.7cm;
+
+        /* Content margins */
+        margin-top: 1cm;
+        margin-bottom: 1cm;
+        margin-left: 1cm;
+        margin-right: 1cm;
+    }
+
     .nw-increment-page .main-title {
         font-size: 1em;
         text-align: left;
@@ -68,11 +80,15 @@
         font-size: 2em;
         color:rgba(255, 0, 0, 0.4);
         transform: translate(-50%,-50%) rotate(-30deg);
-        z-index: 2;
+
+        /* 
+        check z-index value from ResponsiveLine component before change 
+        this value to prevent overlap between watermark and interactive graph
+         */
+         z-index: 11;
     }
 
     table.nw-calc {
-        margin-left: 10px;
         border-collapse: collapse;
         border-style: hidden;
     }

@@ -3,6 +3,7 @@ import {
     Button,
     Card,
     Col,
+    DatePicker,
     Descriptions,
     Form,
     Input,
@@ -26,22 +27,30 @@ import {merge} from 'lodash';
 import './InputData.css';
 import {useDJBRStats} from "../../../hooks/useStats";
 import {useMediaQuery} from "@react-hook/media-query";
+import {sum} from "../../NetWorthHook";
 
 
 export function InputData(props: {
     data: NetWorthIncreaseAnalysis;
     disabled: boolean;
     updateDate: (newData: DeclarationData) => void;
-    updateSingleYear: (prev: DeclarationData, newData: NWAnalysisAvailableYear) => void
+    updateSingleYear: (prev: DeclarationData, newData: NWAnalysisAvailableYear) => void;
+    oneDeclaration: boolean;
 }) {
 
     const [currentYearToChange, setCurrentYearToChange] = useState<DeclarationData>();
+    let inputTitle = <InputTitle data={props.data.lastYear}
+                                 prefix="Declaración final"
+                                 onClick={() => setCurrentYearToChange(props.data.lastYear)}/>;
+    if (props.oneDeclaration) {
+        inputTitle = <ChangeDeclarationDate data={props.data.lastYear} update={props.updateDate}/>;
+    }
 
     return <Disable disabled={props.disabled}>
         <Row gutter={[0, 16]} className="nw-input">
             <Col xs={24}>
                 <Typography.Title level={5} className="title-color">
-                    Datos
+                    Datos (en Gs.)
                 </Typography.Title>
             </Col>
             <Col xs={24}>
@@ -54,9 +63,7 @@ export function InputData(props: {
             </Col>
             <Col xs={24}>
                 <Card className="custom-card-no-shadow">
-                    <InputTitle data={props.data.lastYear}
-                                prefix="Declaración final"
-                                onClick={() => setCurrentYearToChange(props.data.lastYear)}/>
+                    {inputTitle}
                     <SingleDeclaration data={props.data.lastYear} update={props.updateDate}/>
                 </Card>
             </Col>
@@ -81,21 +88,16 @@ function InputTitle(props: {
     onClick: () => void;
     prefix: string;
 }) {
-
     return <Typography.Title level={5} className="title-color">
         <Tooltip title="Ver información de fuente">
-            <div onClick={props.onClick}
-                 style={{
-                     color: 'rgb(24, 144, 255)',
-                     textDecoration: 'underline',
-                     cursor: 'pointer'
-                 }}
-            >
-                {props.prefix} ({formatToDay(props.data.date)})
+            <div>
+                {props.prefix} ({formatToDay(props.data.date)}) {"  "}
+                <Button onClick={props.onClick} type="link">Ver más DJBR</Button>
             </div>
         </Tooltip>
-    </Typography.Title>
+    </Typography.Title>;
 }
+
 
 function getLink(dat: DeclarationData): string | undefined {
     return dat.sources.filter(val => val.type === 'DJBR').map(v => v.url).shift();
@@ -207,6 +209,9 @@ export function SingleDeclaration(props: {
                 Este número se obtiene restando los pasivos de los activos.`;
     }, [props.data.netWorth])
 
+    const monthlyIncome = sum(props.data.incomes.filter(i => i.periodicity === 'monthly')).amount;
+    const yearIncome = sum(props.data.incomes.filter(i => i.periodicity === 'yearly')).amount;
+
     return <Form {...layout}
                  form={form}
                  name={`dec_form_${props.data.date}`}
@@ -281,6 +286,15 @@ export function SingleDeclaration(props: {
 
         <Form.Item label="Ingresos por año">
             <AmountInput disabled title={inputTooltip} value={props.data.totalIncome}/>
+            <div>
+                <small>
+                    <b>Fórmula: </b>
+                    <span>
+                        {formatMoney(monthlyIncome)} <span style={{color: 'gray'}}>(ingresos mensuales * 12) </span>
+                        + {formatMoney(yearIncome)} <span style={{color: 'gray'}}>(ingresos anuales)</span>
+                    </span>
+                </small>
+            </div>
         </Form.Item>
         <Form.Item label="Patrimonio Neto">
             <AmountInput disabled title={nwTooltip} value={props.data.netWorth}/>
@@ -288,4 +302,44 @@ export function SingleDeclaration(props: {
     </Form>;
 }
 
+export function ChangeDeclarationDate(props: {
+    data: DeclarationData,
+    onChange?: (newVal: string) => void;
+    update: (newData: DeclarationData) => void;
+}) {
 
+    const [form] = Form.useForm();
+    const layout = {
+        labelCol: {span: 8},
+        wrapperCol: {span: 16},
+    };
+    const onChange = (value: any, dateString: string) => {
+        if (value) {
+            let newData = props.data;
+            newData.date = dateString + 'T03:00:00.000Z';
+            props.update(newData);
+        }
+    };
+
+    return <Form {...layout}
+                 form={form}
+                 name={`date_form_${props.data.date}`}
+                 size="small"
+                 onValuesChange={(ch, all) => {
+                     const newData = merge(
+                         props.data,
+                         all
+                     );
+                     props.update(newData);
+                 }}>
+        <Typography.Title level={5} className="title-color">Declaración final</Typography.Title>
+        <Typography.Paragraph style={{margin: 'inherit'}}>
+            Se encontró solo una declaración, favor complete los datos faltantes para realizar el análisis.
+        </Typography.Paragraph>
+        <Space/>
+        <Form.Item name={["date"]} label="Fecha de declaración:" rules={[{required: true}]}>
+            <DatePicker onChange={onChange} style={{width: '100%'}} placeholder={'Seleccione fecha de declaración'}
+                        allowClear={false}/>
+        </Form.Item>
+    </Form>
+}

@@ -17,6 +17,7 @@ import {ExternalLinkIcon} from "../../components/icons/ExternalLinkIcon";
 import {useMediaQuery} from "@react-hook/media-query";
 import './AnalysisNetWorthIncrement.css';
 import {CalculationsPrint} from "../components/net_worth/CalculationsPrint";
+import {formatNumber} from "../../formatters";
 
 
 export function AnalysisNetWorthIncrement() {
@@ -61,7 +62,7 @@ export function AnalysisNetWorthIncrement() {
                         "Buscando en fuentes de datos abiertos",
                     ]}/>}
                     {fetched.state === 'ERROR' && <Result status={fetched.error.asSimpleCode()}
-                                                          title={`No se encontraron datos de ${document}`}
+                                                          title={`No se encontraron datos de ${formatNumber(document)}`}
                                                           extra={<Link to="/analysis/">
                                                               <Button>
                                                                   Volver
@@ -121,6 +122,14 @@ function Analysis(props: {
                         </Col>
                     </div>
                 </Row>
+                <Row hidden={!data.oneDeclaration} align="middle" justify="center">
+                    <Col xs={24} style={{textAlign: "center"}}>
+                        <Typography.Text className="main-title-source" style={{color: 'rgb(205 83 52)'}}> Se encontró
+                            una sola Declaración Jurada de
+                            Bienes y Rentas para esta persona. Favor completar los datos faltantes en la sección de
+                            declaración final para realizar el análisis.</Typography.Text>
+                    </Col>
+                </Row>
             </Col>
 
             <Col span={24} className="print-only top-disclaimer">
@@ -157,12 +166,13 @@ function Analysis(props: {
                                disabled={data.working}
                                updateDate={data.setYearData}
                                updateSingleYear={data.changeYear}
+                               oneDeclaration={data.oneDeclaration}
                     />
                 </Card>
             </Col>
 
             <div className="screen-only">
-                <Col sm={xsSpan} lg={lgSpan} xl={xlSpan} xxl={xxlSpan}>
+                <Col sm={xsSpan} lg={lgSpan} xl={{span: xlSpan, offset: (24 - xlSpan) / 2}} xxl={xxlSpan}>
                     <DisclaimerComponent full card>
                         <Space>
                             <Typography.Paragraph style={{margin: 'inherit'}}>
@@ -173,7 +183,10 @@ function Analysis(props: {
                                 <br/>
                                 Para ver mas detalles sobre este análisis, por favor revista este documento
                             </Typography.Paragraph>
-                            <button className="round-button">Ver más</button>
+                            <a href="https://drive.google.com/file/d/115iD7gwOFFtb5Ko8UCNyd-3NiyUdxN4W/view?usp=sharing"
+                               rel="noopener noreferrer" target="_blank">
+                                <button className="round-button">Ver más</button>
+                            </a>
                         </Space>
                     </DisclaimerComponent>
                 </Col>

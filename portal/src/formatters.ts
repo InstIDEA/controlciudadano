@@ -73,7 +73,8 @@ export function formatToDay(value: any) {
 
 export function formatWF(value: any, f: string) {
     if (value) {
-        return format(new Date(value), f, {locale: es});
+        const date = value.replaceAll("/", "-").split("T")[0].split("-");
+        return format(new Date(Date.UTC(date[0], Number(date[1]) -1, Number(date[2]) +1)), f, {locale: es});
     }
 
     return '';
@@ -114,14 +115,13 @@ export function getInitials(name: string) {
     return initials;
 }
 
-
-export function millionFormatter(num: any) {
+export function millionFormatter(num: any, prefix: string = '') {
     if (typeof num !== 'number') return '';
     if (num >= 1000000000) {
-        return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'Mil M';
+        return prefix + (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'Mil M';
     }
     if (num >= 1000000) {
-        return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+        return prefix + (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M ';
     }
-    return num;
+    return `${prefix}${num}`;
 }

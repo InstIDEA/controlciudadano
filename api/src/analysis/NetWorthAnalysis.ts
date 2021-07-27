@@ -56,7 +56,7 @@ export class NetWorthAnalysis {
         const latest = this.getLatestDeclarationsPerYear(decs);
 
         // second: use the latest two (with a spam of al least 4 years)
-        const {first, last} = this.getBestDeclarations(latest);
+        let {first, last} = this.getBestDeclarations(latest);
 
         // third create base struct
         const context: ContextData = {
@@ -138,7 +138,15 @@ export class NetWorthAnalysis {
         }
 
         if (Object.keys(allDecs).length === 1) {
-            return {first: null, last: Object.values(allDecs)[0]};
+            let last = Object.assign({}, Object.values(allDecs)[0])
+            last.active = "0"
+            last.passive = "0"
+            last.anual_income = "0"
+            last.anual_expenses = "0"
+            last.monthly_expenses = "0"
+            last.monthly_income = "0"
+            last.date = null
+            return {first: Object.assign({}, Object.values(allDecs)[0]), last: last};
         }
 
         const years = Object.keys(allDecs).map(y => parseInt(y));
@@ -193,7 +201,6 @@ export class NetWorthAnalysis {
 }
 
 function prepareAvailableDecs(decs: GroupedDecs): NetWorthIncreaseAnalysis["availableYears"] {
-
     return Object.values(decs).map(dec => ({
         id: dec.id,
         date: dec.date,
@@ -438,6 +445,7 @@ function uniq<T>(a: T[]): T[] {
 }
 
 function monthDiff(start: Date, end: Date): number {
+    if (end == null) return 0;
     if (start > end) return monthDiff(end, start);
     let months: number;
     months = (end.getFullYear() - start.getFullYear()) * 12;

@@ -17,9 +17,9 @@ import {useGlobalStats} from "../hooks/useStats";
 
 const CARDS = [
     {
-        img: explorarDatos,
-        href: `/explore`,
-        title: 'Explorar Datos',
+        img: landingAnalysis,
+        title: 'Análisis de crecimiento patrimonial',
+        href: '/analysis/'
     },
     {
         img: comprasCovid,
@@ -32,9 +32,9 @@ const CARDS = [
         href: `/djbr/portal`,
     },
     {
-        img: landingAnalysis,
-        title: 'Portal de análisis',
-        href: '/analysis/'
+        img: explorarDatos,
+        href: `/explore`,
+        title: 'Explorar Datos',
     }
 ];
 
@@ -96,9 +96,9 @@ export function LandingPage() {
                 <Col xs={24} className="banner-title-col-wrapper">
                     <QueueAnim className="banner-title-wrapper">
                         <p className="banner-text" key="content">
-                            Este es un portal en el que vas a poder explorar <strong>Datos Abiertos</strong> y realizar
-                            un <strong>control de los gastos
-                            del COVID-19</strong>
+                        Este es un portal en el que vas a poder explorar <strong>Datos Abiertos</strong>,
+                        realizar un <strong>control de los gastos del COVID-19</strong> y
+                        analizar el <strong> crecimiento patrimonial de funcionarios públicos</strong> en base a sus Declaraciones Juradas de Bienes y Renta
                         </p>
                     </QueueAnim>
                 </Col>
