@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {CSSProperties, useEffect, useState} from "react";
 import {Result} from "antd";
 import {LoadingGraphComponent} from "./ddjj/LoadingGraph";
 
@@ -6,6 +6,8 @@ import {LoadingGraphComponent} from "./ddjj/LoadingGraph";
 export function Loading(props: {
     text?: string | string[];
     interval?: number;
+    style?: CSSProperties;
+    className?: string;
 }) {
 
     const size = !props.text && !Array.isArray(props.text)
@@ -24,6 +26,8 @@ export function Loading(props: {
     }, [props.interval, size])
 
     return <Result title={text}
+                   style={props.style}
+                   className={props.className}
                    icon={<LoadingGraphComponent/>}
     />
 }

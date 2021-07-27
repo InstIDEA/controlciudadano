@@ -184,7 +184,7 @@ export interface OCDSItemTenderInfo {
     local_name: string;
     tenders: string | null;
     status: string;
-    sign_date: string | null;
+    sign_date?: string | null;
     process_duration: string | null;
     quantity: string;
     amount: string;

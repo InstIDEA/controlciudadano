@@ -100,7 +100,7 @@ export function ContractsTable(props: {
     return <Table<OCDSSupplierContract>
         dataSource={props.contracts}
         loading={!props.contracts}
-        rowKey="tender_slug"
+        rowKey={r => r.tender_slug + r.contract_award_id}
         size="small"
         scroll={{
             x: props.isSmall ? 1000 : undefined

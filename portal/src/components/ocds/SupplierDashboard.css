@@ -2,14 +2,3 @@
     padding-top: 24px;
     padding-bottom: 24px;
 }
-
-.ocds-supplier-dashboard .widget-wrapper {
-    border-style: solid;
-    border-color: #868e96;
-    border-width: 2px;
-    border-radius: 10px;
-    padding: 10px;
-    transition: transform 0.3s, box-shadow 0.3s;
-    box-shadow: 10px 10px 5px rgba(84, 48, 132, 0.06);
-    /*margin-left: 10px;*/
-}
