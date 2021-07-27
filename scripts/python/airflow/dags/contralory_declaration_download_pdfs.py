@@ -29,9 +29,12 @@ from airflow.operators.postgres_operator import PostgresOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.dates import days_ago
 
-from ds_table_operations import calculate_hash_of_file
+from ds_table_operations import calculate_hash_of_file, create_dir_in_ftp, upload_to_ftp
 from file_system_helper import move, get_file_size
 from network_operators import download_file, get_head, NetworkError
+
+from contralory_declaration_link_fetcher import keep_num_data
+from contralory_declaration_link_fetcher import is_valid_ci
 
 dag_job_target_dir = os.path.join(Variable.get("CGR_PDF_FOLDER", os.path.join(os.sep, "tmp", "contralory", "raw")))
 dag_sub_jobs_count = int(Variable.get("CGR_DOWNLOAD_PDF_SUB_JOBS_COUNT", 10))
@@ -57,6 +60,26 @@ dag = DAG(
     schedule_interval=timedelta(weeks=1),
 )
 
+def successful_ftp_upload(file_name: str, file_path: str, remote_path: str):
+    con_id = "ftp_data.controlciudadano.org.py"
+    create_dir_in_ftp(con_id, os.path.dirname(remote_path))
+
+    try:
+        print(f"Trying to upload the file {file_name} to ftp")
+
+        target_path = os.path.join(remote_path, file_name)
+        upload_to_ftp(
+            con_id,
+            target_path,
+            file_path
+        )
+    except Exception as e:
+        print(str(e))
+        print(f"An exception occurred while trying to upload the file {file_path} to ftp")
+    else:
+        return True
+
+    return False
 
 def list_navigator(id_ends_with: int, cursor: any, mod_of: int):
     """
@@ -151,6 +174,13 @@ def download_pdf(remote_id: str,
     except NetworkError as ne:
         print(f"An error trying to get the file info {str(ne)}, downloading anyway")
 
+    numdata = keep_num_data(file_prefix)
+    if not is_valid_ci(numdata):
+        print(f"Skipped file {final_url} from raw id {remote_id} because the string '{file_prefix}' doesn't contain a valid CI number")
+        return None
+
+    file_prefix = numdata
+
     temp_target_path = f"{temp_dir}{file_prefix}.pdf"
     download_file(final_url, temp_target_path, False, False)
     file_hash = calculate_hash_of_file(temp_target_path)
@@ -176,6 +206,7 @@ def do_work(number: int, url: str, target_dir: str, mod_of: int):
     sql = get_upsert_query()
 
     temp_dir = tempfile.mkdtemp()
+    ftp_dir = Variable.get("CGR_FTP_PDF_FOLDER", "/data/contraloria/declaraciones/")
 
     for records in list_navigator(number, db_cursor, mod_of):
         to_insert = []
@@ -184,6 +215,10 @@ def do_work(number: int, url: str, target_dir: str, mod_of: int):
                 data = download_pdf(record["remote_id"], url, target_dir, record["downloaded_files"], temp_dir,
                                     record["cedula"])
                 if data is not None:
+                    if not successful_ftp_upload(data["file_name"], data["path"], ftp_dir):
+                        print(f"Skip data insertion for file {data['file_name']} because it doesn't exists in ftp folder")
+                        continue
+
                     to_insert.append([
                         record["id"],
                         data["file_size"],

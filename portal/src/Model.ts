@@ -184,13 +184,17 @@ export interface OCDSItemTenderInfo {
     local_name: string;
     tenders: string | null;
     status: string;
-    sign_date: string | null;
+    sign_date?: string | null;
     process_duration: string | null;
     quantity: string;
     amount: string;
     total: string;
     currency: string;
     supplier?: {
+        id: string;
+        name: string;
+    },
+    buyer?: {
         id: string;
         name: string;
     }
@@ -264,11 +268,12 @@ export interface PaginatedResult<T> {
 }
 
 export interface Affidavit {
+    revision: string;
     id: number;
     name: string;
     document: string;
     year: number;
-    revision: number;
+    version: number;
     link: string;
     source: string;
     link_sandwich: string;
@@ -283,6 +288,9 @@ export interface OCDSSupplierContract {
     contract_award_id: string;
     tender_slug: string;
     tender_title: string;
+    published_date: string;
+    buyer_id: string;
+    buyer_name: string;
     contract_id: string;
     name: string;
     ruc: string;
@@ -528,12 +536,16 @@ export interface AuthoritiesWithoutDocument {
 }
 
 export interface StatisticsDJBR {
+    total_parsed: number;
+    count_employees: number;
     total_authorities: number;
     total_declarations: number;
     count_declarations_auths: number;
     last_success_fetch: string;
     total_authorities_in_order: number;
-    first_election_year: number
+    first_election_year: number;
+    last_election_year: number;
+    count_auths_with_decs: number;
 }
 
 /**
@@ -576,6 +588,22 @@ export const AsyncHelper = {
             case 'LOADED':
                 const mapped: K = mapper(nr.data);
                 return AsyncHelper.loaded<K>(mapped);
+            case 'NO_REQUESTED':
+            default:
+                return AsyncHelper.noRequested();
+
+        }
+    },
+
+    filter: function <T, E>(nr: Async<T[], E>, filter: (toFilter: T) => boolean): Async<T[], E> {
+        switch (nr.state) {
+            case 'ERROR':
+                return AsyncHelper.error(nr.error);
+            case 'FETCHING':
+                return AsyncHelper.fetching();
+            case 'LOADED':
+                const filtered = nr.data.filter(filter);
+                return AsyncHelper.loaded(filtered);
             case 'NO_REQUESTED':
             default:
                 return AsyncHelper.noRequested();

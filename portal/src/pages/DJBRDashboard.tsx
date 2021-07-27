@@ -67,9 +67,12 @@ export function DJBRDashboard() {
                     </Row>}
                     <Row>
                         <DisclaimerComponent full card>
-                            Los funcionarios y empleados públicos están obligados a presentar a la Contraloría, sus
-                            Declaraciones Juradas de Bienes y Rentas dentro de los quince días de haber tomado posesión
-                            de cargo y en igual término al cesar en el mismo.
+                            De acuerdo con la Constitución Nacional (Art. 104) y las reglamentaciones
+                            legales (ley 5033/13 y su modificatoria ley 6355/19), todos los funcionarios
+                            públicos, incluidos aquellos electos en elección popular, están obligados a
+                            presentar ante la Contraloría General de la República (CGR) declaración jurada
+                            de bienes, activos y rentas dentro de los quince días de haber tomado posesión
+                            de su cargo y en igual término al cesar en el mismo.
                         </DisclaimerComponent>
                     </Row>
                     <Row>
@@ -77,18 +80,23 @@ export function DJBRDashboard() {
                     </Row>
                     <Row>
                         <DisclaimerComponent full card>
-                            Existen {formatMoney(statistics.total_authorities)} autoridades electas
-                            desde {formatMoney(statistics.first_election_year)}, de las
-                            cuales {formatMoney(statistics.total_authorities_in_order)} han presentado sus Declaraciones
-                            Juradas de Bienes. Contamos con {formatMoney(statistics.total_declarations)} declaraciones
-                            juradas, de las cuales {formatMoney(statistics.count_declarations_auths)} son
-                            de autoridades (al {formatSortableDate(statistics.last_success_fetch)}).
+                            En esta sección, se muestran estadísticas de un total
+                            de {formatMoney(statistics.total_authorities)} autoridades
+                            electas desde {formatMoney(statistics.first_election_year)} hasta
+                            el {formatMoney(statistics.last_election_year)} en base
+                            a {formatMoney(statistics.total_declarations)} declaraciones juradas
+                            obtenidas de la página de la CGR al {formatSortableDate(statistics.last_success_fetch)}.
+                            Se encontraron {formatMoney(statistics.count_declarations_auths)} declaraciones
+                            juradas correspondientes a {formatMoney(statistics.count_auths_with_decs)} a autoridades
+                            electas en este período.
 
                             <br/>
-                            Podrían existir Declaraciones
-                            Juradas presentadas pero no así publicadas por la Contraloría General de la República.
-                            <a href="https://portaldjbr.contraloria.gov.py/portal-djbr/" target="_blank"
-                               rel="noopener noreferrer"> Ver fuente.</a>
+                            Podrían existir declaraciones juradas presentadas por autoridades electas, pero
+                            que no han sido publicadas por la CGR o aún no han sido incorporadas a este
+                            portal. <a href="https://portaldjbr.contraloria.gov.py/portal-djbr/" target="_blank"
+                                       rel="noopener noreferrer"> Ver fuente.</a>
+
+
                         </DisclaimerComponent>
                     </Row>
                     <ChartsComponent/>

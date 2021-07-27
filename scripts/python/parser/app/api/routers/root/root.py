@@ -4,4 +4,4 @@ router = APIRouter()
 
 @router.get("/")
 def read_root():
-    return {"status": "on"}
+    return {"status": "on", "version": "1.0.3"}

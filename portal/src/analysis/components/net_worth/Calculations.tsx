@@ -1,83 +1,100 @@
-import {NetWorthIncrementData} from "../../AnalysisModel";
-import {Card, Col, Row, Space, Typography} from "antd";
+import {Card, Col, Row, Space, Tooltip, Typography} from "antd";
 import React from "react";
-import {formatMoney, formatNumber} from "../../../formatters";
+import {formatMoney, formatNumber, formatToDay} from "../../../formatters";
+import {AmountWithSource, NetWorthIncreaseAnalysis} from "../../../APIModel";
+import {NetWorthCalculations} from "../../NetWorthHook";
 
 export function Calculations(props: {
-    data: NetWorthIncrementData
+    data: NetWorthIncreaseAnalysis,
+    calculations: NetWorthCalculations
 }) {
 
-    const earnings = (props.data.firstYear.income + props.data.lastYear.income) / 2;
-    const totalIncome = earnings * props.data.duration;
-    const forInversion = totalIncome * 0.35;
-    const variation = props.data.lastYear.netWorth - props.data.firstYear.netWorth;
-    const result = forInversion <= 0
-        ? 1
-        : (variation / forInversion);
-    console.log({
+    const {
         earnings,
+        totalIncome,
         forInversion,
         variation,
-        result
-    })
+        result,
+    } = props.calculations;
+
     return <Row justify="center" gutter={[8, 8]}>
         <Col sm={24}>
             <Typography.Title level={5} className="title-color">
-                Análisis
+                Análisis (en Gs.)
             </Typography.Title>
         </Col>
 
         <DataCard title="Variación"
-                  first={props.data.lastYear.netWorth}
-                  second={props.data.firstYear.netWorth}
+                  first={props.data.lastYear.netWorth.amount}
+                  second={props.data.firstYear.netWorth.amount}
                   operator="-"
-                  result={variation}/>
+                  result={variation.amount}
+                  source={variation.source}
+        />
 
         <DataCard title="Patrimonio Neto Inicial"
-                  first={props.data.firstYear.active}
-                  second={props.data.firstYear.passive}
+                  first={props.data.firstYear.totalActive.amount}
+                  second={props.data.firstYear.totalPassive.amount}
                   operator="-"
-                  result={props.data.firstYear.active - props.data.firstYear.passive}/>
+                  result={props.data.firstYear.netWorth.amount}
+                  source={props.data.firstYear.netWorth.source}
+        />
 
         <DataCard title="Patrimonio Neto final"
-                  first={props.data.lastYear.active}
-                  second={props.data.lastYear.passive}
+                  first={props.data.lastYear.totalActive.amount}
+                  second={props.data.lastYear.totalPassive.amount}
                   operator="-"
-                  result={props.data.lastYear.active - props.data.lastYear.passive}/>
+                  result={props.data.lastYear.netWorth.amount}
+                  source={props.data.lastYear.netWorth.source}
+        />
 
         <DataCard title="Tiempo de análisis"
-                  first={props.data.lastYear.year}
-                  second={props.data.firstYear.year}
+                  first={formatToDay(props.data.firstYear.date)}
+                  second={formatToDay(props.data.lastYear.date)}
                   operator="a"
                   result={props.data.duration + " meses"}/>
 
-        <DataCard title="Ingresos Mensuales"
-                  first={props.data.firstYear.income}
-                  second={props.data.lastYear.income}
+        <DataCard title="Ingresos Totales por año"
+                  first={props.data.firstYear.totalIncome.amount}
+                  second={props.data.lastYear.totalIncome.amount}
                   operator="+"
                   type="division"
                   divider="2"
-                  result={earnings}/>
+                  result={earnings.amount}
+                  source={earnings.source}
+        />
 
-        <DataCard title="Ingresos totales"
-                  first={earnings}
-                  second={props.data.duration}
+        <DataCard title="Ingresos totales en periodo"
+                  first={`${formatMoney(earnings.amount)} (ingresos anuales) / 12`}
+                  second={`${props.data.duration} meses`}
                   operator="x"
-                  result={totalIncome}/>
+                  result={totalIncome.amount}
+                  source={totalIncome.source}
+        />
 
         <DataCard title="Ingresos para mantenimiento"
-                  first={totalIncome}
+                  first={totalIncome.amount}
                   second="65%"
                   operator="x"
-                  result={totalIncome * 0.65}/>
+                  result={totalIncome.amount * 0.65}
+                  source={totalIncome.source}
+        />
 
         <DataCard title="Ingresos para inversión"
-                  first={totalIncome}
+                  first={totalIncome.amount}
                   second="35%"
                   operator="x"
-                  result={forInversion}/>
+                  result={forInversion.amount}
+                  source={forInversion.source}
+        />
 
-        <ResultCard result={result} actives={forInversion} nwVariation={variation}/>
+        <ResultCard result={result.amount}
+                    actives={forInversion.amount}
+                    nwVariation={variation.amount}
+                    sources={variation.source}
+                    normal={props.calculations.normalIncrement}
+                    small={props.calculations.smallIncrement}
+        />
     </Row>
 }
 
@@ -89,8 +106,12 @@ function DataCard(props: {
     divider?: string | number,
     operator: string,
     result: string | number,
+    source?: string
 }) {
 
+    const first = typeof props.first === 'number'
+        ? formatMoney(props.first)
+        : props.first;
     const second = typeof props.second === 'number'
         ? formatMoney(props.second)
         : props.second;
@@ -99,18 +120,18 @@ function DataCard(props: {
         : props.result;
 
     return <Col span={24}>
-        <Card className="custom-card-no-shadow" bodyStyle={{padding: 12}}>
+        <Card className="custom-card-no-shadow"
+              title={<Typography.Title level={5} className="left-align">
+                  {props.title}
+              </Typography.Title>}
+              extra={<Tooltip title="Fuente">{props.source}</Tooltip>}
+              bodyStyle={{padding: 12}}>
             <Row gutter={[16, 0]} align="middle">
-                <Col xs={24}>
-                    <Typography.Title level={5} style={{textAlign: 'left'}}>
-                        {props.title}
-                    </Typography.Title>
-                </Col>
                 <Col xs={24} sm={14} md={14} lg={14}>
                     <Row align="top" gutter={[16, 0]}>
                         <Col span={24}>
                             <Space>
-                                <Typography.Paragraph>{formatMoney(props.first)}</Typography.Paragraph>
+                                <Typography.Paragraph>{first}</Typography.Paragraph>
                                 <Typography.Paragraph>{props.operator}</Typography.Paragraph>
                                 <Typography.Paragraph>{second}</Typography.Paragraph>
                             </Space>
@@ -135,9 +156,12 @@ function DataCard(props: {
 }
 
 function ResultCard(props: {
-    result: number,
-    actives: number,
-    nwVariation: number
+    result: number;
+    actives: number;
+    nwVariation: number;
+    sources: string;
+    normal: AmountWithSource,
+    small: AmountWithSource
 }) {
     const color = props.result > 1.1
         ? '#DF2935'
@@ -158,7 +182,7 @@ function ResultCard(props: {
                     borderLeftStyle: 'solid',
                     borderBottomStyle: 'solid',
                 }}>
-                    <Row align="top" gutter={[8, 0]} style={{padding: 10}}>
+                    <Row align="top" gutter={[0, 0]} style={{padding: 10}}>
                         <Col span={24}>
                             <Typography.Title level={5} style={{textAlign: 'left'}}>
                                 Resultado de análisis
@@ -180,6 +204,16 @@ function ResultCard(props: {
                                 <Typography.Paragraph>/</Typography.Paragraph>
                                 <Typography.Paragraph>35% de ingresos</Typography.Paragraph>
                             </Space>
+                        </Col>
+
+                        <Col md={12} xs={24} style={{color: 'darkgray', fontSize: 14}}>
+                            Incremento normal hasta {formatNumber(props.normal.amount)}
+                        </Col>
+                        <Col md={12} xs={24} style={{color: 'darkgray', fontSize: 14}}>
+                            Inconsistencia leve hasta {formatNumber(props.small.amount)}
+                        </Col>
+                        <Col md={24} style={{color: 'darkgray', fontSize: 14}}>
+                            Fuentes utilizadas: {props.sources}
                         </Col>
                     </Row>
                 </Col>
@@ -210,3 +244,5 @@ function ResultCard(props: {
         </div>
     </Col>
 }
+
+

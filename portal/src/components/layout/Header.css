@@ -10,17 +10,6 @@
 }
 
 
-.ant-input-suffix {
-  font-size: 24px;
-}
-.ant-input-affix-wrapper {
-  border: solid 1px  rgba(0, 52, 91, 1);
-  border-radius: 5px;
-}
-.ant-input-affix-wrapper > input.ant-input {
-  font-weight: bold;
-  color: rgba(0, 52, 91, 1);
-}
 .header-title {
   color: rgba(0, 52, 91, 1);
   overflow: hidden;
