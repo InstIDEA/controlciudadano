@@ -97,7 +97,7 @@ def list_navigator(base_query: str, url: str):
 
     while should_continue:
 
-        data = fetch_data(url, page, page_size, base_query, 3)
+        data = fetch_data(url, page_size, page, base_query, 3)
         total_records = data["totalDatos"]
         records = data["lista"]
 
