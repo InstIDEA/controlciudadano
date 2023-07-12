@@ -1,8 +1,12 @@
 from datetime import timedelta
+import time
+
 
 import math
 import requests
 from re import findall as re_findall
+
+from airflow import AirflowException
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import DAG
 from airflow.operators.dummy_operator import DummyOperator
@@ -30,12 +34,18 @@ dag = DAG(
     schedule_interval=timedelta(weeks=1),
 )
 
-def keep_num_data(data: str):
-    pattern = '[0-9]'
-    re = re_findall(pattern, data)
 
-    # retrieve all numbers
-    return ''.join(re)
+def keep_num_data(data: str):
+    try:
+        pattern = '[0-9]'
+        re = re_findall(pattern, data)
+
+        # retrieve all numbers
+        return ''.join(re)
+    except Exception as e:
+        print(f"Invalid data returned '{data}'")
+        raise AirflowException("Error trying to parse", e)
+
 
 def is_valid_ci(cedula):
     if not isinstance(cedula, str):
@@ -52,6 +62,28 @@ def is_valid_ci(cedula):
 
     return True
 
+
+def fetch_data(url: str, page_size: int, page: int, query: str, retries: int):
+    payload = {'pagNum': page, 'pagSize': page_size, 'nombres': query, 'cedula': ''}
+    try:
+        r = requests.get(url, params=payload, verify=False)
+        if r.status_code == 200:
+            return r.json()
+
+        if retries > 0:
+            print(f"Error fetching data from ${url}, retrying, retries available: ${retries}")
+            fetch_data(url, page_size, page, query, retries - 1)
+
+        raise AirflowException(f"Can't fetch ${url} with params ${payload} after 3 retries.")
+    except requests.exceptions.RequestException as ne:
+        print(f"Error {ne} fetching {payload}, skipping")
+        print("Sleeping 5 sec in case we hit a rate limit")
+        time.sleep(5)
+
+
+
+
+
 def list_navigator(base_query: str, url: str):
     """
 
@@ -63,18 +95,14 @@ def list_navigator(base_query: str, url: str):
     page_size = 100  # the limit is 100
     should_continue = True
 
-    while (should_continue):
-        payload = {'pagNum': page, 'pagSize': page_size, 'nombres': base_query, 'cedula': ''}
-        r = requests.get(url, params=payload, verify=False)
+    while should_continue:
 
-        # TODO check status_code
-
-        data = r.json()
+        data = fetch_data(url, page, page_size, base_query, 3)
         total_records = data["totalDatos"]
         records = data["lista"]
 
         estimated_pages = math.ceil(total_records / page_size)
-        estimated_position = page / estimated_pages * 100
+        estimated_position = math.floor(page / estimated_pages * 100)
 
         print(f"Page {page} returned {len(records)}, total records {total_records}, estimated size: {estimated_pages}")
         print(f"Estimated progress {estimated_position}%")
@@ -82,7 +110,6 @@ def list_navigator(base_query: str, url: str):
         yield records
         should_continue = len(records) != 0
         page += 1
-        # should_continue = False
 
 
 def get_upsert_query() -> str:
@@ -97,6 +124,21 @@ def to_upsert_values(data: dict) -> [any]:
             data["path"], data["fisico"], data["periodo"]]
 
 
+def process_list(records: [dict]):
+    to_insert = []
+
+    for record in records:
+        numdata = record["cedula"]
+        if numdata is None or not is_valid_ci(keep_num_data(numdata)):
+            print(f"Skip insertion of (CI={record['cedula']}, nombres={record['nombres']}, periodo={record['periodo']}) because CI is not valid")
+            continue
+
+        record["cedula"] = keep_num_data(numdata)
+        to_insert.append(to_upsert_values(record))
+
+    print(f"Sending {len(to_insert)} for upsert")
+
+
 def fetch_list(letter: str, url: str, **kwargs):
     print(f"{letter} from {url}")
 
@@ -107,18 +149,7 @@ def fetch_list(letter: str, url: str, **kwargs):
     sql = get_upsert_query()
 
     for records in list_navigator(letter, url):
-        to_insert = []
-
-        for record in records:
-            numdata = keep_num_data(record["cedula"])
-            if not is_valid_ci(numdata):
-                print(f"Skip insertion of (CI={record['cedula']}, nombres={record['nombres']}, periodo={record['periodo']}) because CI is not valid")
-                continue
-
-            record["cedula"] = numdata
-            to_insert.append(to_upsert_values(record))
-
-        print(f"Sending {len(to_insert)} for upsert")
+        to_insert = process_list(records)
         db_cursor.executemany(sql, to_insert)
         db_conn.commit()
 
@@ -145,7 +176,6 @@ with dag:
                                         ''')
 
     for letter in ['a', 'e', 'i', 'o', 'u']:
-    # for letter in ['a']:
         # Get list from webpage
         get_pdf_list = PythonOperator(
             task_id=f"""get_pdf_list_{letter}""",
@@ -162,5 +192,8 @@ with dag:
     launch >> clean_db
 
 if __name__ == "__main__":
-    dag.clear(reset_dag_runs=True)
-    dag.run()
+    records = fetch_data("https://portaldjbr.contraloria.gov.py/portal-djbr/api/consulta/declaraciones/paginadas", 100, 8253, 'o', 3)["lista"]
+    print(records)
+    print(process_list(records))
+    # dag.clear(reset_dag_runs=True)
+    # dag.run()
