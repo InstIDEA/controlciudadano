@@ -1,8 +1,5 @@
 from typing import List
 
-import requests
-from bs4 import BeautifulSoup
-
 from _muni_operators import get_target_path
 from _policia_operators import _get_links, only_files
 from network_operators import download_links
