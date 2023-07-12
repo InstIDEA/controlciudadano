@@ -13,7 +13,7 @@ import {ApiError, RedashAPI} from "../RedashAPI";
 import {NetWorthIncreaseAnalysis} from "../APIModel";
 import {SimpleApi} from "../SimpleApi";
 
-const cacheEnabled = false;
+const cacheEnabled = import.meta.env.DEV
 
 // TODO change this with a data fetcher hook library
 export function useRedashApi<T extends number>(id: T): Async<Array<ApiType<T>>, ApiError> {
@@ -22,8 +22,24 @@ export function useRedashApi<T extends number>(id: T): Async<Array<ApiType<T>>, 
 
     useEffect(() => {
         setData(AsyncHelper.fetching());
+
+        const cacheKey = "cache_" + id;
+        const cached = cacheEnabled
+            ? localStorage.getItem(cacheKey)
+            : undefined;
+
+        if (cached) {
+            setData(JSON.parse(cached));
+            return;
+        }
+
         new RedashAPI().fetchQuery(id)
-            .then(d => setData(AsyncHelper.loaded(d.query_result.data.rows)))
+            .then(d => {
+                console.log('response from redash ', d);
+                if (cacheEnabled)
+                    localStorage.setItem(cacheKey, JSON.stringify(AsyncHelper.loaded(d.query_result.data.rows)));
+                setData(AsyncHelper.loaded(d.query_result.data.rows));
+            })
             .catch(e => setData(AsyncHelper.error(e)))
     }, [id])
 
@@ -38,8 +54,23 @@ export function useApi<ARGS extends any[], T>(
 
     const caller = useCallback(() => {
             setData(AsyncHelper.fetching())
+
+            const cacheKey = "cache_" + args.join('_');
+            const cached = cacheEnabled
+                ? localStorage.getItem(cacheKey)
+                : undefined;
+
+            if (cached) {
+                setData(JSON.parse(cached));
+                return;
+            }
+
             func(...args)
-                .then(dat => setData(AsyncHelper.loaded(dat)))
+                .then(dat => {
+                    if (cacheEnabled)
+                        localStorage.setItem(cacheKey, JSON.stringify(AsyncHelper.loaded(dat)));
+                    setData(AsyncHelper.loaded(dat));
+                })
                 .catch(err => setData(AsyncHelper.error(err)));
         },
         // the user of this hook should not change the request function
@@ -69,7 +100,8 @@ export function useNetWorthAnalysis(doc: string): Async<NetWorthIncreaseAnalysis
         if (!cached) {
             new SimpleApi().analysisNetWorth(doc)
                 .then(d => {
-                    localStorage.setItem("cache_" + doc, JSON.stringify(AsyncHelper.loaded(d)));
+                    if (cacheEnabled)
+                        localStorage.setItem("cache_" + doc, JSON.stringify(AsyncHelper.loaded(d)));
                     setData(AsyncHelper.loaded(d));
                 })
                 .catch(e => setData(AsyncHelper.error(e)))

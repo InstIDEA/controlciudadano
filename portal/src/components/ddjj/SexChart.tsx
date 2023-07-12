@@ -50,7 +50,7 @@ export function SexChart(props: {
         }}
 
         labelFormat={formatMoney}
-        tooltipFormat={formatMoney}
+        valueFormat={formatMoney}
         labelSkipWidth={12}
         labelSkipHeight={12}
         labelTextColor={{from: 'color', modifiers: [['darker', 1.6]]}}
@@ -58,8 +58,6 @@ export function SexChart(props: {
 
 
         animate={true}
-        motionStiffness={90}
-        motionDamping={15}
     />
 }
 

@@ -8,8 +8,8 @@ import {ColumnProps} from 'antd/es/table';
 import {SimpleApi} from '../SimpleApi';
 import {Link, useHistory} from 'react-router-dom';
 import {buildSFPUrl} from '../SFPHelper';
-import { BaseDatosPage } from '../components/BaseDatosPage';
-import { SearchBar } from '../components/SearchBar';
+import {BaseDatosPage} from '../components/BaseDatosPage';
+import {SearchBar} from '../components/SearchBar';
 
 export function DocumentSearchPage() {
 
@@ -17,6 +17,7 @@ export function DocumentSearchPage() {
     const [sfp, setSFP] = useState<object[]>();
     const [local, setLocal] = useState<LocalSearchResult>();
     const history = useHistory();
+
     function doSearchSFP(cedula: string) {
         if (!cedula) return;
 
@@ -40,41 +41,41 @@ export function DocumentSearchPage() {
         doLocalSearch(toSearch);
     }, []);
 
-    useEffect(() => doSearch(document || ''), [document, doSearch]);
+    useEffect(() => doSearch(document ?? ''), [document, doSearch]);
 
 
-    return <> 
-    <BaseDatosPage menuIndex="people" headerExtra={
-        <SearchBar defaultValue={document || ''} onSearch={v => setDocument(v)}/>
-    }>
-    <PageHeader ghost={false}
-                       style={{border: '1px solid rgb(235, 237, 240)'}}
-                       title=""
-                       subTitle="Búsqueda de personas por cédula"
-                       onBack={() => history.push('/')}
-                       backIcon={null}>
+    return <>
+        <BaseDatosPage menuIndex="people" headerExtra={
+            <SearchBar defaultValue={document ?? ''} onSearch={v => setDocument(v)}/>
+        }>
+            <PageHeader ghost={false}
+                        style={{border: '1px solid rgb(235, 237, 240)'}}
+                        title=""
+                        subTitle="Búsqueda de personas por cédula"
+                        onBack={() => history.push('/')}
+                        backIcon={null}>
 
-        <Typography.Paragraph>
-            Se busca una cédula en las fuentes de datos listadas.
-        </Typography.Paragraph>
-        {local && <>
-          <Divider orientation="left" plain>
-            Resultados de búsqueda a bases de datos locales ({local.query})
-          </Divider>
-          <LocalData result={local} showEmpty/>
-        </>
-        }
-        {sfp &&
-        <Card title={<>SFP
-            (externo, solo 2020)
-            (Fuente: <a href="https://datos.sfp.gov.py/data/funcionarios">
-                https://datos.sfp.gov.py/data/funcionarios
-            </a>)
-        </>}>
-          <GenericTable data={sfp}/>
-        </Card>}
-    </PageHeader>
-    </BaseDatosPage>
+                <Typography.Paragraph>
+                    Se busca una cédula en las fuentes de datos listadas.
+                </Typography.Paragraph>
+                {local && <>
+                  <Divider orientation="left" plain>
+                    Resultados de búsqueda a bases de datos locales ({local.query})
+                  </Divider>
+                  <LocalData result={local} showEmpty/>
+                </>
+                }
+                {sfp &&
+                  <Card title={<>SFP
+                      (externo, solo 2020)
+                      (Fuente: <a href="https://datos.sfp.gov.py/data/funcionarios">
+                          https://datos.sfp.gov.py/data/funcionarios
+                      </a>)
+                  </>}>
+                    <GenericTable data={sfp}/>
+                  </Card>}
+            </PageHeader>
+        </BaseDatosPage>
     </>
 
 }
@@ -119,9 +120,9 @@ export function LocalData(props: { result: LocalSearchResult, showEmpty: boolean
     const {staging} = props.result;
 
     let toShow = Object.keys(staging)
-        .map(key =>  {
+        .map(key => {
             const data: object[] = staging[key as keyof LocalSearchResult['staging']] || [];
-            return { key, data }
+            return {key, data}
         });
 
     if (!props.showEmpty) {

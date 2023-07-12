@@ -1,5 +1,5 @@
 import React, {ReactNode, useMemo} from 'react';
-import {Col, Dropdown, Menu, Row} from 'antd';
+import {Col, Dropdown, Menu, MenuProps, Row} from 'antd';
 import './Header.css'
 import {MenuOutlined} from '@ant-design/icons';
 import {Link} from 'react-router-dom';
@@ -12,30 +12,21 @@ export function Header(props: {
     showSeparator?: boolean;
 }) {
 
-    const showSeparator = props.showSeparator !== undefined
-        ? props.showSeparator
-        : props.tableMode;
+    const showSeparator = props.showSeparator ?? props.tableMode;
 
-    const menu = useMemo(() => <Menu mode="horizontal" id="nav" key="nav">
-        <Menu.Item key="home">
-            <Link className="menu-item" to="/">Inicio</Link>
-        </Menu.Item>
-        <Menu.Item key="explorar">
-            <Link className="menu-item" to="/explore">Explorar Datos</Link>
-        </Menu.Item>
-        <Menu.Item key="analisis">
-            <Link className="menu-item" to="/action">Compras COVID</Link>
-        </Menu.Item>
-        <Menu.Item key="ddjj">
-            <Link className="menu-item" to="/djbr/portal">Declaraciones Juradas</Link>
-        </Menu.Item>
-        <Menu.Item key="conjunto">
-            <Link className="menu-item" to="/sources">Fuente de datos</Link>
-        </Menu.Item>
-        <Menu.Item key="docs">
-            <Link className="menu-item" to="/about">Acerca de</Link>
-        </Menu.Item>
-    </Menu>, []);
+    const menu: MenuProps = useMemo(() => ({
+        mode: "horizontal",
+        id: "nav",
+        key: "nav",
+        items: [
+            {key: 'home', label: <Link className="menu-item" to="/">Inicio</Link>},
+            {key: 'explorar', label: <Link className="menu-item" to="/explore">Explorar Datos</Link>},
+            {key: 'analisis', label: <Link className="menu-item" to="/action">Compras COVID</Link>},
+            {key: 'ddjj', label: <Link className="menu-item" to="/djbr/portal">Declaraciones Juradas</Link>},
+            {key: 'conjunto', label: <Link className="menu-item" to="/sources">Fuente de datos</Link>},
+            {key: 'docs', label: <Link className="menu-item" to="/about">Acerca de</Link>}
+        ]
+    }), []);
 
     return (props.tableMode
             ? <div id="header" className="header">
@@ -49,7 +40,7 @@ export function Header(props: {
                     </Col>
                     <Col xxl={0} xl={0} lg={0} md={0} sm={2} xs={2}>
                         <div className="collapsed-menu">
-                            <Dropdown className="dropdown-item" overlay={menu} trigger={['click']}>
+                            <Dropdown className="dropdown-item" menu={menu} trigger={['click']}>
                                 <MenuOutlined/>
                             </Dropdown>
                         </div>
@@ -58,7 +49,7 @@ export function Header(props: {
                     </Col>
                     <Col xxl={14} xl={15} lg={14} md={14} sm={0} xs={0}>
                         <div className="header-meta">
-                            <div id="menu">{menu}</div>
+                            <div id="menu"><Menu {...menu} /></div>
                         </div>
                     </Col>
                 </Row>
@@ -81,12 +72,12 @@ export function Header(props: {
                     </Col>
                     <Col xxl={14} xl={14} lg={14} md={14} sm={0} xs={0}>
                         <div className="header-meta">
-                            <div id="menu">{menu}</div>
+                            <div id="menu"><Menu {...menu} /></div>
                         </div>
                     </Col>
                     <Col xxl={0} xl={0} lg={0} md={0} sm={2} xs={2}>
                         <div className="collapsed-menu">
-                            <Dropdown className="dropdown-item" overlay={menu} trigger={['click']}>
+                            <Dropdown className="dropdown-item" menu={menu} trigger={['click']}>
                                 <MenuOutlined/>
                             </Dropdown>
                         </div>

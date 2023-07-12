@@ -59,10 +59,8 @@ export function AgeChart(props: {
         labelSkipHeight={12}
         labelTextColor={{from: 'color', modifiers: [['darker', 1.6]]}}
 
-        tooltipFormat={formatMoney}
+        valueFormat={formatMoney}
         animate={true}
-        motionStiffness={90}
-        motionDamping={15}
     />
 }
 

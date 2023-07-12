@@ -67,21 +67,21 @@ export function PersonSearchPage() {
 
         <Layout>
             {!isSmall && <Layout.Sider width="20vw">
-                <Typography.Title level={5} style={{textAlign: 'center', paddingTop: 20}}>
-                    Filtros
-                </Typography.Title>
+              <Typography.Title level={5} style={{textAlign: 'center', paddingTop: 20}}>
+                Filtros
+              </Typography.Title>
                 {filter}
             </Layout.Sider>}
             <Layout>
                 <Layout.Content className="content-padding">
                     {isSmall && <Row>
-                        <Col xs={{span: 24}}>
-                            <Collapse defaultActiveKey={['2']} bordered={false}>
-                                <Collapse.Panel header="Mas filtros" key="1">
-                                    {filter}
-                                </Collapse.Panel>
-                            </Collapse>
-                        </Col>
+                      <Col xs={{span: 24}}>
+                        <Collapse defaultActiveKey={['2']} bordered={false}>
+                          <Collapse.Panel header="Mas filtros" key="1">
+                              {filter}
+                          </Collapse.Panel>
+                        </Collapse>
+                      </Col>
                     </Row>}
                     <Row>
                         <Card className="card-style card-fts-search" style={{width: '100%'}}>
@@ -91,8 +91,10 @@ export function PersonSearchPage() {
                                             enableQuerySuggestions={false}
                                             enablePopularSuggestions={false}
                                             debounce={300}
+                                            renderSelectedTags={() => null}
                                             autosuggest={false}
                                             innerClass={{
+                                                inputGroup: 'ttt',
                                                 input: 'fts-search-input'
                                             }}
                                             placeholder="Búsqueda por nombres o apellidos"
@@ -321,11 +323,11 @@ function SingleResultCard(props: {
                      className="small-card"
                      actions={
                          [
-                             <Link to={`/person/${data.document}`}>
+                             <Link to={`/person/${data.document}`} key="more">
                                  <Button className="mas-button">Ver más</Button>
                              </Link>,
                              hasDecs
-                                 ? <Tooltip title={`Ver análisis de crecimiento patrimonial de ${data.name}`}>
+                                 ? <Tooltip title={`Ver análisis de crecimiento patrimonial de ${data.name}`} key="dbr">
                                      <Link to={`/analysis/net_worth/${data.document}?name=${data.name}`}>
                                          <Button className="mas-button">Análisis DJBR</Button>
                                      </Link>
@@ -342,9 +344,9 @@ function SingleResultCard(props: {
                      content={<Space direction="vertical" align="center">
                          <Descriptions title={data.name}>
                              {data.salary &&
-                             <Descriptions.Item label="Salario">{formatMoney(data.salary)}</Descriptions.Item>}
+                               <Descriptions.Item label="Salario">{formatMoney(data.salary)}</Descriptions.Item>}
                              {data.net_worth &&
-                             <Descriptions.Item label="Patrimonio">{formatMoney(data.net_worth)}</Descriptions.Item>}
+                               <Descriptions.Item label="Patrimonio">{formatMoney(data.net_worth)}</Descriptions.Item>}
                          </Descriptions>
                          <Col>
                              <SourcesIconListComponent sources={data.sources}/>
@@ -382,9 +384,9 @@ function SingleResultCard(props: {
                     <Button className="mas-button">Ver más</Button>
                 </Link>
                 {hasDecs && <Tooltip title={`Ver análisis de crecimiento patrimonial de ${data.name}`}>
-                    <Link to={`/analysis/net_worth/${data.document}?name=${data.name}`}>
-                        <Button className="mas-button">Análisis DJBR</Button>
-                    </Link>
+                  <Link to={`/analysis/net_worth/${data.document}?name=${data.name}`}>
+                    <Button className="mas-button">Análisis DJBR</Button>
+                  </Link>
                 </Tooltip>}
             </Space>
         </Col>
@@ -542,15 +544,15 @@ function mapFullDataToFTS(item: ElasticFullDataResult): ElasticFtsPeopleResult[]
     item.sources.forEach((s, idx) => {
         toRet.push({
             source: s,
-            net_worth: item.net_worth?.[idx] || undefined,
+            net_worth: item.net_worth?.[idx] ?? undefined,
             document: item.document + "",
             _id: item._id,
-            photo: item.photo?.[idx] || "",
-            salary: item.salary?.[idx] || undefined,
+            photo: item.photo?.[idx] ?? "",
+            salary: item.salary?.[idx] ?? undefined,
             name: Array.isArray(item.name)
                 ? item.name && item.name[idx] + ""
-                : item.name || '',
-            age: item.age?.[idx] || undefined
+                : item.name ?? '',
+            age: item.age?.[idx] ?? undefined
         })
     })
 

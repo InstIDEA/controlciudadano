@@ -31,7 +31,7 @@ export function ListChart(props: {
                 axisTop={null}
                 axisRight={null}
                 labelFormat={formatMoney}
-                tooltipFormat={formatMoney}
+                valueFormat={formatMoney}
                 axisLeft={{
                     tickSize: 4,
                     tickPadding: 4,
@@ -55,8 +55,6 @@ export function ListChart(props: {
                 labelSkipHeight={12}
                 labelTextColor={{from: 'color', modifiers: [['darker', 1.6]]}}
                 animate={true}
-                motionStiffness={90}
-                motionDamping={15}
     />
 }
 

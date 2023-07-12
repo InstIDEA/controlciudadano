@@ -12,17 +12,17 @@ export const NivoBuyerSuppliersPie = ({data /* see data tab */}: { data: any }) 
         colors={{scheme: 'nivo'}}
         borderWidth={1}
         borderColor={{from: 'color', modifiers: [['darker', 0.2]]}}
-        radialLabelsSkipAngle={10}
-        radialLabelsTextXOffset={6}
-        radialLabelsTextColor="#333333"
-        radialLabelsLinkOffset={0}
-        radialLabelsLinkDiagonalLength={16}
-        radialLabelsLinkHorizontalLength={24}
-        radialLabelsLinkStrokeWidth={1}
-        radialLabelsLinkColor={{from: 'color'}}
-        sliceLabel={r => formatMoney(r.value)}
-        sliceLabelsSkipAngle={10}
-        sliceLabelsTextColor="#333333"
+        // radialLabelsSkipAngle={10}
+        // radialLabelsTextXOffset={6}
+        // radialLabelsTextColor="#333333"
+        // radialLabelsLinkOffset={0}
+        // radialLabelsLinkDiagonalLength={16}
+        // radialLabelsLinkHorizontalLength={24}
+        // radialLabelsLinkStrokeWidth={1}
+        // radialLabelsLinkColor={{from: 'color'}}
+        // sliceLabel={r => formatMoney(r.value)}
+        // sliceLabelsSkipAngle={10}
+        // sliceLabelsTextColor="#333333"
         valueFormat={v => formatMoney(v, 'PYG')}
         // animate={true}
         // tooltip={v => <>{formatMoney(v.datum.value, 'PYG')}</>}

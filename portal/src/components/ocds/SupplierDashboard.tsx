@@ -8,6 +8,7 @@ import {StatsWidget} from "../dashboard-widgets/StatsWidget";
 import {BarWidget} from "../dashboard-widgets/BarWidget";
 import {groupBy} from "../../pages/OCDSItem";
 import {PieWidget} from "../dashboard-widgets/PieWidget";
+import {BarDatum} from '@nivo/bar';
 
 
 export function SupplierDashBoard(props: {
@@ -94,7 +95,7 @@ function BuyerWidget(props: { contracts: Async<OCDSSupplierContract[], ApiError>
 function YearCountWidget(props: { contracts: Async<OCDSSupplierContract[], ApiError> }) {
 
     const data = useMemo(() => {
-        return AsyncHelper.map(props.contracts, c => groupByYear(c, 'Cantidad', d => 1));
+        return AsyncHelper.map(props.contracts, c => groupByYear(c, 'Cantidad', _ => 1));
     }, [props.contracts]);
 
     return <BarWidget data={data}
@@ -114,11 +115,11 @@ function sumReducer(a: number, b: number) {
 
 function groupByYear(data: OCDSSupplierContract[],
                      name: string,
-                     dataProducer: (c: OCDSSupplierContract) => number): Array<object> {
+                     dataProducer: (c: OCDSSupplierContract) => number): Array<BarDatum> {
 
-    const toRet: Record<string, object> = {};
+    const toRet: Record<string, BarDatum> = {};
     for (let d of (data || [])) {
-        const key = (d.sign_date || d.published_date).substr(0, 4);
+        const key = (d.sign_date || d.published_date).substring(0, 4);
         if (toRet[key]) {
             // TODO view if we can type this
             (toRet[key] as any)[name] += dataProducer(d);

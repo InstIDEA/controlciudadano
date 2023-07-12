@@ -241,14 +241,14 @@ export function SingleDeclaration(props: {
                         return <Form.Item label={val?.name} key={field.name}>
                             <Input.Group compact>
                                 <Form.Item name={[field.name]}
-                                           fieldKey={[field.fieldKey]}
+                                           key={field.key}
                                            className="income-amount"
                                            required>
                                     <AmountInput/>
                                 </Form.Item>
                                 <Tooltip title="Indica si el ingreso es mensual o anual">
                                     <Form.Item name={[field.name, "periodicity"]}
-                                               fieldKey={[field.fieldKey, "periodicity"]}>
+                                               key={`${field.key}_periodicity`}>
                                         <Radio.Group>
                                             <Radio.Button value="monthly"
                                                           style={{width: '100%'}}>Mensual</Radio.Button>

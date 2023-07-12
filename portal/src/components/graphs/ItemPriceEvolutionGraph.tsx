@@ -1,12 +1,12 @@
-import * as React from 'react';
-import {useMemo} from 'react';
+import {MouseEvent, useCallback, useMemo} from 'react';
 import {AdjustedAmount, OCDSItemPriceEvolution} from '../../Model';
-import {NodeComponent, ResponsiveScatterPlot, Serie} from '@nivo/scatterplot'
+import {ResponsiveScatterPlot, ScatterPlotDatum, ScatterPlotNode, ScatterPlotRawSerie} from '@nivo/scatterplot'
 import {format} from "date-fns";
 import {es} from "date-fns/locale";
 import {formatMoney} from '../../formatters';
 import {lerpMax} from '../../MathUtils';
 import {Descriptions} from 'antd';
+import {animated} from '@react-spring/web'
 
 
 const commonProperties = {
@@ -39,7 +39,7 @@ export function ItemPriceEvolutionGraph(props: {
                     : 1
     }, [minPrice]);
 
-    const serie: Serie[] = useMemo(() => [{
+    const serie: ScatterPlotRawSerie<ScatterPlotDatum>[] = useMemo(() => [{
         id: 'Precios',
         data: points.map(p => ({
             title: p.item,
@@ -103,53 +103,53 @@ export function ItemPriceEvolutionGraph(props: {
             tickRotation: -90
         }}
         useMesh={false}
-        renderNode={CustomNode}
+        nodeComponent={CustomNode}
     />
 }
 
 
-const CustomNode: NodeComponent = ({
-                                       node,
-                                       x,
-                                       y,
-                                       size,
-                                       color,
-                                       blendMode,
-                                       onMouseEnter,
-                                       onMouseMove,
-                                       onMouseLeave,
-                                       onClick,
-                                   }) => {
-    if ((node.data as any).covid) {
-        return <g transform={`translate(${x},${y})`}>
-            <circle
-                r={size / 2}
-                stroke={'white'}
-                fill="red"
-                strokeWidth="1"
-                style={{mixBlendMode: blendMode}}
-                onMouseEnter={onMouseEnter}
-                onMouseMove={onMouseMove}
-                onMouseLeave={onMouseLeave}
-                onClick={onClick}
-            />
-        </g>
-    }
+const interpolateRadius = (size: number) => size / 2
+const CustomNode: ScatterPlotNode<ScatterPlotDatum> = ({
+                                                           node,
+                                                           style,
+                                                           blendMode,
+                                                           isInteractive,
+                                                           onMouseEnter,
+                                                           onMouseMove,
+                                                           onMouseLeave,
+                                                           onClick,
+                                                       }) => {
 
-    return <g transform={`translate(${x},${y})`}>
-        <circle
-            r={size / 2}
-            stroke={'white'}
-            fill={color}
-            strokeWidth="1"
-            color={'white'}
+    const handleMouseEnter = useCallback(
+        (event: MouseEvent<SVGCircleElement>) => onMouseEnter?.(node, event),
+        [node, onMouseEnter]
+    )
+    const handleMouseMove = useCallback(
+        (event: MouseEvent<SVGCircleElement>) => onMouseMove?.(node, event),
+        [node, onMouseMove]
+    )
+    const handleMouseLeave = useCallback(
+        (event: MouseEvent<SVGCircleElement>) => onMouseLeave?.(node, event),
+        [node, onMouseLeave]
+    )
+    const handleClick = useCallback(
+        (event: MouseEvent<SVGCircleElement>) => onClick?.(node, event),
+        [node, onClick]
+    )
+
+    return (
+        <animated.circle
+            cx={style.x}
+            cy={style.y}
+            r={style.size.to(interpolateRadius)}
+            fill={((node.data as any).covid) ? 'red' : style.color}
             style={{mixBlendMode: blendMode}}
-            onMouseEnter={onMouseEnter}
-            onMouseMove={onMouseMove}
-            onMouseLeave={onMouseLeave}
-            onClick={onClick}
+            onMouseEnter={isInteractive ? handleMouseEnter : undefined}
+            onMouseMove={isInteractive ? handleMouseMove : undefined}
+            onMouseLeave={isInteractive ? handleMouseLeave : undefined}
+            onClick={isInteractive ? handleClick : undefined}
         />
-    </g>
+    )
 }
 
 function Legend(props: {

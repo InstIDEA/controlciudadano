@@ -17,7 +17,7 @@ function Footer(props: {
     aboutFooter?: boolean
 }) {
     return (
-        <footer id="footer">
+        <footer id="footer" style={{paddingTop: 15}}>
             <Row className={props.tableMode ? "footer-background-secondary" : ""}>
                 <Col offset={props.aboutFooter ? 6 : 0}
                      xxl={props.aboutFooter ? 12 : 8} xl={props.aboutFooter ? 12 : 8}

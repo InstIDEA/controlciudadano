@@ -168,7 +168,7 @@ export function NetWorthIncrement(props: {
         axisTop={null}
         axisRight={null}
         axisLeft={{
-            orient: "left",
+            // orient: "left",
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
@@ -190,7 +190,7 @@ export function NetWorthIncrement(props: {
         pointBorderWidth={2}
         pointBorderColor={{from: "serieColor"}}
         animate
-        motionStiffness={10}
+        // motionStiffness={10}
 
         tooltip={({point}) => {
             return <BasicTooltip
