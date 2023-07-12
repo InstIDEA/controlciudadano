@@ -119,12 +119,12 @@ def get_upsert_query() -> str:
     """
 
 
-def to_upsert_values(data: dict) -> [any]:
+def to_upsert_values(data: dict) -> [dict]:
     return [data["id"], data["idCabeceraDjb"], data["nombres"], data["cedula"], data["fecha"], data["nombreArchivo"],
             data["path"], data["fisico"], data["periodo"]]
 
 
-def process_list(records: [dict]):
+def process_list(records: [dict]) -> [dict]:
     to_insert = []
 
     for record in records:
@@ -137,6 +137,7 @@ def process_list(records: [dict]):
         to_insert.append(to_upsert_values(record))
 
     print(f"Sending {len(to_insert)} for upsert")
+    return to_insert
 
 
 def fetch_list(letter: str, url: str, **kwargs):
