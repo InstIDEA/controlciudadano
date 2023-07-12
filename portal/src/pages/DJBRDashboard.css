@@ -87,25 +87,10 @@
     }
 }
 
-
-.card-style .fts-search-input {
-    border: none;
-    background-color: white;
-    /*padding: 10px;*/
-}
-
 .card-fts-search .ant-card-body {
     margin: auto;
     padding: 0;
     width: 100%;
-}
-
-.card-fts-search .fts-search-input-wrapper {
-    padding: 5px;
-    border-radius: 10px;
-    border-style: solid;
-    border-color: #002E4D;
-    border-width: 2px;
 }
 
 .info-ddjj {

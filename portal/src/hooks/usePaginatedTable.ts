@@ -118,7 +118,6 @@ export function usePaginatedTable<T>(
 
 
     const loadData = useCallback(async (newConf: TableQueryConfig<T>) => {
-        console.log('loading data', newConf);
         setData(TDHelper.beginLoadPage);
         const currentPromise = new SimpleApi().doGet<APIResponse<T>>(buildUrl(url, newConf.filter, {
             page: newConf.page,
@@ -131,7 +130,13 @@ export function usePaginatedTable<T>(
             setData(TDHelper.finishLoadPage(response))
         } catch (e) {
             if (lastPromise.current !== currentPromise) return;
-            setData(TDHelper.error(e))
+            if (e instanceof ApiError) {
+                setData(TDHelper.error(e))
+            } else {
+                console.log('unhandled error', e);
+                setData(TDHelper.error(new ApiError("error", 500, "")));
+            }
+
         }
     }, [url]);
 

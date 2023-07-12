@@ -25,8 +25,8 @@ export function PresentedChart(props: {
         colors={t => t.data.color}
         borderWidth={2}
         borderColor="white"
-        enableRadialLabels={false}
-        enableSliceLabels={false}
+        // enableRadialLabels={false}
+        // enableSliceLabels={false}
 
         valueFormat={v => formatMoney(v)}
         // motionStiffness={90}

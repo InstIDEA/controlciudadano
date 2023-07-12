@@ -1,4 +1,4 @@
-import {ResponsiveBar} from "@nivo/bar";
+import {BarDatum, ResponsiveBar} from "@nivo/bar";
 import {formatMoney, millionFormatter} from "../../formatters";
 import * as React from "react";
 import {Widget} from "./BaseWidget";
@@ -6,7 +6,7 @@ import {ApiError} from "../../RedashAPI";
 import {Async} from "../../Model";
 
 export function BarWidget(props: {
-    data: Async<Array<object>, ApiError>,
+    data: Async<Array<BarDatum>, ApiError>,
     indexBy?: string,
     title: string,
     leftLegend?: string,
@@ -27,7 +27,7 @@ export function BarWidget(props: {
 
 function Bar(props: {
     keys: Array<string>,
-    data: Array<object>,
+    data: Array<BarDatum>,
     indexBy?: string,
     leftLegend?: string
 }) {
@@ -36,7 +36,7 @@ function Bar(props: {
     return <ResponsiveBar
         data={props.data}
         keys={props.keys}
-        indexBy={props.indexBy || 'key'}
+        indexBy={props.indexBy ?? 'key'}
         margin={{top: 10, right: 10, bottom: 20, left: 10}}
         padding={0.2}
         enableGridX={false}
@@ -82,10 +82,7 @@ function Bar(props: {
         labelSkipWidth={12}
         labelSkipHeight={12}
         labelTextColor={{from: 'color', modifiers: [['darker', 1.6]]}}
-
-        tooltipFormat={formatMoney}
+        valueFormat={formatMoney}
         animate={true}
-        motionStiffness={90}
-        motionDamping={15}
     />
 }

@@ -13,7 +13,7 @@ import {ApiError, RedashAPI} from "../RedashAPI";
 import {NetWorthIncreaseAnalysis} from "../APIModel";
 import {SimpleApi} from "../SimpleApi";
 
-const cacheEnabled = process.env.NODE_ENV === 'development';
+const cacheEnabled = import.meta.env.DEV
 
 // TODO change this with a data fetcher hook library
 export function useRedashApi<T extends number>(id: T): Async<Array<ApiType<T>>, ApiError> {
@@ -35,8 +35,9 @@ export function useRedashApi<T extends number>(id: T): Async<Array<ApiType<T>>, 
 
         new RedashAPI().fetchQuery(id)
             .then(d => {
+                console.log('response from redash ', d);
                 if (cacheEnabled)
-                    localStorage.setItem(cacheKey, JSON.stringify(AsyncHelper.loaded(d)));
+                    localStorage.setItem(cacheKey, JSON.stringify(AsyncHelper.loaded(d.query_result.data.rows)));
                 setData(AsyncHelper.loaded(d.query_result.data.rows));
             })
             .catch(e => setData(AsyncHelper.error(e)))

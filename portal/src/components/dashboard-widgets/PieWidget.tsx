@@ -40,8 +40,8 @@ function Pie(props: {
         borderWidth={2}
         borderColor="white"
         colors={{scheme: 'nivo'}}
-        enableRadialLabels={false}
-        enableSliceLabels={false}
+        // enableRadialLabels={false}
+        // enableSliceLabels={false}
 
         valueFormat={formatMoney}
     />

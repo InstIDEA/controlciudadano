@@ -96,19 +96,17 @@ export function LandingPage() {
                 <Col xs={24} className="banner-title-col-wrapper">
                     <QueueAnim className="banner-title-wrapper">
                         <p className="banner-text" key="content">
-                        Este es un portal en el que vas a poder explorar <strong>Datos Abiertos</strong>,
-                        realizar un <strong>control de los gastos del COVID-19</strong> y
-                        analizar el <strong> crecimiento patrimonial de funcionarios públicos</strong> en base a sus Declaraciones Juradas de Bienes y Renta
+                            Este es un portal en el que vas a poder explorar <strong>Datos Abiertos</strong>,
+                            realizar un <strong>control de los gastos del COVID-19</strong> y
+                            analizar el <strong> crecimiento patrimonial de funcionarios públicos</strong> en base a sus
+                            Declaraciones Juradas de Bienes y Renta
                         </p>
                     </QueueAnim>
                 </Col>
                 <section className="page-wrapper info-banner">
-                    <QueueAnim
-                        component={Row}
-                        type="bottom"
-                        className="page row text-center"
-                        delay={500}
-                    >
+                    <QueueAnim type="bottom"
+                               className="page row text-center"
+                               delay={500}>
                         <Col className="card-wrapper" key="info" xl={20} md={24} xs={24}>
                             <div className="info-card">
                                 <Statistic name={AsyncHelper.loaded("Salarios Pagados")}
@@ -126,8 +124,7 @@ export function LandingPage() {
                     </QueueAnim>
                 </section>
                 <section className="page-wrapper page1">
-                    <QueueAnim component={Row}
-                               type="bottom"
+                    <QueueAnim type="bottom"
                                className="page row text-center"
                                delay={500}>
                         <Row gutter={[8, 32]} align="middle" justify="center">
