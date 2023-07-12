@@ -66,6 +66,7 @@ function Routes() {
                 <Route path="/explore" exact render={() => <Welcome/>}/>
                 <Route path="/explore/authorities/elected"><ElectedAuthoritiesPage/></Route>
                 <Route path="/explore/contralory/affidavit" exact render={() => <AffidavitList/>}/>
+                <Route path="/explore/comptroller/affidavit" exact render={() => <AffidavitList/>}/>
                 <Route path="/explore/covid/ande" exact render={() => <AndeExoneratedList/>}/>
                 <Route path="/explore/covid/essap" exact render={() => <EssapExoneratedList/>}/>
                 <Route path="/explore/ocds/itemsRanking" exact render={() => <OCDSItemsRankingPage/>}/>

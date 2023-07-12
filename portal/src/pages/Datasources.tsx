@@ -66,14 +66,7 @@ export function DS() {
                         title: "Acciones",
                         dataIndex: "name",
                         render: (_, row) => <Space className="action-column">
-                            <Space>
-                                {row.base_url && <a href={row.base_url} target="_blank" rel="noopener noreferrer">
-                                  <Button className="btn-wrapper btn-secondary" icon={<LinkOutlined/>}>
-                                    Ir a fuente
-                                  </Button>
-                                </a>}
-                                <LinkToDS data={row}/>
-                            </Space>
+                            <LinkToDS data={row}/>
                         </Space>
                     },]}
                 />
@@ -84,19 +77,24 @@ export function DS() {
 }
 
 function LinkToDS(props: { data: DataSet }) {
-    if (props.data.files) return <Link to={`/sources/${props.data.id}`}>
-        <Button type="primary" className="btn-wrapper" icon={<DownloadOutlined/>}>
+
+    const withCustomPages: Record<number, string> = {9: "/action", 10: "/explore/comptroller/affidavit"}
+
+    return <Space>
+        {props.data.base_url && <a href={props.data.base_url} target="_blank" rel="noopener noreferrer">
+          <Button className="btn-wrapper btn-secondary" icon={<LinkOutlined/>}>
+            Ir a fuente
+          </Button>
+        </a>}
+        {props.data.files && <Link to={`/sources/${props.data.id}`}>
+          <Button type="primary" className="btn-wrapper" icon={<DownloadOutlined/>}>
             Ver más
-        </Button>
-    </Link>
-    if (props.data.id === 9) return <Link to="/action">
-        <Button type="primary" className="btn-wrapper" icon={<SearchOutlined/>}>
+          </Button>
+        </Link>}
+        {withCustomPages[props.data.id] && <Link to={withCustomPages[props.data.id]}>
+          <Button type="primary" className="btn-wrapper" icon={<SearchOutlined/>}>
             Explorar datos
-        </Button>
-    </Link>
-    if (props.data.id === 10) return <Link to="/explore/contralory/affidavit">
-        <Button type="primary" className="btn-wrapper" icon={<SearchOutlined/>}>
-            Explorar datos
-        </Button></Link>
-    return <></>
+          </Button>
+        </Link>}
+    </Space>
 }
