@@ -1,3 +1,6 @@
 flask_bcrypt==0.7.1
 requests==2.22.0
 beautifulsoup4==4.9.0
+apache-airflow==1.10.9
+MarkupSafe==1.1.1
+psycopg2-binary==2.8.4

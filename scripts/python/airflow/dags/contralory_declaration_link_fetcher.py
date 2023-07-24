@@ -65,6 +65,7 @@ def is_valid_ci(cedula):
 
 def fetch_data(url: str, page_size: int, page: int, query: str, retries: int):
     payload = {'pagNum': page, 'pagSize': page_size, 'nombres': query, 'cedula': ''}
+    print(payload)
     try:
         r = requests.get(url, params=payload, verify=False)
         if r.status_code == 200:
@@ -193,8 +194,11 @@ with dag:
     launch >> clean_db
 
 if __name__ == "__main__":
-    records = fetch_data("https://portaldjbr.contraloria.gov.py/portal-djbr/api/consulta/declaraciones/paginadas", 100, 8253, 'o', 3)["lista"]
-    print(records)
-    print(process_list(records))
+    for records in list_navigator('o', "https://portaldjbr.contraloria.gov.py/portal-djbr/api/consulta/declaraciones/paginadas"):
+        print(len(records))
+        break
+    # records = fetch_data("https://portaldjbr.contraloria.gov.py/portal-djbr/api/consulta/declaraciones/paginadas", 100, 8253, 'o', 3)["lista"]
+    # print(records)
+    # print(process_list(records))
     # dag.clear(reset_dag_runs=True)
     # dag.run()
