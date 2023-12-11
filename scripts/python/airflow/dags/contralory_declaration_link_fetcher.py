@@ -4,11 +4,13 @@ import math
 import requests
 from re import findall as re_findall
 from airflow.hooks.postgres_hook import PostgresHook
-from airflow.models import DAG
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.postgres_operator import PostgresOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.dates import days_ago
+from airflow.models import DAG, Variable
+
+dag_base_url = Variable.get("CGR_FETCHER_BASE_URL", "https://portaldjbr.contraloria.gov.py/portal-djbr/api/consulta/declaraciones/paginadas")
 
 default_args = {
     "owner": "airflow",
@@ -18,7 +20,6 @@ default_args = {
     "email_on_retry": False,
     "retry_delay": timedelta(hours=1),
     "params": {
-        "url": "https://portaldjbr.contraloria.gov.py/portal-djbr/api/consulta/declaraciones/paginadas",
     },
 }
 
@@ -82,7 +83,6 @@ def list_navigator(base_query: str, url: str):
         yield records
         should_continue = len(records) != 0
         page += 1
-        # should_continue = False
 
 
 def get_upsert_query() -> str:
@@ -145,7 +145,6 @@ with dag:
                                         ''')
 
     for letter in ['a', 'e', 'i', 'o', 'u']:
-    # for letter in ['a']:
         # Get list from webpage
         get_pdf_list = PythonOperator(
             task_id=f"""get_pdf_list_{letter}""",
@@ -153,7 +152,7 @@ with dag:
             python_callable=fetch_list,
             op_kwargs={
                 "letter": letter,
-                "url": "{{ params.url }}",
+                "url": dag_base_url,
             },
         )
 

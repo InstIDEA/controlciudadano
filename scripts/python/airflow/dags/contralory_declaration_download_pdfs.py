@@ -38,6 +38,7 @@ from contralory_declaration_link_fetcher import is_valid_ci
 
 dag_job_target_dir = os.path.join(Variable.get("CGR_PDF_FOLDER", os.path.join(os.sep, "tmp", "contralory", "raw")))
 dag_sub_jobs_count = int(Variable.get("CGR_DOWNLOAD_PDF_SUB_JOBS_COUNT", 10))
+dag_base_url = Variable.get("CGR_DOWNLOAD_PDF_BASE_URL", "https://portaldjbr.contraloria.gov.py/portal-djbr/api/consulta/descargarpdf/")
 
 default_args = {
     "owner": "airflow",
@@ -47,7 +48,6 @@ default_args = {
     "email_on_retry": False,
     "retry_delay": timedelta(hours=1),
     "params": {
-        "url": "https://portaldjbr.contraloria.gov.py/portal-djbr/api/consulta/descargarpdf/",
         "target_dir": dag_job_target_dir
     },
 }
@@ -262,7 +262,7 @@ with dag:
             python_callable=do_work,
             op_kwargs={
                 "number": digit,
-                "url": "{{ params.url }}",
+                "url": dag_base_url,
                 "target_dir": "{{ params.target_dir }}",
                 "mod_of": dag_sub_jobs_count
             },
