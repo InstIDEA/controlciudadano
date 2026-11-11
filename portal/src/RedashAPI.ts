@@ -18,8 +18,9 @@ import {
     Supplier,
     VideoTutorialesSemillas
 } from './Model';
+import {REDASH_API_URL} from "./Config";
 
-const BASE_API = "https://redash.controlciudadanopy.org/api";
+const BASE_API = REDASH_API_URL;
 
 const API_KEYS: Record<number, string> = {
     1: "Wtp9iNNTzO2yTbUwfoE4bOM7qd9msWnWIJ9aeatl",

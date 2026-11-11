@@ -23,7 +23,7 @@ log_config(
 )
 
 VALID_URL = [
-	"https://data.controlciudadanopy.org"
+	"https://data.controlcivico.org"
 ]
 
 class DJBRParser:

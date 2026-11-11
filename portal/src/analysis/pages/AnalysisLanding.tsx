@@ -1,4 +1,5 @@
 import React, {PropsWithChildren, useMemo} from "react";
+import {SITE_NAME} from "../../Config";
 import {Header} from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
 import {Card, Col, Layout, Result, Row, Typography} from "antd";
@@ -67,7 +68,7 @@ export function AnalysisLanding() {
         lang: 'en',
         openGraph: {
             title: `Análisis de crecimiento patrimonial`,
-            site_name: 'controlciudadanopy.org'
+            site_name: SITE_NAME
         },
         twitter: {
             card: 'summary',

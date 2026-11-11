@@ -1,4 +1,5 @@
 import React from "react";
+import {SITE_NAME} from "../../Config";
 import {Header} from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
 import {Button, Card, Col, Layout, Result, Row, Space, Typography} from "antd";
@@ -32,7 +33,7 @@ export function AnalysisNetWorthIncrement() {
         lang: 'en',
         openGraph: {
             title: `Análisis de crecimiento patrimonial de ${document}`,
-            site_name: 'controlciudadanopy.org'
+            site_name: SITE_NAME
         },
         twitter: {
             card: 'summary',

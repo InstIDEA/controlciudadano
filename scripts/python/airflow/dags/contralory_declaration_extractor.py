@@ -16,7 +16,7 @@ from airflow.utils.dates import days_ago
 from requests import post
 
 dag_timer = int(Variable.get("CGR_PARSER_TIMER", 0))
-DEF_API_URLS = "http://data.controlciudadanopy.org:8081/parser/send"
+DEF_API_URLS = "http://data.controlcivico.org:8081/parser/send"
 dag_services = str(Variable.get("CGR_PARSER_SERVICES", DEF_API_URLS)).split(",")
 dag_year_filter = int(Variable.get("CGR_PARSER_MIN_YEAR", 2015))
 dag_sub_jobs_count = int(Variable.get("CGR_PARSER_SUB_JOBS_COUNT", 16))
@@ -154,7 +154,7 @@ def list_navigator(cursor: any, idx: int, year: int, batch_size: int):
 
 def parse(file_name: str):
     t = Template(dumps(parser_request))
-    payload = t.substitute(resource=f"https://data.controlciudadanopy.org/contraloria/declaraciones/{file_name}")
+    payload = t.substitute(resource=f"https://data.controlcivico.org/contraloria/declaraciones/{file_name}")
 
     result = post(get_random_url(), data=payload)
 

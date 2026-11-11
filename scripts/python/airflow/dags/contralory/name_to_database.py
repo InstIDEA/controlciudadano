@@ -32,7 +32,7 @@ def push_to_postgre(ti, **kwargs) -> None:
                 query["document"],
                 query["name"],
                 query["year"],
-                "https://data.controlciudadanopy.org/contraloria/\
+                "https://data.controlcivico.org/contraloria/\
                 declaraciones/"
                 + query["file_name"],
                 query["version"],

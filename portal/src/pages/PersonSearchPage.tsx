@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {useMemo} from 'react';
+import {ELASTIC_URL} from "../Config";
 import {
     Avatar,
     Button,
@@ -62,7 +63,7 @@ export function PersonSearchPage() {
 
     const filter = useMemo(() => <Filter/>, []);
 
-    return <ReactiveBase url="https://data.controlciudadanopy.org/" app="fts_full_data">
+    return <ReactiveBase url={ELASTIC_URL} app="fts_full_data">
         <Header tableMode={true}/>
 
         <Layout>
