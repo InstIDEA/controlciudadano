@@ -16,9 +16,10 @@ import {
 } from './Model';
 import {DeclarationData, NetWorthIncreaseAnalysis} from "./APIModel";
 import {ApiError} from "./RedashAPI";
+import {API_URL, CDN_URL} from "./Config";
 
-const BASE_API = "https://api.controlciudadanopy.org/api";
-const CDN_API = "https://data.controlciudadanopy.org/cdn/";
+const BASE_API = API_URL;
+const CDN_API = CDN_URL;
 
 // const BASE_API = "http://localhost:3001/api";
 

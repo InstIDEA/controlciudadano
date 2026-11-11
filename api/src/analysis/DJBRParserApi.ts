@@ -53,11 +53,14 @@ export interface ParserResult {
 }
 
 
+/** URL del parser de DDJJ (Servidor 2, puerto 8081). Se puede sobreescribir con la env PARSER_URL. */
+const PARSER_URL = process.env.PARSER_URL || 'http://data.controlcivico.org:8081/parser/send';
+
 export async function fetchParsedDJBR(url: string): Promise<ParserResult> {
 
-    // curl -X POST --data '{ "file": { "path": "https://data.controlciudadanopy.org/contraloria/declaraciones/775497_a76ff476d9d3a23716ac225e9a46e794.pdf" } }'  localhost:8080/parser/send
+    // curl -X POST --data '{ "file": { "path": "https://data.controlcivico.org/contraloria/declaraciones/775497_a76ff476d9d3a23716ac225e9a46e794.pdf" } }'  localhost:8080/parser/send
     console.log(`Trying to parse dec: "${url}"`)
-    const parsed = await fetch('http://data.controlciudadanopy.org:8081/parser/send', {
+    const parsed = await fetch(PARSER_URL, {
         method: 'POST',
         timeout: 5000,
         body: JSON.stringify({

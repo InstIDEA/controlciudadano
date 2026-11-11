@@ -20,6 +20,7 @@ import {Link} from 'react-router-dom';
 import './DJBRDashboard.css';
 import {CardPopup} from '../components/ddjj/CardPopup';
 import {useDJBRStats} from "../hooks/useStats";
+import {ELASTIC_URL, SITE_NAME} from "../Config";
 
 const ALL_FILTERS_KEYS = ['list', 'year_elected', 'departament', 'district', 'election', 'charge', 'title'];
 
@@ -36,7 +37,7 @@ export function DJBRDashboard() {
         lang: 'en',
         openGraph: {
             title: 'Declaraciones juradas de bienes y rentas',
-            site_name: 'controlciudadanopy.org'
+            site_name: SITE_NAME
         },
         twitter: {
             card: 'summary',
@@ -45,7 +46,7 @@ export function DJBRDashboard() {
         }
     }, [])
 
-    return <ReactiveBase url="https://data.controlciudadanopy.org/" app="fts_authorities_ddjj">
+    return <ReactiveBase url={ELASTIC_URL} app="fts_authorities_ddjj">
         <Header tableMode={true}/>
 
         <Layout>

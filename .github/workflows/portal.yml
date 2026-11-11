@@ -39,8 +39,16 @@ jobs:
     - name: Download dependencies
       run: npx yarn
 
-    - name: Build 
+    - name: Build
       run: npm run build
+      # Variables de repositorio (Settings > Secrets and variables > Actions > Variables).
+      # Si no están definidas llegan vacías y src/Config.ts usa los valores de controlcivico.org.
+      env:
+        REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}
+        REACT_APP_CDN_URL: ${{ vars.REACT_APP_CDN_URL }}
+        REACT_APP_REDASH_API_URL: ${{ vars.REACT_APP_REDASH_API_URL }}
+        REACT_APP_ELASTIC_URL: ${{ vars.REACT_APP_ELASTIC_URL }}
+        REACT_APP_SITE_NAME: ${{ vars.REACT_APP_SITE_NAME }}
 
     - name: Build image
       run: docker build . --file Dockerfile --tag $IMAGE_NAME
