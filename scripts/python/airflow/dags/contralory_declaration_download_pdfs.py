@@ -13,6 +13,11 @@ Table `staging.djbr_downloaded_files`:
  * hash: hash of the file
  * file_name: the name of the file in our local storage ("hash_document.pdf")
 
+[a99da94] Versión traída del commit a99da94 (rama feature/retry_if_error_on_contraloria_gov),
+que nunca se fusionó a master pero es la que corrió en producción (2023-07 a 2023-09).
+Cambios respecto a la versión anterior de master, marcados con "# [a99da94]":
+ * Ya no sube los PDF por FTP: se guardan directo en CGR_PDF_FOLDER (carpeta montada en el servidor).
+ * Los errores de descarga se guardan en staging.djbr_download_files_errors y no se reintentan.
 """
 import os
 import tempfile
@@ -22,6 +27,8 @@ from datetime import timedelta
 from typing import Dict, Union, List
 
 import math
+
+from airflow import AirflowException
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import DAG, Variable
 from airflow.operators.dummy_operator import DummyOperator
@@ -29,7 +36,8 @@ from airflow.operators.postgres_operator import PostgresOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.dates import days_ago
 
-from ds_table_operations import calculate_hash_of_file, create_dir_in_ftp, upload_to_ftp
+# [a99da94] se quitaron create_dir_in_ftp y upload_to_ftp: ya no se sube por FTP
+from ds_table_operations import calculate_hash_of_file
 from file_system_helper import move, get_file_size
 from network_operators import download_file, get_head, NetworkError
 
@@ -60,26 +68,6 @@ dag = DAG(
     schedule_interval=timedelta(weeks=1),
 )
 
-def successful_ftp_upload(file_name: str, file_path: str, remote_path: str):
-    con_id = "ftp_data.controlciudadano.org.py"
-    create_dir_in_ftp(con_id, os.path.dirname(remote_path))
-
-    try:
-        print(f"Trying to upload the file {file_name} to ftp")
-
-        target_path = os.path.join(remote_path, file_name)
-        upload_to_ftp(
-            con_id,
-            target_path,
-            file_path
-        )
-    except Exception as e:
-        print(str(e))
-        print(f"An exception occurred while trying to upload the file {file_path} to ftp")
-    else:
-        return True
-
-    return False
 
 def list_navigator(id_ends_with: int, cursor: any, mod_of: int):
     """
@@ -107,8 +95,11 @@ def list_navigator(id_ends_with: int, cursor: any, mod_of: int):
             )) as downloaded_files
         FROM staging.djbr_raw_data raw
         LEFT JOIN staging.djbr_downloaded_files downloaded ON raw.id = downloaded.raw_data_id
+        -- [a99da94] excluye las declaraciones que ya fallaron en una corrida anterior
+        LEFT JOIN staging.djbr_download_files_errors errors ON raw.id = errors.raw_data_id
         WHERE mod(raw.id, %s) = %s
           AND downloaded IS NULL -- we should remove this to allow re-download files if changed
+          AND errors IS NULL -- we should remove this to allow re-try
         GROUP BY raw.id, raw.cedula, raw.remote_id
         ORDER BY RANDOM()
         LIMIT %s
@@ -133,6 +124,14 @@ def get_upsert_query() -> str:
     """
 
 
+# [a99da94] registra el motivo por el que no se pudo descargar una declaración
+def get_error_query() -> str:
+    return """
+        INSERT INTO staging.djbr_download_files_errors (raw_data_id, message)
+        VALUES (%s, %s) ON CONFLICT DO NOTHING;
+    """
+
+
 def find_in_list(size: str, data: List[Dict[str, str]]):
     for datum in data:
         if str(datum["file_size"]) == str(size):
@@ -146,7 +145,7 @@ def download_pdf(remote_id: str,
                  already_downloaded: List[Dict[str, any]],
                  temp_dir: str,
                  file_prefix: str
-                 ) -> Union[Dict[str, str], None]:
+                 ) -> Dict[str, str]:
     """
     Downloads a pdf if necessary and returns the 'hash', 'file_size' and path of the downloaded file
 
@@ -160,7 +159,6 @@ def download_pdf(remote_id: str,
     """
 
     final_url = f"{base_path}{remote_id}"
-    file_size = None
     try:
         file_info = get_head(final_url, verify=False)
         file_size = file_info["Content-Length"]
@@ -168,16 +166,16 @@ def download_pdf(remote_id: str,
         find_downloaded = find_in_list(file_size, already_downloaded)
 
         if find_downloaded is not None:
-            print(f"The file {final_url} already downloaded")
             # We already has a copy of this file
-            return None
+            # [a99da94] antes devolvía None; ahora lanza DownloadError para registrarlo como error
+            raise DownloadError(f"The file {final_url} already downloaded")
     except NetworkError as ne:
         print(f"An error trying to get the file info {str(ne)}, downloading anyway")
 
     numdata = keep_num_data(file_prefix)
     if not is_valid_ci(numdata):
-        print(f"Skipped file {final_url} from raw id {remote_id} because the string '{file_prefix}' doesn't contain a valid CI number")
-        return None
+        # [a99da94] antes devolvía None; ahora lanza DownloadError para registrarlo como error
+        raise DownloadError(f"Skipped file {final_url} from raw id {remote_id} because the string '{file_prefix}' doesn't contain a valid CI number")
 
     file_prefix = numdata
 
@@ -190,7 +188,7 @@ def download_pdf(remote_id: str,
 
     return {
         'hash': file_hash,
-        'file_size': file_size if file_size is not None else get_file_size(final_path),
+        'file_size': get_file_size(final_path),  # [a99da94] tamaño del archivo descargado, no del header HTTP
         'file_name': final_name,
         'path': final_path
     }
@@ -204,35 +202,39 @@ def do_work(number: int, url: str, target_dir: str, mod_of: int):
     db_cursor = db_conn.cursor()
 
     sql = get_upsert_query()
+    error_sql = get_error_query()
 
     temp_dir = tempfile.mkdtemp()
-    ftp_dir = Variable.get("CGR_FTP_PDF_FOLDER", "/data/contraloria/declaraciones/")
 
     for records in list_navigator(number, db_cursor, mod_of):
         to_insert = []
+        to_errors = []
         for record in records:
             try:
                 data = download_pdf(record["remote_id"], url, target_dir, record["downloaded_files"], temp_dir,
                                     record["cedula"])
-                if data is not None:
-                    if not successful_ftp_upload(data["file_name"], data["path"], ftp_dir):
-                        print(f"Skip data insertion for file {data['file_name']} because it doesn't exists in ftp folder")
-                        continue
-
-                    to_insert.append([
-                        record["id"],
-                        data["file_size"],
-                        data["hash"],
-                        data["file_name"],
-                        datetime.now()
-                    ])
+                # [a99da94] se inserta directo: el PDF ya quedó en target_dir, sin paso por FTP
+                to_insert.append([
+                    record["id"],
+                    data["file_size"],
+                    data["hash"],
+                    data["file_name"],
+                    datetime.now()
+                ])
+            # [a99da94] los errores se acumulan y se guardan en staging.djbr_download_files_errors
+            except DownloadError as de:
+                to_errors.append([record["id"], f"{de}"])
             except NetworkError as ne:
                 print(f"Error {ne} fetching {record['remote_id']}, skipping")
                 print("Sleeping 5 sec in case we hit a rate limit")
                 time.sleep(5)
+                to_errors.append([record["id"], f"{ne}"])
 
         print(f"Sending {len(to_insert)} for upsert")
         db_cursor.executemany(sql, to_insert)
+        if len(to_errors) > 0:
+            print(f"Sending {len(to_insert)} for errors")
+            db_cursor.executemany(error_sql, to_errors)
         db_conn.commit()
 
 
@@ -249,9 +251,18 @@ with dag:
                                             hash            text,
                                             file_name       text,
                                             download_date   timestamp,
-                                            CONSTRAINT "djbr_downloaded_files_to_raw_rada" 
+                                            CONSTRAINT "djbr_downloaded_files_to_raw_rada"
                                             FOREIGN KEY(raw_data_id) REFERENCES staging.djbr_raw_data(id)
-                                        )
+                                        );
+
+                                        -- [a99da94] tabla de errores de descarga
+                                        CREATE TABLE IF NOT EXISTS staging.djbr_download_files_errors
+                                        (
+                                            id bigserial primary key ,
+                                            raw_data_id BIGINT REFERENCES staging.djbr_raw_data(id),
+                                            date timestamp default now(),
+                                            message text
+                                        );
                                         ''')
 
     # for digit in range(0, 1):
@@ -271,6 +282,10 @@ with dag:
         ensure_table_created >> download_number >> done
 
     launch >> ensure_table_created
+
+# [a99da94] error "esperado" de descarga (ya descargado, CI inválida); se registra y no se reintenta
+class DownloadError(AirflowException):
+    pass
 
 if __name__ == "__main__":
     dag.clear(reset_dag_runs=True)
