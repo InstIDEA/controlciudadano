@@ -8,11 +8,10 @@ from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator
 
 from _muni_operators import get_target_path
-from _policia_operators import get_links
+from _policia_operators import get_links, download_poli_links
 from ds_table_operations import upload_to_ftp, create_dir_in_ftp
 # These args will get passed on to each operator
 # You can override them on a per-task basis during operator initialization
-from network_operators import download_links
 
 default_args = {
     'owner': 'airflow',
@@ -53,7 +52,8 @@ dag = DAG(
 
 def retrieve_links_and_download(target: str, **context):
     links = context['ti'].xcom_pull(task_ids="fetch_links")
-    return download_links(links, target)
+    # download_poli_links también baja los archivos que la Policía publica en Google Drive
+    return download_poli_links(links, target)
 
 
 def upload_files_to_ftp(prefix: str, **context):

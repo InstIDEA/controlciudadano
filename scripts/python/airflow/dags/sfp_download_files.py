@@ -78,7 +78,10 @@ with dag:
                                        python_callable=download_file_if_changed,
                                        op_kwargs={
                                            "url": original_url_exp,
-                                           "target": zip_path_exp
+                                           "target": zip_path_exp,
+                                           # datos.sfp.gov.py no envía el certificado intermedio de GlobalSign
+                                           # y requests falla con CERTIFICATE_VERIFY_FAILED
+                                           "verify": False
                                        })
 
         calc_hash = CalculateHash(
