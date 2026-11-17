@@ -20,7 +20,8 @@ env:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    # fijo en 24.04: con ubuntu-latest (Ubuntu 26, Docker más nuevo) el push a docker.pkg.github.com da 401
+    runs-on: ubuntu-24.04
 
     defaults:
       run:
