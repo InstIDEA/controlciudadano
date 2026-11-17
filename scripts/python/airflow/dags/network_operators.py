@@ -12,11 +12,12 @@ from dateutil.parser import parse as parsedate
 
 def download_file_if_changed(
         url: str,
-        target: str
+        target: str,
+        verify: bool = True  # False para sitios que no envían la cadena SSL completa (ej. datos.sfp.gov.py)
 ):
     print(f"Downloading file {url} to {target}")
 
-    head_info = requests.head(url)
+    head_info = requests.head(url, verify=verify)
 
     if head_info.status_code != requests.codes.ok:
         raise NetworkError(f"The url '{url}' returned {head_info.status_code}")
@@ -53,7 +54,7 @@ def download_file_if_changed(
     if should_download:
         with open(target, 'wb') as target_file:
             downloaded = 0
-            req = requests.get(url, stream=True)
+            req = requests.get(url, stream=True, verify=verify)
 
             if req.status_code != requests.codes.ok:
                 raise NetworkError(f"The url {url} returned {req.status_code}")

@@ -18,6 +18,14 @@ que nunca se fusionó a master pero es la que corrió en producción (2023-07 a 
 Cambios respecto a la versión anterior de master, marcados con "# [a99da94]":
  * Ya no sube los PDF por FTP: se guardan directo en CGR_PDF_FOLDER (carpeta montada en el servidor).
  * Los errores de descarga se guardan en staging.djbr_download_files_errors y no se reintentan.
+
+API nueva de la Contraloría (2024+):
+ * La URL cambió a /api/consultas/djb-descargarpdf/<id> (la vieja /api/consulta/descargarpdf/ da 404).
+ * Se descargan físicas y online, para tener copia del PDF:
+     - físicas: su id no cambió y está en remote_id.
+     - online: el id viejo da 404, se usa remote_id_v2 (lo carga el link fetcher).
+       Las online sin remote_id_v2 todavía no se pueden descargar y se saltean.
+   Los datos de las online salen del JSON (contralory_declaration_json), el PDF es solo la copia.
 """
 import os
 import tempfile
@@ -55,7 +63,7 @@ default_args = {
     "email_on_retry": False,
     "retry_delay": timedelta(hours=1),
     "params": {
-        "url": "https://portaldjbr.contraloria.gov.py/portal-djbr/api/consulta/descargarpdf/",
+        "url": "https://portaldjbr.contraloria.gov.py/portal-djbr/api/consultas/djb-descargarpdf/",
         "target_dir": dag_job_target_dir
     },
 }
@@ -88,7 +96,8 @@ def list_navigator(id_ends_with: int, cursor: any, mod_of: int):
         SELECT 
             raw.id, 
             raw.cedula, 
-            raw.remote_id, 
+            -- id en la API nueva: físicas con remote_id, online con remote_id_v2
+            CASE WHEN raw.fisico THEN raw.remote_id ELSE raw.remote_id_v2 END as remote_id,
             jsonb_agg(jsonb_build_object(
                 'file_size', COALESCE(downloaded.file_size, 0),
                 'hash', COALESCE(downloaded.hash, '')
@@ -98,9 +107,11 @@ def list_navigator(id_ends_with: int, cursor: any, mod_of: int):
         -- [a99da94] excluye las declaraciones que ya fallaron en una corrida anterior
         LEFT JOIN staging.djbr_download_files_errors errors ON raw.id = errors.raw_data_id
         WHERE mod(raw.id, %s) = %s
+          -- las online sin remote_id_v2 no se pueden descargar todavía
+          AND (raw.fisico = true OR raw.remote_id_v2 IS NOT NULL)
           AND downloaded IS NULL -- we should remove this to allow re-download files if changed
           AND errors IS NULL -- we should remove this to allow re-try
-        GROUP BY raw.id, raw.cedula, raw.remote_id
+        GROUP BY raw.id, raw.cedula, raw.fisico, raw.remote_id, raw.remote_id_v2
         ORDER BY RANDOM()
         LIMIT %s
         """, [mod_of, id_ends_with, batch_size])

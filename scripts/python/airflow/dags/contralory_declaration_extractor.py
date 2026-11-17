@@ -5,6 +5,12 @@
 #  * Se acepta el resumen aunque los totales calculados por el parser no coincidan (solo se avisa).
 #  * Al parser se le envía solo el nombre del archivo: el parser tiene montada la carpeta de PDFs.
 #  * Se quitó CGR_PARSER_REMOVE_INVALID y el DELETE de djbr_downloaded_files.
+#
+# API nueva de la Contraloría (2024+):
+#  * Solo se parsean las físicas (fisico = true). Las online se cargan desde el JSON
+#    (contralory_declaration_json, source = 'CGR_DJBR_JSON').
+#  * La regla del año acepta el periodo o el año anterior: la fecha que lee el parser es la de corte, y las
+#    declaraciones hechas a fin de año para el año siguiente quedaban rechazadas (15.457 de 15.481 rechazos).
 from datetime import datetime, timedelta
 from json import dumps
 from json import loads
@@ -80,11 +86,12 @@ def is_valid_data(year: int, data: Dict[str, any], row: Dict[str, any]) -> Optio
         return f"{raw_id} - Returning false because data is null"
 
     periodo = datetime.strptime(data['fecha'].split('T')[0], '%Y-%m-%d').year
-    if periodo != row['raw_periodo']:
+    # la fecha leída es la de corte: puede ser del año anterior al periodo (ej. corte 20/12/2015, periodo 2016)
+    if periodo not in (row['raw_periodo'], row['raw_periodo'] - 1):
         return f"{raw_id} - Mismatch between parsed year {periodo} and fetched year {row['raw_periodo']}"
 
-    if periodo < year:
-        return f"{raw_id} - The parsed year {periodo} is less than the required minimum year {year}"
+    if row['raw_periodo'] < year:
+        return f"{raw_id} - The fetched year {row['raw_periodo']} is less than the required minimum year {year}"
 
     calc_active = data['activos']
     calc_passives = data['pasivos']
@@ -148,6 +155,8 @@ def list_navigator(cursor: any, idx: int, year: int, batch_size: int):
             -- [a99da94] excluye las declaraciones ya marcadas como inválidas
             LEFT JOIN staging.djbr_invalid_files div ON div.raw_data_id = drd.id
             WHERE drd.periodo BETWEEN %s AND date_part('year', current_date)
+              -- solo físicas: las online se cargan desde el JSON (contralory_declaration_json)
+              AND drd.fisico = true
               AND mod(drd.id, %s) = %s
               AND parsed IS NULL
               AND div IS NULL
