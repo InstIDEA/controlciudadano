@@ -1,3 +1,4 @@
 flask_bcrypt==0.7.1
 requests==2.22.0
 beautifulsoup4==4.9.0
+pytz==2025.2
