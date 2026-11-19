@@ -162,12 +162,17 @@ def check_sorted_by_fecha(records: List[dict], previous_last: Optional[str]):
     """
     Si la API cambia y el orden deja de ser por fecha desc, el DAG falla en vez de cortar mal el delta.
     Las fechas vienen como 'YYYY-MM-DD HH:MM:SS', que ordena igual como texto que como fecha.
+
+    Entre páginas no se exige el orden: si mientras se recorre entran declaraciones nuevas, el listado
+    se corre hacia abajo y la página siguiente repite algunas de la anterior (con fecha más nueva).
+    Las repetidas no hacen daño (el upsert no duplica), así que solo se avisa.
     """
     fechas = [r["fecha"] for r in records]
-    if previous_last is not None:
-        fechas = [previous_last] + fechas
     if fechas != sorted(fechas, reverse=True):
         raise AirflowException(f"El listado no vino ordenado por fecha desc: {fechas[:10]}")
+    if previous_last is not None and fechas[0] > previous_last:
+        print(f"La página empieza con {fechas[0]}, más nueva que la última de la anterior ({previous_last}): "
+              f"entraron declaraciones nuevas durante el recorrido, se repiten algunas")
 
 
 def local_to_utc(fecha: str) -> datetime:
